@@ -1,0 +1,46 @@
+var mongoose = require('mongoose');
+
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb+srv://minhson123:minhson123@cluster0.v0phx.mongodb.net/project?retryWrites=true&w=majority";
+
+mongoose.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+mongoose.set('useCreateIndex', true);
+
+
+var extracurricularActivitiesSchema= new mongoose.Schema({
+    classID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'class'
+    },
+    StudentID: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'account'
+    }],
+    teacherID:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'account'
+    }],
+    extracurricularActivitiesContent: {
+        type : String,
+        default : "Has not been commented yet"
+    },
+    FeedBackStudent: [
+        {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'account'
+        },{
+            type: String,
+            default: 'Not rate'
+        }
+    ],
+    ConsideredImplementation: {
+        type: String,
+        default: "Not Considered Implementation Yet"
+    }
+})
+
+var extracurricularActivitiesModel = mongoose.model('extracurricularActivities',extracurricularActivitiesSchema);
+module.exports = extracurricularActivitiesModel

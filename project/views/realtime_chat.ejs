@@ -1,0 +1,62 @@
+<script>
+
+  var element = document.getElementById("message-box-12");
+  var form = document.getElementById("send_message");
+  var input = document.getElementById("text_value");
+  
+  
+  var container1 = document.getElementById("container_mes_1");
+
+  // send message
+  form.addEventListener("submit", e => {
+      var message = input.value;
+      if( message == ""){
+        e.preventDefault();
+      }
+    if (message != "") {
+         var mes = input.value;
+         e.preventDefault();
+         socket.emit("client_send_mes", {
+         mes: mes,
+         cookiesemail: "<%=cookiesemail.email%>",
+         User: "<%=user.email%>",
+         file_name: ""
+      });
+
+      // append message in user-send's boxchat 
+      var param = document.createElement("li");
+      param.setAttribute("class", "messages-me clearfix");
+      // if (index == -1) {
+        param.innerHTML = `<div class="message-body clearfix">                               
+                                  <div class="message-header" style="height: 39px;">
+                                    <small class="time-messages text-muted">
+                                          <span class="fas fa-time"></span>${new Date().getHours()}:${new Date().getMinutes()}-${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}
+                                      </small>                                 
+                                  </div>
+                           </div>
+                           <p class="messages-p" style="border-radius: 14px 14px 0px 14px; background-color:#1877F2; color: white;">${mes}</p> `;
+
+      container1.appendChild(param);
+      element.scrollTop = element.scrollHeight+100;
+      document.getElementById("text_value").value = "";
+    }
+
+    
+  });
+  // // listen event server send text
+  socket.on("server_send_mes", data => { 
+    var mes = data.message;
+    var param = document.createElement("li");
+    param.setAttribute("class", "messages-you clearfix");
+      param.innerHTML = ` <div class="message-body clearfix">                              
+                                  <div class="message-header" style="height: 39px;">
+                                      <p class="messages-title"  width="35" height="35"><%=user.email%></p> 
+                                  </div>
+                                  <p class="messages-p" style="background-color: #F2F3F5; border-radius: 14px;">
+                                        ${data.message}
+                                  </p>
+                          </div> `
+    container1.appendChild(param);
+    element.scrollTop = element.scrollHeight;
+  })                         
+</script>

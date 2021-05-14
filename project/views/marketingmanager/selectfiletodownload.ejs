@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/css/selectfile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script>
+      $(document).ready(function(){
+        $('.checkbtn').click(function(){
+          $('ul').toggleClass('show');
+        });
+      });
+    </script>
+     
+    <title>Document</title>
+</head>
+<body>
+  <div class="layout">
+    <div class="header">
+      <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fa fa-bars" ></i>
+        </label>
+        <a href="/logout"><span class="logout">&times;</span></a>
+
+    </div>
+        <div class="layout1">
+            <div class="menu">
+                <ul>
+                    <li><a href="/account/indexManager" >Home</a></li>
+                    <li><a href="/manage/allfaculty">All faculty</a></li>
+                </ul>
+
+            </div>
+            <div class="content">
+              <div class="swapbtn">
+                  <input type="button" class="btn" onclick='selectAll()' value="Select All"/>
+                  <input type="button" class="btn" onclick='UnSelectAll()' value="Unselect All"/><br>
+                </div>
+  <form action ="/file/abc" method="post" name="">
+    <input type="hidden" name="hobby" value="."/> 
+    <% data.forEach(function(data) { %>
+          <%if (data.status =="Pass" && !data.nameFile2) { %> 
+
+            <div class="swap1">
+              <input type="checkbox" name="hobby" value="<%= data.filePathdoc %>"/> <label><%= data.nameFile %></label> 
+            </div>
+              
+            <% }  %>
+          
+            <%if (data.status2 =="Pass" && data.nameFile2) { %>
+              <div class="swap1">
+                <input type="checkbox" name="hobby" value="<%= data.filePathdoc2 %>"/> <label><%= data.nameFile2 %></label> 
+
+            </div>
+              
+            <% }  %>
+  <% }); %>
+  <br><br>
+  <div class="swapbtn">
+    <input type="submit" id="btn" value="Download"/>
+  </div>
+            
+        </form>
+      </div>
+        </div>
+  </div>
+
+  
+  <script>
+function selectAll(){
+				var items=document.getElementsByName('hobby');
+				for(var i=0; i<items.length; i++){
+					if(items[i].type=='checkbox')
+						items[i].checked=true;
+				}
+			}
+			function UnSelectAll(){
+				var items=document.getElementsByName('hobby');
+				for(var i=0; i<items.length; i++){
+					if(items[i].type=='checkbox')
+						items[i].checked=false;
+				}
+			}
+  // Get the modal
+
+  </script>
+    
+            </div>
+
+        </div>
+      </div>
+    <div class="footer">
+        <p>@University-2021</p>
+    </div>
+
+     
+</body>
+</html>

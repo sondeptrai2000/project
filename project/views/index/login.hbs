@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  box-sizing:border-box
+}
+h2 {
+  text-align: center;
+}
+/* Slideshow container */
+.slideshow-container {
+  max-width: 500px;
+  position: relative;
+  margin: auto;
+}
+/* Ẩn các slider */
+.mySlides {
+    display: none;
+}
+/* Định dạng nội dung Caption */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+ 
+/* định dạng các chấm chuyển đổi các slide */
+.dot {
+  cursor:pointer;
+  height: 13px;
+  width: 13px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+/* khi được hover, active đổi màu nền */
+.active, .dot:hover {
+  background-color: #717171;
+}
+ 
+/* Thêm hiệu ứng khi chuyển đổi các slide */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 3s;
+  animation-name: fade;
+  animation-duration: 3s;
+}
+ 
+@-webkit-keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+ 
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+body{
+    height: 100%;
+    width: 100%; 
+    margin: 0;
+    margin-block-start: -4mm;
+}
+header, footer {
+    height: 50px;
+    width: 100%;
+    color: black;
+    background-color: wheat;
+    clear: left;
+    text-align: center;
+}
+
+#menu ul {
+    overflow: hidden;
+    list-style-type: none;
+    padding: 0;
+}
+    
+#menu li {
+  color: black;
+  float: left;
+  width: 150px;
+  height: 50px;
+  line-height: 50px;
+}
+
+#menu a {
+    display: block;
+  text-decoration: none;
+  color: black;
+  width: 100%;
+  height: 100%;
+  line-height: 100%;
+  padding-top:15px;
+      border: 1px solid white;
+
+}
+#menu a:hover {
+  background: #F1F1F1;
+  color: #333;
+}
+ 
+article {
+    margin-left: 170px;
+    border-left: 1px solid gray;
+    padding: 1em;
+    overflow: hidden;
+}
+
+nav {
+    float: right;
+    max-width: 160px;
+    margin: 0;
+    padding: 1em;
+}
+ 
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+    
+nav ul a {
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+    
+    <header>
+        <div id="menu">
+            <ul>
+                <li><a href="#">Trang chủ</a></li>
+                <li><a href="#">Thông tin khóa học</a></li>
+                <li><a href="#">Về chúng tôi</a></li>
+                <li><a href="#">Đăng nhập</a></li>
+            </ul>
+        </div>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Lập trình web</a></li>
+            <li><a href="#">Thiết kế web</a></li>
+        </ul>
+    </nav>
+    <article>
+        <h1>đăng nhập</h1>
+    <form action="/account/dologin" method="post">
+        <p>Username</p>
+        <input type = "text" name = "username">
+        <p>Password</p></br>
+        <input type = "text" name = "password">
+        </br>
+        <input type = "submit" value="Đăng nhập">
+    </form>
+    </article>
+    
+    <footer>Copyright &copy; 2016 dammio.com</footer>
+<div class="slideshow-container">
+  <h2>Freetus.net hướng dẫn tạo slideShow đơn giản</h2>
+  <div class="mySlides fade">
+    <img src="./images/slide-1.jpg" style="width:100%">
+    <div class="text">Nội dung caption của slide đầu tiên!</div>
+  </div>
+ 
+  <div class="mySlides fade">
+    <img src="./images/slide-2.jpg" style="width:100%">
+    <div class="text">Nội dung caption của slide thứ 2!</div>
+  </div>
+ 
+  <div class="mySlides fade">
+    <img src="./images/slide-3.jpg" style="width:100%">
+    <div class="text">Nội dung caption của slide thứ 3!</div>
+  </div>
+</div>
+<br>
+ 
+<div style="text-align:center">
+  <span class="dot" onclick="currentSlide(0)"></span> 
+  <span class="dot" onclick="currentSlide(1)"></span> 
+  <span class="dot" onclick="currentSlide(2)"></span> 
+</div>
+ 
+</body>
+
+
+<script>
+  //khai báo biến slideIndex đại diện cho slide hiện tại
+  var slideIndex;
+  // KHai bào hàm hiển thị slide
+  function showSlides() {
+      var i;
+      var slides = document.getElementsByClassName("mySlides");
+      var dots = document.getElementsByClassName("dot");
+      for (i = 0; i < slides.length; i++) {
+         slides[i].style.display = "none";  
+      }
+      for (i = 0; i < dots.length; i++) {
+          dots[i].className = dots[i].className.replace(" active", "");
+      }
+ 
+      slides[slideIndex].style.display = "block";  
+      dots[slideIndex].className += " active";
+      //chuyển đến slide tiếp theo
+      slideIndex++;
+      //nếu đang ở slide cuối cùng thì chuyển về slide đầu
+      if (slideIndex > slides.length - 1) {
+        slideIndex = 0
+      }    
+      //tự động chuyển đổi slide sau 5s
+      setTimeout(showSlides, 5000);
+  }
+  //mặc định hiển thị slide đầu tiên 
+  showSlides(slideIndex = 0);
+ 
+ 
+  function currentSlide(n) {
+    showSlides(slideIndex = n);
+  }
+</script>
+</html>

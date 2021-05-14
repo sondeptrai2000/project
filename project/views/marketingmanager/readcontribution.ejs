@@ -1,0 +1,13 @@
+<% data.forEach(function(data) { %>
+    <tr>
+        <%if (data.status =="Pass" &&! data.nameFile2) { %>
+            <p>You can download the file here<a href="/download/<%= data._id %>"><%= data.nameFile %></a></p>
+            <iframe src="/<%= data.filePath %>" height="100%" width ="100%"></iframe>
+          <% }  %>
+        
+          <%if (data.status2 =="Pass" && data.nameFile2) { %>
+            <p>You can download the file here<a href="/download2/<%= data._id %>"><%= data.nameFile2 %></a></p>
+            <iframe src="/<%= data.filePath2 %>" height="100%" width ="100%"></iframe>
+          <% }  %>
+      </tr> 
+<% }); %>

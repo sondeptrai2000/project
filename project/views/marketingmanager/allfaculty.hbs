@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/homemanage.css">
+  <link rel="stylesheet" href="/css/allfaculty.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.checkbtn').click(function () {
+        $('ul').toggleClass('show');
+      });
+    });
+  </script>
+
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="layout">
+    <div class="header">
+      <input type="checkbox" id="check">
+      <label for="check" class="checkbtn">
+        <i class="fa fa-bars"></i>
+      </label>
+      <a href="/logout"><span class="logout">&times;</span></a>
+
+    </div>
+    <div class="layout1">
+      <div class="menu">
+        <ul>
+          <li><a href="/account/indexManager">Home</a></li>
+          <li><a href="/manage/allfaculty">All faculty</a></li>
+        </ul>
+
+      </div>
+      <div class="content">
+        {{#each faculty}}
+        <div class="card">
+          <h5>{{facultyname}}</h5>
+          <button><a href="/manage/allcontribution{{facultyID}}">View contributions</a></button>
+          <button><a href="/manage/viewStatistical{{facultyID}}">View statistical</a></button>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+    <div class="footer">
+    <p>@University-2021</p>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+      <h2>ACCOUNT INFORMATION</h2>
+      <form method="post" action="/admin/createAccount">
+            <label for="facultyname">Name</label>
+            <input type="text" name="username">
+            <br>
+            <label for="topic">Email</label>
+            <input type="email" name="email" class="emailinput">
+            <br>
+            <label for="topic">Password</label>
+            <input type="password" name="password">
+            <br>
+            <label for="topic">Role</label>
+            <select class="Role" name="Role">
+                  <option value="student">Student</option>
+                  <option value="guardian">Guardian</option>
+                  <option value="teacher">Teacher</option>
+            </select>
+            <br>
+            <label for="level">Level</label>
+            <select class="level" name="level">
+                  <option value="beginner">Beginner </option>
+                  <option value="highBeginner">High Beginner</option>
+                  <option value="lowIntermediate">Low Intermediate</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="highAdvanced">High Advanced </option>
+                  <option value="advanced">Advanced</option>
+            </select>
+
+            <label for="topic">Class ID</label>
+            <select name="facultyID">
+                  {{#each faculty}}
+                  <option value="{{facultyID}}" name="facultyID">{{facultyID}}</option>
+                  {{/each}}
+                  <option value="None" name="facultyID">None</option>
+            </select>
+            <br>
+            <label for="topic">Birthday</label>
+            <input type="date" name="birthday">
+            <br>
+            <label for="topic">Phone</label>
+            <input type="text" name="phone">
+            <br>
+            <label for="topic">Address</label>
+            <input type="text" name="address">
+            <br>
+            <button type="submit" class="btn5">Submit</button>
+      </form>
+</body>
+
+</html>

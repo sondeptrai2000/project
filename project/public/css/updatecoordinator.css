@@ -1,0 +1,70 @@
+.content h2{
+    color: #293336;
+    margin-top: 15px;
+    font-size: 40px;
+}
+
+.swap {
+    width: 350px;
+    height: auto;
+    margin: 50px auto auto auto;
+}
+
+.swap label{
+    color: #293336;
+    float: left;
+    font-size: 20px;
+}
+.swap input{
+    float: right;
+    height: 25px;
+    border-radius: 5px;
+    width: 173px;
+    height: 25px;
+    border: none;
+}
+.swap select{
+    float: right;
+    height: 25px;
+    border-radius: 5px;
+    width: 173px;
+    height: 25px;
+    border: none;
+}
+.form-group{
+    margin-top: 10px;
+}
+.btn5{
+    width: 80px;
+    height: 30px;
+    margin-top: 30px;
+    border-radius: 10px;
+    float: left;
+    font-size: 17px;
+    margin-left: 175px;
+    background-color: #3b69e6;
+    color: #fff;
+    border: none;
+}
+.btn5:hover{
+    transform: scale(1.1);
+    cursor: pointer;
+}
+@media (max-width: 768px) {
+    .swap {
+        width: 300px;
+        height: auto;
+        margin: 30px auto auto auto;
+    }
+    .swap label{
+        font-size: 17px;
+    }
+    .content h2{
+        font-size: 25px;
+    }
+    .btn{
+        margin-left: 125px;
+    }
+    
+
+}
