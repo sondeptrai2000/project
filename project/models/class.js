@@ -9,24 +9,24 @@ mongoose.connect(url, {
 mongoose.set('useCreateIndex', true);
 
 const Schema = mongoose.Schema;
-const classSchema = new Schema({ 
-    classname : String,
-    level:String,
-    description:String,
-    StudentID: {
+const classSchema = new Schema({
+    className: String,
+    level: String,
+    description: String,
+    studentID: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'account'
+    }],
+    teacherID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'account'
     },
-    TeacherID:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'account'
-    },
-    schedule: [{type: String}],
-    endDate:String,
-    startDate:String
-},{
-    collection : 'class',
-    timestamps : true
+    schedule: [{ type: String }],
+    endDate: String,
+    startDate: String
+}, {
+    collection: 'class',
+    timestamps: true
 });
 
 var classModel = mongoose.model('class', classSchema)

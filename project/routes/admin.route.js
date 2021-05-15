@@ -16,6 +16,9 @@ adminRouter.post('/editAccount', adminController.doeditAccount)
 
 //liên quan đến lớp học
 adminRouter.get('/createClass', adminController.createClass)
+adminRouter.post('/createClass', adminController.docreateClass)
+
+
 adminRouter.get('/allClassLevel', adminController.allClassLevel)
 adminRouter.get('/editClass', adminController.editClass)
 adminRouter.get('/addStudentToClass', adminController.addStudentToClass)

@@ -11,7 +11,7 @@
         <input type="text" name="className">
         <br>
         <label for="level">Level</label>
-        <select id="mySelect" onchange="level()">
+        <select id="mySelect" class="level" name="classLevel" onchange="level()">
       <option value="beginner">Beginner</option>
       <option value="highBeginner">High Beginner</option>
       <option value="lowIntermediate">Low Intermediate</option>
@@ -34,17 +34,17 @@
                 var x = document.getElementById("mySelect").value;
                 const table = "<table id='table' class='table' border='solid' style='text-align:center;'><th>Name</th><th>Email</th><th>Choose</th>"
                 if (x === "beginner") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='beginner'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
+                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='beginner'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
                 } else if (x === "highBeginner") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='highBeginner'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
+                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='highBeginner'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
                 } else if (x === "lowIntermediate") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='lowIntermediate'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
+                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='lowIntermediate'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
                 } else if (x === "intermediate") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='intermediate'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
+                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='intermediate'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
                 } else if (x === "highAdvanced") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='highAdvanced'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
+                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='highAdvanced'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
                 } else if (x === "advanced") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='advanced'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
+                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='advanced'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
                 }
             }
         </script>
@@ -52,7 +52,7 @@
         <label for="topic">Teacher</label>
         <select name="facultyID">
           <% teacher.forEach(function(teacher) { %>
-            <option value="{{_id}}" name="facultyID"><%= teacher.username %> </option>
+            <option value="<%= teacher._id %>" name="facultyID"><%= teacher.username %> </option>
           <% }); %>
             <option value="None" name="facultyID">None</option>
     </select>

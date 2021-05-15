@@ -1,5 +1,7 @@
 const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
+const ClassModel = require('../models/class');
+
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const { data } = require('jquery');
@@ -10,7 +12,9 @@ class adminController {
     }
 
     createAccount(req, res) {
-        res.render('admin/createAccount')
+        ClassModel.find({}, function(err, classInfor) {
+            res.render('admin/createAccount', { classInfor })
+        })
     }
 
     docreateAccount(req, res) {
@@ -96,14 +100,63 @@ class adminController {
     createClass(req, res) {
         AccountModel.find({ role: 'student' }, function(err, student) {
             AccountModel.find({ role: 'teacher' }, function(err, teacher) {
-                console.log(student)
                 res.render('admin/createClass.ejs', { student, teacher })
             })
         })
     }
 
+    docreateClass(req, res) {
+        try {
+            // let { className, level, description, StudentID, TeacherID, endDate, startDate } = req.body
+            let className = req.body.className
+            let level = req.body.classLevel
+            let description = req.body.description
+            let studentID = req.body.hobby
+            let teacherID = req.body.facultyID
+            let endDate = req.body.endDate
+            let startDate = req.body.startDate
+            console.log('className', className)
+            console.log('description', description)
+            console.log('startDate', startDate)
+            console.log('endDate', endDate)
+            console.log('level', level)
+            console.log('StudentID', studentID)
+            console.log('TeacherID', teacherID)
+                // ClassModel.findOne({ classname: classname, startDate: startDate, endDate: endDate }, function(err, result) {
+                //     if (result.length !== 0) {
+                //         res.json('Lớp học đã tồn tại')
+                //     } else {
+            ClassModel.create({
+                className,
+                level,
+                description,
+                studentID,
+                teacherID,
+                endDate,
+                startDate
+            });
+            return res.status(200).json({
+                    message: "Sign Up success",
+                    error: false
+                })
+                //     }
+                // })
+        } catch (error) {
+            if (error) {
+                res.status(400).json({
+                    message: "Sign Up fail",
+                    error: true
+                })
+            }
+        }
+    }
+
     allClassLevel(req, res) {
-        res.render('admin/allClassLevel')
+        ClassModel.find({ className: 'Speak' }).populate('studentID').exec((err, user) => {
+                console.log(user)
+                res.json(user)
+            })
+            // res.render('admin/allClassLevel')
     }
 
     editClass(req, res) {
