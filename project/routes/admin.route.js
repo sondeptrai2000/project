@@ -5,10 +5,13 @@ var adminController = require('../controller/admin.controller')
 
 
 adminRouter.get('/', adminController.adminHome)
+adminRouter.get('/allTeacher', adminController.allTeacher)
+adminRouter.get('/allStudent', adminController.allStudent)
+adminRouter.get('/allGuardian', adminController.allGuardian)
 
 //tạo tài khoản
 adminRouter.get('/createAccount', adminController.createAccount)
-adminRouter.post('/createAccount', adminController.docreateAccount)
+adminRouter.post('/doCreateAccount', adminController.doCreateAccount)
     //update account
 adminRouter.get('/editAccount', adminController.editAccount)
 adminRouter.post('/editAccount', adminController.doeditAccount)
@@ -20,6 +23,8 @@ adminRouter.post('/createClass', adminController.docreateClass)
 
 
 adminRouter.get('/allClassLevel', adminController.allClassLevel)
+adminRouter.get('/allClassStudent', adminController.allClassStudent)
+
 adminRouter.get('/editClass', adminController.editClass)
 adminRouter.get('/addStudentToClass', adminController.addStudentToClass)
 adminRouter.get('/addTeacherToClass', adminController.addTeacherToClass)

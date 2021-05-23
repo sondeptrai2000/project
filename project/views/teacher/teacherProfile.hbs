@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="content">
+    <h1>Marketing Coordinator profile</h1>
+    <table>
+      <th>Username</th>
+      <th>Email</th>
+      <th>classID</th>
+      <th>Phone</th>
+      <th>Birthday</th>
+      <th>Address</th>
+      <th>Update information</th>
+      <tr>
+        <td>{{data.username}}</td>
+        <td>{{data.email}}</td>
+        <td>{{data.classID}}</td>
+        <td>{{data.phone}}</td>
+        <td>{{data.birthday}}</td>
+        <td>{{data.address}}</td>
+        <td><a href="/coordinator/update{{_id}}">Update</a></td>
+      </tr>
+
+    </table>
+
+    <div class="footer">
+      <p>@University-2021</p>
+    </div>
+
+</body>
+
+</html>

@@ -8,21 +8,55 @@ const { data } = require('jquery');
 const saltRounds = 10;
 class adminController {
     adminHome(req, res) {
-        res.json('Trang chủ admin')
+        res.render('admin/adminHome')
     }
 
-    createAccount(req, res) {
-        ClassModel.find({}, function(err, classInfor) {
-            res.render('admin/createAccount', { classInfor })
+    allTeacher(req, res) {
+        AccountModel.find({ role: "teacher" }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
         })
     }
 
-    docreateAccount(req, res) {
+    allStudent(req, res) {
+        AccountModel.find({ role: "student" }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
+    }
+
+    allGuardian(req, res) {
+        AccountModel.find({ role: "guardian" }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
+    }
+
+    createAccount(req, res) {
+        AccountModel.find({ role: "teacher" })
+            .then(data => {
+                ClassModel.find({}, function(err, classInfor) {
+                    res.render('admin/createAccount', { data, classInfor })
+                })
+            })
+
+    }
+
+    doCreateAccount(req, res) {
         try {
             let { username, password, email, classID, role, level, phone, address, birthday } = req.body
             AccountModel.find({ username: username }, function(err, result) {
                 if (result.length !== 0) {
-                    res.json('tài khoản đã tồn tại')
+                    res.json({ msg: 'Account already exists' });
                 } else {
                     if (username && password) {
                         const salt = bcrypt.genSaltSync(saltRounds);
@@ -37,18 +71,21 @@ class adminController {
                             phone,
                             address,
                             birthday
+                        }, function(err, data) {
+                            if (err) {
+                                res.json({ msg: 'error' });
+                            } else {
+                                res.json({ msg: 'success', data: data });
+                            }
                         });
                     }
-                    return res.status(200).json({
-                        message: "Sign Up success",
-                        error: false
-                    })
+
                 }
             })
         } catch (error) {
             if (error) {
                 res.status(400).json({
-                    message: "Sign Up fail",
+                    msg: "Sign Up fail",
                     error: true
                 })
             }
@@ -61,40 +98,7 @@ class adminController {
 
     //làm cuối
     doeditAccount(req, res) {
-        try {
-            let { _id, username, password, email, classID, role, phone, address, birthday } = req.body
-            AccountModel.findOneAndUpdate({ username: username }, function(err, result) {
-                if (result.length !== 0) {
-                    res.json('tài khoản đã tồn tại')
-                } else {
-                    if (username && password) {
-                        const salt = bcrypt.genSaltSync(saltRounds);
-                        const hash = bcrypt.hashSync(password, salt);
-                        AccountModel.create({
-                            username,
-                            password: hash,
-                            email,
-                            classID,
-                            role,
-                            phone,
-                            address,
-                            birthday
-                        });
-                    }
-                    return res.status(200).json({
-                        message: "Sign Up success",
-                        error: false
-                    })
-                }
-            })
-        } catch (error) {
-            if (error) {
-                res.status(400).json({
-                    message: "Sign Up fail",
-                    error: true
-                })
-            }
-        }
+        res.json("ok")
     }
 
     createClass(req, res) {
@@ -152,11 +156,21 @@ class adminController {
     }
 
     allClassLevel(req, res) {
-        ClassModel.find({ className: 'Speak' }).populate('studentID').exec((err, user) => {
-                console.log(user)
-                res.json(user)
-            })
-            // res.render('admin/allClassLevel')
+        ClassModel.find({}).populate('studentID').populate('teacherID').exec((err, classInfor) => {
+            res.render('admin/allClassLevel.hbs', { classInfor })
+                // res.json(classInfor)
+        })
+    }
+
+    allClassStudent(req, res) {
+        var _id = req.query.abc
+        ClassModel.find({ _id: _id }).populate('studentID').populate('teacherID').exec((err, selectedClassInfor) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: selectedClassInfor });
+            }
+        })
     }
 
     editClass(req, res) {
