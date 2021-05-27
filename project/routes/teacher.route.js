@@ -17,7 +17,7 @@ teacherRouter.get('/allClassStudent', teacherController.allClassStudent)
 teacherRouter.get('/viewClass', teacherController.viewClass)
 teacherRouter.get('/takeAttended', teacherController.takeAttended)
 teacherRouter.get('/addStudentToClass', teacherController.addStudentToClass)
-teacherRouter.get('/studentAssessment', teacherController.studentAssessment)
+teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 
 //liên quan đến hoạt động ngoại khóa
 teacherRouter.get('/proposeEtracurricularActivities', teacherController.proposeEtracurricularActivities)

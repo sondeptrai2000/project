@@ -1,5 +1,7 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
+const FeedBackModel = require('../models/feedBack');
+
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
 class teacherController {
@@ -53,7 +55,32 @@ class teacherController {
     }
 
     studentAssessment(req, res) {
-        res.json('Trang đánh giá học sinh trong lớp ')
+        try {
+            let token = req.cookies.token
+            let teacherID = jwt.verify(token, 'minhson')
+            let { classID, studentId, grade, comment } = req.body
+            FeedBackModel.create({
+                classID,
+                studentId,
+                teacherID,
+                grade,
+                classID,
+                feedBackContent: comment,
+            }, function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data: data });
+                }
+            });
+        } catch (error) {
+            if (error) {
+                res.status(400).json({
+                    msg: "Sign Up fail",
+                    error: true
+                })
+            }
+        }
     }
 
     allextracurricularActivities(req, res) {

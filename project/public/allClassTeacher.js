@@ -16,7 +16,7 @@ function sendData(id) {
                 if (response.msg == 'success') {
                     $.each(response.data, function(index, data) {
                         $.each(data.studentID, function(index, studentID) {
-                            $(".taskrow").append("<tr><td>" + studentID.username + "</td><td>" + studentID.level + "</td><td>" + studentID.email + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                            $(".taskrow").append("<tr><td>" + studentID.username + "</td><td>" + studentID.level + "</td><td>" + studentID.email + "</td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID._id + "','" + studentID.username + "','" + studentID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
                         });
                     });
 
@@ -28,6 +28,47 @@ function sendData(id) {
         });
     }
 
+}
+
+function studentAssessmentForm(classID, studentID, name, email) {
+    $("#classID").html(classID);
+    $("#studentID").html(studentID);
+    $("#name").html(name);
+    $("#email").html(email);
+    $(".studentAssessment").show();
+}
+
+function takeFeedBack() {
+    var formData = {
+        classID: $("#classID").text(),
+        studentId: $("#studentID").text(),
+        grade: $("#grade").val(),
+        comment: $("#comment").text(),
+    };
+    var classID = $("#classID").text()
+    var studentId = $("#studentID").text()
+    alert(classID)
+
+    alert(studentId)
+    $.ajax({
+        url: '/teacher/studentAssessment',
+        method: 'post',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                accountInformation = response.data;
+                alert("take feedback success")
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+function cancle() {
+    $(".studentAssessment").hide();
 }
 
 function closeStudentList() {

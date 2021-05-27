@@ -44,14 +44,44 @@
         </tr>
         {{/each}}
     </table>
-    <tbody>
-
-    </tbody>
     <div class="inner">
         <table class='taskrow' border='solid'>
-        
+
+        </table>
+    </div>
+
+    <div class="studentAssessment" style="display:none">
+        <table class='' border='solid'>
+            <h2>studentAssessment form</h2>
+            <label for="classID">ClassID</label>\
+            <p id='classID'></p>
+            <label for="facultyname">StudentID</label>\
+            <p id='studentID'></p>
+            <br>
+            <label for="facultyname">Name</label>
+            <p id='name'></p>
+            <br>
+            <label for="topic">Email</label>
+            <p id='email'></p>
+            <br>
+            <label for="topic">Grade</label>
+            <select class="level" id="grade">
+                  <option value="beginner">Beginner </option>
+                  <option value="highBeginner">High Beginner</option>
+                  <option value="lowIntermediate">Low Intermediate</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="highAdvanced">High Advanced </option>
+                  <option value="advanced">Advanced</option>
+            </select>
+            <br>
+            <label for="topic">Comment</label>
+            <input type="text" id="comment">
+            <br>
+            <button onclick ="takeFeedBack()"> Tiến hành đánh giá</button>
+            <p onclick= "cancle()">cancle</p>
         </table>
     </div>
 </body>
-    <script src="/allClassTeacher.js"></script>  
+<script src="/allClassTeacher.js"></script>
+
 </html>

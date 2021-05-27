@@ -6,8 +6,12 @@
 </head>
 
 <body>
-      <div id="createAccount" style="display:none">
+      <div id="createAccount" >
             <h2>ACCOUNT INFORMATION</h2>
+            <label for="facultyname">Avatar</label>
+            Select images: <input type="file" name="myFile" id="myFile">
+            <div class="gallery"></div>
+            <br>
             <label for="facultyname">Name</label>
             <input type="text" id="username">
             <br>
@@ -54,17 +58,33 @@
             <button id="btn1" onclick="signUp()">tiến hành tạo tài khoản</button>
       </div>
       <button id="btnxx">Create new account</button>
+      <button id="reset">Reset</button>
       <button id="btn2" onclick="getTeacher()">getTeacher </button>
       <button id="btn3" onclick="getStudent()">getStudent </button>
       <button id="btn3" onclick="getGuardian()">getGuardian </button>
       <table border='solid'>
-            <th>username</th>
-            <th>level</th>
-            <th>email</th>
-            <th><input id="myInput" type="text" placeholder="Search.."></th>
+            <thead>
+                  <tr>
+                        <th>avatar</th>
+                        <th>username</th>
+                        <th>level</th>
+                        <th>email</th>
+                        <th><input id="myInput" type="text" placeholder="Search.."></th>
+                  </tr>
+            </thead>
             <tbody class='taskrow'></tbody>
       </table>
+
+
+      <div id="updateForm" >
+
+      </div>
+
 </body>
 <script src="/createAccountAdmin.js"></script>
+
+<script>
+
+</script>
 
 </html>

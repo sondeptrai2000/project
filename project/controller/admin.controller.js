@@ -1,11 +1,11 @@
 const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
-
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const { data } = require('jquery');
 const saltRounds = 10;
+var fs = require('fs')
 class adminController {
     adminHome(req, res) {
         res.render('admin/adminHome')
@@ -22,15 +22,21 @@ class adminController {
     }
 
     allStudent(req, res) {
-        AccountModel.find({ role: "student" }, function(err, data) {
+        // AccountModel.find({ role: "student" }, function(err, data) {
+        //     if (err) {
+        //         res.json({ msg: 'error' });
+        //     } else {
+        //         res.json({ msg: 'success', data: data });
+        //     }
+        // })
+        AccountModel.find({ role: "student" }).populate('studentID').populate('teacherID').exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
                 res.json({ msg: 'success', data: data });
-            }
+            } // res.json(classInfor)
         })
     }
-
     allGuardian(req, res) {
         AccountModel.find({ role: "guardian" }, function(err, data) {
             if (err) {
@@ -51,7 +57,16 @@ class adminController {
 
     }
 
+
+
     doCreateAccount(req, res) {
+        var path = './public/uploads/' + req.body.filename;
+        var image = req.body.file;
+        var data = image.split(',')[1];
+        fs.writeFileSync(path, data, { encoding: 'base64' });
+        var temp = fs.readFileSync(path);
+        var buff = new Buffer(temp);
+        var base64data = buff.toString('base64');
         try {
             let { username, password, email, classID, role, level, phone, address, birthday } = req.body
             AccountModel.find({ username: username }, function(err, result) {
@@ -62,6 +77,7 @@ class adminController {
                         const salt = bcrypt.genSaltSync(saltRounds);
                         const hash = bcrypt.hashSync(password, salt);
                         AccountModel.create({
+                            avatar: base64data,
                             username,
                             password: hash,
                             email,
@@ -93,7 +109,14 @@ class adminController {
     }
 
     editAccount(req, res) {
-        res.render('admin/editAccount')
+        AccountModel.find({ _id: req.query.updateid }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                console.log(data)
+                res.json({ msg: 'success', data: data });
+            }
+        })
     }
 
     //làm cuối

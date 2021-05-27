@@ -1,7 +1,9 @@
 var getTeacherClick = 0;
 var getStudentClick = 0;
 var getGuardianClick = 0;
-var accountInformation;
+var fileData;
+var myFile;
+
 getTeacher();
 $("#createAccount").slideUp();
 $(document).ready(function() {
@@ -9,10 +11,48 @@ $(document).ready(function() {
         $(".createAccount").show();
         $("#createAccount").slideToggle();
     });
+
+    $("#reset").click(function() {
+        alert('okokoko')
+        document.getElementById('myFile').value = ''
+        document.getElementById('username').value = ''
+        document.getElementById('password').value = ''
+        document.getElementById('email').value = ''
+        document.getElementById('classID').value = ''
+        document.getElementById('level').value = ''
+        document.getElementById('phone').value = ''
+        document.getElementById('address').value = ''
+        document.getElementByName('div.gallery').value = ''
+    });
+});
+
+$(function() {
+    var imagesPreview = function(input, placeToInsertImagePreview) {
+        if (input.files) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                $($.parseHTML('<img style ="max-width:150px;max-height:200px">')).attr('src', event.target.result).appendTo(placeToInsertImagePreview);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+    $('#myFile').on('change', function() {
+        imagesPreview(this, 'div.gallery');
+
+        var filereader = new FileReader();
+        filereader.onload = function(event) {
+            fileData = event.target.result;
+        };
+        myFile = $('#myFile').prop('files')[0];
+        console.log('myfile', myFile)
+        filereader.readAsDataURL(myFile)
+    });
 });
 
 function signUp() {
     var formData = {
+        filename: myFile.name,
+        file: fileData,
         username: $("#username").val(),
         password: $("#password").val(),
         email: $("#email").val(),
@@ -22,6 +62,8 @@ function signUp() {
         phone: $("#phone").val(),
         address: $("#address").val(),
     };
+    console.log(formData.myFile)
+
     $.ajax({
         url: '/admin/doCreateAccount',
         method: 'post',
@@ -62,9 +104,8 @@ function getTeacher() {
             data: {},
             success: function(response) {
                 if (response.msg == 'success') {
-                    accountInformation = response.data;
                     $.each(response.data, function(index, data) {
-                        $(".taskrow").append("<tr id='myList'><td>" + data.username + "</td><td>" + data.level + "</td><td>" + data.email + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + "<button class='del' onclick=updateForm('" + data._id + "')>Update</button>" + "</td></tr>");
                     });
                 }
             },
@@ -74,6 +115,28 @@ function getTeacher() {
         });
     }
 
+}
+
+function updateForm(id) {
+    $("#updateForm").html("");
+    $.ajax({
+        url: '/admin/editAccount',
+        method: 'get',
+        dataType: 'json',
+        data: { updateid: id },
+        success: function(response) {
+            if (response.msg == 'success') {
+                alert("lay thong tin ok")
+                $.each(response.data, function(index, data) {
+                    var update = "<h2>Update ACCOUNT INFORMATION</h2><label for='facultyname'>Avatar</label>Select images: <input type='file' name='myFile1' id='myFile1'><div class='gallery1'></div><br><label>Name</label><input type='text' id='username1' value='" + data.username + "'><br><label for='topic'>Email</label><input type='email' id='email1' value='" + data.email + "'><br><label for='topic'>Password</label><input type='password' id='password1'><br><label for='topic'>Role</label><select class='Role1' id='role1'><option value='student'>Student</option><option value='guardian'>Guardian</option><option value='teacher'>Teacher</option></select><br><label for='level'>Level</label><select class='level1' id='level1'><option value='beginner'>Beginner </option><option value='highBeginner'>High Beginner</option><option value='lowIntermediate'>Low Intermediate</option><option value='intermediate'>Intermediate</option><option value='highAdvanced'>High Advanced </option><option value='advanced'>Advanced</option></select><label for='topic'>Class ID</label><select id='classID1'>{{#each classInfor}}<option value='{{_id}}' id='classID1'>{{className}}</option>{{/each}}<option value='None' id='classID1'>None</option></select><br><label for='topic'>Birthday</label><input type='date' id='birthday1'><br><label for='topic'>Phone</label><input type='text' id='phone1'><br><label for='topic'>Address</label><input type='text' id='address1'><br><button id='btn2' onclick='updateAccount()'>tiến hành cập nhật thông tin tài khoản</button>"
+                    $("#updateForm").append(update);
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
 }
 
 function getStudent() {
@@ -89,9 +152,8 @@ function getStudent() {
             data: {},
             success: function(response) {
                 if (response.msg == 'success') {
-                    accountInformation = response.data;
                     $.each(response.data, function(index, data) {
-                        $(".taskrow").append("<tr id='myList'><td>" + data.username + "</td><td>" + data.level + "</td><td>" + data.email + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
                     });
                 }
             },
@@ -118,7 +180,7 @@ function getGuardian() {
                 if (response.msg == 'success') {
                     accountInformation = response.data;
                     $.each(response.data, function(index, data) {
-                        $(".taskrow").append("<tr id='myList'><td>" + data.username + "</td><td>" + data.level + "</td><td>" + data.email + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
                     });
                 }
             },
@@ -132,7 +194,7 @@ function getGuardian() {
 $(document).ready(function() {
     $("#myInput").on("keyup", function() {
         var value = $(this).val().toLowerCase();
-        $("#myList td").filter(function() {
+        $(".taskrow tr").filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });

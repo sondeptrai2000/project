@@ -5,27 +5,28 @@ var url = "mongodb+srv://minhson123:minhson123@cluster0.v0phx.mongodb.net/projec
 mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  });
+});
 
 const Schema = mongoose.Schema;
 const AccountSchema = new Schema({
+    avatar: String,
     username: String,
     password: String,
-    email : String,
+    email: String,
     level: String,
-    role : {
-        type : String,
-        default : "none"
+    role: {
+        type: String,
+        default: "none"
     },
     classID: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'class'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'class'
     }],
+    sex: String,
     phone: String,
-    address : String,
-    birthday : String,
-},
-{
+    address: String,
+    birthday: String,
+}, {
     collection: 'account'
 });
 

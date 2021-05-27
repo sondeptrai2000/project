@@ -10,16 +10,29 @@ mongoose.connect(url, {
 mongoose.set('useCreateIndex', true);
 
 
-var feedBackSchema= new mongoose.Schema({
-    classID :String,
-    studentID:String,
-    teacherID:String,
+var feedBackSchema = new mongoose.Schema({
+    classID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'class'
+    },
+    studentID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'account'
+    },
+    teacherID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'account'
+    },
+    grade: {
+        type: String,
+        default: "Has not been commented yet"
+    },
     feedBackContent: {
-        type : String,
-        default : "Has not been commented yet"
+        type: String,
+        default: "Has not been commented yet"
     }
 })
 
-var feedBackModel = mongoose.model('feedBack',feedBackSchema);
+var feedBackModel = mongoose.model('feedBack', feedBackSchema);
 
 module.exports = feedBackModel
