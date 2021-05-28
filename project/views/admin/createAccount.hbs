@@ -37,14 +37,6 @@
                   <option value="highAdvanced">High Advanced </option>
                   <option value="advanced">Advanced</option>
             </select>
-
-            <label for="topic">Class ID</label>
-            <select id="classID">
-                  {{#each classInfor}}
-                  <option value="{{_id}}" id="classID">{{className}}</option>
-                  {{/each}}
-                  <option value="None" id="classID">None</option>
-            </select>
             <br>
             <label for="topic">Birthday</label>
             <input type="date" id="birthday">
@@ -83,8 +75,5 @@
 </body>
 <script src="/createAccountAdmin.js"></script>
 
-<script>
-
-</script>
 
 </html>

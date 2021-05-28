@@ -20,7 +20,6 @@
       <option value="highAdvanced">High Advanced </option>
       <option value="advanced">Advanced</option>
     </select>
-        <p id="demo"></p>
         <br>
         <label for="topic">Description</label>
         <input type="text" name="description">
@@ -30,25 +29,6 @@
         <br>
         <label for="topic">Student</label>
         <div id="demo1"></div>
-        <script>
-            function level() {
-                var x = document.getElementById("mySelect").value;
-                const table = "<table id='table' class='table' border='solid' style='text-align:center;'><th>Name</th><th>Email</th><th>Choose</th>"
-                if (x === "beginner") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='beginner'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
-                } else if (x === "highBeginner") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='highBeginner'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
-                } else if (x === "lowIntermediate") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='lowIntermediate'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
-                } else if (x === "intermediate") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='intermediate'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
-                } else if (x === "highAdvanced") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='highAdvanced'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
-                } else if (x === "advanced") {
-                    document.getElementById("demo1").innerHTML = table + "<% student.forEach(function(student) { %><% if(student.level ==='advanced'){ %><tr><td><ul> Avatar </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></table>";
-                }
-            }
-        </script>
         <br>
         <label for="topic">Teacher</label>
         <select name="facultyID">
@@ -72,6 +52,32 @@
         <button type="submit" class="btn5">Submit</button>
     </form>
 </body>
-
+<script>
+    function level() {
+        var x = document.getElementById("mySelect").value;
+        const table = "<table id='table' class='table' border='solid' style='text-align:center;'><th>Name</th><th>Email</th><th>Choose</th><th><input id='myInput' type='text' placeholder='Search..'></th>"
+        if (x === "beginner") {
+            document.getElementById("demo1").innerHTML = table + "<tbody class='taskrow'><% student.forEach(function(student) { %><% if(student.level ==='beginner'){ %><tr><td><ul> <img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64,<%= student.avatar %>'> </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></tbody></table>";
+        } else if (x === "highBeginner") {
+            document.getElementById("demo1").innerHTML = table + "<tbody class='taskrow'><% student.forEach(function(student) { %><% if(student.level ==='highBeginner'){ %><tr><td><ul> <img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64,<%= student.avatar %>'>  </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></tbody></table>";
+        } else if (x === "lowIntermediate") {
+            document.getElementById("demo1").innerHTML = table + "<tbody class='taskrow'><% student.forEach(function(student) { %><% if(student.level ==='lowIntermediate'){ %><tr><td><ul> <img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64,<%= student.avatar %>'>  </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></tbody></table>";
+        } else if (x === "intermediate") {
+            document.getElementById("demo1").innerHTML = table + "<tbody class='taskrow'><% student.forEach(function(student) { %><% if(student.level ==='intermediate'){ %><tr><td><ul> <img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64,<%= student.avatar %>'>  </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></tbody></table>";
+        } else if (x === "highAdvanced") {
+            document.getElementById("demo1").innerHTML = table + "<tbody class='taskrow'><% student.forEach(function(student) { %><% if(student.level ==='highAdvanced'){ %><tr><td><ul> <img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64,<%= student.avatar %>'>  </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></tbody></table>";
+        } else if (x === "advanced") {
+            document.getElementById("demo1").innerHTML = table + "<tbody class='taskrow'><% student.forEach(function(student) { %><% if(student.level ==='advanced'){ %><tr><td><ul> <img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64,<%= student.avatar %>'>  </ul><ul><%= student.username %></ul></td><td><%= student.email %><%= student._id %></td><td><input type='checkbox' name='hobby' value='<%= student._id %>' /></td></tr><% } %><% }); %></tbody></table>";
+        }
+    }
+    $(document).ready(function() {
+        $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".taskrow tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
 
 </html>

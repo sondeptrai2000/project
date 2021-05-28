@@ -28,7 +28,7 @@ class teacherController {
 
     allClassStudent(req, res) {
         var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('studentID').populate('teacherID').exec((err, selectedClassInfor) => {
+        ClassModel.find({ _id: _id }).populate('teacherID').populate('studentID').exec((err, selectedClassInfor) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {

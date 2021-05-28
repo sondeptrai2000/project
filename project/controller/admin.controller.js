@@ -68,7 +68,7 @@ class adminController {
         var buff = new Buffer(temp);
         var base64data = buff.toString('base64');
         try {
-            let { username, password, email, classID, role, level, phone, address, birthday } = req.body
+            let { username, password, email, role, level, phone, address, birthday } = req.body
             AccountModel.find({ username: username }, function(err, result) {
                 if (result.length !== 0) {
                     res.json({ msg: 'Account already exists' });
@@ -81,7 +81,6 @@ class adminController {
                             username,
                             password: hash,
                             email,
-                            classID,
                             role,
                             level,
                             phone,

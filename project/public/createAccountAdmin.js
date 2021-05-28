@@ -56,7 +56,6 @@ function signUp() {
         username: $("#username").val(),
         password: $("#password").val(),
         email: $("#email").val(),
-        classID: $("#classID").val(),
         role: $("#role").val(),
         level: $("#level").val(),
         phone: $("#phone").val(),

@@ -5,10 +5,10 @@ function sendData(id) {
     if (click == 1) {
         $(".inner").show();
         var _id = id
-        const studentList = "<th>username</th><th>level</th><th>email</th><th onclick='closeStudentList()'>X</th>"
+        const studentList = "<th>avatar</th><th>username</th><th>level</th><th>email</th><th onclick='closeStudentList()'>X</th>"
         $(".taskrow").html(studentList)
         $.ajax({
-            url: '/admin/allClassStudent',
+            url: '/teacher/allClassStudent',
             method: 'get',
             dataType: 'json',
             data: { abc: _id },
@@ -16,7 +16,7 @@ function sendData(id) {
                 if (response.msg == 'success') {
                     $.each(response.data, function(index, data) {
                         $.each(data.studentID, function(index, studentID) {
-                            $(".taskrow").append("<tr><td>" + studentID.username + "</td><td>" + studentID.level + "</td><td>" + studentID.email + "</td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID._id + "','" + studentID.username + "','" + studentID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
+                            $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.avatar + "'></td><td>" + studentID.username + "</td><td>" + studentID.level + "</td><td>" + studentID.email + "</td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID._id + "','" + studentID.username + "','" + studentID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
                         });
                     });
 
