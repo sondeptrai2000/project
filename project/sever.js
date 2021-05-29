@@ -40,6 +40,8 @@ var admin = require('./routes/admin.route')
 app.use('/admin', admin);
 var teacher = require('./routes/teacher.route')
 app.use('/teacher', teacher);
+var student = require('./routes/student.route')
+app.use('/student', student);
 
 
 //tiến hành cài đặt cho chat box

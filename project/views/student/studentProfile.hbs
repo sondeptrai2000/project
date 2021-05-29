@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="content">
+    <h1>Student profile</h1>
+    <table border="solid">
+      <th>Avatar</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>classID</th>
+      <th>Phone</th>
+      <th>Birthday</th>
+      <th>Address</th>
+      <th>Update information</th>
+      <tr>
+        {{#each data}}
+        <td><img style='max-width:150px;max-height:200px' src='data:image/jpeg;base64,{{avatar}}'></td>
+        <td>{{username}}</td>
+        <td>{{email}}</td>
+        <td>
+          {{#each classID}}
+          {{className}}<br><br>
+          {{/each }}
+          <a href='/student/allClass'>View more</a>
+        </td>
+        <td>{{phone}}</td>
+        <td>{{birthday}}</td>
+        <td>{{address}}</td>
+        <td><a href="/coordinator/update{{_id}}">Update</a></td>
+        {{/each}}
+      </tr>
+
+    </table>
+</body>
+
+</html>

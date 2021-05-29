@@ -1,0 +1,57 @@
+<head>
+  <script src="/jquery/jquery.js"></script>
+</head>
+<table border="solid">
+  <th>ClassID</th>
+  <th>className</th>
+  <th>level</th>
+  <th>description</th>
+  <th>Teacher Name</th>
+  <th>Teacher ID</th>
+  <th>startDate</th>
+  <th>endDate</th>
+  {{#each data}}
+  {{#each classID}}
+  <tr>
+    <td>
+      {{_id }}
+    </td>
+    <td>
+      {{className }}
+    </td>
+    <td>
+      {{level }}
+    </td>
+    <td>
+      {{description }}
+    </td>
+    <td>
+      {{#each teacherID}}
+      <p onclick="viewTeacherProfile('{{_id}}')">{{username}}</p>
+      {{/each}}
+    </td>
+    <td>
+      {{startDate }}
+    </td>
+    <td>
+      {{endDate }}
+    </td>
+  </tr>
+  {{/each}}
+  {{/each}}
+</table>
+<div>
+  <table id="teacherIn4" border='solid' style="display:none">
+    <thead>
+      <tr>
+        <th>avatar</th>
+        <th>username</th>
+        <th>email</th>
+        <th><input id="myInput" type="text" placeholder="Search.."></th>
+        <th onclick="teacherIn4Close()">X</th>
+      </tr>
+    </thead>
+    <tbody class='taskrow'></tbody>
+  </table>
+</div>
+<script src="/allClassStudent.js"></script>

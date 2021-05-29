@@ -22,19 +22,12 @@ class adminController {
     }
 
     allStudent(req, res) {
-        // AccountModel.find({ role: "student" }, function(err, data) {
-        //     if (err) {
-        //         res.json({ msg: 'error' });
-        //     } else {
-        //         res.json({ msg: 'success', data: data });
-        //     }
-        // })
         AccountModel.find({ role: "student" }).populate('studentID').populate('teacherID').exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
                 res.json({ msg: 'success', data: data });
-            } // res.json(classInfor)
+            }
         })
     }
     allGuardian(req, res) {
@@ -141,17 +134,9 @@ class adminController {
             let teacherID = req.body.facultyID
             let endDate = req.body.endDate
             let startDate = req.body.startDate
-            console.log('className', className)
-            console.log('description', description)
-            console.log('startDate', startDate)
-            console.log('endDate', endDate)
-            console.log('level', level)
-            console.log('StudentID', studentID)
-            console.log('TeacherID', teacherID)
-                // ClassModel.findOne({ classname: classname, startDate: startDate, endDate: endDate }, function(err, result) {
-                //     if (result.length !== 0) {
-                //         res.json('Lớp học đã tồn tại')
-                //     } else {
+
+
+
             ClassModel.create({
                 className,
                 level,
@@ -160,13 +145,17 @@ class adminController {
                 teacherID,
                 endDate,
                 startDate
+            }, function(err, data) {
+                console.log(data._id)
+                for (var i = 0; i < studentID.length; i++) {
+                    AccountModel.findOneAndUpdate({ _id: studentID[i] }, { $push: { classID: data._id } }, function(err, teacher) {})
+                }
+                AccountModel.findOneAndUpdate({ _id: teacherID }, { $push: { classID: data._id } }, function(err, teacher) {})
             });
             return res.status(200).json({
-                    message: "Sign Up success",
-                    error: false
-                })
-                //     }
-                // })
+                message: "Sign Up success",
+                error: false
+            })
         } catch (error) {
             if (error) {
                 res.status(400).json({

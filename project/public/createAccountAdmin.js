@@ -75,6 +75,7 @@ function signUp() {
                 } else if (formData.role == "teacher") {
                     getTeacher();
                 } else if (formData.role == "guardian") {
+                    a
                     getGuardian();
                 }
                 alert('Sign Up success');
