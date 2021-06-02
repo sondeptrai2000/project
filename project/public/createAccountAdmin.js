@@ -61,7 +61,6 @@ function signUp() {
         phone: $("#phone").val(),
         address: $("#address").val(),
     };
-    console.log(formData.myFile)
 
     $.ajax({
         url: '/admin/doCreateAccount',

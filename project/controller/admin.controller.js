@@ -1,6 +1,7 @@
 const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
+const studyRouteModel = require('../models/studyRoute');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const { data } = require('jquery');
@@ -50,6 +51,41 @@ class adminController {
 
     }
 
+    createRoute(req, res) {
+        res.render('admin/createRoute')
+    }
+
+    test(req, res) {
+        var l = ['1', '2', '3']
+        studyRouteModel.update({ _id: "60b7b7a3cfbf8a0928ab04a1" }, {
+            $push: {
+                routeSchedual: {
+                    $each: [{ stage: "sa", routeabcd: l }]
+                }
+            }
+        })
+    }
+    docreateRoute(req, res) {
+            console.log(req.body.stageContent)
+            console.log(req.body.route)
+            console.log(req.body.totalStage)
+            console.log(req.body.routeName)
+            console.log(req.body.description)
+            var stageContent = req.body.stageContent
+            var route = req.body.route
+            var totalStage = req.body.totalStage
+            studyRouteModel.create({
+                routeName: req.body.routeName,
+                description: req.body.description,
+                routeSchedual: [
+                    { stage: 'Foo', routeabcd: route }
+                ]
+            }, function(err, data) {
+                res.json({ msg: 'success' });
+
+            })
+        }
+        // AccountModel.findOneAndUpdate({ _id: studentID[i] }, { $push: { classID: data._id } }, function(err, teacher) {})
 
 
     doCreateAccount(req, res) {

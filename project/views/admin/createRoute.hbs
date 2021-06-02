@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <script src="/jquery/jquery.js"></script>
+</head>
+<h1>
+        <form action="/admin/test" method="POST">
+        <button>sfasds</button>
+        </form>
+</h1>
+<body>
+        <h2>Create route</h2>
+        <label>routeName </label>
+        <input type="text" name="routeName" id="routeName">
+        <br>
+        <label>Description</label>
+        <input type="text" name="description" id="description">
+        <br>
+        <label>Total of stage</label>
+        <input type="number" name="totalStage" id="totalStage" onchange="totalStage()">
+        <br>
+        <div id="addStage"></div>
+        <br>
+        <button type="submit" onclick="signUp()">Submit</button>
+</body>
+<script>
+        function totalStage() {
+                var stage = 1;
+                $('#addStage').html("");
+                var totalStage = parseInt($('#totalStage').val());
+                for (stage = 1; stage < totalStage + 1; stage++) {
+                        var add = "<label>stage" + stage + "</label><input type='text' value='" + stage + "' name='stage'><br><label onclick='addRoute(" + stage + ")'>add route</label><br><div id='" + stage + "'></div>"
+                        $('#addStage').append(add)
+                }
+        }
+        var route = 0;
+        var uuuu = 1;
+        function addRoute(stage) {
+                if (stage === uuuu) {
+                        route = route + 1
+                        uuuu = stage
+                } else if (stage != uuuu) {
+                        route = 1
+                        uuuu = stage
+                }
+                var x = '#' + stage
+                var add = "<div id= 'remove_field" + route + "'><label>route</label><input type='text' value='route" + route + "' name='route" + stage + "'><p onclick=deleteRoute('remove_field" + route + "')>Bo route</p></div>"
+                $(x).append(add)
+        }
+        function deleteRoute(abcx) {
+                abcx = "#" + abcx
+                $(abcx).remove();
+
+        }
+        function signUp() {
+                var stageContent = [];
+                var totalStage = parseInt($('#totalStage').val());
+                $("input[name='stage']").each(function () {
+                        stageContent.push($(this).val())
+                });
+                route = [];
+                pre = 1;
+                for (stage = 1; stage < totalStage + 1; stage++) {
+                        if (pre < stage) {
+                                route.push("space")
+                        }
+                        var y = "input[name='route" + stage + "']"
+                        $(y).each(function () {
+                                route.push($(this).val())
+                        });
+                }
+                var formData = {
+                        stageContent: stageContent,
+                        route: route,
+                        totalStage: totalStage,
+                        routeName: $("#routeName").val(),
+                        description:$("#description").val(), 
+                };
+                $.ajax({
+                        url: '/admin/docreateRoute',
+                        method: 'post',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                                if (response.msg == 'success') {
+                                        if (formData.role == "student") {
+                                                getStudent();
+                                        } else if (formData.role == "teacher") {
+                                                getTeacher();
+                                        } else if (formData.role == "guardian") {
+                                                a
+                                                getGuardian();
+                                        }
+                                        alert('Sign Up success');
+                                }
+                                if (response.msg == 'Account already exists') {
+                                        alert('Account already exists');
+                                }
+                        },
+                        error: function (response) {
+                                alert('server error');
+                        }
+                })
+
+        }
+</script>
+
+</html>

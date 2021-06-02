@@ -8,6 +8,11 @@ adminRouter.get('/allTeacher', adminController.allTeacher)
 adminRouter.get('/allStudent', adminController.allStudent)
 adminRouter.get('/allGuardian', adminController.allGuardian)
 
+
+adminRouter.post('/test', adminController.test)
+
+
+
 //tạo tài khoản
 adminRouter.get('/createAccount', adminController.createAccount)
 adminRouter.post('/doCreateAccount', adminController.doCreateAccount)
@@ -15,6 +20,9 @@ adminRouter.post('/doCreateAccount', adminController.doCreateAccount)
 adminRouter.get('/editAccount', adminController.editAccount)
 adminRouter.post('/editAccount', adminController.doeditAccount)
 
+//liên quan đến lộ trình học
+adminRouter.get('/createRoute', adminController.createRoute)
+adminRouter.post('/docreateRoute', adminController.docreateRoute)
 
 //liên quan đến lớp học
 adminRouter.get('/createClass', adminController.createClass)
