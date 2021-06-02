@@ -56,36 +56,56 @@ class adminController {
     }
 
     test(req, res) {
-        var l = ['1', '2', '3']
-        studyRouteModel.update({ _id: "60b7b7a3cfbf8a0928ab04a1" }, {
-            $push: {
-                routeSchedual: {
-                    $each: [{ stage: "sa", routeabcd: l }]
-                }
-            }
-        })
+        var stage = ['1assdf', '2asdfvdwf', '3afghyrter']
+        var route = ['route1', 'route2', 'route3', 'space', 'route1', 'route2', 'space', 'route1', 'route2']
+        var testthu = route.toString();
+        testthu = testthu.split(",space,")
+        console.log(testthu[0])
+        console.log(testthu[0])
+            // for (var i = 0; i < 3; i++) {
+            //     console.log(stage[i])
+            //     studyRouteModel.updateOne({ _id: "60b7b7a3cfbf8a0928ab04a1" }, {
+            //         $push: {
+            //             routeSchedual: {
+            //                 stage: stage[i],
+            //                 routeabcd: routeabcd
+            //             }
+            //         }
+            //     }, function(err, data) {
+            //         if (err) {
+            //             console.log("lỗi vcl")
+            //         }
+            //     })
+            // }
     }
     docreateRoute(req, res) {
-            console.log(req.body.stageContent)
-            console.log(req.body.route)
-            console.log(req.body.totalStage)
-            console.log(req.body.routeName)
-            console.log(req.body.description)
-            var stageContent = req.body.stageContent
-            var route = req.body.route
-            var totalStage = req.body.totalStage
-            studyRouteModel.create({
-                routeName: req.body.routeName,
-                description: req.body.description,
-                routeSchedual: [
-                    { stage: 'Foo', routeabcd: route }
-                ]
-            }, function(err, data) {
-                res.json({ msg: 'success' });
+        var stageContent = req.body.stageContent
+        var route = req.body.route
+        var testthu = route.toString();
+        testthu = testthu.split(",space,")
+        var totalStage = req.body.totalStage
+        studyRouteModel.create({
+            routeName: req.body.routeName,
+            description: req.body.description,
+        }, function(err, data) {
+            for (var i = 0; i < totalStage; i++) {
+                studyRouteModel.updateOne({ _id: data._id }, {
+                    $push: {
+                        routeSchedual: {
+                            stage: stageContent[i],
+                            routeabcd: testthu[i],
+                        }
+                    }
+                }, function(err, data) {
+                    if (err) {
+                        res.json({ msg: 'Account already exists' });
+                    }
 
-            })
-        }
-        // AccountModel.findOneAndUpdate({ _id: studentID[i] }, { $push: { classID: data._id } }, function(err, teacher) {})
+                })
+            }
+        })
+        res.json({ msg: 'success' });
+    }
 
 
     doCreateAccount(req, res) {
