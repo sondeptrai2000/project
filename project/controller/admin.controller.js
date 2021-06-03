@@ -51,33 +51,28 @@ class adminController {
 
     }
 
-    createRoute(req, res) {
-        res.render('admin/createRoute')
-    }
 
     test(req, res) {
         var stage = ['1assdf', '2asdfvdwf', '3afghyrter']
         var route = ['route1', 'route2', 'route3', 'space', 'route1', 'route2', 'space', 'route1', 'route2']
         var testthu = route.toString();
         testthu = testthu.split(",space,")
-        console.log(testthu[0])
-        console.log(testthu[0])
-            // for (var i = 0; i < 3; i++) {
-            //     console.log(stage[i])
-            //     studyRouteModel.updateOne({ _id: "60b7b7a3cfbf8a0928ab04a1" }, {
-            //         $push: {
-            //             routeSchedual: {
-            //                 stage: stage[i],
-            //                 routeabcd: routeabcd
-            //             }
-            //         }
-            //     }, function(err, data) {
-            //         if (err) {
-            //             console.log("lỗi vcl")
-            //         }
-            //     })
-            // }
+        console.log(testthu)
+        for (var i = 0; i < 3; i++) {
+            testthu[i] = testthu[i].toString();
+            testthu[i] = testthu[i].split(",")
+            console.log(testthu[i])
+        }
+
+
     }
+
+    createRoute(req, res) {
+        studyRouteModel.find({}, function(err, data) {
+            res.render('admin/createRoute', { data: data })
+        })
+    }
+
     docreateRoute(req, res) {
         var stageContent = req.body.stageContent
         var route = req.body.route
@@ -89,6 +84,8 @@ class adminController {
             description: req.body.description,
         }, function(err, data) {
             for (var i = 0; i < totalStage; i++) {
+                testthu[i] = testthu[i].toString();
+                testthu[i] = testthu[i].split(",")
                 studyRouteModel.updateOne({ _id: data._id }, {
                     $push: {
                         routeSchedual: {

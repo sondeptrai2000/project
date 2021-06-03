@@ -6,9 +6,10 @@
 </head>
 <h1>
         <form action="/admin/test" method="POST">
-        <button>sfasds</button>
+                <button>sfasds</button>
         </form>
 </h1>
+
 <body>
         <h2>Create route</h2>
         <label>routeName </label>
@@ -23,8 +24,36 @@
         <div id="addStage"></div>
         <br>
         <button type="submit" onclick="signUp()">Submit</button>
+        <br><br><br><br><br><br><br><br>
+        {{#each data}}
+        <h1>Lộ trình:{{routeName}}</h1>
+        <h1>Miêu tả:{{description}}</h1>
+        <h1>Lộ trình học</h1>
+        <table border="solid">
+                {{#each routeSchedual}}
+                <th>Stage {{@index}}: {{stage}}</th>
+                {{/each}} <tr>
+                        {{#each routeSchedual}}
+                        <td>
+                                <ul>
+                                        {{#each routeabcd}}
+                                        <li>
+                                                {{this}}
+                                        </li>
+                                        {{/each}}
+                                </ul>
+                        </td>
+                        {{/each}}
+                </tr>
+
+        </table>
+        {{/each}}
+
 </body>
 <script>
+        Handlebars.registerHelper("inc", function (value, options) {
+                return parseInt(value) + 1;
+        });
         function totalStage() {
                 var stage = 1;
                 $('#addStage').html("");
@@ -75,7 +104,7 @@
                         route: route,
                         totalStage: totalStage,
                         routeName: $("#routeName").val(),
-                        description:$("#description").val(), 
+                        description: $("#description").val(),
                 };
                 $.ajax({
                         url: '/admin/docreateRoute',
