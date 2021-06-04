@@ -6,7 +6,7 @@
 </head>
 
 <body>
-      <div id="createAccount" >
+      <div id="createAccount">
             <h2>ACCOUNT INFORMATION</h2>
             <label for="facultyname">Avatar</label>
             Select images: <input type="file" name="myFile" id="myFile">
@@ -28,15 +28,18 @@
                   <option value="teacher">Teacher</option>
             </select>
             <br>
-            <label for="level">Level</label>
-            <select class="level" id="level">
-                  <option value="beginner">Beginner </option>
-                  <option value="highBeginner">High Beginner</option>
-                  <option value="lowIntermediate">Low Intermediate</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="highAdvanced">High Advanced </option>
-                  <option value="advanced">Advanced</option>
+            <label>Chọn lộ trình học</label>
+            <select id="routeTypeS" onchange="routeType()">
+                  {{#each targetxxx}}
+                  <option value="{{routeName}}">
+                        {{routeName}}
+                  </option>
+                  {{/each}}
             </select>
+            <label for="level">Level</label>
+            <select id="levelS"></select>
+            <br>
+
             <br>
             <label for="topic">Birthday</label>
             <input type="date" id="birthday">
@@ -57,21 +60,25 @@
       <table border='solid'>
             <thead>
                   <tr>
+                        <th><input id="myInput" type="text" placeholder="Search.."></th>
+                  </tr>
+                  <tr>
                         <th>avatar</th>
                         <th>username</th>
-                        <th>level</th>
-                        <th>email</th>
-                        <th><input id="myInput" type="text" placeholder="Search.."></th>
+                        <th>routeName</th>
+                        <th>stage</th>
+                        <th>More information</th>
                   </tr>
             </thead>
             <tbody class='taskrow'></tbody>
       </table>
 
 
-      <div id="updateForm" >
+      <div id="updateForm">
 
       </div>
 
 </body>
 <script src="/createAccountAdmin.js"></script>
+
 </html>

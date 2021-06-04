@@ -4,10 +4,10 @@
 <table border="solid">
   <th>ClassID</th>
   <th>className</th>
-  <th>level</th>
+  <th>Route</th>
+  <th>Stage</th>
   <th>description</th>
   <th>Teacher Name</th>
-  <th>Teacher ID</th>
   <th>startDate</th>
   <th>endDate</th>
   {{#each data}}
@@ -20,7 +20,10 @@
       {{className }}
     </td>
     <td>
-      {{level }}
+      {{routeName }}
+    </td> 
+    <td>
+      {{stage }}
     </td>
     <td>
       {{description }}

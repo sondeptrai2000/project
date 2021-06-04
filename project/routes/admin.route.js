@@ -9,7 +9,7 @@ adminRouter.get('/allStudent', adminController.allStudent)
 adminRouter.get('/allGuardian', adminController.allGuardian)
 
 
-adminRouter.post('/test', adminController.test)
+adminRouter.get('/getStage', adminController.getStage)
 
 
 

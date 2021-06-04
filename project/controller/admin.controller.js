@@ -42,31 +42,31 @@ class adminController {
     }
 
     createAccount(req, res) {
-        AccountModel.find({ role: "teacher" })
-            .then(data => {
-                ClassModel.find({}, function(err, classInfor) {
-                    res.render('admin/createAccount', { data, classInfor })
+        studyRouteModel.find({}, function(err, targetxxx) {
+            AccountModel.find({ role: "teacher" })
+                .then(data => {
+                    ClassModel.find({}, function(err, classInfor) {
+                        res.render('admin/createAccount', { data, classInfor, targetxxx })
+                    })
+                })
+        })
+
+    }
+
+
+    getStage(req, res) {
+        studyRouteModel.find({ routeName: req.query.abc }, function(err, targetxxx) {
+            AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }, function(err, student) {
+                studyRouteModel.find({ routeName: req.query.abc }, function(err, data) {
+                    if (err) {
+                        res.json({ msg: 'error' });
+                    } else {
+                        res.json({ msg: 'success', data, student, targetxxx });
+                    }
                 })
             })
-
+        })
     }
-
-
-    test(req, res) {
-        var stage = ['1assdf', '2asdfvdwf', '3afghyrter']
-        var route = ['route1', 'route2', 'route3', 'space', 'route1', 'route2', 'space', 'route1', 'route2']
-        var testthu = route.toString();
-        testthu = testthu.split(",space,")
-        console.log(testthu)
-        for (var i = 0; i < 3; i++) {
-            testthu[i] = testthu[i].toString();
-            testthu[i] = testthu[i].split(",")
-            console.log(testthu[i])
-        }
-
-
-    }
-
     createRoute(req, res) {
         studyRouteModel.find({}, function(err, data) {
             res.render('admin/createRoute', { data: data })
@@ -114,7 +114,7 @@ class adminController {
         var buff = new Buffer(temp);
         var base64data = buff.toString('base64');
         try {
-            let { username, password, email, role, level, phone, address, birthday } = req.body
+            let { username, password, email, role, routeName, stage, phone, address, birthday } = req.body
             AccountModel.find({ username: username }, function(err, result) {
                 if (result.length !== 0) {
                     res.json({ msg: 'Account already exists' });
@@ -128,7 +128,8 @@ class adminController {
                             password: hash,
                             email,
                             role,
-                            level,
+                            routeName,
+                            stage,
                             phone,
                             address,
                             birthday
@@ -170,45 +171,45 @@ class adminController {
     }
 
     createClass(req, res) {
-        AccountModel.find({ role: 'student' }, function(err, student) {
-            AccountModel.find({ role: 'teacher' }, function(err, teacher) {
-                res.render('admin/createClass.ejs', { student, teacher })
+        studyRouteModel.find({}, function(err, targetxxx) {
+            AccountModel.find({ role: 'student' }, function(err, student) {
+                AccountModel.find({ role: 'teacher' }, function(err, teacher) {
+                    res.render('admin/createClass.ejs', { student, teacher, targetxxx })
+                })
             })
         })
+
     }
 
     docreateClass(req, res) {
         try {
-            // let { className, level, description, StudentID, TeacherID, endDate, startDate } = req.body
-            let className = req.body.className
-            let level = req.body.classLevel
-            let description = req.body.description
-            let studentID = req.body.hobby
-            let teacherID = req.body.facultyID
-            let endDate = req.body.endDate
-            let startDate = req.body.startDate
-
-
-
+            let studentID = []
+            studentID.push(req.body.hobby)
             ClassModel.create({
-                className,
-                level,
-                description,
-                studentID,
-                teacherID,
-                endDate,
-                startDate
+                className: req.body.className,
+                routeName: req.body.routeName,
+                stage: req.body.stage,
+                description: req.body.description,
+                studentID: studentID,
+                teacherID: req.body.facultyID,
+                endDate: req.body.endDate,
+                startDate: req.body.startDate,
             }, function(err, data) {
-                console.log(data._id)
-                for (var i = 0; i < studentID.length; i++) {
-                    AccountModel.findOneAndUpdate({ _id: studentID[i] }, { $push: { classID: data._id } }, function(err, teacher) {})
+                if (err) {
+                    res.json("lỗi k tạo được")
+                } else {
+                    console.log(data._id)
+                    for (var i = 0; i < studentID.length; i++) {
+                        AccountModel.findOneAndUpdate({ _id: studentID[i] }, { $push: { classID: data._id } }, function(err, teacher) {})
+                    }
+                    AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
+                        return res.status(200).json({
+                            message: "Sign Up success",
+                            error: false
+                        })
+                    })
                 }
-                AccountModel.findOneAndUpdate({ _id: teacherID }, { $push: { classID: data._id } }, function(err, teacher) {})
             });
-            return res.status(200).json({
-                message: "Sign Up success",
-                error: false
-            })
         } catch (error) {
             if (error) {
                 res.status(400).json({

@@ -11,7 +11,8 @@ mongoose.set('useCreateIndex', true);
 const Schema = mongoose.Schema;
 const classSchema = new Schema({
     className: String,
-    level: String,
+    routeName: String,
+    stage: String,
     description: String,
     studentID: [{
         type: mongoose.Schema.Types.ObjectId,

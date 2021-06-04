@@ -13,6 +13,8 @@ const AccountSchema = new Schema({
     username: String,
     password: String,
     email: String,
+    routeName: String,
+    stage: String,
     level: String,
     role: {
         type: String,

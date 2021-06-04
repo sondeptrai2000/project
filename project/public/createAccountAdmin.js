@@ -57,7 +57,8 @@ function signUp() {
         password: $("#password").val(),
         email: $("#email").val(),
         role: $("#role").val(),
-        level: $("#level").val(),
+        routeName: $("#routeTypeS").val(),
+        stage: $("#levelS").val(),
         phone: $("#phone").val(),
         address: $("#address").val(),
     };
@@ -152,7 +153,7 @@ function getStudent() {
             success: function(response) {
                 if (response.msg == 'success') {
                     $.each(response.data, function(index, data) {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
                     });
                 }
             },
@@ -198,3 +199,29 @@ $(document).ready(function() {
         });
     });
 });
+
+function routeType() {
+    var routeName = $('#routeTypeS').val();
+    $.ajax({
+        url: '/admin/getStage',
+        method: 'get',
+        dataType: 'json',
+        data: {
+            abc: routeName
+        },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $('#levelS').html('');
+                $.each(response.data, function(index, data) {
+                    $.each(data.routeSchedual, function(index, routeSchedual) {
+                        var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
+                        $("#levelS").append(update);
+                    });
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
