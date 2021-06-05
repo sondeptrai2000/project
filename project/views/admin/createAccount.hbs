@@ -10,7 +10,7 @@
             <h2>ACCOUNT INFORMATION</h2>
             <label for="facultyname">Avatar</label>
             Select images: <input type="file" name="myFile" id="myFile">
-            <div class="gallery"></div>
+            <div class="gallery" id="gallery"></div>
             <br>
             <label for="facultyname">Name</label>
             <input type="text" id="username">
@@ -22,24 +22,28 @@
             <input type="password" id="password">
             <br>
             <label for="topic">Role</label>
-            <select class="Role" id="role">
+            <select class="Role" id="role" onchange="role()">
                   <option value="student">Student</option>
                   <option value="guardian">Guardian</option>
                   <option value="teacher">Teacher</option>
             </select>
             <br>
-            <label>Chọn lộ trình học</label>
-            <select id="routeTypeS" onchange="routeType()">
-                  {{#each targetxxx}}
-                  <option value="{{routeName}}">
-                        {{routeName}}
-                  </option>
-                  {{/each}}
-            </select>
-            <label for="level">Level</label>
-            <select id="levelS"></select>
-            <br>
-
+            <div class="typeRole">
+                  <label>Chọn lộ trình học</label>
+                  <select id="routeTypeS" onchange="routeType()">
+                        {{#each targetxxx}}
+                        <option value="{{routeName}}">
+                              {{routeName}}
+                        </option>
+                        {{/each}}
+                  </select>
+                  <br>
+                  <label>Level</label>
+                  <select id="levelS"></select>
+                  <br>
+                  <label>Aim</label>
+                  <select id="Aim"></select>
+            </div>
             <br>
             <label for="topic">Birthday</label>
             <input type="date" id="birthday">
@@ -54,22 +58,11 @@
       </div>
       <button id="btnxx">Create new account</button>
       <button id="reset">Reset</button>
-      <button id="btn2" onclick="getTeacher()">getTeacher </button>
-      <button id="btn3" onclick="getStudent()">getStudent </button>
-      <button id="btn3" onclick="getGuardian()">getGuardian </button>
+      <button id="btn2" onclick="getAccount('teacher')">getTeacher </button>
+      <button id="btn3" onclick="getAccount('student')">getStudent </button>
+      <button id="btn3" onclick="getAccount('guardian')">getGuardian </button>
       <table border='solid'>
-            <thead>
-                  <tr>
-                        <th><input id="myInput" type="text" placeholder="Search.."></th>
-                  </tr>
-                  <tr>
-                        <th>avatar</th>
-                        <th>username</th>
-                        <th>routeName</th>
-                        <th>stage</th>
-                        <th>More information</th>
-                  </tr>
-            </thead>
+            <thead id ="tableInforType"></thead>
             <tbody class='taskrow'></tbody>
       </table>
 

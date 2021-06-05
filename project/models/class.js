@@ -22,7 +22,17 @@ const classSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'account'
     },
-    schedule: [{ type: String }],
+    schedule: [{
+        date: String,
+        room: String,
+        attend: [{
+            studentID: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'account'
+            },
+            attended: String,
+        }]
+    }],
     endDate: String,
     startDate: String
 }, {

@@ -4,7 +4,7 @@ var getGuardianClick = 0;
 var fileData;
 var myFile;
 
-getTeacher();
+getAccount('teacher')
 $("#createAccount").slideUp();
 $(document).ready(function() {
     $("#btnxx").click(function() {
@@ -13,16 +13,14 @@ $(document).ready(function() {
     });
 
     $("#reset").click(function() {
-        alert('okokoko')
         document.getElementById('myFile').value = ''
         document.getElementById('username').value = ''
         document.getElementById('password').value = ''
         document.getElementById('email').value = ''
-        document.getElementById('classID').value = ''
-        document.getElementById('level').value = ''
+        document.getElementById('levelS').value = ''
         document.getElementById('phone').value = ''
         document.getElementById('address').value = ''
-        document.getElementByName('div.gallery').value = ''
+        document.getElementById('gallery').innerHTML = ''
     });
 });
 
@@ -90,32 +88,47 @@ function signUp() {
     })
 }
 
-function getTeacher() {
-    getTeacherClick = getTeacherClick + 1;
-    getStudentClick = 0;
-    getGuardianClick = 0;
-
-    if (getTeacherClick == 1) {
-        $(".taskrow").html("");
-        $.ajax({
-            url: '/admin/allTeacher',
-            method: 'get',
-            dataType: 'json',
-            data: {},
-            success: function(response) {
-                if (response.msg == 'success') {
-                    $.each(response.data, function(index, data) {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + "<button class='del' onclick=updateForm('" + data._id + "')>Update</button>" + "</td></tr>");
-                    });
-                }
-            },
-            error: function(response) {
-                alert('server error');
-            }
-        });
+function getAccount(index) {
+    var tableInfor
+    if (index === 'teacher' || index === 'guardian') {
+        tableInfor = "<tr><th><input id='myInput' type='text' placeholder='Search..'></th></tr><tr><th>avatar</th><th>username</th><th>email</th><th>role</th><th>sex</th><th>phone</th><th>address</th><th>birthday</th><th>More information</th></tr>"
+        $("#tableInforType").html(tableInfor);
+    } else {
+        tableInfor = "<tr><th><input id='myInput' type='text' placeholder='Search..'></th></tr><tr><th>avatar</th><th>username</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
+        $("#tableInforType").html(tableInfor);
     }
-
+    $(".taskrow").html("");
+    $.ajax({
+        url: '/admin/getAccount',
+        method: 'get',
+        dataType: 'json',
+        data: { role: index },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $.each(response.data, function(index, data) {
+                    if (index === 'teacher' || index === 'guardian') {
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.sex + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><button onclick=updateForm('" + data._id + "')>Update " + data._id + "</button></td></tr>");
+                    } else {
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update " + data._id + "</button></td></tr>");
+                    }
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
 }
+
+
+$(document).ready(function() {
+    $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(".taskrow tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});
 
 function updateForm(id) {
     $("#updateForm").html("");
@@ -126,7 +139,6 @@ function updateForm(id) {
         data: { updateid: id },
         success: function(response) {
             if (response.msg == 'success') {
-                alert("lay thong tin ok")
                 $.each(response.data, function(index, data) {
                     var update = "<h2>Update ACCOUNT INFORMATION</h2><label for='facultyname'>Avatar</label>Select images: <input type='file' name='myFile1' id='myFile1'><div class='gallery1'></div><br><label>Name</label><input type='text' id='username1' value='" + data.username + "'><br><label for='topic'>Email</label><input type='email' id='email1' value='" + data.email + "'><br><label for='topic'>Password</label><input type='password' id='password1'><br><label for='topic'>Role</label><select class='Role1' id='role1'><option value='student'>Student</option><option value='guardian'>Guardian</option><option value='teacher'>Teacher</option></select><br><label for='level'>Level</label><select class='level1' id='level1'><option value='beginner'>Beginner </option><option value='highBeginner'>High Beginner</option><option value='lowIntermediate'>Low Intermediate</option><option value='intermediate'>Intermediate</option><option value='highAdvanced'>High Advanced </option><option value='advanced'>Advanced</option></select><label for='topic'>Class ID</label><select id='classID1'>{{#each classInfor}}<option value='{{_id}}' id='classID1'>{{className}}</option>{{/each}}<option value='None' id='classID1'>None</option></select><br><label for='topic'>Birthday</label><input type='date' id='birthday1'><br><label for='topic'>Phone</label><input type='text' id='phone1'><br><label for='topic'>Address</label><input type='text' id='address1'><br><button id='btn2' onclick='updateAccount()'>tiến hành cập nhật thông tin tài khoản</button>"
                     $("#updateForm").append(update);
@@ -138,67 +150,6 @@ function updateForm(id) {
         }
     });
 }
-
-function getStudent() {
-    getStudentClick = getStudentClick + 1;
-    getTeacherClick = 0;
-    getGuardianClick = 0;
-    if (getStudentClick == 1) {
-        $(".taskrow").html("");
-        $.ajax({
-            url: '/admin/allStudent',
-            method: 'get',
-            dataType: 'json',
-            data: {},
-            success: function(response) {
-                if (response.msg == 'success') {
-                    $.each(response.data, function(index, data) {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
-                    });
-                }
-            },
-            error: function(response) {
-                alert('server error');
-            }
-        });
-    }
-}
-
-
-function getGuardian() {
-    getGuardianClick = getGuardianClick + 1;
-    getTeacherClick = 0;
-    getStudentClick = 0;
-    if (getGuardianClick == 1) {
-        $(".taskrow").html("");
-        $.ajax({
-            url: '/admin/allGuardian',
-            method: 'get',
-            dataType: 'json',
-            data: {},
-            success: function(response) {
-                if (response.msg == 'success') {
-                    accountInformation = response.data;
-                    $.each(response.data, function(index, data) {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
-                    });
-                }
-            },
-            error: function(response) {
-                alert('server error');
-            }
-        });
-    }
-}
-
-$(document).ready(function() {
-    $("#myInput").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".taskrow tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-    });
-});
 
 function routeType() {
     var routeName = $('#routeTypeS').val();
@@ -212,10 +163,13 @@ function routeType() {
         success: function(response) {
             if (response.msg == 'success') {
                 $('#levelS').html('');
+                $("#Aim").html('');
                 $.each(response.data, function(index, data) {
                     $.each(data.routeSchedual, function(index, routeSchedual) {
                         var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
                         $("#levelS").append(update);
+                        $("#Aim").append(update);
+
                     });
                 });
             }
@@ -224,4 +178,13 @@ function routeType() {
             alert('server error');
         }
     })
+}
+
+function role() {
+    var accountRole = $('#role').val();
+    if (accountRole === "guardian" || accountRole === "teacher") {
+        $('.typeRole').slideUp()
+    } else {
+        $('.typeRole').slideDown()
+    }
 }

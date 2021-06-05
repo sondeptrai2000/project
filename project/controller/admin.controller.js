@@ -12,8 +12,8 @@ class adminController {
         res.render('admin/adminHome')
     }
 
-    allTeacher(req, res) {
-        AccountModel.find({ role: "teacher" }, function(err, data) {
+    getAccount(req, res) {
+        AccountModel.find({ role: req.query.role }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -21,26 +21,6 @@ class adminController {
             }
         })
     }
-
-    allStudent(req, res) {
-        AccountModel.find({ role: "student" }).populate('studentID').populate('teacherID').exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
-        })
-    }
-    allGuardian(req, res) {
-        AccountModel.find({ role: "guardian" }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
-        })
-    }
-
     createAccount(req, res) {
         studyRouteModel.find({}, function(err, targetxxx) {
             AccountModel.find({ role: "teacher" })
@@ -114,7 +94,16 @@ class adminController {
         var buff = new Buffer(temp);
         var base64data = buff.toString('base64');
         try {
-            let { username, password, email, role, routeName, stage, phone, address, birthday } = req.body
+            let { username, password, email, phone, address, birthday } = req.body
+            let role = req.body.role
+            let stage = req.body.stage
+            let routeName = req.body.routeName
+            let aim = req.body.aim
+            if (role === "guardian" || role === "teacher") {
+                stage = "none"
+                routeName = "none"
+                aim = "none"
+            }
             AccountModel.find({ username: username }, function(err, result) {
                 if (result.length !== 0) {
                     res.json({ msg: 'Account already exists' });
@@ -129,6 +118,7 @@ class adminController {
                             email,
                             role,
                             routeName,
+                            aim,
                             stage,
                             phone,
                             address,
@@ -159,7 +149,6 @@ class adminController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                console.log(data)
                 res.json({ msg: 'success', data: data });
             }
         })

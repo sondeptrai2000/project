@@ -4,9 +4,7 @@ var adminController = require('../controller/admin.controller')
 
 
 adminRouter.get('/', adminController.adminHome)
-adminRouter.get('/allTeacher', adminController.allTeacher)
-adminRouter.get('/allStudent', adminController.allStudent)
-adminRouter.get('/allGuardian', adminController.allGuardian)
+adminRouter.get('/getAccount', adminController.getAccount)
 
 
 adminRouter.get('/getStage', adminController.getStage)
