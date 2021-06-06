@@ -145,18 +145,64 @@ class adminController {
     }
 
     editAccount(req, res) {
-        AccountModel.find({ _id: req.query.updateid }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
+        studyRouteModel.find({}, function(err, targetxxx) {
+            AccountModel.find({ _id: req.query.updateid }, function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data, targetxxx });
+                }
+            })
         })
     }
 
     //làm cuối
     doeditAccount(req, res) {
-        res.json("ok")
+        // var path = './public/uploads/' + req.body.filename;
+        // var image = req.body.file;
+        // var data = image.split(',')[1];
+        // fs.writeFileSync(path, data, { encoding: 'base64' });
+        // var temp = fs.readFileSync(path);
+        // var buff = new Buffer(temp);
+        // var base64data = buff.toString('base64');
+        try {
+            let { username, password, email, phone, address, birthday } = req.body
+            let role = req.body.role
+            let stage = req.body.stage
+            let routeName = req.body.routeName
+            let aim = req.body.aim
+            if (role === "guardian" || role === "teacher") {
+                stage = "none"
+                routeName = "none"
+                aim = "none"
+            }
+            console.log(username)
+            AccountModel.findOneAndUpdate({ _id: req.body._id }, {
+                username,
+                password,
+                email,
+                role,
+                routeName,
+                aim,
+                stage,
+                phone,
+                address,
+                birthday
+            }, function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data: data });
+                }
+            })
+        } catch (error) {
+            if (error) {
+                res.status(400).json({
+                    msg: "Sign Up fail",
+                    error: true
+                })
+            }
+        }
     }
 
     createClass(req, res) {

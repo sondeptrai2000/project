@@ -16,7 +16,7 @@ adminRouter.get('/createAccount', adminController.createAccount)
 adminRouter.post('/doCreateAccount', adminController.doCreateAccount)
     //update account
 adminRouter.get('/editAccount', adminController.editAccount)
-adminRouter.post('/editAccount', adminController.doeditAccount)
+adminRouter.post('/doeditAccount', adminController.doeditAccount)
 
 //liên quan đến lộ trình học
 adminRouter.get('/createRoute', adminController.createRoute)

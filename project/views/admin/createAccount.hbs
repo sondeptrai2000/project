@@ -22,7 +22,7 @@
             <input type="password" id="password">
             <br>
             <label for="topic">Role</label>
-            <select class="Role" id="role" onchange="role()">
+            <select class="Role" id="role" onchange="role('create')">
                   <option value="student">Student</option>
                   <option value="guardian">Guardian</option>
                   <option value="teacher">Teacher</option>
@@ -30,7 +30,7 @@
             <br>
             <div class="typeRole">
                   <label>Chọn lộ trình học</label>
-                  <select id="routeTypeS" onchange="routeType()">
+                  <select id="routeTypeS" onchange="routeType('create')">
                         {{#each targetxxx}}
                         <option value="{{routeName}}">
                               {{routeName}}
