@@ -99,6 +99,7 @@ class adminController {
             let stage = req.body.stage
             let routeName = req.body.routeName
             let aim = req.body.aim
+            console.log(aim)
             if (role === "guardian" || role === "teacher") {
                 stage = "none"
                 routeName = "none"
@@ -176,7 +177,6 @@ class adminController {
                 routeName = "none"
                 aim = "none"
             }
-            console.log(username)
             AccountModel.findOneAndUpdate({ _id: req.body._id }, {
                 username,
                 password,
@@ -218,10 +218,16 @@ class adminController {
 
     docreateClass(req, res) {
         try {
-            let studentID = []
-            studentID.push(req.body.hobby)
+            let getStudentID = req.body.hobby
+            var studentID = []
+            if (Array.isArray(studentID) == false) {
+                studentID.push(req.body.hobby)
+            } else {
+                studentID = getStudentID
+            }
             ClassModel.create({
                 className: req.body.className,
+                subject: req.body.subject,
                 routeName: req.body.routeName,
                 stage: req.body.stage,
                 description: req.body.description,
@@ -233,7 +239,6 @@ class adminController {
                 if (err) {
                     res.json("lỗi k tạo được")
                 } else {
-                    console.log(data._id)
                     for (var i = 0; i < studentID.length; i++) {
                         AccountModel.findOneAndUpdate({ _id: studentID[i] }, { $push: { classID: data._id } }, function(err, teacher) {})
                     }

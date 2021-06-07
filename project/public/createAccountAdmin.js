@@ -61,6 +61,7 @@ $(function() {
 });
 
 function signUp() {
+    alert($("#Aim").val())
     var formData = {
         filename: myFile.name,
         file: fileData,
@@ -68,6 +69,7 @@ function signUp() {
         password: $("#password").val(),
         email: $("#email").val(),
         role: $("#role").val(),
+        aim: $("#Aim").val(),
         routeName: $("#routeTypeS").val(),
         stage: $("#levelS").val(),
         phone: $("#phone").val(),

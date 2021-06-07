@@ -11,7 +11,9 @@
 
     <table border="solid">
         <th>Class name</th>
-        <th>Level</th>
+        <th>routeName</th>
+        <th>stage</th>
+        <th>subject</th>
         <th>Description</th>
         <th>Teacher</th>
         <th>Start date</th>
@@ -20,13 +22,16 @@
         {{#each classInfor}}
         <tr>
             <td>
-                {{_id }}
-            </td>
-            <td>
                 {{className }}
             </td>
             <td>
-                {{level }}
+                {{routeName }}
+            </td>
+            <td>
+                {{stage }}
+            </td>
+            <td>
+                {{subject }}
             </td>
             <td>
                 {{description }}
@@ -53,28 +58,19 @@
     <div class="studentAssessment" style="display:none">
         <table class='' border='solid'>
             <h2>studentAssessment form</h2>
-            <label for="classID">ClassID</label>\
-            <p id='classID'></p>
-            <label for="facultyname">StudentID</label>\
-            <p id='studentID'></p>
-            <br>
-            <label for="facultyname">Name</label>
-            <p id='name'></p>
-            <br>
-            <label for="topic">Email</label>
-            <p id='email'></p>
-            <br>
+            <label id='classID'>ClassID</label>
+            <label id='studentID'>StudentID</label>
+            <label id='name'>Name</label>
+            <label id='email'>Email</label>
             <label for="topic">Grade</label>
             <select class="level" id="grade">
-                <option value="beginner">Beginner </option>
-                <option value="highBeginner">High Beginner</option>
-                <option value="lowIntermediate">Low Intermediate</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="highAdvanced">High Advanced </option>
-                <option value="advanced">Advanced</option>
+                <option value="Greate">Greate </option>
+                <option value="Good">Good</option>
+                <option value="Soso">Soso</option>
+                <option value="Restudy">Restudy</option>
             </select>
             <br>
-            <label for="topic">Comment</label>
+            <label>Comment</label>
             <input type="text" id="comment">
             <br>
             <button onclick="takeFeedBack()"> Tiến hành đánh giá</button>

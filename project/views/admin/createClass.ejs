@@ -26,7 +26,7 @@
         <select id="levelS" name="stage" onchange="level()"></select>
         <br>
         <label>Subject</label>
-        <select id="subject"></select>
+        <select id="subject" name="subject"></select>
         <br>
         <label for="topic">Class Name</label>
         <input type="text" name="className">
@@ -38,6 +38,7 @@
         <input type="number" name="totalSlot" onchange="totalSlot()">
         <br>
         <label for="topic">Student</label>
+
         <table id="studentTable" border='solid' style="display: none;">
             <thead>
                 <tr>
@@ -134,6 +135,7 @@
             success: function(response) {
                 if (response.msg == 'success') {
                     $('#subject').html('');
+                    $('.taskrow').html('');
                     $('#studentTable').show();
                     $.each(response.data, function(index, data) {
                         $.each(data.routeSchedual, function(index, routeSchedual) {

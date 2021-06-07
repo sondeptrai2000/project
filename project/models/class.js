@@ -13,6 +13,7 @@ const classSchema = new Schema({
     className: String,
     routeName: String,
     stage: String,
+    subject: String,
     description: String,
     studentID: [{
         type: mongoose.Schema.Types.ObjectId,
