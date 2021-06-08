@@ -86,13 +86,9 @@ class adminController {
 
 
     doCreateAccount(req, res) {
-        var path = './public/uploads/' + req.body.filename;
         var image = req.body.file;
         var data = image.split(',')[1];
-        fs.writeFileSync(path, data, { encoding: 'base64' });
-        var temp = fs.readFileSync(path);
-        var buff = new Buffer(temp);
-        var base64data = buff.toString('base64');
+        var base64data = data.toString('base64')
         try {
             let { username, password, email, phone, address, birthday } = req.body
             let role = req.body.role
@@ -159,13 +155,9 @@ class adminController {
 
     //làm cuối
     doeditAccount(req, res) {
-        // var path = './public/uploads/' + req.body.filename;
-        // var image = req.body.file;
-        // var data = image.split(',')[1];
-        // fs.writeFileSync(path, data, { encoding: 'base64' });
-        // var temp = fs.readFileSync(path);
-        // var buff = new Buffer(temp);
-        // var base64data = buff.toString('base64');
+        var image = req.body.file;
+        var data = image.split(',')[1];
+        var base64data = data.toString('base64')
         try {
             let { username, password, email, phone, address, birthday } = req.body
             let role = req.body.role
@@ -178,6 +170,7 @@ class adminController {
                 aim = "none"
             }
             AccountModel.findOneAndUpdate({ _id: req.body._id }, {
+                avatar: base64data,
                 username,
                 password,
                 email,

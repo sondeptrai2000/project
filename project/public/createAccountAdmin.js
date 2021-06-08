@@ -14,54 +14,43 @@ $(document).ready(function() {
         $("#createAccount").slideToggle();
     });
 
-    $("#reset").click(function() {
-        document.getElementById('myFile').value = ''
-        document.getElementById('username').value = ''
-        document.getElementById('password').value = ''
-        document.getElementById('email').value = ''
-        document.getElementById('levelS').value = ''
-        document.getElementById('phone').value = ''
-        document.getElementById('address').value = ''
-        document.getElementById('gallery').innerHTML = ''
-    });
-});
-
-$(function() {
-    var imagesPreview = function(input, placeToInsertImagePreview) {
-        if (input.files) {
-            var reader = new FileReader();
-            reader.onload = function(event) {
-                $($.parseHTML('<img style ="max-width:150px;max-height:200px">')).attr('src', event.target.result).appendTo(placeToInsertImagePreview);
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    };
     $('#myFile').on('change', function() {
-        imagesPreview(this, 'div.gallery');
-
         var filereader = new FileReader();
         filereader.onload = function(event) {
             fileData = event.target.result;
+            var dataURL = filereader.result;
+            $("#output").attr("src", dataURL);
         };
         myFile = $('#myFile').prop('files')[0];
         console.log('myfile', myFile)
         filereader.readAsDataURL(myFile)
     });
-
-    $('#myFileUpdate').on('change', function() {
-        imagesPreview(this, 'div.galleryUpdate');
-        var filereaderUpdate = new FileReader();
-        filereaderUpdate.onload = function(event) {
-            fileDataUpdate = event.target.result;
-        };
-        myFileUpdate = $('#myFileUpdate').prop('files')[0];
-        console.log('myfile', myFileUpdate)
-        filereaderUpdate.readAsDataURL(myFileUpdate)
-    });
 });
 
+function updateImg() {
+    var filereaderUpdate = new FileReader();
+    filereaderUpdate.onload = function(event) {
+        fileDataUpdate = event.target.result;
+        var dataURLUpdate = filereaderUpdate.result;
+        $("#outputUpdate").attr("src", dataURLUpdate);
+    };
+    myFileUpdate = $('#myFileUpdate').prop('files')[0];
+    console.log('myfileUpdate', myFileUpdate)
+    filereaderUpdate.readAsDataURL(myFileUpdate)
+}
+
+function reset() {
+    document.getElementById('myFile').value = ''
+    document.getElementById('username').value = ''
+        // document.getElementById('password').value = ''
+    document.getElementById('email').value = ''
+    document.getElementById('levelS').value = ''
+    document.getElementById('phone').value = ''
+    document.getElementById('address').value = ''
+    document.getElementById('output').src = ''
+}
+
 function signUp() {
-    alert($("#Aim").val())
     var formData = {
         filename: myFile.name,
         file: fileData,
@@ -82,14 +71,8 @@ function signUp() {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
-                if (formData.role == "student") {
-                    getStudent();
-                } else if (formData.role == "teacher") {
-                    getTeacher();
-                } else if (formData.role == "guardian") {
-                    a
-                    getGuardian();
-                }
+                reset();
+                getAccount(role);
                 alert('Sign Up success');
             }
             if (response.msg == 'Account already exists') {
@@ -212,7 +195,7 @@ function updateForm(id) {
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
-                    var update = "<h2>ACCOUNT update INFORMATION</h2><label>Old Avatar</label><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></img><br><label>Update Avatar</label> Select images: <input type='file' name='myFileUpdate' id='myFileUpdate'><div class='galleryUpdate' id='galleryUpdate'></div><br><label>Name</label><input type='text' value ='" + data.username + "' id='usernameUpdate'><br><label >Email</label><input type='email'  value ='" + data.email + "' id='emailUpdate' class='emailinput'><br><label >Password</label><input type='password' value ='" + data.password + "' id='passwordUpdate'><br>"
+                    var update = "<h2>ACCOUNT update INFORMATION</h2><label>Old Avatar</label><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></img><br><label>Update Avatar</label> Select images: <input type='file' id='myFileUpdate' onchange= 'updateImg()' accept='image/*'><br><img id='outputUpdate' style='height:3cm; width:3cm'><br><label>Name</label><input type='text' value ='" + data.username + "' id='usernameUpdate'><br><label >Email</label><input type='email'  value ='" + data.email + "' id='emailUpdate' class='emailinput'><br><label >Password</label><input type='password' value ='" + data.password + "' id='passwordUpdate'><br>"
                     var roleroute = "<label >Role</label><select class='Role' id='roleUpdate' onchange=role('update')></select><br><div class='typeRole'><label>Chọn lộ trình học</label><select id='routeTypeSUpdate' onchange=routeType('update')></select><br>"
                     var stageAimOther = "<label>Level</label><select id='levelSUpdate'></select><br><label>Aim</label><select id='AimUpdate'></select></div><br><label >Birthday</label><input type='date'  value ='" + data.birthday + "' id='birthdayUpdate'><br><label >Phone</label><input type='text' value ='" + data.phone + "' id='phoneUpdate'><br><label >Address</label><input type='text' value ='" + data.address + "'id='addressUpdate'><br><button id='btn2' onclick=doUpdate('" + data._id + "')>tiến hành tạo tài khoản</button></div>"
                     $("#updateForm").append(update + roleroute + stageAimOther);
@@ -244,6 +227,8 @@ function updateForm(id) {
 function doUpdate(id) {
     var formData = {
         _id: id,
+        filename: myFileUpdate.name,
+        file: fileDataUpdate,
         username: $("#usernameUpdate").val(),
         password: $("#passwordUpdate").val(),
         email: $("#emailUpdate").val(),

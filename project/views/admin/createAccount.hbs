@@ -9,8 +9,9 @@
       <div id="createAccount">
             <h2>ACCOUNT INFORMATION</h2>
             <label for="facultyname">Avatar</label>
-            Select images: <input type="file" name="myFile" id="myFile">
-            <div class="gallery" id="gallery"></div>
+            Select images: <input type='file' id="myFile" accept='image/*'>
+            <br>
+            <img id='output' style="height:3cm; width:3cm">
             <br>
             <label for="facultyname">Name</label>
             <input type="text" id="username">
@@ -57,20 +58,15 @@
             <button id="btn1" onclick="signUp()">tiến hành tạo tài khoản</button>
       </div>
       <button id="btnxx">Create new account</button>
-      <button id="reset">Reset</button>
+      <button id="reset"  onclick="reset()">Reset</button>
       <button id="btn2" onclick="getAccount('teacher')">getTeacher </button>
       <button id="btn3" onclick="getAccount('student')">getStudent </button>
       <button id="btn3" onclick="getAccount('guardian')">getGuardian </button>
       <table border='solid'>
-            <thead id ="tableInforType"></thead>
+            <thead id="tableInforType"></thead>
             <tbody class='taskrow'></tbody>
       </table>
-
-
-      <div id="updateForm">
-
-      </div>
-
+      <div id="updateForm"></div>
 </body>
 <script src="/createAccountAdmin.js"></script>
 
