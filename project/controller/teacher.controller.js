@@ -43,6 +43,24 @@ class teacherController {
         })
     }
 
+    addStudentToClass(req, res) {
+        console.log(req.query.routeName)
+        console.log(req.query.stage)
+        AccountModel.find({ role: 'student', routeName: req.query.routeName, stage: req.query.stage }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
+    }
+
+    doaddStudentToClass(req, res) {
+        console.log(req.body.studentlist)
+        console.log(req.body.classID)
+
+    }
+
     viewClass(req, res) {
         res.json('Trang thông tin lớp học')
     }
@@ -56,27 +74,9 @@ class teacherController {
         res.json('Trang trỉnh sủa thông tin các lớp học')
     }
 
-    addStudentToClass(req, res) {
-        res.json('Trang thêm học sinh vào lớp ')
-    }
+
 
     studentAssessment(req, res) {
-        ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {
-            $set: {
-                "studentID.$.grade": req.body.grade,
-                "studentID.$.feedBackContent": req.body.comment
-            }
-        }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
-            }
-        })
-    }
-
-
-    updateStudentAssessment(req, res) {
         ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {
             $set: {
                 "studentID.$.grade": req.body.grade,

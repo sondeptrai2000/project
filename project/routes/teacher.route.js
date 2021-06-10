@@ -3,7 +3,6 @@ var teacherRouter = express.Router();
 var teacherController = require('../controller/teacher.controller')
 
 
-teacherRouter.get('/abc', teacherController.abc)
 
 teacherRouter.get('/', teacherController.teacherHome)
 
@@ -18,8 +17,8 @@ teacherRouter.get('/allClassStudent', teacherController.allClassStudent)
 teacherRouter.get('/viewClass', teacherController.viewClass)
 teacherRouter.get('/takeAttended', teacherController.takeAttended)
 teacherRouter.get('/addStudentToClass', teacherController.addStudentToClass)
+teacherRouter.post('/doaddStudentToClass', teacherController.doaddStudentToClass)
 teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
-teacherRouter.post('/updateStudentAssessment', teacherController.updateStudentAssessment)
 
 //liên quan đến hoạt động ngoại khóa
 teacherRouter.get('/proposeEtracurricularActivities', teacherController.proposeEtracurricularActivities)

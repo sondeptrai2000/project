@@ -16,7 +16,6 @@ const AccountSchema = new Schema({
     aim: String,
     routeName: String,
     stage: String,
-    level: String,
     role: {
         type: String,
         default: "none"

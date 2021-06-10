@@ -1,12 +1,13 @@
 var click = 0;
 
-function sendData(id) {
+function sendData(id, routeName, stage, subject) {
     click = click + 1;
     if (click == 1) {
         $(".inner").show();
         var _id = id
         const studentList = "<th>avatar</th><th>username</th><th>stage</th><th>Aim</th><th>email</th><th>grade</th><th>feedBackContent</th><th onclick='closeStudentList()'>X</th>"
-        $(".taskrow").html(studentList)
+        $(".taskrow").html("<button onclick=addStudent()>Them học sinh vào lớp</button>" + studentList)
+        $(".taskrow").append("<input class='classIDadd' value = '" + id + "'><input id='rountNameadd' value = '" + routeName + "'><input id='stageadd' value = '" + stage + "'><input id='subjectadd' value = '" + subject + "'>");
         $.ajax({
             url: '/teacher/allClassStudent',
             method: 'get',
@@ -17,9 +18,9 @@ function sendData(id) {
                     $.each(response.data, function(index, data) {
                         $.each(data.studentID, function(index, studentID) {
                             if (studentID.grade === "Has not been commented yet") {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td>" + studentID.feedBackContent + "</td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'" + studentID.feedBackContent + "</td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
                             } else {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td>" + studentID.feedBackContent + "</td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td></tr>");
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td></tr>");
                             }
                         });
                     });
@@ -40,15 +41,16 @@ function studentAssessmentForm(classID, studentID, name, email) {
     $("#email").html("<p>Email :" + email + "</p>");
     $(".studentAssessment").show();
 }
-// "," + studentID.grade + "," + studentID.feedBackContent + "
+
 function updateStudentAssessmentForm(classID, studentID, name, grade) {
-    alert(classID)
+    var content = '#' + studentID
     $("#updateclassID").html(classID);
     $("#updatestudentID").html(studentID);
     $("#updatename").html("<p>Name :" + name + "</p>");
-    $("#updateemail").html("<p>Email :" + email + "</p>");
-    $("#updategrade").html("<p>Email :" + grade + "</p>");
-    // $("#updatecomment").val(comment)
+    $("#updategrade").html("<option value=" + grade + ">" + grade + " </option>");
+    $("#updatecomment").val($(content).text())
+    $(".studentAssessmentUpdate").show();
+
 }
 
 function takeFeedBack() {
@@ -75,11 +77,93 @@ function takeFeedBack() {
     });
 }
 
-function cancle() {
+function updateFeekBack() {
+    var formData = {
+        classID: $("#updateclassID").text(),
+        studentId: $("#updatestudentID").text(),
+        grade: $("#updategrade").val(),
+        comment: $("#updatecomment").val(),
+    };
+    $.ajax({
+        url: '/teacher/studentAssessment',
+        method: 'post',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                accountInformation = response.data;
+                alert("update feedback success")
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+
+}
+
+function canclestudentAssessment() {
     $(".studentAssessment").hide();
+}
+
+function canclestudentAssessmentUpdate() {
+    $(".studentAssessmentUpdate").hide();
 }
 
 function closeStudentList() {
     click = 0;
     $(".inner").hide();
+}
+
+
+function addStudent() {
+    var classIDAdd = $('.classIDadd').val()
+    $.ajax({
+        url: '/teacher/addStudentToClass',
+        method: 'get',
+        dataType: 'json',
+        data: {
+            routeName: $('#rountNameadd').val(),
+            stage: $('#stageadd').val(),
+        },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $('.taskrow111').html('');
+                $('#studentTable').show();
+                $.each(response.data, function(index, data) {
+                    if (data.classID.includes(classIDAdd) == true) {} else if (data.classID.includes(classIDAdd) == false) {
+                        $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                    }
+                });
+                $(".taskrow111").append("<button onclick= 'doAddToClass()'>Add to Class</button>");
+
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+function doAddToClass() {
+    var studentlist = $('.hobby').val()
+    var classID = $('.classIDadd').val()
+    alert(classID)
+    $.ajax({
+        url: '/teacher/doaddStudentToClass',
+        method: 'post',
+        dataType: 'json',
+        data: {
+            studentlist: studentlist,
+            classID: classID
+        },
+        success: function(response) {
+            if (response.msg == 'success') {
+
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
 }
