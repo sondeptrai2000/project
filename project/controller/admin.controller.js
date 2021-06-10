@@ -169,10 +169,12 @@ class adminController {
                 routeName = "none"
                 aim = "none"
             }
+            const salt = bcrypt.genSaltSync(saltRounds);
+            const hash = bcrypt.hashSync(password, salt);
             AccountModel.findOneAndUpdate({ _id: req.body._id }, {
                 avatar: base64data,
                 username,
-                password,
+                password: hash,
                 email,
                 role,
                 routeName,
@@ -213,18 +215,18 @@ class adminController {
         try {
             let getStudentID = req.body.hobby
             var studentID = []
-            if (Array.isArray(studentID) == false) {
+            if (Array.isArray(getStudentID) == false) {
                 studentID.push(req.body.hobby)
             } else {
                 studentID = getStudentID
             }
+            console.log(studentID.length)
             ClassModel.create({
                 className: req.body.className,
                 subject: req.body.subject,
                 routeName: req.body.routeName,
                 stage: req.body.stage,
                 description: req.body.description,
-                studentID: studentID,
                 teacherID: req.body.facultyID,
                 endDate: req.body.endDate,
                 startDate: req.body.startDate,
@@ -234,6 +236,11 @@ class adminController {
                 } else {
                     for (var i = 0; i < studentID.length; i++) {
                         AccountModel.findOneAndUpdate({ _id: studentID[i] }, { $push: { classID: data._id } }, function(err, teacher) {})
+                        ClassModel.findOneAndUpdate({ _id: data._id }, { $push: { studentID: { ID: studentID[i] } } }, function(err, teacher) {
+                            if (err) {
+                                console.log("lỗi k tạo được")
+                            }
+                        })
                     }
                     AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
                         return res.status(200).json({

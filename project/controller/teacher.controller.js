@@ -1,6 +1,5 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
-const FeedBackModel = require('../models/feedBack');
 
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
@@ -21,14 +20,21 @@ class teacherController {
     allClass(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        ClassModel.find({ teacherID: decodeAccount }).populate('studentID').populate('teacherID').exec((err, classInfor) => {
+        ClassModel.find({ teacherID: decodeAccount }).populate('teacherID').exec((err, classInfor) => {
             res.render('teacher/allClass', { classInfor })
+        })
+    }
+
+
+    abc(req, res) {
+        ClassModel.find({ _id: "60c1c61488743a330c150bc2" }).populate('studentID.ID').exec((err, classInfor) => {
+            res.render('teacher/abc', { classInfor })
         })
     }
 
     allClassStudent(req, res) {
         var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('teacherID').populate('studentID').exec((err, selectedClassInfor) => {
+        ClassModel.find({ _id: _id }).populate('studentID.ID').exec((err, selectedClassInfor) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -55,32 +61,34 @@ class teacherController {
     }
 
     studentAssessment(req, res) {
-        try {
-            let token = req.cookies.token
-            let teacherID = jwt.verify(token, 'minhson')
-            let { classID, studentId, grade, comment } = req.body
-            FeedBackModel.create({
-                classID,
-                studentId,
-                teacherID,
-                grade,
-                classID,
-                feedBackContent: comment,
-            }, function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data: data });
-                }
-            });
-        } catch (error) {
-            if (error) {
-                res.status(400).json({
-                    msg: "Sign Up fail",
-                    error: true
-                })
+        ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {
+            $set: {
+                "studentID.$.grade": req.body.grade,
+                "studentID.$.feedBackContent": req.body.comment
             }
-        }
+        }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
+    }
+
+
+    updateStudentAssessment(req, res) {
+        ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {
+            $set: {
+                "studentID.$.grade": req.body.grade,
+                "studentID.$.feedBackContent": req.body.comment
+            }
+        }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
     }
 
     allextracurricularActivities(req, res) {

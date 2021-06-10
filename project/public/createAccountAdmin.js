@@ -1,6 +1,3 @@
-var getTeacherClick = 0;
-var getStudentClick = 0;
-var getGuardianClick = 0;
 var fileData;
 var myFile;
 var fileDataUpdate;
@@ -9,6 +6,13 @@ var myFileUpdate;
 getAccount('teacher')
 $("#createAccount").slideUp();
 $(document).ready(function() {
+    $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(".taskrow tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
     $("#btnxx").click(function() {
         $(".createAccount").show();
         $("#createAccount").slideToggle();
@@ -117,14 +121,6 @@ function getAccount(index) {
     });
 }
 
-$(document).ready(function() {
-    $("#myInput").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".taskrow tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-    });
-});
 
 function routeType(action) {
     if (action === 'create') {

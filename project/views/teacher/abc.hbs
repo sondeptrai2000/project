@@ -37,7 +37,14 @@
                 {{description }}
             </td>
             <td>
-                {{teacherID.username }}
+                {{#each studentID}}
+                {{#each ID}}
+                <ul>
+                    {{username}}
+                </ul>
+                {{/each}}
+                {{/each}}
+
             </td>
             <td>
                 {{startDate }}
@@ -76,30 +83,6 @@
             <p onclick="cancle()">cancle</p>
         </table>
     </div>
-
-
-    <divborder="solid">
-        <table class='' border='solid'>
-            <h2>Update studentAssessment form</h2>
-            <label id='updateclassID'></label><br>
-            <label id='updatestudentID'></label>
-            <label id='updatename'>Name</label>
-            <label id='updateemail'>Email</label>
-            <label for="topic">Grade</label>
-            <select class="level" id="updategrade">
-                <option value="Greate">Greate </option>
-                <option value="Good">Good</option>
-                <option value="Soso">Soso</option>
-                <option value="Restudy">Restudy</option>
-            </select>
-            <br>
-            <label>Comment</label>
-            <input type="text" id="updatecomment">
-            <br>
-            <button onclick="takeFeedBack()"> Tiến hành đánh giá</button>
-            <p onclick="cancle()">cancle</p>
-        </table>
-    </divborder=>
 </body>
 <script src="/allClassTeacher.js"></script>
 

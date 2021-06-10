@@ -16,8 +16,18 @@ const classSchema = new Schema({
     subject: String,
     description: String,
     studentID: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'account'
+        ID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'account'
+        },
+        grade: {
+            type: String,
+            default: "Has not been commented yet"
+        },
+        feedBackContent: {
+            type: String,
+            default: "Has not been commented yet"
+        }
     }],
     teacherID: {
         type: mongoose.Schema.Types.ObjectId,
