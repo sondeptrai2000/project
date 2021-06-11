@@ -57,8 +57,29 @@ class teacherController {
 
     doaddStudentToClass(req, res) {
         console.log(req.body.studentlist)
+        console.log(req.body.studentlistcl)
         console.log(req.body.classID)
-
+        var classID = req.body.classID
+        let studentID = req.body.studentlist
+        AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID } }, function(err, data) {
+            if (err) {
+                console.log("lỗi trong quá trình thêm lớp vào thông tin học sinh")
+            } else {
+                ClassModel.findOneAndUpdate({ _id: classID }, {
+                    $push: {
+                        studentID: {
+                            $each: req.body.studentlist
+                        }
+                    }
+                }, function(err, teacher) {
+                    if (err) {
+                        res.json({ msg: 'error' });
+                    } else {
+                        res.json({ msg: 'success' });
+                    }
+                })
+            }
+        })
     }
 
     viewClass(req, res) {

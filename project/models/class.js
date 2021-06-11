@@ -45,7 +45,8 @@ const classSchema = new Schema({
         }]
     }],
     endDate: String,
-    startDate: String
+    startDate: String,
+    classStatus: String,
 }, {
     collection: 'class',
     timestamps: true

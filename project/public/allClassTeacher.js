@@ -6,8 +6,7 @@ function sendData(id, routeName, stage, subject) {
         $(".inner").show();
         var _id = id
         const studentList = "<th>avatar</th><th>username</th><th>stage</th><th>Aim</th><th>email</th><th>grade</th><th>feedBackContent</th><th onclick='closeStudentList()'>X</th>"
-        $(".taskrow").html("<button onclick=addStudent()>Them học sinh vào lớp</button>" + studentList)
-        $(".taskrow").append("<input class='classIDadd' value = '" + id + "'><input id='rountNameadd' value = '" + routeName + "'><input id='stageadd' value = '" + stage + "'><input id='subjectadd' value = '" + subject + "'>");
+        $(".taskrow").html("<button onclick=addStudent('" + id + "','" + routeName + "','" + stage + "','" + subject + "')>Them học sinh vào lớp</button>" + studentList)
         $.ajax({
             url: '/teacher/allClassStudent',
             method: 'get',
@@ -18,7 +17,7 @@ function sendData(id, routeName, stage, subject) {
                     $.each(response.data, function(index, data) {
                         $.each(data.studentID, function(index, studentID) {
                             if (studentID.grade === "Has not been commented yet") {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'" + studentID.feedBackContent + "</td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
                             } else {
                                 $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td></tr>");
                             }
@@ -34,10 +33,10 @@ function sendData(id, routeName, stage, subject) {
 
 }
 
-function studentAssessmentForm(classID, studentID, name, email) {
+function studentAssessmentForm(classID, studentid, username, email) {
     $("#classID").html(classID);
-    $("#studentID").html(studentID);
-    $("#name").html("<p>Name :" + name + "</p>");
+    $("#studentID").html(studentid);
+    $("#name").html("<p>Name :" + username + "</p>");
     $("#email").html("<p>Email :" + email + "</p>");
     $(".studentAssessment").show();
 }
@@ -116,26 +115,26 @@ function closeStudentList() {
 }
 
 
-function addStudent() {
-    var classIDAdd = $('.classIDadd').val()
+function addStudent(classID, routeName, stage, subject) {
+    var checkClassID = classID
     $.ajax({
         url: '/teacher/addStudentToClass',
         method: 'get',
         dataType: 'json',
         data: {
-            routeName: $('#rountNameadd').val(),
-            stage: $('#stageadd').val(),
+            routeName: routeName,
+            stage: stage,
         },
         success: function(response) {
             if (response.msg == 'success') {
                 $('.taskrow111').html('');
                 $('#studentTable').show();
                 $.each(response.data, function(index, data) {
-                    if (data.classID.includes(classIDAdd) == true) {} else if (data.classID.includes(classIDAdd) == false) {
+                    if (data.classID.includes(checkClassID) == true) {} else if (data.classID.includes(checkClassID) == false) {
                         $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
                     }
                 });
-                $(".taskrow111").append("<button onclick= 'doAddToClass()'>Add to Class</button>");
+                $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "')>Add to Class</button>");
 
             }
         },
@@ -145,21 +144,36 @@ function addStudent() {
     })
 }
 
-function doAddToClass() {
-    var studentlist = $('.hobby').val()
-    var classID = $('.classIDadd').val()
-    alert(classID)
+function doAddToClass(classID) {
+    var studentlist = [];
+    $('.hobby').each(function() {
+        if ($(this).is(":checked")) {
+            studentlist.push({ 'ID': $(this).attr('value') });
+        }
+    });
+
+    var studentlistcl = [];
+    $('.hobby').each(function() {
+        if ($(this).is(":checked")) {
+            studentlistcl.push($(this).attr('value'));
+        }
+    });
+
     $.ajax({
         url: '/teacher/doaddStudentToClass',
         method: 'post',
         dataType: 'json',
         data: {
+            studentlistcl: studentlistcl,
             studentlist: studentlist,
             classID: classID
         },
         success: function(response) {
             if (response.msg == 'success') {
-
+                alert('add success ');
+            }
+            if (response.msg == 'error') {
+                alert('add error ');
             }
         },
         error: function(response) {

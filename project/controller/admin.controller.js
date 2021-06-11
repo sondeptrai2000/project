@@ -220,7 +220,6 @@ class adminController {
             } else {
                 studentID = getStudentID
             }
-            console.log(studentID.length)
             ClassModel.create({
                 className: req.body.className,
                 subject: req.body.subject,

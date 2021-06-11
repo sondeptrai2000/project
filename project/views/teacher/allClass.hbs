@@ -45,7 +45,7 @@
             <td>
                 {{endDate }}
             </td>
-            <td><button id="btn1" onclick="sendData('{{id}}','{{routeName}}','{{stage}}','{{subject}}')">List of student</button></td>
+            <td><button id="btn1" onclick="sendData('{{_id}}','{{routeName}}','{{stage}}','{{subject}}')">List of student</button></td>
         </tr>
         {{/each}}
     </table>
@@ -54,7 +54,26 @@
         </table>
     </div>
 
-    <div class="studentAssessment" style="display:none">
+    
+
+    <table id="studentTable" border='solid' style="display: none;">
+        <thead>
+            <tr>
+                <th><input id="myInputxxxx" type="text" placeholder="Search.."></th>
+            </tr>
+            <tr>
+                <th>avatar</th>
+                <th>username</th>
+                <th>routeName</th>
+                <th>stage</th>
+                <th>Chose</th>
+                <th>More information</th>
+            </tr>
+        </thead>
+        <tbody class='taskrow111'></tbody>
+    </table>
+
+<div class="studentAssessment" style="display:none">
         <table class='' border='solid'>
             <h2>studentAssessment form</h2>
             <label id='classID'></label><br>
@@ -76,25 +95,6 @@
             <p onclick="canclestudentAssessment()">cancle</p>
         </table>
     </div>
-
-    <table id="studentTable" border='solid' style="display: none;">
-        <thead>
-            <tr>
-                <th><input id="myInputxxxx" type="text" placeholder="Search.."></th>
-            </tr>
-            <tr>
-                <th>avatar</th>
-                <th>username</th>
-                <th>routeName</th>
-                <th>stage</th>
-                <th>Chose</th>
-                <th>More information</th>
-            </tr>
-        </thead>
-        <tbody class='taskrow111'></tbody>
-    </table>
-
-
     
     <div class="studentAssessmentUpdate" style="display:none">
         <table border='solid'>

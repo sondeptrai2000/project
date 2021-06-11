@@ -21,12 +21,10 @@ class studentController {
     }
 
     getTeacherProfile(req, res) {
-        console.log(req.query.abc)
         AccountModel.find({ _id: req.query.abc }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                console.log(data)
                 res.json({ msg: 'success', data: data });
             }
         })
