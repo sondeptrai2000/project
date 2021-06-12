@@ -11,10 +11,13 @@ class teacherController {
     teacherProfile(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.findOne({ _id: decodeAccount })
-            .then(data => {
-                res.render('teacher/teacherProfile', { data })
-            })
+        AccountModel.findOne({ _id: decodeAccount }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
     }
 
     allClass(req, res) {
@@ -44,8 +47,6 @@ class teacherController {
     }
 
     addStudentToClass(req, res) {
-        console.log(req.query.routeName)
-        console.log(req.query.stage)
         AccountModel.find({ role: 'student', routeName: req.query.routeName, stage: req.query.stage }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
@@ -56,9 +57,6 @@ class teacherController {
     }
 
     doaddStudentToClass(req, res) {
-        console.log(req.body.studentlist)
-        console.log(req.body.studentlistcl)
-        console.log(req.body.classID)
         var classID = req.body.classID
         let studentID = req.body.studentlist
         AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID } }, function(err, data) {

@@ -15,7 +15,7 @@ class studentController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.render("student/studentProfile", { data: data });
+                res.json({ msg: 'success', data: data });
             }
         })
     }

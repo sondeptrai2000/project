@@ -1,15 +1,95 @@
 <!DOCTYPE html>
 <html>
-<head>
-<style>
 
-</style>
+<head>
+    <script src="/jquery/jquery.js"></script>
 </head>
+
 <body>
     <p><a href='/account/homeStudent'>Trang chủ Student</a></p>
     <p><a href='/student/allClass'>Môn học</a></p>
     <p><a href='/student/viewschedule'>Lịch học</a></p>
-    <p><a href='/student/studentProfile'>thông tin học sinh</a></p>
+    <p><a onclick='studentProfile()'>Student Profile</a></p>
 </body>
+<div class="content" style="text-align: center; display:none">
+    <h1>Student profile</h1>
+    <table border="solid">
+        <tr>
+            <th onclick="closeProfile()">Close</th>
+        </tr>
+        <tr>
+            <th>Avatar</th>
+            <td id='avatarProfile'></td>
+        </tr>
+        <tr>
+            <th>Username</th>
+            <td id='usernameProfile'></td>
+
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td id='emailProfile'></td>
+
+        </tr>
+        <tr>
+            <th>Route </th>
+            <td id='routeProfile'></td>
+        </tr>
+        <tr>
+            <th>Stage</th>
+            <td id='stageProfile'></td>
+        </tr>
+        <tr>
+            <th>classID</th>
+            <td id='classIDProfile'></td>
+        </tr>
+        <tr>
+            <th>Phone</th>
+            <td id='phoneProfile'></td>
+        </tr>
+        <tr>
+            <th>Birthday</th>
+            <td id='birthdayProfile'></td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td id='addressProfile'></td>
+        </tr>
+        <tr>
+            <th><button>cập nhật thông tin cá nhân</button></th>
+        </tr>
+    </table>
+</div>
+</body>
+<script>
+    function studentProfile() {
+        $.ajax({
+            url: '/teacher/teacherProfile',
+            method: 'get',
+            dataType: 'json',
+            data: {},
+            success: function (response) {
+                if (response.msg == 'success') {
+                    $(".content").show();
+                    $("#avatarProfile").html("<img style='max-width:150px;max-height:200px' src='data:image/jpeg;base64,"+response.data.avatar+"'>");
+                    $("#usernameProfile").html(response.data.username);
+                    $("#emailProfile").html(response.data.email);
+                    $("#routeProfile").html(response.data.routeName);
+                    $("#stageProfile").html(response.data.stage);
+                    $("#classIDProfile").html(response.data.classID);
+                    $("#phoneProfile").html(response.data.phone);
+                    $("#birthdayProfile").html(response.data.birthday);
+                    $("#addressProfile").html(response.data.address);
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+    function closeProfile() {
+        $(".content").hide();
+    }
+</script>
 
 </html>
