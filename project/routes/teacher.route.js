@@ -18,6 +18,7 @@ teacherRouter.get('/viewClass', teacherController.viewClass)
 teacherRouter.get('/takeAttended', teacherController.takeAttended)
 teacherRouter.get('/addStudentToClass', teacherController.addStudentToClass)
 teacherRouter.post('/doaddStudentToClass', teacherController.doaddStudentToClass)
+teacherRouter.post('/doremoveStudentToClass', teacherController.doremoveStudentToClass)
 teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 
 //liên quan đến hoạt động ngoại khóa

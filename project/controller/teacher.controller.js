@@ -80,6 +80,30 @@ class teacherController {
         })
     }
 
+    doremoveStudentToClass(req, res) {
+        var classID = req.body.classID
+        console.log(studentID)
+        AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID } }, function(err, data) {
+            if (err) {
+                console.log("lỗi trong quá trình xóa lớp trong thông tin học sinh")
+            } else {
+                ClassModel.updateMany({ _id: req.body.classID }, {
+                    $pull: {
+                        studentID: {
+                            ID: { $in: req.body.studentlistcl }
+                        }
+                    }
+                }, function(err, teacher) {
+                    if (err) {
+                        res.json({ msg: 'error' });
+                    } else {
+                        res.json({ msg: 'success' });
+                    }
+                })
+            }
+        })
+    }
+
     viewClass(req, res) {
         res.json('Trang thông tin lớp học')
     }
