@@ -1,11 +1,11 @@
 var click = 0;
 
-function sendData(id, routeName, stage, subject) {
+function sendData(id, routeName, stage, subject, teacherID, teacherName) {
     click = click + 1;
     if (click == 1) {
         $(".inner").show();
         var _id = id
-        const studentList = "<th>avatar</th><th>username</th><th>stage</th><th>Aim</th><th>email</th><th>grade</th><th>Select</th><th>feedBackContent</th><th onclick='closeStudentList()'>X</th>"
+        const studentList = "<th>avatar</th><th>username</th><th>stage</th><th>Aim</th><th>email</th><th>grade</th><th>feedBackContent</th><th>Select</th><th>Chat</th><th>đánh giá</th><th onclick='closeStudentList()'>X</th>"
         $(".taskrow").html("<button onclick=addStudent('" + id + "','" + routeName + "','" + stage + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>" + studentList)
         $.ajax({
             url: '/teacher/allClassStudent',
@@ -17,9 +17,9 @@ function sendData(id, routeName, stage, subject) {
                     $.each(response.data, function(index, data) {
                         $.each(data.studentID, function(index, studentID) {
                             if (studentID.grade === "Has not been commented yet") {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td><button onclick =chat('" + studentID.ID._id + "','" + studentID.ID.username + "','" + teacherID + "','" + teacherName + "')> Chat</button></td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td></tr>");
                             } else {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td></tr>");
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td><button onclick =chat('" + studentID.ID._id + "','" + studentID.ID.username + "','" + teacherID + "','" + teacherName + "')> Chat</button></td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td></tr>");
                             }
                         });
                     });
@@ -204,6 +204,37 @@ function removeStudent(classID) {
             }
             if (response.msg == 'error') {
                 alert('remove error ');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+function chat(studentID, studentName, teacherID, teacherName) {
+    $.ajax({
+        url: '/messenger/makeConnection',
+        method: 'get',
+        dataType: 'json',
+        data: {
+            studentID: studentID,
+            studentName: studentName,
+            teacherID: teacherID,
+            teacherName: teacherName
+        },
+        success: function(response) {
+            if (response.msg == 'error') {
+                alert('có lỗi trogn khi check cuộc trò chuyện');
+            }
+            if (response.msg == 'có lỗi trogn khi tạo cuộc trò chuyện') {
+                alert('có lỗi trogn khi tạo cuộc trò chuyện');
+            }
+            if (response.msg == 'tạo cuộc trò chuyện thành công') {
+                alert('tạo cuộc trò chuyện thành công');
+            }
+            if (response.msg == 'Bạn đã có kết nối với người này') {
+                alert('Bạn đã có kết nối với người này');
             }
         },
         error: function(response) {

@@ -8,8 +8,6 @@
 <body>
     <h2>All class level</h2>
     <p><a href='/admin/createClass'>Create class</a></p>
-<form action="/teacher/doremoveStudentToClass" method='post'>
-<button >sbutmit</button></form>
     <table border="solid">
         <th>Class name</th>
         <th>routeName</th>
@@ -46,7 +44,7 @@
             <td>
                 {{endDate }}
             </td>
-            <td><button id="btn1" onclick="sendData('{{_id}}','{{routeName}}','{{stage}}','{{subject}}')">List of student</button></td>
+            <td><button id="btn1" onclick="sendData('{{_id}}','{{routeName}}','{{stage}}','{{subject}}','{{teacherID._id }}','{{teacherID.username }}')">List of student</button></td>
         </tr>
         {{/each}}
     </table>

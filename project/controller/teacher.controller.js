@@ -29,11 +29,7 @@ class teacherController {
     }
 
 
-    abc(req, res) {
-        ClassModel.find({ _id: "60c1c61488743a330c150bc2" }).populate('studentID.ID').exec((err, classInfor) => {
-            res.render('teacher/abc', { classInfor })
-        })
-    }
+
 
     allClassStudent(req, res) {
         var _id = req.query.abc
@@ -82,7 +78,6 @@ class teacherController {
 
     doremoveStudentToClass(req, res) {
         var classID = req.body.classID
-        console.log(studentID)
         AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID } }, function(err, data) {
             if (err) {
                 console.log("lỗi trong quá trình xóa lớp trong thông tin học sinh")

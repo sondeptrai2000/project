@@ -42,6 +42,8 @@ var teacher = require('./routes/teacher.route')
 app.use('/teacher', teacher);
 var student = require('./routes/student.route')
 app.use('/student', student);
+var messenger = require('./routes/mess.route')
+app.use('/messenger', messenger);
 
 
 //tiến hành cài đặt cho chat box

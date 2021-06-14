@@ -10,12 +10,16 @@ mongoose.connect(url, {
 mongoose.set('useCreateIndex', true);
 
 
-var chatSchema= new mongoose.Schema({
-    userSend: String,
-    userReceive: String,
-    message:[{type: String}]
+var chatSchema = new mongoose.Schema({
+    person1: String,
+    person2: String,
+    message: [{
+        ownermessenger: String,
+        messContent: String,
+        timeSend: Date,
+    }]
 })
 
-var chatModel = mongoose.model('chat',chatSchema);
+var chatModel = mongoose.model('chat', chatSchema);
 
 module.exports = chatModel
