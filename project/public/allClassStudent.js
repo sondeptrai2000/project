@@ -14,7 +14,7 @@ function viewTeacherProfile(id) {
             success: function(response) {
                 if (response.msg == 'success') {
                     $.each(response.data, function(index, data) {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "<td><form action='/messenger/makeConnection' method='get'><input type='hidden' name='studentID' value='" + data._id + "'><input type='hidden' name='studentName' value='" + data.username + "'><button>Chat</button></form></td></td></tr>");
                     });
                 }
             },
