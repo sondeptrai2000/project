@@ -55,10 +55,7 @@ const io = socketio(server);
 //real-time in chat
 
 io.on("connection", function(socket) {
-
-
     socket.on("tao-room", function(data) {
-        console.log(data.sender)
         var roomName = "á"
         if (data.senderRole == 'teacher') {
             roomName = data.sender + "" + data.receiver
@@ -67,7 +64,6 @@ io.on("connection", function(socket) {
         if (data.senderRole == 'student') {
             roomName = data.receiver + "" + data.sender
             socket.Phong = roomName
-
         }
         socket.join(roomName);
     })
@@ -78,9 +74,6 @@ io.on("connection", function(socket) {
         } else if (data.senderRole === "student" || data.senderRole === "guardian") {
             condition = { person1: data.receiver, person2: data.sender }
         }
-        console.log(condition.person1)
-        console.log(condition.person2)
-
         chatModel.findOneAndUpdate(condition, {
             $push: {
                 message: {
@@ -95,7 +88,6 @@ io.on("connection", function(socket) {
         })
         io.sockets.in(socket.Phong).emit("server-chat", data)
     })
-
 });
 
 
