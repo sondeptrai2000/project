@@ -7,21 +7,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <script src="/jquery/jquery.js"></script>
 
-    <title>Socket.io Example</title>
+    <title>Chat</title>
 </head>
 
 <body>
-    <h1>Our Socket.io Chat Application</h1>
-    <p id="taoroom"> Tạo room</p>
     <div>
         <h2>Conversation between {{formData.sender}} and {{formData.studentName}}</h2>
-        {{#each data}}
-        {{#each message}}
+        <div id="scroll_box" style="height: 120px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+            {{#each data}}
+            {{#each message}}
 
-        <ul>{{ownermessenger}}: {{messContent}}</ul>
-        {{/each}}
-        {{/each}}
-        <ul id="lol"></ul>
+            <ul>{{ownermessenger}}: {{messContent}}</ul>
+            {{/each}}
+            {{/each}}
+            <div id="lol"></div>
+        </div>
+
     </div>
     <input id="receiver" type="hidden" value="{{formData.studentName}}" />
     <input id="name" type="hidden" value="{{formData.sender}}" />
@@ -41,13 +42,19 @@
 
         // establish socket.io connection
         const socket = io();
-        $('#taoroom').click(function () {
+
+        $(document).ready(function () {
+            createRoom();
+            $('#scroll_box').scrollTop($(document).height());
+
+        });
+        function createRoom() {
             socket.emit("tao-room", {
                 sender: input.value,
                 senderRole: input3.value,
                 receiver: input4.value,
             });
-        })
+        }
 
         $("#btnChat").click(function () {
             socket.emit("user-chat", {
@@ -64,11 +71,12 @@
         // add message to our page
         function addMessageToHTML(message) {
             // create a new li element
-            const li = document.createElement("li");
+            const ul = document.createElement("ul");
             // add message to the elements text
-            li.innerText = message.sender + ": " + message.mess;
+            ul.innerText = message.sender + ": " + message.mess;
             // add to list of messages
-            messageList.append(li);
+            messageList.append(ul);
+            $('#scroll_box').scrollTop($(document).height());
         }
     </script>
 </body>
