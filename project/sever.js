@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser')
 var path = require('path');
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
+const chatModel = require('./models/messenger');
 
 
 app.set('views', './views');
@@ -54,9 +55,47 @@ const io = socketio(server);
 //real-time in chat
 
 io.on("connection", function(socket) {
-    socket.on('message', function(msg) {
-        io.emit("message", msg);
-    });
+
+
+    socket.on("tao-room", function(data) {
+        console.log(data.sender)
+        var roomName = "á"
+        if (data.senderRole == 'teacher') {
+            roomName = data.sender + "" + data.receiver
+            socket.Phong = roomName
+        }
+        if (data.senderRole == 'student') {
+            roomName = data.receiver + "" + data.sender
+            socket.Phong = roomName
+
+        }
+        socket.join(roomName);
+    })
+
+    socket.on("user-chat", function(data) {
+        if (data.senderRole === "teacher") {
+            condition = { person1: data.sender, person2: data.receiver }
+        } else if (data.senderRole === "student" || data.senderRole === "guardian") {
+            condition = { person1: data.receiver, person2: data.sender }
+        }
+        console.log(condition.person1)
+        console.log(condition.person2)
+
+        chatModel.findOneAndUpdate(condition, {
+            $push: {
+                message: {
+                    ownermessenger: data.sender,
+                    messContent: data.mess,
+                }
+            }
+        }, function(err, data) {
+            if (err) {
+                console.log("lỗi khi thêm tin nhắn vào đb")
+            }
+        })
+        io.sockets.in(socket.Phong).emit("server-chat", data)
+    })
+
 });
 
 

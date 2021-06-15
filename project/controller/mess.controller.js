@@ -12,13 +12,10 @@ class messtController {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
         AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
-            console.log("StudentID: " + req.query.studentID + " Name: " + req.query.studentName)
-            console.log("TeacherID: " + sender._id + " Name: " + sender.username)
             var formData = {
-                studentID: req.query.studentID,
                 studentName: req.query.studentName,
                 sender: sender.username,
-                senderID: sender._id
+                senderRole: sender.role
             }
             if (sender.role === 'teacher') { // giáo viên chủ động nhắn tin
                 var condition = { person1: sender.username, person2: req.query.studentName }
@@ -33,11 +30,11 @@ class messtController {
                         if (err) {
                             res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                         } else {
-                            res.json({ msg: 'tạo cuộc trò chuyện thành công', data: data });
+                            res.json({ msg: 'tạo cuộc trò chuyện thành công' });
                         }
                     });
                 } else {
-                    res.render("chat", { formData })
+                    res.render("chat", { formData, data })
 
                 }
             })

@@ -5,58 +5,71 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="/jquery/jquery.js"></script>
+
     <title>Socket.io Example</title>
 </head>
 
 <body>
     <h1>Our Socket.io Chat Application</h1>
+    <p id="taoroom"> Tạo room</p>
     <div>
         <h2>Conversation between {{formData.sender}} and {{formData.studentName}}</h2>
-        <ul></ul>
+        {{#each data}}
+        {{#each message}}
+
+        <ul>{{ownermessenger}}: {{messContent}}</ul>
+        {{/each}}
+        {{/each}}
+        <ul id="lol"></ul>
     </div>
-    <form action="">
-        <input id="name" type="hidden" value="{{formData.sender}}"/>
-        <input id="mess" type="text" />
-        <button>Send</button>
-    </form>
+    <input id="receiver" type="hidden" value="{{formData.studentName}}" />
+    <input id="name" type="hidden" value="{{formData.sender}}" />
+    <input id="senderRole" type="hidden" value="{{formData.senderRole}}" />
+    <input id="mess" type="text" />
+    <button id="btnChat">Send</button>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+
         // select relevant elements
         const form = document.querySelector("form");
+        const input3 = document.querySelector("#senderRole");
+        const input4 = document.querySelector("#receiver");
         const input = document.querySelector("#name");
         const input1 = document.querySelector("#mess");
-        messageList = document.querySelector("ul");
+        messageList = document.querySelector("#lol");
 
         // establish socket.io connection
         const socket = io();
-
-        // handle sending message to server & input reset
-        function sendMessage(e) {
-            // prevent form submission refreshing page
-            e.preventDefault();
-            // send input value to server as type 'message'
-            socket.emit("message", {
-                user: input.value,
-                mess: input1.value
+        $('#taoroom').click(function () {
+            socket.emit("tao-room", {
+                sender: input.value,
+                senderRole: input3.value,
+                receiver: input4.value,
             });
-            // reset input value
-            input1.value = "";
-        }
+        })
 
-        // add listener to form submission
-        form.addEventListener("submit", sendMessage);
+        $("#btnChat").click(function () {
+            socket.emit("user-chat", {
+                sender: input.value,
+                senderRole: input3.value,
+                mess: input1.value,
+                receiver: input4.value,
+            })
+            input1.value = "";
+        })
+
+        socket.on("server-chat", addMessageToHTML)
 
         // add message to our page
         function addMessageToHTML(message) {
             // create a new li element
             const li = document.createElement("li");
             // add message to the elements text
-            li.innerText = message.user + ": " + message.mess;
+            li.innerText = message.sender + ": " + message.mess;
             // add to list of messages
             messageList.append(li);
         }
-        // watch for socket to emit a 'message'
-        socket.on("message", addMessageToHTML);
     </script>
 </body>
 
