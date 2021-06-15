@@ -16,7 +16,6 @@ var chatSchema = new mongoose.Schema({
     message: [{
         ownermessenger: String,
         messContent: String,
-        timeSend: Date,
     }]
 })
 

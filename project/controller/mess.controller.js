@@ -18,9 +18,23 @@ class messtController {
                 senderRole: sender.role
             }
             if (sender.role === 'teacher') { // giáo viên chủ động nhắn tin
-                var condition = { person1: sender.username, person2: req.body.studentName }
+                var condition = {
+                    person1: sender.username,
+                    person2: req.body.studentName,
+                    message: {
+                        ownermessenger: "Hệ thống",
+                        messContent: "Đã kết nối! Ấn vào để chat",
+                    }
+                }
             } else if (sender.role === 'student' || sender.role === 'guardian') {
-                var condition = { person1: req.body.studentName, person2: sender.username }
+                var condition = {
+                    person1: req.body.studentName,
+                    person2: sender.username,
+                    message: {
+                        ownermessenger: "Hệ thống",
+                        messContent: "Đã kết nối! Ấn vào để chat",
+                    }
+                }
             }
             chatModel.find(condition, function(err, data) {
                 if (err) {
@@ -44,6 +58,7 @@ class messtController {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
         AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
+            var sender = sender.username
             var condition
             if (sender.role == 'teacher') {
                 condition = { person1: sender.username }
@@ -51,7 +66,7 @@ class messtController {
                 condition = { person2: sender.username }
             }
             chatModel.find(condition, function(err, data) {
-                res.json(data)
+                res.render('message/chatBoxHistory.ejs', { data, sender })
             })
         })
     }

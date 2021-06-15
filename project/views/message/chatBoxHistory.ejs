@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="/jquery/jquery.js"></script>
+
+    <title>Chat</title>
+</head>
+
+<body>
+    <div>
+        <div id="scroll_box" style="height: 300px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+            <% data.forEach(function(data) { %>
+                <%if (data.person1 !== sender) { %>
+                    <form action="/messenger/makeConnection" method="post">
+                        <ul>
+                            <%= data.person1 %>
+                                <input type='text' name="studentName" value="<%= data.person1 %>" readonly>
+                                <input type='text' value="<%= data.message[data.message.length - 1].messContent %>" readonly>
+                                <button> submit</button>
+                        </ul>
+                    </form>
+                    <% } %>
+                        <%if (data.person2 !== sender) { %>
+                            <form action="/messenger/makeConnection" method="post">
+                                <ul>
+                                    <%= data.person2 %>
+                                        <input type='text' name="studentName" value="<%= data.person2 %>" readonly>
+                                        <input type='text' value="<%= data.message[data.message.length - 1].messContent %>" readonly>
+                                        <button> submit</button>
+                                </ul>
+                            </form>
+                            <% } %>
+                                <% }); %>
+        </div>
+
+    </div>
+    <input id="receiver" type="hidden" value="{{formData.studentName}}" />
+    <input id="name" type="hidden" value="{{formData.sender}}" />
+    <input id="senderRole" type="hidden" value="{{formData.senderRole}}" />
+    <input id="mess" type="text" />
+    <button id="btnChat">Send</button>
+</body>
+
+</html>
