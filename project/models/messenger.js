@@ -8,6 +8,7 @@ mongoose.connect(url, {
     useUnifiedTopology: true,
 });
 mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 
 
 var chatSchema = new mongoose.Schema({

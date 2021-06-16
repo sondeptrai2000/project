@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="/jquery/jquery.js"></script>
+
+    <title>Chat</title>
+</head>
+
+<body>
+    <div id="chatHistory" style="height: 300px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+
+        <input type='hidden' id='allMess' value="<%= data1 %>" readonly>
+
+        <% data1.forEach(function(data1) { %>
+            <%if (data1.person1 !== formData.sender) { %>
+                <ul>
+                    Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
+                    <input type='text' id='<%=data1._id %>' value="<%= data1.message[data1.message.length - 1].ownermessenger %>: <%= data1.message[data1.message.length - 1].messContent %>" readonly>
+                    <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
+                </ul>
+                <% } %>
+                    <%if (data1.person2 !== formData.sender) { %>
+                        <ul>
+                            Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
+                            <input type='text' id='<%=data1._id %>' value="<%= data1.message[data1.message.length - 1].ownermessenger %>: <%= data1.message[data1.message.length - 1].messContent %>" readonly>
+                            <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
+                        </ul>
+                        <% } %>
+                            <% }); %>
+    </div>
+    <div>
+        <h2 id='conversation'>Conversation between
+            <%=formData.sender %> and
+                <%=formData.studentName %>
+        </h2>
+        <div id="scroll_box" style="height: 120px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+            <% data.forEach(function(data) { %>
+                <% data.message.forEach(function(message) { %>
+                    <ul>
+                        <%=message.ownermessenger %>:
+                            <%=message.messContent %>
+                    </ul>
+                    <% }); %>
+                        <% }); %>
+                            <div id="lol"></div>
+        </div>
+
+    </div>
+    <input id="receiver" type="hidden" value="<%=formData.studentName %>" />
+    <input id="name" type="hidden" value="<%=formData.sender %>" />
+    <% data.forEach(function(data) { %>
+        <input id="_idRoom" type="hidden" value="<%=data._id %>" />
+        <% }); %>
+            <input id="mess" type="text" />
+            <button id="btnChat">Send</button>
+
+
+
+            <script src="/socket.io/socket.io.js"></script>
+            <script>
+                // select relevant elements
+                const form = document.querySelector("form");
+                const input3 = document.querySelector("#_idRoom");
+                const input4 = document.querySelector("#receiver");
+                const input = document.querySelector("#name");
+                const input1 = document.querySelector("#mess");
+                messageList = document.querySelector("#lol");
+
+                // establish socket.io connection
+                const socket = io();
+
+                $(document).ready(function() {
+                    createRoom();
+                    $('#scroll_box').scrollTop($(document).height());
+
+                });
+
+                function chatBox(receiver, sender, _idRoom) {
+                    $('#receiver').val(receiver)
+                    $('#name').val(sender)
+                    $('#_idRoom').val(_idRoom)
+                    $('#conversation').html("Conversation between" + sender + " and " + receiver)
+                    $('#scroll_box').html("")
+                    var allMess = $('#allMess').val()
+                    $.each(allMess, function(index, allMess) {
+                        if (allMess._id === _idRoom) {
+                            $.each(allMess.message, function(index, message) {
+                                $('#scroll_box').append("<ul>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            });
+                        }
+                    });
+                    socket.emit("tao-room", {
+                        sender: sender,
+                        _idRoom: _idRoom,
+                        receiver: receiver,
+                    });
+                }
+
+                function createRoom() {
+                    socket.emit("tao-room", {
+                        sender: input.value,
+                        _idRoom: input3.value,
+                        receiver: input4.value,
+                    });
+                }
+
+                $("#btnChat").click(function() {
+                    socket.emit("user-chat", {
+                        sender: input.value,
+                        mess: input1.value,
+                        receiver: input4.value,
+                        _idRoom: input3.value,
+                    })
+                    input1.value = "";
+                })
+
+                socket.on("server-chat", addMessageToHTML)
+
+                // add message to our page
+                function addMessageToHTML(message) {
+                    // create a new li element
+                    const ul = document.createElement("ul");
+                    // add message to the elements text
+                    ul.innerText = message.sender + ": " + message.mess;
+                    // add to list of messages
+                    messageList.append(ul);
+                    var _idRoom = '#' + message._idRoom
+                    $('#_idRoom').val(message.sender + ": " + message.mess)
+                    $('#scroll_box').scrollTop($(document).height());
+                }
+            </script>
+</body>
+
+</html>

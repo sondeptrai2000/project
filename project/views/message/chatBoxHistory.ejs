@@ -14,35 +14,86 @@
     <div>
         <div id="scroll_box" style="height: 300px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
             <% data.forEach(function(data) { %>
-                <%if (data.person1 !== sender) { %>
-                    <form action="/messenger/makeConnection" method="post">
-                        <ul>
-                            <%= data.person1 %>
-                                <input type='text' name="studentName" value="<%= data.person1 %>" readonly>
-                                <input type='text' value="<%= data.message[data.message.length - 1].messContent %>" readonly>
-                                <button> submit</button>
-                        </ul>
-                    </form>
+                <%if (data.person1 !== formData.sender) { %>
+                    <ul>
+                        Name: <input type='text' name="studentName" value="<%= data.person1 %>" readonly>
+                        <input type='text' value="<%= data.message[data.message.length - 1].ownermessenger %>: <%= data.message[data.message.length - 1].messContent %>" readonly>
+                        <button onclick="chatBox(' <%=data.person1 %>','<%=sender.username %>','<%= sender.role %>')"> Chat</button>
+                    </ul>
                     <% } %>
-                        <%if (data.person2 !== sender) { %>
-                            <form action="/messenger/makeConnection" method="post">
-                                <ul>
-                                    <%= data.person2 %>
-                                        <input type='text' name="studentName" value="<%= data.person2 %>" readonly>
-                                        <input type='text' value="<%= data.message[data.message.length - 1].messContent %>" readonly>
-                                        <button> submit</button>
-                                </ul>
-                            </form>
+                        <%if (data.person2 !== formData.sender) { %>
+                            <ul>
+                                Name: <input type='text' name="studentName" value="<%= data.person2 %>" readonly>
+                                <input type='text' value="<%= data.message[data.message.length - 1].ownermessenger %>: <%= data.message[data.message.length - 1].messContent %>" readonly>
+                                <button onclick="chatBox(' <%=data.person2 %>','<%=sender.username %>','<%= sender.role %>')"> Chat</button>
+                            </ul>
                             <% } %>
                                 <% }); %>
         </div>
-
     </div>
-    <input id="receiver" type="hidden" value="{{formData.studentName}}" />
-    <input id="name" type="hidden" value="{{formData.sender}}" />
-    <input id="senderRole" type="hidden" value="{{formData.senderRole}}" />
+    <div>
+        <h2 id="TenNguoiNhan"></h2>
+        <div id="scroll_box" style="height: 120px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+
+            <ul></ul>
+            <div id="lol"></div>
+        </div>
+        <input id="receiver" type="text" value="" />
+        <input id="name" type="text" value="" />
+        <input id="senderRole" type="text" value="" />
+    </div>
     <input id="mess" type="text" />
     <button id="btnChat">Send</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // select relevant elements
+        const input4 = document.querySelector("#receiver");
+        const input = document.querySelector("#name");
+        const input3 = document.querySelector("#senderRole");
+        const input1 = document.querySelector("#mess");
+        messageList = document.querySelector("#lol");
+        // establish socket.io connection
+        const socket = io();
+
+        $(document).ready(function() {
+            $('#scroll_box').scrollTop($(document).height());
+
+        });
+
+        function chatBox(receiver, sender, senderRole) {
+            $('#receiver').val(receiver)
+            $('#name').val(sender)
+            $('#senderRole').val(senderRole)
+            socket.emit("tao-room", {
+                sender: sender,
+                senderRole: senderRole,
+                receiver: receiver,
+            });
+        }
+
+        $("#btnChat").click(function() {
+            socket.emit("user-chat", {
+                sender: input.value,
+                senderRole: input3.value,
+                mess: input1.value,
+                receiver: input4.value,
+            })
+            input1.value = "";
+        })
+
+        socket.on("server-chat", addMessageToHTML)
+
+        // add message to our page
+        function addMessageToHTML(message) {
+            // create a new li element
+            const ul = document.createElement("ul");
+            // add message to the elements text
+            ul.innerText = message.sender + ": " + message.mess;
+            // add to list of messages
+            messageList.append(ul);
+            $('#scroll_box').scrollTop($(document).height());
+        }
+    </script>
 </body>
 
 </html>

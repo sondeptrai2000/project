@@ -8,7 +8,6 @@ const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
 const chatModel = require('./models/messenger');
 
-
 app.set('views', './views');
 app.set('view engine', 'hbs');
 app.set('view-engine', 'ejs');
@@ -56,25 +55,20 @@ const io = socketio(server);
 
 io.on("connection", function(socket) {
     socket.on("tao-room", function(data) {
-        var roomName = "á"
-        if (data.senderRole == 'teacher') {
-            roomName = data.sender + "" + data.receiver
-            socket.Phong = roomName
-        }
-        if (data.senderRole == 'student') {
-            roomName = data.receiver + "" + data.sender
-            socket.Phong = roomName
-        }
-        socket.join(roomName);
+        socket.Phong = data._idRoom
+        socket.join(data._idRoom);
     })
 
     socket.on("user-chat", function(data) {
-        if (data.senderRole === "teacher") {
-            condition = { person1: data.sender, person2: data.receiver }
-        } else if (data.senderRole === "student" || data.senderRole === "guardian") {
-            condition = { person1: data.receiver, person2: data.sender }
+        var condition = {
+            person1: data.sender,
+            person2: data.receiver,
         }
-        chatModel.findOneAndUpdate(condition, {
+        var condition1 = {
+            person1: data.receiver,
+            person2: data.sender,
+        }
+        chatModel.findOneAndUpdate({ $or: [condition, condition1] }, {
             $push: {
                 message: {
                     ownermessenger: data.sender,
@@ -84,6 +78,8 @@ io.on("connection", function(socket) {
         }, function(err, data) {
             if (err) {
                 console.log("lỗi khi thêm tin nhắn vào đb")
+            } else {
+                console.log("lưu tiin nhắn ok")
             }
         })
         io.sockets.in(socket.Phong).emit("server-chat", data)

@@ -15,60 +15,49 @@ class messtController {
             var formData = {
                 studentName: req.body.studentName,
                 sender: sender.username,
-                senderRole: sender.role
             }
-            if (sender.role === 'teacher') { // giáo viên chủ động nhắn tin
-                var condition = {
-                    person1: sender.username,
-                    person2: req.body.studentName,
-                    message: {
-                        ownermessenger: "Hệ thống",
-                        messContent: "Đã kết nối! Ấn vào để chat",
-                    }
-                }
-            } else if (sender.role === 'student' || sender.role === 'guardian') {
-                var condition = {
-                    person1: req.body.studentName,
-                    person2: sender.username,
-                    message: {
-                        ownermessenger: "Hệ thống",
-                        messContent: "Đã kết nối! Ấn vào để chat",
-                    }
+            var condition = {
+                person1: sender.username,
+                person2: req.body.studentName,
+            }
+
+            var condition1 = {
+                person1: req.body.studentName,
+                person2: sender.username,
+            }
+
+            var createConnection = {
+                person1: sender.username,
+                person2: req.body.studentName,
+                message: {
+                    ownermessenger: "Hệ thống",
+                    messContent: "Đã kết nối! Ấn vào để chat",
                 }
             }
-            chatModel.find(condition, function(err, data) {
+            chatModel.find({ $or: [condition, condition1] }, function(err, data) {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else if (data.length == 0) {
-                    chatModel.create(condition, function(err, data) {
+                    chatModel.create(createConnection, function(err, data) {
                         if (err) {
                             res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                         } else {
-                            res.render("message/chat", { formData, data })
+                            chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, function(err, data1) {
+                                res.render("message/chat.ejs", { formData, data, data1 })
+                            })
                         }
                     });
                 } else {
-                    res.render("message/chat", { formData, data })
+                    chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, function(err, data1) {
+                        res.render("message/chat.ejs", { formData, data, data1 })
+                    })
                 }
             })
         })
     }
 
     chatBoxHistory(req, res) {
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
-            var sender = sender.username
-            var condition
-            if (sender.role == 'teacher') {
-                condition = { person1: sender.username }
-            } else if (sender.role == 'student' || sender.role == 'guardian') {
-                condition = { person2: sender.username }
-            }
-            chatModel.find(condition, function(err, data) {
-                res.render('message/chatBoxHistory.ejs', { data, sender })
-            })
-        })
+
     }
 
 }
