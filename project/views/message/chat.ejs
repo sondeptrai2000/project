@@ -6,152 +6,179 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <script src="/jquery/jquery.js"></script>
-
+    <style>
+        div.container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid gray;
+        }
+        
+        nav {
+            float: left;
+            max-width: 30%;
+            margin: 0;
+            padding: 1em;
+        }
+        
+        article {
+            margin-left: 170px;
+            max-width: 60%;
+            border-left: 1px solid gray;
+            padding: 1em;
+            overflow: hidden;
+        }
+    </style>
     <title>Chat</title>
 </head>
 
 <body>
-    <div id="chatHistory" style="height: 300px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
-        <% data1.forEach(function(data1) { %>
-            <%if (data1.person1 !== formData.sender) { %>
-                <ul>
-                    Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
-                    <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
-                    <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
-                </ul>
-                <% } %>
-                    <%if (data1.person2 !== formData.sender) { %>
+    <div class="container">
+        <nav>
+            <div>
+                <h2> Chat history</h2>
+            </div>
+            <div id="chatHistory" style="height: 350px;width: 100%;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+                <% data1.forEach(function(data1) { %>
+                    <%if (data1.person1 !== formData.sender) { %>
                         <ul>
-                            Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
+                            Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
                             <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
-                            <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
+                            <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
                         </ul>
                         <% } %>
-                            <% }); %>
-    </div>
-    <div>
-        <h2 id='conversation'>Conversation between
-            <%=formData.sender %> and
-                <%=formData.studentName %>
-        </h2>
-        <div id="scroll_box" style="height: 120px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+                            <%if (data1.person2 !== formData.sender) { %>
+                                <ul>
+                                    Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
+                                    <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
+                                    <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
+                                </ul>
+                                <% } %>
+                                    <% }); %>
+            </div>
+        </nav>
+        <article>
+            <div>
+                <h2 id='conversation'>Conversation between
+                    <%=formData.sender %> and
+                        <%=formData.studentName %>
+                </h2>
+                <div id="scroll_box" style="height: 350px;width: 100%;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+                    <div id='messContent'>
+                        <% data.forEach(function(data) { %>
+                            <% data.message.forEach(function(message) { %>
+                                <ul>
+                                    <%=message.ownermessenger %>:
+                                        <%=message.messContent %>
+                                </ul>
+                                <% }); %>
+                                    <% }); %>
+                                        <div id="lol"></div>
+                    </div>
+                </div>
+            </div>
+            <input id="receiver" type="hidden" value="<%=formData.studentName %>" />
+            <input id="name" type="hidden" value="<%=formData.sender %>" />
             <% data.forEach(function(data) { %>
-                <% data.message.forEach(function(message) { %>
-                    <ul>
-                        <%=message.ownermessenger %>:
-                            <%=message.messContent %>
-                    </ul>
-                    <% }); %>
-                        <% }); %>
-                            <div id="lol"></div>
-        </div>
-
+                <input id="_idRoom" type="hidden" value="<%=data._id %>" />
+                <% }); %>
+                    <input id="mess" type="text" />
+                    <button id="btnChat">Send</button>
+        </article>
     </div>
-    <input id="receiver" type="hidden" value="<%=formData.studentName %>" />
-    <input id="name" type="hidden" value="<%=formData.sender %>" />
-    <% data.forEach(function(data) { %>
-        <input id="_idRoom" type="hidden" value="<%=data._id %>" />
-        <% }); %>
-            <input id="mess" type="text" />
-            <button id="btnChat">Send</button>
-
-
-
-            <script src="/socket.io/socket.io.js"></script>
-            <script>
-                // select relevant elements
-                const form = document.querySelector("form");
-                const input3 = document.querySelector("#_idRoom");
-                const input4 = document.querySelector("#receiver");
-                const input = document.querySelector("#name");
-                const input1 = document.querySelector("#mess");
-                messageList = document.querySelector("#lol");
-
-                // establish socket.io connection
-                const socket = io();
-
-                $(document).ready(function() {
-                    createRoom();
-                    $('#scroll_box').scrollTop($(document).height());
-                });
-
-                function chatBox(receiver, sender, _idRoom) {
-                    var Room = '#' + _idRoom
-                    $(Room).css("font-weight", "normal");
-                    $('#receiver').val(receiver)
-                    $('#name').val(sender)
-                    $('#_idRoom').val(_idRoom)
-                    $('#conversation').html("Conversation between" + sender + " and " + receiver)
-                    $('#scroll_box').html("")
-                    $.ajax({
-                        url: '/messenger/getMessenger',
-                        method: 'get',
-                        dataType: 'json',
-                        data: {
-                            sender: sender,
-                            receiver: receiver
-                        },
-                        success: function(response) {
-                            if (response.msg == 'success') {
-                                $.each(response.data, function(index, data) {
-                                    $.each(data.message, function(index, message) {
-                                        $('#scroll_box').append("<ul>" + message.ownermessenger + ": " + message.messContent + "</ul>")
-                                    });
-                                });
-                            }
-                            $('#scroll_box').scrollTop($(document).height());
-                        },
-                        error: function(response) {
-                            alert('server error');
-                        }
-                    });
-                    socket.emit("tao-room", {
-                        sender: sender,
-                        _idRoom: _idRoom,
-                        receiver: receiver,
-                    });
-                }
-
-                function createRoom() {
-                    socket.emit("tao-room", {
-                        sender: input.value,
-                        _idRoom: input3.value,
-                        receiver: input4.value,
-                    });
-                }
-
-                $("#btnChat").click(function() {
-                    socket.emit("user-chat", {
-                        sender: input.value,
-                        mess: input1.value,
-                        receiver: input4.value,
-                        _idRoom: input3.value,
-                    })
-                    input1.value = "";
-                })
-
-                socket.on("server-chat", addMessageToHTML)
-
-                // add message to our page
-                function addMessageToHTML(message) {
-                    // create a new li element
-                    const ul = document.createElement("ul");
-                    // add message to the elements text
-                    ul.innerText = message.sender + ": " + message.mess;
-                    // add to list of messages
-                    messageList.append(ul);
-                    var newMess = '#' + message._idRoom
-                    $(newMess).val(message.sender + ": " + message.mess)
-
-                    if (message._idRoom != input3.value) {
-                        $(newMess).css("font-weight", "bold");
-                    } else if (message.receiver == $('#name').val()) {
-                        $(newMess).css("font-weight", "normal");
-                    }
-
-                    $('#scroll_box').scrollTop($(document).height());
-                }
-            </script>
 </body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    // select relevant elements
+    const _idRoom = document.querySelector("#_idRoom");
+    const receiver = document.querySelector("#receiver");
+    const name = document.querySelector("#name");
+    const mess = document.querySelector("#mess");
+    messageList = document.querySelector("#lol");
+
+    // establish socket.io connection
+    const socket = io();
+
+    $(document).ready(function() {
+        createRoom();
+        $('#scroll_box').scrollTop($('#messContent').height())
+    });
+
+    function chatBox(receiver, sender, _idRoom) {
+        var Room = '#' + _idRoom
+        $(Room).css("font-weight", "normal");
+        $('#receiver').val(receiver)
+        $('#name').val(sender)
+        $('#_idRoom').val(_idRoom)
+        $('#conversation').html("Conversation between" + sender + " and " + receiver)
+        $('#messContent').html("")
+        $.ajax({
+            url: '/messenger/getMessenger',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                sender: sender,
+                receiver: receiver
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    $.each(response.data, function(index, data) {
+                        $.each(data.message, function(index, message) {
+                            $('#messContent').append("<ul>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                        });
+                    });
+                }
+                $('#scroll_box').scrollTop($('#messContent').height())
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        });
+
+        socket.emit("tao-room", {
+            sender: sender,
+            _idRoom: _idRoom,
+            receiver: receiver,
+        });
+    }
+
+    function createRoom() {
+        socket.emit("tao-room", {
+            sender: name.value,
+            _idRoom: _idRoom.value,
+            receiver: receiver.value,
+        });
+    }
+
+    $("#btnChat").click(function() {
+        socket.emit("user-chat", {
+            sender: name.value,
+            mess: mess.value,
+            receiver: receiver.value,
+            _idRoom: _idRoom.value,
+        })
+        mess.value = "";
+    })
+
+    socket.on("server-chat", addMessageToHTML)
+
+    // add message to our page
+    function addMessageToHTML(message) {
+        // create a new li element
+        const ul = document.createElement("ul");
+        // add message to the elements text
+        ul.innerText = message.sender + ": " + message.mess;
+        // add to list of messages
+        messageList.append(ul);
+        var newMess = '#' + message._idRoom
+        $(newMess).val(message.sender + ": " + message.mess)
+
+        if (message._idRoom != _idRoom.value) {
+            $(newMess).css("font-weight", "bold");
+        } else if (message.receiver == $('#name').val()) {
+            $(newMess).css("font-weight", "normal");
+        }
+        $('#scroll_box').scrollTop($('#messContent').height())
+    }
+</script>
 
 </html>
