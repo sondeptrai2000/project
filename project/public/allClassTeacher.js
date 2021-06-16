@@ -8,7 +8,7 @@ function sendData(id, routeName, stage, subject, teacherID, teacherName) {
         const studentList = "<th>avatar</th><th>username</th><th>stage</th><th>Aim</th><th>email</th><th>grade</th><th>feedBackContent</th><th>Select</th><th>Chat</th><th>đánh giá</th><th onclick='closeStudentList()'>X</th>"
         $(".taskrow").html("<button onclick=addStudent('" + id + "','" + routeName + "','" + stage + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>" + studentList)
         $.ajax({
-            url: '/teacher/allClassStudent',
+            url: '/messenger/getMessenger',
             method: 'get',
             dataType: 'json',
             data: { abc: _id },

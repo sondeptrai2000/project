@@ -48,16 +48,36 @@ class messtController {
                         }
                     });
                 } else {
-                    chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, function(err, data1) {
-                        res.render("message/chat.ejs", { formData, data, data1 })
-                    })
+                    chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, {
+                            // lấy tin nhắn cuối cùng trong mảng message
+                            message: { $slice: -1 }
+                        },
+                        function(err, data1) {
+                            res.render("message/chat.ejs", { formData, data, data1 })
+                        })
                 }
             })
         })
     }
 
-    chatBoxHistory(req, res) {
+    getMessenger(req, res) {
+        var condition = {
+            person1: req.query.receiver,
+            person2: req.query.sender,
+        }
 
+        var condition1 = {
+            person1: req.query.sender,
+            person2: req.query.receiver,
+        }
+        chatModel.find({ $or: [condition, condition1] },
+            function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data: data });
+                }
+            })
     }
 
 }
