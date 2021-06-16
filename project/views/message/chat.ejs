@@ -73,12 +73,11 @@
                 $(document).ready(function() {
                     createRoom();
                     $('#scroll_box').scrollTop($(document).height());
-
                 });
-                var read = "1";
 
                 function chatBox(receiver, sender, _idRoom) {
-                    read = "0";
+                    var Room = '#' + _idRoom
+                    $(Room).css("font-weight", "normal");
                     $('#receiver').val(receiver)
                     $('#name').val(sender)
                     $('#_idRoom').val(_idRoom)
@@ -97,10 +96,10 @@
                                 $.each(response.data, function(index, data) {
                                     $.each(data.message, function(index, message) {
                                         $('#scroll_box').append("<ul>" + message.ownermessenger + ": " + message.messContent + "</ul>")
-                                        $('#scroll_box').scrollTop($(document).height());
                                     });
                                 });
                             }
+                            $('#scroll_box').scrollTop($(document).height());
                         },
                         error: function(response) {
                             alert('server error');
@@ -114,7 +113,6 @@
                 }
 
                 function createRoom() {
-                    read = "0";
                     socket.emit("tao-room", {
                         sender: input.value,
                         _idRoom: input3.value,
@@ -123,13 +121,11 @@
                 }
 
                 $("#btnChat").click(function() {
-                    read = "0";
                     socket.emit("user-chat", {
                         sender: input.value,
                         mess: input1.value,
                         receiver: input4.value,
                         _idRoom: input3.value,
-                        otherRead: "1"
                     })
                     input1.value = "";
                 })
@@ -146,16 +142,14 @@
                     messageList.append(ul);
                     var newMess = '#' + message._idRoom
                     $(newMess).val(message.sender + ": " + message.mess)
-                    $('#scroll_box').scrollTop($(document).height());
-                    if (message.otherRead = read) {
-                        $(newMess).css("font-weight", "normal");
-                        console.log(message.otherRead + " =" + read)
-                    } else if (message.otherRead != read) {
+
+                    if (message._idRoom != input3.value) {
                         $(newMess).css("font-weight", "bold");
-                        console.log(message.otherRead + " !=" + read)
-
-
+                    } else if (message.receiver == $('#name').val()) {
+                        $(newMess).css("font-weight", "normal");
                     }
+
+                    $('#scroll_box').scrollTop($(document).height());
                 }
             </script>
 </body>
