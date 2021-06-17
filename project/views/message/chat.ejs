@@ -38,16 +38,17 @@
                 <h2> Chat history</h2>
             </div>
             <div id="chatHistory" style="height: 350px;width: 100%;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
+                <div id='UpdateHistory'></div>
                 <% data1.forEach(function(data1) { %>
                     <%if (data1.person1 !== formData.sender) { %>
-                        <ul>
+                        <ul class='<%=data1._id %>'>
                             Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
                             <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
                             <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
                         </ul>
                         <% } %>
                             <%if (data1.person2 !== formData.sender) { %>
-                                <ul>
+                                <ul class='<%=data1._id %>'>
                                     Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
                                     <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
                                     <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
@@ -93,7 +94,6 @@
     const receiver = document.querySelector("#receiver");
     const name = document.querySelector("#name");
     const mess = document.querySelector("#mess");
-    messageList = document.querySelector("#lol");
 
     // establish socket.io connection
     const socket = io();
@@ -111,6 +111,7 @@
         $('#_idRoom').val(_idRoom)
         $('#conversation').html("Conversation between" + sender + " and " + receiver)
         $('#messContent').html("")
+
         $.ajax({
             url: '/messenger/getMessenger',
             method: 'get',
@@ -127,6 +128,8 @@
                         });
                     });
                 }
+                $('#messContent').append('<div id="lol"></div>')
+
                 $('#scroll_box').scrollTop($('#messContent').height())
             },
             error: function(response) {
@@ -168,16 +171,17 @@
         // add message to the elements text
         ul.innerText = message.sender + ": " + message.mess;
         // add to list of messages
-        messageList.append(ul);
+        $('#lol').append(ul);
         var newMess = '#' + message._idRoom
         $(newMess).val(message.sender + ": " + message.mess)
-
         if (message._idRoom != _idRoom.value) {
             $(newMess).css("font-weight", "bold");
         } else if (message.receiver == $('#name').val()) {
             $(newMess).css("font-weight", "normal");
         }
         $('#scroll_box').scrollTop($('#messContent').height())
+        var newestMess = '.' + message._idRoom
+        $(newestMess).prependTo("#UpdateHistory");
     }
 </script>
 
