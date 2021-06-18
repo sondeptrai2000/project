@@ -63,29 +63,27 @@
             <div>
                 <h2 id='conversation'>Conversation between
                     <%=formData.sender %> and
-                        <%=formData.studentName %>
+                        <%if (data1[0].person1 != formData.sender) { %>
+                            <%=data1[0].person1 %>
+                                <input id="receiver" type="hidden" value="<%=data1[0].person1 %>" />
+
+                                <% } %>
+                                    <%if (data1[0].person2 != formData.sender) { %>
+
+                                        <%=data1[0].person2 %>
+                                            <input id="receiver" type="hidden" value="<%=data1[0].person2 %>" />
+                                            <% } %>
                 </h2>
                 <div id="scroll_box" style="height: 350px;width: 100%;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
                     <div id='messContent'>
-                        <% data.forEach(function(data) { %>
-                            <% data.message.forEach(function(message) { %>
-                                <ul>
-                                    <%=message.ownermessenger %>:
-                                        <%=message.messContent %>
-                                </ul>
-                                <% }); %>
-                                    <% }); %>
-                                        <div id="lol"></div>
+                        <div id="lol"></div>
                     </div>
                 </div>
             </div>
-            <input id="receiver" type="hidden" value="<%=formData.studentName %>" />
             <input id="name" type="hidden" value="<%=formData.sender %>" />
-            <% data.forEach(function(data) { %>
-                <input id="_idRoom" type="hidden" value="<%=data._id %>" />
-                <% }); %>
-                    <input id="mess" type="text" />
-                    <button id="btnChat">Send</button>
+            <input id="_idRoom" type="hidden" value=" <%=data1[0]._id %>" />
+            <input id="mess" type="text" />
+            <button id="btnChat">Send</button>
         </article>
     </div>
 </body>
@@ -102,6 +100,7 @@
 
     $(document).ready(function() {
         connectAllConversation();
+        firstConversation();
         $('#scroll_box').scrollTop($('#messContent').height())
     });
     //tạo room cho tất cả cuọco trò chuyện "online" để nhận thông báo khi người khác gửi tin nhắn
@@ -112,6 +111,33 @@
         });
         socket.emit("tao-room", {
             idConversationList
+        });
+    }
+
+
+    function firstConversation() {
+        $.ajax({
+            url: '/messenger/getMessenger',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                sender: name.value,
+                receiver: receiver.value
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    $.each(response.data, function(index, data) {
+                        $.each(data.message, function(index, message) {
+                            $('#messContent').append("<ul>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                        });
+                    });
+                }
+                $('#messContent').append('<div id="lol"></div>')
+                $('#scroll_box').scrollTop($('#messContent').height())
+            },
+            error: function(response) {
+                alert('server error');
+            }
         });
     }
 

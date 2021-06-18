@@ -55,8 +55,13 @@ const io = socketio(server);
 
 io.on("connection", function(socket) {
     socket.on("tao-room", function(data) {
-        socket.Phong = data._idRoom
-        socket.join(data._idRoom);
+        data = data.idConversationList
+        console.log(data)
+        for (var i = 0; i < data.length; i++) {
+            console.log("tạo room thành công")
+            socket.Phong = data[i]
+            socket.join(data[i]);
+        }
     })
 
     socket.on("user-chat", function(data) {
@@ -74,7 +79,8 @@ io.on("connection", function(socket) {
                     ownermessenger: data.sender,
                     messContent: data.mess,
                 }
-            }
+            },
+            updateTime: new Date
         }, function(err, data) {
             if (err) {
                 console.log("lỗi khi thêm tin nhắn vào đb")

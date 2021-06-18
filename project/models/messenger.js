@@ -17,7 +17,8 @@ var chatSchema = new mongoose.Schema({
     message: [{
         ownermessenger: String,
         messContent: String,
-    }]
+    }],
+    updateTime: { type: Date, default: Date.now }
 })
 
 var chatModel = mongoose.model('chat', chatSchema);

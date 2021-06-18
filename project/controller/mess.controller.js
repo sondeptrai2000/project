@@ -8,6 +8,7 @@ var bcrypt = require('bcrypt');
 const mongodb = require("mongodb");
 
 class messtController {
+    //ấn chat vào người bất kỳ r dẫn đến form chat và lịch sử
     makeConnection(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
@@ -42,24 +43,40 @@ class messtController {
                         if (err) {
                             res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                         } else {
-                            chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, function(err, data1) {
+                            chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }).sort({ updateTime: -1 }).exec(function(err, data1) {
                                 res.render("message/chat.ejs", { formData, data, data1 })
                             })
                         }
                     });
                 } else {
                     chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, {
-                            // lấy tin nhắn cuối cùng trong mảng message
-                            message: { $slice: -1 }
-                        },
-                        function(err, data1) {
-                            res.render("message/chat.ejs", { formData, data, data1 })
-                        })
+                        // lấy tin nhắn cuối cùng trong mảng message
+                        message: { $slice: -1 }
+                    }).sort({ updateTime: -1 }).exec(function(err, data1) {
+                        res.render("message/chat.ejs", { formData, data, data1 })
+                    })
                 }
             })
         })
     }
 
+    //lịch sử chat, hiển thị tin nhắn đầu trong danh sách
+    chatForm(req, res) {
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
+            var formData = {
+                sender: sender.username
+            }
+            chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, {
+                // lấy tin nhắn cuối cùng trong mảng message
+                message: { $slice: -1 }
+            }).sort({ updateTime: -1 }).exec(function(err, data1) {
+                res.render("message/chatForm.ejs", { data1, formData })
+            })
+        });
+
+    }
     getMessenger(req, res) {
         var condition = {
             person1: req.query.receiver,
