@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <script src="/jquery/jquery.js"></script>
+
     <style>
         div.container {
             width: 100%;
@@ -37,26 +38,28 @@
             <div>
                 <h2> Chat history</h2>
             </div>
+            <div>
+                Add chat: <input type='text id=' addChat '>
+            </div>
             <div id="chatHistory" style="height: 350px;width: 100%;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
-                <div id='UpdateHistory'></div>
+                <div id="UpdateHistory"></div>
                 <% data1.forEach(function(data1) { %>
                     <%if (data1.person1 !== formData.sender) { %>
+                        <ul class='<%=data1._id %>'> Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
+                <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
+                <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
+                <input type="text" class='allID' value="<%=data1._id %>"></input>
+                </ul>
+                <% } %>
+                    <%if (data1.person2 !== formData.sender) { %>
                         <ul class='<%=data1._id %>'>
-                            Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
+                            Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
                             <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
-                            <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
+                            <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
                             <input type="text" class='allID' value="<%=data1._id %>"></input>
                         </ul>
                         <% } %>
-                            <%if (data1.person2 !== formData.sender) { %>
-                                <ul class='<%=data1._id %>'>
-                                    Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
-                                    <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
-                                    <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
-                                    <input type="text" class='allID' value="<%=data1._id %>"></input>
-                                </ul>
-                                <% } %>
-                                    <% }); %>
+                            <% }); %>
             </div>
         </nav>
         <article>

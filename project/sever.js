@@ -56,9 +56,7 @@ const io = socketio(server);
 io.on("connection", function(socket) {
     socket.on("tao-room", function(data) {
         data = data.idConversationList
-        console.log(data)
         for (var i = 0; i < data.length; i++) {
-            console.log("tạo room thành công")
             socket.Phong = data[i]
             socket.join(data[i]);
         }

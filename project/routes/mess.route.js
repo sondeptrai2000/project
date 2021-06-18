@@ -5,6 +5,6 @@ const messController = require('../controller/mess.controller');
 messRoute.post('/makeConnection', messController.makeConnection)
 messRoute.get('/getMessenger', messController.getMessenger)
 messRoute.get('/chatForm', messController.chatForm)
-
+messRoute.post('/addChat', messController.addChat)
 
 module.exports = messRoute
