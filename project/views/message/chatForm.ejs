@@ -260,6 +260,11 @@
                     $('#messContent').append('<div id="lol"></div>')
                     $('#scroll_box').scrollTop($('#messContent').height())
                     $("#UpdateHistory").append("<ul class='" + response._idRoom + "'> Name: <input type='text' name='studentName' value='" + response.receiver + "' readonly><input type='text' id='" + response._idRoom + "' value='Hệ thống: Đã kết nối! Ấn vào để chat' readonly><button onclick= chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Chat</button><input type='hidden' class='allID' value='" + response._idRoom + "'></input></ul>")
+                    var idConversationList = [];
+                    idConversationList.push(response._idRoom);
+                    socket.emit("tao-room", {
+                        idConversationList
+                    });
                 }
             },
             error: function(response) {

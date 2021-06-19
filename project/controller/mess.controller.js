@@ -44,7 +44,9 @@ class messtController {
                             res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                         } else {
                             chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }).sort({ updateTime: -1 }).exec(function(err, data1) {
-                                res.render("message/chat.ejs", { formData, data, data1 })
+                                chatModel.find({ $or: [condition, condition1] }, function(err, data) {
+                                    res.render("message/chat.ejs", { formData, data, data1 })
+                                });
                             })
                         }
                     });
