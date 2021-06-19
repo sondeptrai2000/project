@@ -56,6 +56,7 @@ const io = socketio(server);
 io.on("connection", function(socket) {
     socket.on("tao-room", function(data) {
         data = data.idConversationList
+        console.log(data)
         for (var i = 0; i < data.length; i++) {
             socket.Phong = data[i]
             socket.join(data[i]);
@@ -63,6 +64,7 @@ io.on("connection", function(socket) {
     })
 
     socket.on("user-chat", function(data) {
+        console.log(data)
         var condition = {
             person1: data.sender,
             person2: data.receiver,
@@ -86,6 +88,8 @@ io.on("connection", function(socket) {
                 console.log("lưu tiin nhắn ok")
             }
         })
+        socket.Phong = data._idRoom
+        console.log(socket.Phong)
         io.sockets.in(socket.Phong).emit("server-chat", data)
     })
 });

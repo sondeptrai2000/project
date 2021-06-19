@@ -71,13 +71,12 @@
                 </h2>
                 <div id="scroll_box" style="height: 350px;width: 100%;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
                     <div id='messContent'>
-                        <div id="lol"></div>
                     </div>
                 </div>
             </div>
             <input id="receiver" type="text" value="<%=formData.receiver %>" />
             <input id="name" type="text" value="<%=formData.sender %>" />
-            <input id="_idRoom" type="text" value=" <%=data1[0]._id %>" />
+            <input id="_idRoom" type="text" value="<%=data1[0]._id %>" />
             <input id="mess" type="text" />
             <button id="btnChat">Send</button>
         </article>
@@ -189,7 +188,7 @@
         // add message to the elements text
         ul.innerText = message.sender + ": " + message.mess;
         // add to list of messages
-        $('#lol').append(ul);
+        $("#lol").append(ul);
         var newMess = '#' + message._idRoom
         $(newMess).val(message.sender + ": " + message.mess)
             //tin nhắn gửi đến nếu chưa xem thì in đậm, xem r thì in bt
