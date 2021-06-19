@@ -89,6 +89,18 @@ io.on("connection", function(socket) {
         socket.Phong = data._idRoom
         io.sockets.in(socket.Phong).emit("server-chat", data)
     })
+
+    socket.on("typing", function(data) {
+        socket.Phong = data._idRoom
+        var action = 'typing'
+        io.sockets.in(socket.Phong).emit("Typing", data, action)
+    })
+
+    socket.on("stopTyping", function(data) {
+        socket.Phong = data._idRoom
+        var action = 'notTyping'
+        io.sockets.in(socket.Phong).emit("notTyping", data, action)
+    })
 });
 
 

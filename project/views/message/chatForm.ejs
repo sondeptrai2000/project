@@ -78,6 +78,7 @@
             <input id="name" type="text" value="<%=formData.sender %>" />
             <input id="_idRoom" type="text" value="<%=data1[0]._id %>" />
             <input id="mess" type="text" />
+            <div id="action" style="display: none;"></div>
             <button id="btnChat">Send</button>
         </article>
     </div>
@@ -109,6 +110,33 @@
         });
     }
 
+    $('#mess').focusin(function() {
+        socket.emit('typing', {
+            sender: name.value,
+            receiver: receiver.value,
+            _idRoom: _idRoom.value
+        })
+    })
+    $('#mess').focusout(function() {
+        socket.emit('stopTyping', {
+            sender: name.value,
+            receiver: receiver.value,
+            _idRoom: _idRoom.value
+        })
+    })
+    socket.on("Typing", TypingOrNot)
+    socket.on("notTyping", TypingOrNot)
+
+    function TypingOrNot(data, action) {
+        if (acction === 'typing') {
+            $("#action").show()
+            $("#action").html(data.sender + 'is typing')
+        }
+        if (acction === 'notTyping') {
+            $("#action").hide()
+            $("#action").html('')
+        }
+    }
 
     function firstConversation() {
         $.ajax({
