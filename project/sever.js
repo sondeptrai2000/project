@@ -93,13 +93,21 @@ io.on("connection", function(socket) {
     socket.on("typing", function(data) {
         socket.Phong = data._idRoom
         var action = 'typing'
-        io.sockets.in(socket.Phong).emit("Typing", data, action)
+        var infor = {
+            action: action,
+            person: data.sender
+        }
+        io.sockets.in(socket.Phong).emit("Typing", infor)
     })
 
     socket.on("stopTyping", function(data) {
         socket.Phong = data._idRoom
         var action = 'notTyping'
-        io.sockets.in(socket.Phong).emit("notTyping", data, action)
+        var infor = {
+            action: action,
+            person: data.sender
+        }
+        io.sockets.in(socket.Phong).emit("notTyping", infor)
     })
 });
 

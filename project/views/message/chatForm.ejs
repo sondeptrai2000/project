@@ -78,7 +78,7 @@
             <input id="name" type="text" value="<%=formData.sender %>" />
             <input id="_idRoom" type="text" value="<%=data1[0]._id %>" />
             <input id="mess" type="text" />
-            <div id="action" style="display: none;"></div>
+            <p id="action" style="display: none;"></p>
             <button id="btnChat">Send</button>
         </article>
     </div>
@@ -110,14 +110,14 @@
         });
     }
 
-    $('#mess').focusin(function() {
+    $("#mess").focusin(function() {
         socket.emit('typing', {
             sender: name.value,
             receiver: receiver.value,
             _idRoom: _idRoom.value
         })
     })
-    $('#mess').focusout(function() {
+    $("#mess").focusout(function() {
         socket.emit('stopTyping', {
             sender: name.value,
             receiver: receiver.value,
@@ -127,12 +127,12 @@
     socket.on("Typing", TypingOrNot)
     socket.on("notTyping", TypingOrNot)
 
-    function TypingOrNot(data, action) {
-        if (acction === 'typing') {
+    function TypingOrNot(data) {
+        if (data.action === 'typing') {
             $("#action").show()
-            $("#action").html(data.sender + 'is typing')
+            $("#action").html(data.person + 'is typing')
         }
-        if (acction === 'notTyping') {
+        if (data.action === 'notTyping') {
             $("#action").hide()
             $("#action").html('')
         }
