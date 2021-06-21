@@ -83,7 +83,7 @@ class messtController {
                         receiver: data1[0].person2
                     }
                 }
-                res.render("message/chatForm.ejs", { data1, formData })
+                res.render("message/chatBoxHistory.ejs", { data1, formData })
             })
         });
     }

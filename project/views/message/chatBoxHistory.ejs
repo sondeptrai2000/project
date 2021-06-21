@@ -7,93 +7,377 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <script src="/jquery/jquery.js"></script>
 
+    <style>
+        div.chatForm {
+            width: 100%;
+            border: 1px solid blue;
+        }
+        
+        div.chatHistory {
+            height: 100%;
+            max-width: 30%;
+            padding-top: 1em;
+            padding-right: 1em;
+            padding-left: 1em;
+            padding-bottom: 0;
+            float: left;
+            border: 1px solid red;
+        }
+        
+        div.chat {
+            height: 100%;
+            max-width: 70%;
+            padding-top: 1em;
+            padding-right: 1em;
+            padding-left: 1em;
+            overflow: hidden;
+            border: 1px solid black;
+        }
+        
+        div.chatOption {
+            border: 1px solid black;
+        }
+        
+        div.history {
+            height: 430px;
+            width: 100%;
+            overflow: auto;
+            border: 1px solid #CCCCCC;
+            margin: 1em 0;
+            border: 1px solid black;
+            background-color: gray;
+        }
+        
+        .history ul {
+            border: 1px solid black;
+            border-radius: 10px;
+            background-color: rgb(161, 160, 160);
+            height: 70px;
+        }
+        
+        .chatTo {
+            height: 100%;
+            padding: 1em;
+        }
+        
+        div.chatTitle {
+            border: 1px solid black;
+        }
+        
+        .sender {
+            text-align: right;
+            padding-right: 20px;
+        }
+        
+        .receiver {
+            text-align: left;
+            padding-left: 20px;
+        }
+        
+        div.chatBox {
+            height: 400px;
+            width: 100%;
+            overflow: auto;
+            border: 1px solid #CCCCCC;
+            margin: 1em 0;
+            border: 1px solid black;
+            background-color: dimgray;
+            color: ghostwhite;
+        }
+        
+        div.sendMess {
+            height: 50px;
+            max-width: 100%;
+            border: 1px solid black;
+        }
+    </style>
     <title>Chat</title>
 </head>
 
 <body>
-    <div>
-        <div id="scroll_box" style="height: 300px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
-            <% data.forEach(function(data) { %>
-                <%if (data.person1 !== formData.sender) { %>
-                    <ul>
-                        Name: <input type='text' name="studentName" value="<%= data.person1 %>" readonly>
-                        <input type='text' value="<%= data.message[data.message.length - 1].ownermessenger %>: <%= data.message[data.message.length - 1].messContent %>" readonly>
-                        <button onclick="chatBox(' <%=data.person1 %>','<%=sender.username %>','<%= sender.role %>')"> Chat</button>
-                    </ul>
-                    <% } %>
-                        <%if (data.person2 !== formData.sender) { %>
-                            <ul>
-                                Name: <input type='text' name="studentName" value="<%= data.person2 %>" readonly>
-                                <input type='text' value="<%= data.message[data.message.length - 1].ownermessenger %>: <%= data.message[data.message.length - 1].messContent %>" readonly>
-                                <button onclick="chatBox(' <%=data.person2 %>','<%=sender.username %>','<%= sender.role %>')"> Chat</button>
-                            </ul>
-                            <% } %>
-                                <% }); %>
+    <div class="chatForm">
+        <div class="chatHistory">
+            <div class="chatOption">
+                <h2>
+                    Add chat: <input type='text' id='addChat'>
+                    <button onclick='addChat() '>Add to Chat</button>
+                </h2>
+            </div>
+            <div class="history">
+                <div id="UpdateHistory"></div>
+                <% data1.forEach(function(data1) { %>
+                    <%if (data1.person1 !== formData.sender) { %>
+                        <ul class='<%=data1._id %>'>
+                            <div class='chatTo'>
+                                Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
+                                <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
+                                <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
+                                <input type="text" class='allID' value="<%=data1._id %>"></input>
+                            </div>
+                        </ul>
+                        <% } %>
+                            <%if (data1.person2 !== formData.sender) { %>
+                                <ul class='<%=data1._id %>'>
+                                    <div class='chatTo'>
+                                        Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
+                                        <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
+                                        <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
+                                        <input type="text" class='allID' value="<%=data1._id %>"></input>
+                                    </div>
+                                </ul>
+                                <% } %>
+                                    <% }); %>
+            </div>
+        </div>
+        <div class='chat'>
+            <div class='chatTitle'>
+                <h2>Conversation between
+                    <%=formData.sender %> and
+                        <%=formData.receiver %>
+                </h2>
+            </div>
+            <div class="chatBox">
+                <div id='messContent'></div>
+            </div>
+            <p id="action" style="display: none;"></p>
+            <div class="sendMess">
+                <input id="mess" type="text" style="height:40px;width: 77%;float: left;" />
+                <button id="btnChat" style="height:46px;width: 20%;float: left;">Send</button>
+            </div>
         </div>
     </div>
-    <div>
-        <h2 id="TenNguoiNhan"></h2>
-        <div id="scroll_box" style="height: 120px;width: 400px;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
-
-            <ul></ul>
-            <div id="lol"></div>
-        </div>
-        <input id="receiver" type="text" value="" />
-        <input id="name" type="text" value="" />
-        <input id="senderRole" type="text" value="" />
+    <div class="chatInformation" style="display: none;">
+        <input id="receiver" type="text" value="<%=formData.receiver %>" />
+        <input id="name" type="text" value="<%=formData.sender %>" />
+        <input id="_idRoom" type="text" value="<%=data1[0]._id %>" />
     </div>
-    <input id="mess" type="text" />
-    <button id="btnChat">Send</button>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        // select relevant elements
-        const input4 = document.querySelector("#receiver");
-        const input = document.querySelector("#name");
-        const input3 = document.querySelector("#senderRole");
-        const input1 = document.querySelector("#mess");
-        messageList = document.querySelector("#lol");
-        // establish socket.io connection
-        const socket = io();
-
-        $(document).ready(function() {
-            $('#scroll_box').scrollTop($(document).height());
-
-        });
-
-        function chatBox(receiver, sender, senderRole) {
-            $('#receiver').val(receiver)
-            $('#name').val(sender)
-            $('#senderRole').val(senderRole)
-            socket.emit("tao-room", {
-                sender: sender,
-                senderRole: senderRole,
-                receiver: receiver,
-            });
-        }
-
-        $("#btnChat").click(function() {
-            socket.emit("user-chat", {
-                sender: input.value,
-                senderRole: input3.value,
-                mess: input1.value,
-                receiver: input4.value,
-            })
-            input1.value = "";
-        })
-
-        socket.on("server-chat", addMessageToHTML)
-
-        // add message to our page
-        function addMessageToHTML(message) {
-            // create a new li element
-            const ul = document.createElement("ul");
-            // add message to the elements text
-            ul.innerText = message.sender + ": " + message.mess;
-            // add to list of messages
-            messageList.append(ul);
-            $('#scroll_box').scrollTop($(document).height());
-        }
-    </script>
 </body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    // select relevant elements
+    const _idRoom = document.querySelector("#_idRoom");
+    const receiver = document.querySelector("#receiver");
+    const name = document.querySelector("#name");
+    const mess = document.querySelector("#mess");
+
+    // establish socket.io connection
+    const socket = io();
+
+    $(document).ready(function() {
+        connectAllConversation();
+        firstConversation();
+    });
+    //tạo room cho tất cả cuọco trò chuyện "online" để nhận thông báo khi người khác gửi tin nhắn
+    function connectAllConversation() {
+        var idConversationList = [];
+        $('.allID').each(function() {
+            idConversationList.push($(this).attr('value'));
+        });
+        socket.emit("tao-room", {
+            idConversationList
+        });
+    }
+
+    $("#mess").focusin(function() {
+        socket.emit('typing', {
+            sender: name.value,
+            receiver: receiver.value,
+            _idRoom: _idRoom.value
+        })
+    })
+    $("#mess").focusout(function() {
+        socket.emit('stopTyping', {
+            sender: name.value,
+            receiver: receiver.value,
+            _idRoom: _idRoom.value
+        })
+    })
+    socket.on("Typing", TypingOrNot)
+    socket.on("notTyping", TypingOrNot)
+
+    function TypingOrNot(data) {
+        if (data.action === 'typing') {
+            $("#action").show()
+            $("#action").html(data.person + 'is typing')
+        }
+        if (data.action === 'notTyping') {
+            $("#action").hide()
+            $("#action").html('')
+        }
+    }
+
+    function firstConversation() {
+        $.ajax({
+            url: '/messenger/getMessenger',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                sender: name.value,
+                receiver: receiver.value
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    $.each(response.data, function(index, data) {
+                        $.each(data.message, function(index, message) {
+                            if (message.ownermessenger === name.value) {
+                                $('#messContent').append("<ul class='sender'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            } else if (message.ownermessenger === receiver.value) {
+                                $('#messContent').append("<ul class='receiver'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            } else {
+                                $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            }
+                        });
+                    });
+                }
+                $('#messContent').append('<div id="lol"></div>')
+                $(".chatBox").scrollTop($('#messContent').height())
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        });
+    }
+
+    function chatBox(receiver, sender, _idRoom) {
+        var Room = '#' + _idRoom
+        $(Room).css("font-weight", "normal");
+        $('#receiver').val(receiver)
+        $('#_idRoom').val(_idRoom)
+        $('#name').val(sender)
+        $('.chatTitle').html("<h2>Conversation between" + sender + " and " + receiver + "</h2>")
+        $('#messContent').html("")
+        $.ajax({
+            url: '/messenger/getMessenger',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                sender: sender,
+                receiver: receiver
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    $.each(response.data, function(index, data) {
+                        $.each(data.message, function(index, message) {
+                            if (message.ownermessenger === name.value) {
+                                $('#messContent').append("<ul class='sender'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            } else if (message.ownermessenger === receiver) {
+                                $('#messContent').append("<ul class='receiver'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            } else {
+                                $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            }
+                        });
+                    });
+                }
+                $('#messContent').append('<div id="lol"></div>')
+                $('.chatBox').scrollTop($('#messContent').height())
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        });
+    }
+    $("#btnChat").click(function() {
+            //sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
+            socket.emit("user-chat", {
+                sender: name.value,
+                mess: mess.value,
+                receiver: receiver.value,
+                _idRoom: _idRoom.value,
+            })
+            mess.value = "";
+        })
+        // server gửi tin nhắn lại từ sender cho receiver
+    socket.on("server-chat", addMessageToHTML)
+
+    // add message to our page
+    function addMessageToHTML(message) {
+        // create a new li element
+        const ul = document.createElement("ul");
+        // add message to the elements text
+        ul.innerText = message.sender + ": " + message.mess;
+        // add to list of messages
+        $("#lol").append(ul);
+        var newMess = '#' + message._idRoom
+        $(newMess).val(message.sender + ": " + message.mess)
+            //tin nhắn gửi đến nếu chưa xem thì in đậm, xem r thì in bt
+        if (message._idRoom != _idRoom.value) {
+            $(newMess).css("font-weight", "bold");
+        } else if (message.receiver == $('#name').val()) {
+            $(newMess).css("font-weight", "normal");
+        }
+        $('.chatBox').scrollTop($('#messContent').height())
+        var newestMess = '.' + message._idRoom
+            //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
+        $(newestMess).prependTo("#UpdateHistory");
+    }
+
+    function addChat() {
+        alert($('#addChat').val())
+        $.ajax({
+            url: '/messenger/addChat',
+            method: 'post',
+            dataType: 'json',
+            data: {
+                receiver: $('#addChat').val()
+            },
+            success: function(response) {
+                if (response.msg == 'error') {
+                    alert('tạo chát  lỗi')
+                }
+                if (response.msg == 'user not found') {
+                    alert('user not found')
+                }
+                if (response.msg == 'cuộc hội thoại đã được tạo') {
+                    $('.chatTitle').html("<h2>Conversation between" + response.sender + " and " + response.receiver + "</h2>")
+                    $('#messContent').html("")
+                    $('#receiver').val(response.receiver)
+                    $('#name').val(response.sender)
+                    $.each(response.data, function(index, data) {
+                        $('#_idRoom').val(data._id)
+                        var newestMess = '.' + data._id
+                            //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
+                        $(newestMess).prependTo("#UpdateHistory");
+                        $.each(data.message, function(index, message) {
+                            if (message.ownermessenger === name.value) {
+                                $('#messContent').append("<ul class='sender'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            } else if (message.ownermessenger === receiver.value) {
+                                $('#messContent').append("<ul class='receiver'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            } else {
+                                $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            }
+                        });
+                        $('#messContent').append("<div id='lol'></div>");
+                    });
+                    $('.chatBox').scrollTop($('#messContent').height())
+                }
+                if (response.msg == 'lỗi khi tìm kiếm user') {
+                    alert('lỗi khi tìm kiếm user')
+                }
+                if (response.msg == 'Bạn không thể tạo cuộc trò chuyện với chính mình') {
+                    alert('Bạn không thể tạo cuộc trò chuyện với chính mình')
+                }
+                if (response.msg == 'tạo cuộc hội thoại thành công') {
+                    $('#receiver').val(response.receiver)
+                    $('#name').val(response.sender)
+                    $('#_idRoom').val(response._idRoom)
+                    $('.chatTitle').html("<h2>Conversation between" + response.sender + " and " + response.receiver + "</h2>")
+                    $('#messContent').html("")
+                    $('#messContent').append("<ul style='text-align:center;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
+                    $('#messContent').append('<div id="lol"></div>')
+                    $('.chatBox').scrollTop($('#messContent').height())
+                    $("#UpdateHistory").append("<ul class='" + response._idRoom + "'> Name: <input type='text' name='studentName' value='" + response.receiver + "' readonly><input type='text' id='" + response._idRoom + "' value='Hệ thống: Đã kết nối! Ấn vào để chat' readonly><button onclick= chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Chat</button><input type='hidden' class='allID' value='" + response._idRoom + "'></input></ul>")
+                    var idConversationList = [];
+                    idConversationList.push(response._idRoom);
+                    socket.emit("tao-room", {
+                        idConversationList
+                    });
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        });
+    }
+</script>
 
 </html>
