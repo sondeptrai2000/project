@@ -23,7 +23,7 @@ class teacherController {
     allClass(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        ClassModel.find({ teacherID: decodeAccount }).populate('teacherID').exec((err, classInfor) => {
+        ClassModel.find({ teacherID: decodeAccount }).exec((err, classInfor) => {
             res.render('teacher/allClass', { classInfor })
         })
     }
@@ -98,21 +98,6 @@ class teacherController {
             }
         })
     }
-
-    viewClass(req, res) {
-        res.json('Trang thông tin lớp học')
-    }
-
-    takeAttended(req, res) {
-        res.json('Trang điểm danh')
-    }
-
-
-    editClass(req, res) {
-        res.json('Trang trỉnh sủa thông tin các lớp học')
-    }
-
-
 
     studentAssessment(req, res) {
         ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {

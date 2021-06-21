@@ -14,8 +14,6 @@ teacherRouter.get('/allClass', teacherController.allClass)
 teacherRouter.get('/allClassStudent', teacherController.allClassStudent)
 
 
-teacherRouter.get('/viewClass', teacherController.viewClass)
-teacherRouter.get('/takeAttended', teacherController.takeAttended)
 teacherRouter.get('/addStudentToClass', teacherController.addStudentToClass)
 teacherRouter.post('/doaddStudentToClass', teacherController.doaddStudentToClass)
 teacherRouter.post('/doremoveStudentToClass', teacherController.doremoveStudentToClass)

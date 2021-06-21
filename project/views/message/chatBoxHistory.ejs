@@ -112,7 +112,7 @@
                                 Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
                                 <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
                                 <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
-                                <input type="text" class='allID' value="<%=data1._id %>"></input>
+                                <input type="hidden" class='allID' value="<%=data1._id %>"></input>
                             </div>
                         </ul>
                         <% } %>
@@ -122,7 +122,7 @@
                                         Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
                                         <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
                                         <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
-                                        <input type="text" class='allID' value="<%=data1._id %>"></input>
+                                        <input type="hidden" class='allID' value="<%=data1._id %>"></input>
                                     </div>
                                 </ul>
                                 <% } %>

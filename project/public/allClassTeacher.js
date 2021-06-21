@@ -1,12 +1,10 @@
 var click = 0;
 
-function sendData(id, routeName, stage, subject, teacherID, teacherName) {
+function sendData(id, routeName, stage, subject) {
     click = click + 1;
     if (click == 1) {
-        $(".inner").show();
         var _id = id
-        const studentList = "<th>avatar</th><th>username</th><th>stage</th><th>Aim</th><th>email</th><th>grade</th><th>feedBackContent</th><th>Select</th><th>Chat</th><th>đánh giá</th><th onclick='closeStudentList()'>X</th>"
-        $(".taskrow").html("<button onclick=addStudent('" + id + "','" + routeName + "','" + stage + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>" + studentList)
+        $(".option").html("<button onclick=addStudent('" + id + "','" + routeName + "','" + stage + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
         $.ajax({
             url: '/teacher/allClassStudent',
             method: 'get',
@@ -23,6 +21,7 @@ function sendData(id, routeName, stage, subject, teacherID, teacherName) {
                             }
                         });
                     });
+                    $(".inner").fadeIn(2000);
                 }
             },
             error: function(response) {
@@ -33,86 +32,7 @@ function sendData(id, routeName, stage, subject, teacherID, teacherName) {
 
 }
 
-function studentAssessmentForm(classID, studentid, username, email) {
-    $("#classID").html(classID);
-    $("#studentID").html(studentid);
-    $("#name").html("<p>Name :" + username + "</p>");
-    $("#email").html("<p>Email :" + email + "</p>");
-    $(".studentAssessment").show();
-}
 
-function updateStudentAssessmentForm(classID, studentID, name, grade) {
-    var content = '#' + studentID
-    $("#updateclassID").html(classID);
-    $("#updatestudentID").html(studentID);
-    $("#updatename").html("<p>Name :" + name + "</p>");
-    $("#updategrade").html("<option value=" + grade + ">" + grade + " </option>");
-    $("#updatecomment").val($(content).text())
-    $(".studentAssessmentUpdate").show();
-
-}
-
-function takeFeedBack() {
-    var formData = {
-        classID: $("#classID").text(),
-        studentId: $("#studentID").text(),
-        grade: $("#grade").val(),
-        comment: $("#comment").val(),
-    };
-    $.ajax({
-        url: '/teacher/studentAssessment',
-        method: 'post',
-        dataType: 'json',
-        data: formData,
-        success: function(response) {
-            if (response.msg == 'success') {
-                accountInformation = response.data;
-                alert("take feedback success")
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
-
-function updateFeekBack() {
-    var formData = {
-        classID: $("#updateclassID").text(),
-        studentId: $("#updatestudentID").text(),
-        grade: $("#updategrade").val(),
-        comment: $("#updatecomment").val(),
-    };
-    $.ajax({
-        url: '/teacher/studentAssessment',
-        method: 'post',
-        dataType: 'json',
-        data: formData,
-        success: function(response) {
-            if (response.msg == 'success') {
-                accountInformation = response.data;
-                alert("update feedback success")
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-
-}
-
-function canclestudentAssessment() {
-    $(".studentAssessment").hide();
-}
-
-function canclestudentAssessmentUpdate() {
-    $(".studentAssessmentUpdate").hide();
-}
-
-function closeStudentList() {
-    click = 0;
-    $(".inner").hide();
-}
 
 
 function addStudent(classID, routeName, stage, subject) {
@@ -135,7 +55,6 @@ function addStudent(classID, routeName, stage, subject) {
                     }
                 });
                 $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "')>Add to Class</button>");
-
             }
         },
         error: function(response) {
@@ -210,4 +129,85 @@ function removeStudent(classID) {
             alert('server error');
         }
     })
+}
+
+function studentAssessmentForm(classID, studentid, username, email) {
+    $("#classID").html(classID);
+    $("#studentID").html(studentid);
+    $("#name").html(username);
+    $("#email").html(email);
+    $(".studentAssessment").fadeIn(2000);
+}
+
+function updateStudentAssessmentForm(classID, studentID, name, grade) {
+    $("#updateclassID").html(classID);
+    $("#updatestudentID").html(studentID);
+    $("#updatename").html(name);
+    $("#updategrade option[value='" + grade + "']").attr('selected', 'selected');
+    var content = '#' + studentID
+    $("#updatecomment").val($(content).text())
+    $(".studentAssessmentUpdate").fadeIn(2000);
+
+}
+
+function takeFeedBack() {
+    var formData = {
+        classID: $("#classID").text(),
+        studentId: $("#studentID").text(),
+        grade: $("#grade").val(),
+        comment: $("#comment").val(),
+    };
+    $.ajax({
+        url: '/teacher/studentAssessment',
+        method: 'post',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                accountInformation = response.data;
+                alert("take feedback success")
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+function updateFeekBack() {
+    var formData = {
+        classID: $("#updateclassID").text(),
+        studentId: $("#updatestudentID").text(),
+        grade: $("#updategrade").val(),
+        comment: $("#updatecomment").val(),
+    };
+    $.ajax({
+        url: '/teacher/studentAssessment',
+        method: 'post',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                accountInformation = response.data;
+                alert("update feedback success")
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+
+}
+
+function canclestudentAssessment() {
+    $(".studentAssessment").hide();
+}
+
+function canclestudentAssessmentUpdate() {
+    $(".studentAssessmentUpdate").hide();
+}
+
+function closeStudentList() {
+    click = 0;
+    $(".inner").hide();
 }

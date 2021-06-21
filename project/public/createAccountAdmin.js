@@ -182,7 +182,7 @@ function role(action) {
 }
 
 function updateForm(id) {
-    $("#updateForm").html("");
+    $("#updateForm").fadeIn(2000);
     $.ajax({
         url: '/admin/editAccount',
         method: 'get',
@@ -191,25 +191,34 @@ function updateForm(id) {
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
-                    var update = "<h2>ACCOUNT update INFORMATION</h2><label>Old Avatar</label><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></img><br><label>Update Avatar</label> Select images: <input type='file' id='myFileUpdate' onchange= 'updateImg()' accept='image/*'><br><img id='outputUpdate' style='height:3cm; width:3cm'><br><label>Name</label><input type='text' value ='" + data.username + "' id='usernameUpdate'><br><label >Email</label><input type='email'  value ='" + data.email + "' id='emailUpdate' class='emailinput'><br><label >Password</label><input type='password' value ='" + data.password + "' id='passwordUpdate'><br>"
-                    var roleroute = "<label >Role</label><select class='Role' id='roleUpdate' onchange=role('update')></select><br><div class='typeRole'><label>Chọn lộ trình học</label><select id='routeTypeSUpdate' onchange=routeType('update')></select><br>"
-                    var stageAimOther = "<label>Level</label><select id='levelSUpdate'></select><br><label>Aim</label><select id='AimUpdate'></select></div><br><label >Birthday</label><input type='date'  value ='" + data.birthday + "' id='birthdayUpdate'><br><label >Phone</label><input type='text' value ='" + data.phone + "' id='phoneUpdate'><br><label >Address</label><input type='text' value ='" + data.address + "'id='addressUpdate'><br><button id='btn2' onclick=doUpdate('" + data._id + "')>tiến hành tạo tài khoản</button></div>"
-                    $("#updateForm").append(update + roleroute + stageAimOther);
-                    if (data.role === "teacher") {
-                        $("#roleUpdate").append("<option value='" + data.role + "'>" + data.role + "</option><option value='student'>Student</option><option value='guardian'>Guardian</option>");
-                    }
-                    if (data.role === "student") {
-                        $("#roleUpdate").append("<option value='" + data.role + "'>" + data.role + "</option><option value='teacher'>Teacher</option><option value='guardian'>Guardian</option>");
-                    }
-                    if (data.role === "guardian") {
-                        $("#roleUpdate").append("<option value='" + data.role + "'>" + data.role + "</option><option value='teacher'>Teacher</option><option value='student'>Student</option>");
-                    }
+                    $("#PersonID").val(data._id)
+                    var oldAva = "data:image/jpeg;base64," + data.avatar
+                    $("#oldAvatar").attr("src", oldAva);
+                    $("#usernameUpdate").val(data.username)
+                    $("#emailUpdate").val(data.email)
+                    $("#passwordUpdate").val(data.password)
+                    $("#phoneUpdate").val(data.phone)
+                    $("#addressUpdate").val(data.address)
+                    var routeName = data.routeName
+                    var stage = data.stage
+                    var aim = data.aim
+                    $("#roleUpdate option[value='" + data.role + "']").attr('selected', 'selected');
+                    role('update');
                     $.each(response.targetxxx, function(index, targetxxx) {
-                        var routeOption = "<option value='" + targetxxx.routeName + "'>" + targetxxx.routeName + "</option>{{/each}}"
-                        $("#routeTypeSUpdate").append(routeOption);
+                        if (targetxxx.routeName == routeName) {
+                            var routeOption = "<option value='" + targetxxx.routeName + "'>" + targetxxx.routeName + "</option>"
+                            $("#routeTypeSUpdate").append(routeOption);
+                            $("#routeTypeSUpdate option[value='" + routeName + "']").attr('selected', 'selected');
+                            $.each(targetxxx.routeSchedual, function(index, routeSchedual) {
+                                var Schudelstage = "<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>"
+                                $("#levelSUpdate").append(Schudelstage);
+                                $("#levelSUpdate option[value='" + stage + "']").attr('selected', 'selected');
+                                $("#AimUpdate").append(Schudelstage);
+                                $("#AimUpdate option[value='" + aim + "']").attr('selected', 'selected');
+                            });
+                        }
                     });
                 });
-
             }
         },
         error: function(response) {
@@ -218,7 +227,9 @@ function updateForm(id) {
     });
 }
 
-
+$("#closeUpdateForm").click(function() {
+    $('#updateForm').fadeOut(2000);
+});
 
 function doUpdate(id) {
     var formData = {
