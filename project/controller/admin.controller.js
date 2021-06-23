@@ -95,7 +95,6 @@ class adminController {
             let stage = req.body.stage
             let routeName = req.body.routeName
             let aim = req.body.aim
-            console.log(aim)
             if (role === "guardian" || role === "teacher") {
                 stage = "none"
                 routeName = "none"

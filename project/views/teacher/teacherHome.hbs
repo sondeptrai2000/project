@@ -3,13 +3,32 @@
 
 <head>
     <script src="/jquery/jquery.js"></script>
+    <style>
+        #table {
+            display: table;
+            padding: 5px;
+        }
+
+        .tr {
+            display: table-row;
+            padding: 5px;
+        }
+
+        .td {
+            display: table-cell;
+            padding: 5px;
+            width: 300px;
+            border: #000000 solid 1px;
+            margin: 5px;
+        }
+    </style>
 </head>
 
 <body>
     <p><a href='/account/homeTeacher'>Trang chủ Teacher</a></p>
     <p><a onclick='teacherProfile()'>Teacher Profile</a></p>
     <p><a href='/teacher/allClass'>Class</a></p>
-    <p><a href='/teacher/allextracurricularActivities'>Teacher All Extracurricular Activities</a></p>
+    <p><a onclick="proposalT()">Teacher All Extracurricular Activities</a></p>
     <p><a href='/messenger/chatBoxHistory'>Teacher Messenge</a></p>
 </body>
 <div class="content" style="text-align: center; display:none">
@@ -46,7 +65,29 @@
         </tr>
     </table>
 </div>
+
+<div class="proposal" style="display: none;">
+    <div id="table">
+        <div class="tr">
+            <div class="td"><input type="text"><button>Find</button></div>
+            <div class="td"><input type="text" id="myUploadProposal"><button>Upload New file</button></div>
+            <div class="td"><select class="Role" id="role" onchange="role('create')">
+                    <option value="all">All</option>
+                    <option value="extracurricularActivities">Extracurricular Activities</option>
+                    <option value="event">Event</option>
+                    <option value="teaching">Teaching</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="td"><button onclick="closeProposal()">&times;</button></div>
+        </div>
+    </div>
+</div>
 <script>
+
+    $(document).ready(function () {
+        $('.proposal').slideUp()
+    });
     function teacherProfile() {
         $.ajax({
             url: '/teacher/teacherProfile',
@@ -71,6 +112,16 @@
     }
     function closeProfile() {
         $(".content").hide();
+    }
+
+    function proposalT() {
+
+        {{!-- viết jax để lấy thông tin tại đây --}}
+        $('.proposal').slideDown(2000)
+    }
+
+    function closeProposal() {
+        $('.proposal').slideUp()
     }
 </script>
 

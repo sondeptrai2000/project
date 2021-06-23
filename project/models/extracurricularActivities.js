@@ -10,37 +10,34 @@ mongoose.connect(url, {
 mongoose.set('useCreateIndex', true);
 
 
-var extracurricularActivitiesSchema= new mongoose.Schema({
+var extracurricularActivitiesSchema = new mongoose.Schema({
     classID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'class'
     },
     StudentID: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'account'
+        ID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'account'
+        },
+        FeedBackStudent: {
+            type: String,
+            default: "Has not been commented yet"
+        },
+        ConsideredImplementation: {
+            type: String,
+            default: "Not Considered Implementation Yet"
+        },
     }],
-    teacherID:[{
+    teacherID: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'account'
     }],
     extracurricularActivitiesContent: {
-        type : String,
-        default : "Has not been commented yet"
-    },
-    FeedBackStudent: [
-        {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'account'
-        },{
-            type: String,
-            default: 'Not rate'
-        }
-    ],
-    ConsideredImplementation: {
         type: String,
-        default: "Not Considered Implementation Yet"
-    }
+        default: "Has not been commented yet"
+    },
 })
 
-var extracurricularActivitiesModel = mongoose.model('extracurricularActivities',extracurricularActivitiesSchema);
+var extracurricularActivitiesModel = mongoose.model('extracurricularActivities', extracurricularActivitiesSchema);
 module.exports = extracurricularActivitiesModel

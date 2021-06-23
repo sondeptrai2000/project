@@ -5,6 +5,12 @@ var myFileUpdate;
 
 getAccount('teacher')
 $("#createAccount").slideUp();
+
+$("#btnxx").click(function() {
+    $("#createAccount").slideToggle();
+});
+
+
 $(document).ready(function() {
     $("#myInput").on("keyup", function() {
         var value = $(this).val().toLowerCase();
@@ -12,12 +18,6 @@ $(document).ready(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
-
-    $("#btnxx").click(function() {
-        $(".createAccount").show();
-        $("#createAccount").slideToggle();
-    });
-
     $('#myFile').on('change', function() {
         var filereader = new FileReader();
         filereader.onload = function(event) {
@@ -29,6 +29,7 @@ $(document).ready(function() {
         console.log('myfile', myFile)
         filereader.readAsDataURL(myFile)
     });
+
 });
 
 function updateImg() {
@@ -55,6 +56,7 @@ function reset() {
 }
 
 function signUp() {
+    var role = $("#role").val()
     var formData = {
         filename: myFile.name,
         file: fileData,
