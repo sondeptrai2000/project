@@ -20,8 +20,8 @@ teacherRouter.post('/doremoveStudentToClass', teacherController.doremoveStudentT
 teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 
 //liên quan đến hoạt động ngoại khóa
-teacherRouter.get('/proposeEtracurricularActivities', teacherController.proposeEtracurricularActivities)
-teacherRouter.get('/allextracurricularActivities', teacherController.allextracurricularActivities)
+teacherRouter.post('/uploadNewProposal', teacherController.uploadNewProposal)
+teacherRouter.get('/allProposal', teacherController.allProposal)
 teacherRouter.get('/extracurricularActivities', teacherController.extracurricularActivities)
 
 //chat

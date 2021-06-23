@@ -70,7 +70,12 @@
     <div id="table">
         <div class="tr">
             <div class="td"><input type="text"><button>Find</button></div>
-            <div class="td"><input type="text" id="myUploadProposal"><button>Upload New file</button></div>
+            <div class="td">
+                <input type="text" id="proposalName">
+                <input type="text" id="proposalContent">
+                <input type="file" id="myUploadProposal">
+                <button onclick="uploadNewProposal()">Upload New file</button>
+            </div>
             <div class="td"><select class="Role" id="role" onchange="role('create')">
                     <option value="all">All</option>
                     <option value="extracurricularActivities">Extracurricular Activities</option>
@@ -81,13 +86,26 @@
             </div>
             <div class="td"><button onclick="closeProposal()">&times;</button></div>
         </div>
+        <div class="tr">
+            <div class="td">Name</div>
+            <div class="td">Content</div>
+            <div class="td">Upload Date</div>
+            <div class="td">Status</div>
+        </div>
     </div>
 </div>
-<script>
+<div id="viewProposal"> </div>
+<a id="output-frame-id"></a>
 
+<script>
+    var fileData;
+    var myFile;
     $(document).ready(function () {
         $('.proposal').slideUp()
+
     });
+
+
     function teacherProfile() {
         $.ajax({
             url: '/teacher/teacherProfile',
@@ -113,15 +131,71 @@
     function closeProfile() {
         $(".content").hide();
     }
+    $('#myUploadProposal').on('change', function () {
+        var filereader = new FileReader();
+        filereader.onload = function (event) {
+            fileData = event.target.result;
+            var dataURL = filereader.result;
+        };
+        myFile = $('#myUploadProposal').prop('files')[0];
+        console.log('myUploadProposal', myFile)
+        filereader.readAsDataURL(myFile)
+    });
 
     function proposalT() {
-
-        {{!-- viết jax để lấy thông tin tại đây --}}
-        $('.proposal').slideDown(2000)
+        $.ajax({
+            url: '/teacher/allProposal',
+            method: 'get',
+            dataType: 'json',
+            success: function (response) {
+                if (response.msg == 'success') {
+                    $.each(response.data, function (index, data) {
+                        var content = "<div class='tr'><div class='td' onclick=view('" + data.file + "')>" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.uploadDate + "</div><div class='td'>" + data.Status + "</div></div>"
+                        $("#table").append(content);
+                    })
+                    $('.proposal').slideDown(1000)
+                }
+                if (response.msg == 'error') {
+                    alert(' error');
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
     }
 
+    function view(base64) {
+        $('#viewProposal').append('<iframe  src="data:application/pdf;base64,' + base64 + '" height="100%" width="100%"></iframe>');
+    }
     function closeProposal() {
         $('.proposal').slideUp()
+    }
+
+    function uploadNewProposal() {
+        var formData = {
+            filename: myFile.name,
+            file: fileData,
+            proposalName: $("#proposalName").val(),
+            proposalContent: $("#proposalContent").val(),
+        };
+        $.ajax({
+            url: '/teacher/uploadNewProposal',
+            method: 'post',
+            dataType: 'json',
+            data: formData,
+            success: function (response) {
+                if (response.msg == 'success') {
+                    alert('Upload proposal success');
+                }
+                if (response.msg == 'error') {
+                    alert('Upload proposal error');
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
     }
 </script>
 

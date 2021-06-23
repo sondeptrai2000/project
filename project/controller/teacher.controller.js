@@ -1,5 +1,6 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
+const ProposalModel = require('../models/proposal');
 
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
@@ -114,16 +115,41 @@ class teacherController {
         })
     }
 
-    allextracurricularActivities(req, res) {
-        res.json('Trang xem tất cả các hoạt động ngoại khóa mà giáo viên đã thực hiện (góc nhìn: giáo viên)')
+    allProposal(req, res) {
+        console.log("vaof r")
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        ProposalModel.find({ teacherID: decodeAccount }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
     }
 
     extracurricularActivities(req, res) {
         res.json('Trang xem thông tin hoạt động ngoại khóa đã thực hiện và tiến hành đánh giá học sinh trong hoạt động ngoại khóa ')
     }
 
-    proposeEtracurricularActivities(req, res) {
-        res.json('Gửi thông tin và bản kế hoạch về hoạt động ngoại khóa')
+    uploadNewProposal(req, res) {
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        var proposalFile = req.body.file;
+        var data = proposalFile.split(',')[1];
+        var base64data = data.toString('base64')
+        ProposalModel.create({
+            proposalName: req.body.proposalName,
+            Content: req.body.proposalContent,
+            file: base64data,
+            teacherID: decodeAccount
+        }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
     }
 
     allChat(req, res) {
