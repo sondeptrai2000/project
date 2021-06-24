@@ -12,12 +12,6 @@ $("#btnxx").click(function() {
 
 
 $(document).ready(function() {
-    $("#myInput").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".taskrow tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-    });
     $('#myFile').on('change', function() {
         var filereader = new FileReader();
         filereader.onload = function(event) {
@@ -30,6 +24,15 @@ $(document).ready(function() {
         filereader.readAsDataURL(myFile)
     });
 
+});
+
+$("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    console.log(value)
+
+    $(".taskrow tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
 });
 
 function updateImg() {
@@ -92,15 +95,16 @@ function signUp() {
 }
 
 function getAccount(index) {
+    $(".taskrow").html("");
+    $(".tableInforType").html("");
     var tableInfor
     if (index === 'teacher' || index === 'guardian') {
-        tableInfor = "<tr><th><input id='myInput' type='text' placeholder='Search..'></th></tr><tr><th>avatar</th><th>username</th><th>email</th><th>role</th><th>sex</th><th>phone</th><th>address</th><th>birthday</th><th>More information</th></tr>"
-        $("#tableInforType").html(tableInfor);
+        tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>email</th><th>role</th><th>sex</th><th>phone</th><th>address</th><th>birthday</th><th>More information</th></tr>"
     } else {
-        tableInfor = "<tr><th><input id='myInput' type='text' placeholder='Search..'></th></tr><tr><th>avatar</th><th>username</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
-        $("#tableInforType").html(tableInfor);
+        tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
     }
-    $(".taskrow").html("");
+    $("#tableInforType").html(tableInfor);
+
     $.ajax({
         url: '/admin/getAccount',
         method: 'get',
