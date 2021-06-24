@@ -22,6 +22,8 @@ teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 //liên quan đến hoạt động ngoại khóa
 teacherRouter.post('/uploadNewProposal', teacherController.uploadNewProposal)
 teacherRouter.get('/allProposal', teacherController.allProposal)
+teacherRouter.post('/updateProposal', teacherController.updateProposal)
+teacherRouter.post('/deleteProposal', teacherController.deleteProposal)
 teacherRouter.get('/extracurricularActivities', teacherController.extracurricularActivities)
 
 //chat

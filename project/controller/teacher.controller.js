@@ -116,7 +116,6 @@ class teacherController {
     }
 
     allProposal(req, res) {
-        console.log("vaof r")
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
         ProposalModel.find({ teacherID: decodeAccount }, function(err, data) {
@@ -142,7 +141,8 @@ class teacherController {
             proposalName: req.body.proposalName,
             Content: req.body.proposalContent,
             file: base64data,
-            teacherID: decodeAccount
+            teacherID: decodeAccount,
+            proposalType: req.body.proposalType
         }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
@@ -150,6 +150,21 @@ class teacherController {
                 res.json({ msg: 'success' });
             }
         })
+    }
+
+    updateProposal(req, res) {
+
+    }
+
+    deleteProposal(req, res) {
+        ProposalModel.deleteOne({ _id: req.body.abc }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
+
     }
 
     allChat(req, res) {

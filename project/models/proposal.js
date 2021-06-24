@@ -13,6 +13,7 @@ var proposalSchema = new mongoose.Schema({
     proposalName: String,
     Content: String,
     file: String,
+    proposalType: String,
     teacherID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'account'

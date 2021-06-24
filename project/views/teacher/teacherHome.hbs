@@ -14,6 +14,11 @@
             padding: 5px;
         }
 
+        .tr1 {
+            display: table-row;
+            padding: 5px;
+        }
+
         .td {
             display: table-cell;
             padding: 5px;
@@ -65,18 +70,25 @@
         </tr>
     </table>
 </div>
-
 <div class="proposal" style="display: none;">
     <div id="table">
         <div class="tr">
-            <div class="td"><input type="text"><button>Find</button></div>
+            <div class="td"><input type="text"></div>
+            <div class="td"><button>Find</button></div>
             <div class="td">
                 <input type="text" id="proposalName">
                 <input type="text" id="proposalContent">
+                <select id="proposalType">
+                    <option value="extracurricularActivities">Extracurricular Activities</option>
+                    <option value="event">Event</option>
+                    <option value="teaching">Teaching</option>
+                    <option value="other">Other</option>
+                </select>
                 <input type="file" id="myUploadProposal">
                 <button onclick="uploadNewProposal()">Upload New file</button>
             </div>
-            <div class="td"><select class="Role" id="role" onchange="role('create')">
+            <div class="td">
+                <select id="proposalFilter" onclick="proposalFilter()">
                     <option value="all">All</option>
                     <option value="extracurricularActivities">Extracurricular Activities</option>
                     <option value="event">Event</option>
@@ -84,19 +96,20 @@
                     <option value="other">Other</option>
                 </select>
             </div>
+            <div class="td"></div>
             <div class="td"><button onclick="closeProposal()">&times;</button></div>
         </div>
         <div class="tr">
             <div class="td">Name</div>
             <div class="td">Content</div>
+            <div class="td">Type</div>
             <div class="td">Upload Date</div>
             <div class="td">Status</div>
+            <div class="td">Action</div>
         </div>
     </div>
 </div>
-<div id="viewProposal"> </div>
-<a id="output-frame-id"></a>
-
+<div id="viewProposal"></div>
 <script>
     var fileData;
     var myFile;
@@ -143,6 +156,7 @@
     });
 
     function proposalT() {
+        $(".tr1").remove();
         $.ajax({
             url: '/teacher/allProposal',
             method: 'get',
@@ -150,9 +164,10 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     $.each(response.data, function (index, data) {
-                        var content = "<div class='tr'><div class='td' onclick=view('" + data.file + "')>" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.uploadDate + "</div><div class='td'>" + data.Status + "</div></div>"
+                        var content = "<div class='tr1'><div class='td' onclick=view('" + data.file + "')>" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.proposalType + "</div><div class='td'>" + data.uploadDate + "</div><div class='td'>" + data.Status + "</div><div class='td'><button onclick=updateProposal('" + data._id + "')>update</button><button onclick=deleteProposal('" + data._id + "')>delete</button></div>"
                         $("#table").append(content);
                     })
+                    console.log("loaded")
                     $('.proposal').slideDown(1000)
                 }
                 if (response.msg == 'error') {
@@ -166,8 +181,13 @@
     }
 
     function view(base64) {
-        $('#viewProposal').append('<iframe  src="data:application/pdf;base64,' + base64 + '" height="100%" width="100%"></iframe>');
+        $('#viewProposal').append('<button onclick="cancelProposal()">&times;</button><iframe  src="data:application/pdf;base64,' + base64 + '" height="350px" width="100%"></iframe>');
     }
+
+    function cancelProposal() {
+        $('#viewProposal').html('')
+    }
+
     function closeProposal() {
         $('.proposal').slideUp()
     }
@@ -178,6 +198,7 @@
             file: fileData,
             proposalName: $("#proposalName").val(),
             proposalContent: $("#proposalContent").val(),
+            proposalType: $("#proposalType").val(),
         };
         $.ajax({
             url: '/teacher/uploadNewProposal',
@@ -187,9 +208,44 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     alert('Upload proposal success');
+                    proposalT()
                 }
                 if (response.msg == 'error') {
                     alert('Upload proposal error');
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+    $("#proposalFilter").on("change", function () {
+        var value = $(this).val().toLowerCase();
+        if (value == "all") {
+            $("#table .tr1").slideDown()
+        } else {
+            $("#table .tr1").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        }
+    });
+
+
+    function deleteProposal(id) {
+        var _id = id
+        alert(_id)
+        $.ajax({
+            url: '/teacher/deleteProposal',
+            method: 'post',
+            dataType: 'json',
+            data: { abc: _id },
+            success: function (response) {
+                if (response.msg == 'success') {
+                    proposalT();
+                    alert(' success');
+                }
+                if (response.msg == 'error') {
+                    alert(' error');
                 }
             },
             error: function (response) {
