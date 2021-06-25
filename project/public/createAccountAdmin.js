@@ -3,15 +3,23 @@ var myFile;
 var fileDataUpdate;
 var myFileUpdate;
 
-getAccount('teacher')
-$("#createAccount").slideUp();
+
 
 $("#btnxx").click(function() {
     $("#createAccount").slideToggle();
 });
-
-
+// load for all ajax
+// $(document).ajaxStart(function() {
+//     $("#loading").show();
+// });
+// $(document).ajaxStop(function() {
+//     $("#loading").hide();
+// });
 $(document).ready(function() {
+    getAccount('teacher')
+    $("#createAccount").slideUp();
+
+
     $('#myFile').on('change', function() {
         var filereader = new FileReader();
         filereader.onload = function(event) {
@@ -82,6 +90,7 @@ function signUp() {
             if (response.msg == 'success') {
                 reset();
                 getAccount(role);
+                $("#createAccount").slideUp();
                 alert('Sign Up success');
             }
             if (response.msg == 'Account already exists') {
@@ -95,6 +104,7 @@ function signUp() {
 }
 
 function getAccount(index) {
+    $("#loading").show();
     $(".taskrow").html("");
     $(".tableInforType").html("");
     var tableInfor
@@ -119,6 +129,7 @@ function getAccount(index) {
                         $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update " + data._id + "</button></td></tr>");
                     }
                 });
+                $("#loading").hide();
             }
         },
         error: function(response) {

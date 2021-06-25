@@ -3,7 +3,28 @@
 
 <head>
     <script src="/jquery/jquery.js"></script>
+
     <style>
+        #loading {
+            position: fixed;
+            display: block;
+            top: 0;
+            bottom: 0;
+            z-index: 1000000;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        #loading img {
+            margin: auto;
+            display: block;
+            top: calc(50% - 100px);
+            left: calc(50% - 10px);
+            position: absolute;
+            z-index: 999999;
+        }
+
         #table {
             display: table;
             padding: 5px;
@@ -69,6 +90,9 @@
         <td><a href="/coordinator/update{{_id}}">Update</a></td>
         </tr>
     </table>
+</div>
+<div id="loading" style="display:none">
+    <img src="/images/loadingWalking.gif" alt="Loading..." />
 </div>
 <div class="proposal" style="display: none;">
     <div id="table">
@@ -156,6 +180,7 @@
     });
 
     function proposalT() {
+        $("#loading").show();
         $(".tr1").remove();
         $.ajax({
             url: '/teacher/allProposal',
@@ -167,7 +192,7 @@
                         var content = "<div class='tr1'><div class='td' onclick=view('" + data.file + "')>" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.proposalType + "</div><div class='td'>" + data.uploadDate + "</div><div class='td'>" + data.Status + "</div><div class='td'><button onclick=updateProposal('" + data._id + "')>update</button><button onclick=deleteProposal('" + data._id + "')>delete</button></div>"
                         $("#table").append(content);
                     })
-                    console.log("loaded")
+                    $("#loading").hide();
                     $('.proposal').slideDown(1000)
                 }
                 if (response.msg == 'error') {
@@ -233,25 +258,27 @@
 
     function deleteProposal(id) {
         var _id = id
-        alert(_id)
-        $.ajax({
-            url: '/teacher/deleteProposal',
-            method: 'post',
-            dataType: 'json',
-            data: { abc: _id },
-            success: function (response) {
-                if (response.msg == 'success') {
-                    proposalT();
-                    alert(' success');
+        var confirmDelete = confirm("Delete this proposal");
+        if (confirmDelete == true) {
+            $.ajax({
+                url: '/teacher/deleteProposal',
+                method: 'post',
+                dataType: 'json',
+                data: { abc: _id },
+                success: function (response) {
+                    if (response.msg == 'success') {
+                        proposalT();
+                        alert(' success');
+                    }
+                    if (response.msg == 'error') {
+                        alert(' error');
+                    }
+                },
+                error: function (response) {
+                    alert('server error');
                 }
-                if (response.msg == 'error') {
-                    alert(' error');
-                }
-            },
-            error: function (response) {
-                alert('server error');
-            }
-        })
+            })
+        }
     }
 </script>
 
