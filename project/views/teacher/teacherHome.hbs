@@ -100,16 +100,19 @@
             <div class="td"><input type="text"></div>
             <div class="td"><button>Find</button></div>
             <div class="td">
-                <input type="text" id="proposalName">
-                <input type="text" id="proposalContent">
-                <select id="proposalType">
-                    <option value="extracurricularActivities">Extracurricular Activities</option>
-                    <option value="event">Event</option>
-                    <option value="teaching">Teaching</option>
-                    <option value="other">Other</option>
-                </select>
-                <input type="file" id="myUploadProposal">
-                <button onclick="uploadNewProposal()">Upload New file</button>
+                <div class="uploadFile" style="display: none;">
+                    <input type="text" id="proposalName">
+                    <input type="text" id="proposalContent">
+                    <select id="proposalType">
+                        <option value="extracurricularActivities">Extracurricular Activities</option>
+                        <option value="event">Event</option>
+                        <option value="teaching">Teaching</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input type="file" id="myUploadProposal">
+                    <button onclick="uploadNewProposal()">Upload New file</button>
+                </div>
+                <button onclick="createNewProposal()">Create New Proposal</button>
             </div>
             <div class="td">
                 <select id="proposalFilter" onchange="proposalFilter()">
@@ -133,16 +136,35 @@
         </div>
     </div>
 </div>
+
+<div class="proposalUpdate" style="display: none;">
+    <input type="text" id="proposalNameUpdate">
+    <input type="text" id="proposalContentUpdate">
+    <select id="proposalType">
+        <option value="extracurricularActivities">Extracurricular Activities</option>
+        <option value="event">Event</option>
+        <option value="teaching">Teaching</option>
+        <option value="other">Other</option>
+    </select>
+    <input type="file" id="myUploadProposal">
+    <button onclick="uploadNewProposal()">Upload New file</button>
+</div>
+
+
 <div id="viewProposal"></div>
 <script>
     var fileData;
     var myFile;
     $(document).ready(function () {
         $('.proposal').slideUp()
+        $(".uploadFile").slideUp();
+        $('.proposalUpdate').slideUp()
 
     });
 
-
+    function createNewProposal() {
+        $(".uploadFile").slideToggle();
+    }
     function teacherProfile() {
         $.ajax({
             url: '/teacher/teacherProfile',
@@ -203,6 +225,10 @@
                 alert('server error');
             }
         })
+    }
+
+    function updateProposal(id){
+        $(".proposalUpdate").slideToggle();
     }
 
     function view(base64) {
