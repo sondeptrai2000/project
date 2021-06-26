@@ -219,6 +219,7 @@ function updateForm(id) {
                     var routeName = data.routeName
                     var stage = data.stage
                     var aim = data.aim
+                    $('#roleUpdate option:selected').removeAttr('selected');
                     $("#roleUpdate option[value='" + data.role + "']").attr('selected', 'selected');
                     role('update');
                     $.each(response.targetxxx, function(index, targetxxx) {
@@ -229,8 +230,10 @@ function updateForm(id) {
                             $.each(targetxxx.routeSchedual, function(index, routeSchedual) {
                                 var Schudelstage = "<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>"
                                 $("#levelSUpdate").append(Schudelstage);
+                                $('#levelSUpdate option:selected').removeAttr('selected');
                                 $("#levelSUpdate option[value='" + stage + "']").attr('selected', 'selected');
                                 $("#AimUpdate").append(Schudelstage);
+                                $('#AimUpdate option:selected').removeAttr('selected');
                                 $("#AimUpdate option[value='" + aim + "']").attr('selected', 'selected');
                             });
                         }

@@ -153,7 +153,29 @@ class teacherController {
     }
 
     updateProposal(req, res) {
-
+        if (req.body.file == "none") {
+            var update = {
+                proposalName: req.body.proposalName,
+                Content: req.body.Content,
+                proposalType: req.body.proposalType,
+                uploadDate: new Date
+            }
+        } else {
+            var update = {
+                proposalName: req.body.proposalName,
+                Content: req.body.Content,
+                file: req.body.file,
+                proposalType: req.body.proposalType,
+                uploadDate: new Date
+            }
+        }
+        ProposalModel.updateOne({ _id: req.body._id }, update, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
     }
 
     deleteProposal(req, res) {
