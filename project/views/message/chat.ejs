@@ -54,18 +54,28 @@
                 <div id="UpdateHistory"></div>
                 <% data1.forEach(function(data1) { %>
                     <%if (data1.person1 !== formData.sender) { %>
-                        <ul class='<%=data1._id %>'> Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
-                <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
-                <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
-                <input type="text" class='allID' value="<%=data1._id %>"></input>
+                        <ul class='<%=data1._id %>' style="background-color: gray;color:cornsilk;border-radius: 15px;">
+                <div onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Name:
+                    <%= data1.person1 %>
+                        <p id='<%=data1._id %>'>
+                            <%= data1.message[0].ownermessenger %>:
+                                <%= data1.message[0].messContent %>
+                        </p>
+                        <input type="hidden" class='allID' value="<%=data1._id %>"></p>
+                </div>
                 </ul>
                 <% } %>
                     <%if (data1.person2 !== formData.sender) { %>
-                        <ul class='<%=data1._id %>'>
-                            Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
-                            <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
-                            <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
-                            <input type="hidden" class='allID' value="<%=data1._id %>"></input>
+                        <ul class='<%=data1._id %>' style="background-color: gray;color:cornsilk;border-radius: 15px;">
+                            <div onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')">
+                                Name:
+                                <%= data1.person2 %>
+                                    <p id='<%=data1._id %>'>
+                                        <%= data1.message[0].ownermessenger %>:
+                                            <%= data1.message[0].messContent %>
+                                    </p>
+                                    <input type="hidden" class='allID' value="<%=data1._id %>"></p>
+                            </div>
                         </ul>
                         <% } %>
                             <% }); %>
@@ -100,7 +110,6 @@
                                                 <% } %>
                                                     <% }); %>
                                                         <% }); %>
-                                                            <div id="lol"></div>
                 </div>
             </div>
             <div style="height: 100%;">
@@ -166,12 +175,16 @@
                 if (response.msg == 'success') {
                     $.each(response.data, function(index, data) {
                         $.each(data.message, function(index, message) {
-                            $('#messContent').append("<ul>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            if (message.ownermessenger === name.value) {
+                                $('#messContent').append("<ul class='sender'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            } else if (message.ownermessenger === receiver) {
+                                $('#messContent').append("<ul class='receiver'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            } else {
+                                $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                            }
                         });
                     });
                 }
-                $('#messContent').append('<div id="lol"></div>')
-                console.log($('#messContent').height())
                 $('#scroll_box').scrollTop($('#messContent').height())
             },
             error: function(response) {
@@ -198,18 +211,18 @@
     // add message to our page
     function addMessageToHTML(message) {
         // create a new li element
-        const ul = document.createElement("ul");
+        var ul = document.createElement("ul");
         if (message.sender == name.value) {
             ul.setAttribute("class", "sender");
-        } else if (message.receiver == receiver.value) {
+        } else {
             ul.setAttribute("class", "receiver");
         }
         // add message to the elements text
         ul.innerText = message.sender + ": " + message.mess;
         // add to list of messages
-        $("#lol").append(ul);
+        $("#messContent").append(ul);
         var newMess = '#' + message._idRoom
-        $(newMess).val(message.sender + ": " + message.mess)
+        $(newMess).text(message.sender + ": " + message.mess)
             //tin nhắn gửi đến nếu chưa xem thì in đậm, xem r thì in bt
         if (message._idRoom != _idRoom.value) {
             $(newMess).css("font-weight", "bold");

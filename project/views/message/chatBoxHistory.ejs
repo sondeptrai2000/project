@@ -108,21 +108,26 @@
                 <% data1.forEach(function(data1) { %>
                     <%if (data1.person1 !== formData.sender) { %>
                         <ul class='<%=data1._id %>'>
-                            <div class='chatTo'>
-                                Name: <input type='text' name="studentName" value="<%= data1.person1 %>" readonly>
-                                <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
-                                <button onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')"> Chat</button>
-                                <input type="hidden" class='allID' value="<%=data1._id %>"></input>
+                            <div class='chatTo' onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')">
+                                Name:
+                                <%= data1.person1 %>
+                                    <p id='<%=data1._id %>'>
+                                        <%= data1.message[0].ownermessenger %>:
+                                            <%= data1.message[0].messContent %>
+                                    </p>
+                                    <input type="hidden" class='allID' value="<%=data1._id %>"></input>
                             </div>
                         </ul>
                         <% } %>
                             <%if (data1.person2 !== formData.sender) { %>
                                 <ul class='<%=data1._id %>'>
-                                    <div class='chatTo'>
-                                        Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
-                                        <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
-                                        <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
-                                        <input type="hidden" class='allID' value="<%=data1._id %>"></input>
+                                    <div class='chatTo' onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')">
+                                        Name:
+                                        <%= data1.person2 %>
+                                            <p id='<%=data1._id %>'>
+                                                <%= data1.message[0].ownermessenger %>:
+                                                    <%= data1.message[0].messContent %>
+                                            </p> <input type="hidden" class='allID' value="<%=data1._id %>"></input>
                                     </div>
                                 </ul>
                                 <% } %>
@@ -229,7 +234,6 @@
                         });
                     });
                 }
-                $('#messContent').append('<div id="lol"></div>')
                 $(".chatBox").scrollTop($('#messContent').height())
             },
             error: function(response) {
@@ -268,7 +272,6 @@
                         });
                     });
                 }
-                $('#messContent').append('<div id="lol"></div>')
                 $('.chatBox').scrollTop($('#messContent').height())
             },
             error: function(response) {
@@ -293,21 +296,22 @@
 
     // add message to our page
     function addMessageToHTML(message) {
-        const ul = document.createElement("ul");
-
+        // create a new li element
+        var ul = document.createElement("ul");
         if (message.sender == name.value) {
             ul.setAttribute("class", "sender");
-        } else if (message.receiver == receiver.value) {
+        } else {
             ul.setAttribute("class", "receiver");
         }
-        // create a new li element
         // add message to the elements text
         ul.innerText = message.sender + ": " + message.mess;
         // add to list of messages
-        $("#lol").append(ul);
+        $("#messContent").append(ul);
+
         var newMess = '#' + message._idRoom
-        $(newMess).val(message.sender + ": " + message.mess)
-            //tin nhắn gửi đến nếu chưa xem thì in đậm, xem r thì in bt
+        $(newMess).text(message.sender + ": " + message.mess)
+
+        //tin nhắn gửi đến nếu chưa xem thì in đậm, xem r thì in bt
         if (message._idRoom != _idRoom.value) {
             $(newMess).css("font-weight", "bold");
         } else if (message.receiver == $('#name').val()) {
@@ -354,7 +358,6 @@
                                 $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
                             }
                         });
-                        $('#messContent').append("<div id='lol'></div>");
                     });
                     $('.chatBox').scrollTop($('#messContent').height())
                 }
@@ -371,9 +374,8 @@
                     $('.chatTitle').html("<h2>Conversation between" + response.sender + " and " + response.receiver + "</h2>")
                     $('#messContent').html("")
                     $('#messContent').append("<ul style='text-align:center;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
-                    $('#messContent').append('<div id="lol"></div>')
                     $('.chatBox').scrollTop($('#messContent').height())
-                    $("#UpdateHistory").append("<ul class='" + response._idRoom + "'> Name: <input type='text' name='studentName' value='" + response.receiver + "' readonly><input type='text' id='" + response._idRoom + "' value='Hệ thống: Đã kết nối! Ấn vào để chat' readonly><button onclick= chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Chat</button><input type='hidden' class='allID' value='" + response._idRoom + "'></input></ul>")
+                    $("#UpdateHistory").append("<ul class='" + response._idRoom + "'> Name: " + response.receiver + "' readonly><input type='text' id='" + response._idRoom + "' value='Hệ thống: Đã kết nối! Ấn vào để chat' readonly><button onclick= chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Chat</button><input type='hidden' class='allID' value='" + response._idRoom + "'></input></ul>")
                     var idConversationList = [];
                     idConversationList.push(response._idRoom);
                     socket.emit("tao-room", {
