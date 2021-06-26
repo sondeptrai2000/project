@@ -277,14 +277,16 @@
         });
     }
     $("#btnChat").click(function() {
-            //sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
-            socket.emit("user-chat", {
-                sender: name.value,
-                mess: mess.value,
-                receiver: receiver.value,
-                _idRoom: _idRoom.value,
-            })
-            mess.value = "";
+            if (mess.value != "") {
+                //sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
+                socket.emit("user-chat", {
+                    sender: name.value,
+                    mess: mess.value,
+                    receiver: receiver.value,
+                    _idRoom: _idRoom.value,
+                })
+                mess.value = "";
+            }
         })
         // server gửi tin nhắn lại từ sender cho receiver
     socket.on("server-chat", addMessageToHTML)

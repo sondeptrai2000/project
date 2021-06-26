@@ -65,7 +65,7 @@
                             Name: <input type='text' name="studentName" value="<%= data1.person2 %>" readonly>
                             <input type='text' id='<%=data1._id %>' value="<%= data1.message[0].ownermessenger %>: <%= data1.message[0].messContent %>" readonly>
                             <button onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')"> Chat</button>
-                            <input type="text" class='allID' value="<%=data1._id %>"></input>
+                            <input type="hidden" class='allID' value="<%=data1._id %>"></input>
                         </ul>
                         <% } %>
                             <% }); %>
@@ -77,7 +77,7 @@
                     <%=formData.studentName %>
             </h2>
             <div id="scroll_box" style="height: 350px;width: 100%;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
-                <div id='messContent' style="height: 80%;">
+                <div id='messContent'>
                     <% data.forEach(function(data) { %>
                         <% data.message.forEach(function(message) { %>
                             <%if (message.ownermessenger == formData.sender) { %>
@@ -86,7 +86,7 @@
                                         <%=message.messContent %>
                                 </ul>
                                 <% } %>
-                                    <%if (message.ownermessenger != "Hệ thống" ) { %>
+                                    <%if (message.ownermessenger == formData.studentName ) { %>
                                         <ul class="receiver">
                                             <%=message.ownermessenger %>:
                                                 <%=message.messContent %>
@@ -105,7 +105,7 @@
             </div>
             <div style="height: 100%;">
                 <p id="action" style="display: none;"></p>
-                <input id="mess" type="text" style=" width:100%;height: 40px;" />
+                <input id="mess" type="text" style=" width:92%;height: 40px;" />
                 <button id="btnChat" style="height: 45px;">Send</button>
             </div>
             <div class='inforChat' style="display:none;height: 150px;max-width: 40%;border: 1px solid gray;padding: 1em;overflow: hidden;text-align: center;">
@@ -132,6 +132,7 @@
 
     $(document).ready(function() {
         connectAllConversation();
+        console.log($('#messContent').height())
         $('#scroll_box').scrollTop($('#messContent').height())
     });
     //tạo room cho tất cả cuọco trò chuyện "online" để nhận thông báo khi người khác gửi tin nhắn
@@ -170,6 +171,7 @@
                     });
                 }
                 $('#messContent').append('<div id="lol"></div>')
+                console.log($('#messContent').height())
                 $('#scroll_box').scrollTop($('#messContent').height())
             },
             error: function(response) {
@@ -179,14 +181,16 @@
     }
 
     $("#btnChat").click(function() {
-            //sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
-            socket.emit("user-chat", {
-                sender: name.value,
-                mess: mess.value,
-                receiver: receiver.value,
-                _idRoom: _idRoom.value,
-            })
-            mess.value = "";
+            if (mess.value != "") {
+                //sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
+                socket.emit("user-chat", {
+                    sender: name.value,
+                    mess: mess.value,
+                    receiver: receiver.value,
+                    _idRoom: _idRoom.value,
+                })
+                mess.value = "";
+            }
         })
         // server gửi tin nhắn lại từ sender cho receiver
     socket.on("server-chat", addMessageToHTML)
@@ -194,7 +198,6 @@
     // add message to our page
     function addMessageToHTML(message) {
         // create a new li element
-        const ul = document.createElement("ul");
         const ul = document.createElement("ul");
         if (message.sender == name.value) {
             ul.setAttribute("class", "sender");
