@@ -291,8 +291,14 @@
 
     // add message to our page
     function addMessageToHTML(message) {
-        // create a new li element
         const ul = document.createElement("ul");
+
+        if (message.sender == name.value) {
+            ul.setAttribute("class", "sender");
+        } else if (message.receiver == receiver.value) {
+            ul.setAttribute("class", "receiver");
+        }
+        // create a new li element
         // add message to the elements text
         ul.innerText = message.sender + ": " + message.mess;
         // add to list of messages

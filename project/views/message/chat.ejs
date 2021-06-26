@@ -8,6 +8,16 @@
     <script src="/jquery/jquery.js"></script>
 
     <style>
+        .sender {
+            text-align: right;
+            padding-right: 20px;
+        }
+        
+        .receiver {
+            text-align: left;
+            padding-left: 20px;
+        }
+        
         div.container {
             width: 100%;
             height: 100%;
@@ -39,7 +49,6 @@
             <div>
                 <h2> Chat history</h2>
                 Add chat: <input type='text id=' addChat '>
-
             </div>
             <div id="chatHistory" style="height: 350px;width: 100%;overflow: auto;border: 1px solid #CCCCCC;margin: 1em 0;">
                 <div id="UpdateHistory"></div>
@@ -71,13 +80,27 @@
                 <div id='messContent' style="height: 80%;">
                     <% data.forEach(function(data) { %>
                         <% data.message.forEach(function(message) { %>
-                            <ul>
-                                <%=message.ownermessenger %>:
-                                    <%=message.messContent %>
-                            </ul>
-                            <% }); %>
-                                <% }); %>
-                                    <div id="lol"></div>
+                            <%if (message.ownermessenger == formData.sender) { %>
+                                <ul class="sender">
+                                    <%=message.ownermessenger %>:
+                                        <%=message.messContent %>
+                                </ul>
+                                <% } %>
+                                    <%if (message.ownermessenger != "Hệ thống" ) { %>
+                                        <ul class="receiver">
+                                            <%=message.ownermessenger %>:
+                                                <%=message.messContent %>
+                                        </ul>
+                                        <% } %>
+                                            <% if (message.ownermessenger == "Hệ thống") { %>
+                                                <ul style="text-align: center;">
+                                                    <%=message.ownermessenger %>:
+                                                        <%=message.messContent %>
+                                                </ul>
+                                                <% } %>
+                                                    <% }); %>
+                                                        <% }); %>
+                                                            <div id="lol"></div>
                 </div>
             </div>
             <div style="height: 100%;">
@@ -120,34 +143,6 @@
         socket.emit("tao-room", {
             idConversationList
         });
-    }
-
-    $("#mess").focusin(function() {
-        socket.emit('typing', {
-            sender: name.value,
-            receiver: receiver.value,
-            _idRoom: _idRoom.value
-        })
-    })
-    $("#mess").focusout(function() {
-        socket.emit('stopTyping', {
-            sender: name.value,
-            receiver: receiver.value,
-            _idRoom: _idRoom.value
-        })
-    })
-    socket.on("Typing", TypingOrNot)
-    socket.on("notTyping", TypingOrNot)
-
-    function TypingOrNot(data) {
-        if (data.action === 'typing') {
-            $("#action").show()
-            $("#action").html(data.person + 'is typing')
-        }
-        if (data.action === 'notTyping') {
-            $("#action").hide()
-            $("#action").html('')
-        }
     }
 
     function chatBox(receiver, sender, _idRoom) {
@@ -200,6 +195,12 @@
     function addMessageToHTML(message) {
         // create a new li element
         const ul = document.createElement("ul");
+        const ul = document.createElement("ul");
+        if (message.sender == name.value) {
+            ul.setAttribute("class", "sender");
+        } else if (message.receiver == receiver.value) {
+            ul.setAttribute("class", "receiver");
+        }
         // add message to the elements text
         ul.innerText = message.sender + ": " + message.mess;
         // add to list of messages
@@ -216,6 +217,36 @@
         var newestMess = '.' + message._idRoom
             //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
         $(newestMess).prependTo("#UpdateHistory");
+    }
+
+
+    //trangj thái của user: đang nhập văn bản hay không
+    $("#mess").focusin(function() {
+        socket.emit('typing', {
+            sender: name.value,
+            receiver: receiver.value,
+            _idRoom: _idRoom.value
+        })
+    })
+    $("#mess").focusout(function() {
+        socket.emit('stopTyping', {
+            sender: name.value,
+            receiver: receiver.value,
+            _idRoom: _idRoom.value
+        })
+    })
+    socket.on("Typing", TypingOrNot)
+    socket.on("notTyping", TypingOrNot)
+
+    function TypingOrNot(data) {
+        if (data.action === 'typing') {
+            $("#action").show()
+            $("#action").html(data.person + 'is typing')
+        }
+        if (data.action === 'notTyping') {
+            $("#action").hide()
+            $("#action").html('')
+        }
     }
 </script>
 

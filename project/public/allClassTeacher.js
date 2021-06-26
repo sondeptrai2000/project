@@ -12,6 +12,7 @@ function sendData(id, routeName, stage, subject) {
             data: { abc: _id },
             success: function(response) {
                 if (response.msg == 'success') {
+                    $(".taskrow").html("")
                     $.each(response.data, function(index, data) {
                         $.each(data.studentID, function(index, studentID) {
                             if (studentID.grade === "Has not been commented yet") {
@@ -143,11 +144,11 @@ function updateStudentAssessmentForm(classID, studentID, name, grade) {
     $("#updateclassID").html(classID);
     $("#updatestudentID").html(studentID);
     $("#updatename").html(name);
+    $('#updategrade option:selected').removeAttr('selected');
     $("#updategrade option[value='" + grade + "']").attr('selected', 'selected');
     var content = '#' + studentID
     $("#updatecomment").val($(content).text())
     $(".studentAssessmentUpdate").fadeIn(2000);
-
 }
 
 function takeFeedBack() {
@@ -164,7 +165,11 @@ function takeFeedBack() {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
-                accountInformation = response.data;
+                closeStudentList();
+                var infor = response.data
+                var infor = response.data
+                sendData(infor._id, infor.routeName, infor.stage, infor.subject);
+                console.log(infor._id + infor.routeName + infor.stage + infor.subject)
                 alert("take feedback success")
             }
         },
@@ -188,7 +193,10 @@ function updateFeekBack() {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
-                accountInformation = response.data;
+                closeStudentList();
+                var infor = response.data
+                sendData(infor._id, infor.routeName, infor.stage, infor.subject);
+                console.log(infor._id + infor.routeName + infor.stage + infor.subject)
                 alert("update feedback success")
             }
         },

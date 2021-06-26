@@ -110,7 +110,7 @@ class teacherController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.json({ msg: 'success' });
+                res.json({ msg: 'success', data });
             }
         })
     }
