@@ -116,7 +116,6 @@ function doUpdateProposal() {
         proposalType: $("#proposalType ").val(),
         file: fileDataUpdate.split("data:application/pdf;base64,")[1],
     }
-    console.log(formData)
     $.ajax({
         url: '/teacher/updateProposal',
         method: 'post',

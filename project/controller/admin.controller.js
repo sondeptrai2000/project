@@ -86,9 +86,6 @@ class adminController {
 
 
     doCreateAccount(req, res) {
-        var image = req.body.file;
-        var data = image.split(',')[1];
-        var base64data = data.toString('base64')
         try {
             let { username, password, email, phone, address, birthday } = req.body
             let role = req.body.role
@@ -108,7 +105,7 @@ class adminController {
                         const salt = bcrypt.genSaltSync(saltRounds);
                         const hash = bcrypt.hashSync(password, salt);
                         AccountModel.create({
-                            avatar: base64data,
+                            avatar: req.body.file.split("data:image/jpeg;base64,")[1],
                             username,
                             password: hash,
                             email,
@@ -154,49 +151,40 @@ class adminController {
 
     //làm cuối
     doeditAccount(req, res) {
-        var image = req.body.file;
-        var data = image.split(',')[1];
-        var base64data = data.toString('base64')
-        try {
-            let { username, password, email, phone, address, birthday } = req.body
-            let role = req.body.role
-            let stage = req.body.stage
-            let routeName = req.body.routeName
-            let aim = req.body.aim
-            if (role === "guardian" || role === "teacher") {
-                stage = "none"
-                routeName = "none"
-                aim = "none"
-            }
-            const salt = bcrypt.genSaltSync(saltRounds);
-            const hash = bcrypt.hashSync(password, salt);
-            AccountModel.findOneAndUpdate({ _id: req.body._id }, {
-                avatar: base64data,
-                username,
-                password: hash,
-                email,
-                role,
-                routeName,
-                aim,
-                stage,
-                phone,
-                address,
-                birthday
-            }, function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data: data });
-                }
-            })
-        } catch (error) {
-            if (error) {
-                res.status(400).json({
-                    msg: "Sign Up fail",
-                    error: true
-                })
-            }
+        let role = req.body.role
+        let stage = req.body.stage
+        let routeName = req.body.routeName
+        let aim = req.body.aim
+        if (role === "guardian" || role === "teacher") {
+            stage = "none"
+            routeName = "none"
+            aim = "none"
         }
+        let password = req.body.password
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const hash = bcrypt.hashSync(password, salt);
+        var update = {
+            username: req.body.username,
+            password: hash,
+            email: req.body.email,
+            role: req.body.role,
+            routeName: routeName,
+            aim: aim,
+            stage: stage,
+            phone: req.body.phone,
+            address: req.body.address,
+            birthday: req.body.birthday
+        }
+        if (req.body.file != "none") {
+            update["avatar"] = req.body.file.split("data:image/jpeg;base64,")[1]
+        }
+        AccountModel.findOneAndUpdate({ _id: req.body._id }, update, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
     }
 
     createClass(req, res) {

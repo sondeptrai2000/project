@@ -32,6 +32,17 @@ $(document).ready(function() {
         filereader.readAsDataURL(myFile)
     });
 
+    $('#myFileUpdate').on('change', function() {
+        var filereaderUpdate = new FileReader();
+        filereaderUpdate.onload = function(event) {
+            fileDataUpdate = event.target.result;
+            var dataURLUpdate = filereaderUpdate.result;
+            $("#outputUpdate").attr("src", dataURLUpdate);
+        };
+        myFileUpdate = $('#myFileUpdate').prop('files')[0];
+        console.log('myfileUpdate', myFileUpdate)
+        filereaderUpdate.readAsDataURL(myFileUpdate)
+    });
 });
 
 $("#myInput").on("keyup", function() {
@@ -43,17 +54,7 @@ $("#myInput").on("keyup", function() {
     });
 });
 
-function updateImg() {
-    var filereaderUpdate = new FileReader();
-    filereaderUpdate.onload = function(event) {
-        fileDataUpdate = event.target.result;
-        var dataURLUpdate = filereaderUpdate.result;
-        $("#outputUpdate").attr("src", dataURLUpdate);
-    };
-    myFileUpdate = $('#myFileUpdate').prop('files')[0];
-    console.log('myfileUpdate', myFileUpdate)
-    filereaderUpdate.readAsDataURL(myFileUpdate)
-}
+
 
 function reset() {
     document.getElementById('myFile').value = ''
@@ -251,10 +252,14 @@ $("#closeUpdateForm").click(function() {
     $('#updateForm').fadeOut(2000);
 });
 
-function doUpdate(id) {
+function doUpdate() {
+    if (!fileDataUpdate) {
+        fileDataUpdate = "none"
+    } else {
+        fileDataUpdate.split("data:image/jpeg;base64,")[1]
+    }
     var formData = {
-        _id: id,
-        filename: myFileUpdate.name,
+        _id: $("#PersonID").val(),
         file: fileDataUpdate,
         username: $("#usernameUpdate").val(),
         password: $("#passwordUpdate").val(),
