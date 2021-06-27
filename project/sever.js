@@ -81,9 +81,9 @@ io.on("connection", function(socket) {
             updateTime: new Date
         }, function(err, data) {
             if (err) {
-                console.log("lỗi khi thêm tin nhắn vào đb")
+                // console.log("lỗi khi thêm tin nhắn vào đb")
             } else {
-                console.log("lưu tiin nhắn ok")
+                // console.log("lưu tiin nhắn ok")
             }
         })
         socket.Phong = data._idRoom

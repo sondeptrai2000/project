@@ -134,15 +134,13 @@ class teacherController {
     uploadNewProposal(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        var proposalFile = req.body.file;
-        var data = proposalFile.split(',')[1];
-        var base64data = data.toString('base64')
         ProposalModel.create({
             proposalName: req.body.proposalName,
             Content: req.body.proposalContent,
-            file: base64data,
+            file: req.body.file,
             teacherID: decodeAccount,
-            proposalType: req.body.proposalType
+            proposalType: req.body.proposalType,
+            uploadDate: new Date
         }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });

@@ -148,7 +148,7 @@
                         });
                     });
                     $.each(response.student, function(index, student) {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
                     });
                 }
             },

@@ -113,7 +113,7 @@ class adminController {
                         const salt = bcrypt.genSaltSync(saltRounds);
                         const hash = bcrypt.hashSync(password, salt);
                         AccountModel.create({
-                            avatar: req.body.file.split("data:image/jpeg;base64,")[1],
+                            avatar: req.body.file,
                             username,
                             password: hash,
                             email,
@@ -184,7 +184,7 @@ class adminController {
             birthday: req.body.birthday
         }
         if (req.body.file != "none") {
-            update["avatar"] = req.body.file.split("data:image/jpeg;base64,")[1]
+            update["avatar"] = req.body.file
         }
         AccountModel.findOneAndUpdate({ _id: req.body._id }, update, function(err, data) {
             if (err) {

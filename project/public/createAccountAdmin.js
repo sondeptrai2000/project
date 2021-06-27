@@ -18,8 +18,7 @@ $("#btnxx").click(function() {
 $(document).ready(function() {
     getAccount('teacher')
     $("#createAccount").slideUp();
-
-
+    //xử lý file khi tạo tài khoản
     $('#myFile').on('change', function() {
         var filereader = new FileReader();
         filereader.onload = function(event) {
@@ -31,7 +30,7 @@ $(document).ready(function() {
         console.log('myfile', myFile)
         filereader.readAsDataURL(myFile)
     });
-
+    //xử lý file khi câpj nhật thông tin tài khoản
     $('#myFileUpdate').on('change', function() {
         var filereaderUpdate = new FileReader();
         filereaderUpdate.onload = function(event) {
@@ -44,11 +43,9 @@ $(document).ready(function() {
         filereaderUpdate.readAsDataURL(myFileUpdate)
     });
 });
-
+//tìm kiếm account
 $("#myInput").on("keyup", function() {
     var value = $(this).val().toLowerCase();
-    console.log(value)
-
     $(".taskrow tr").filter(function() {
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
@@ -108,14 +105,12 @@ function getAccount(index) {
     $("#loading").show();
     $(".taskrow").html("");
     $(".tableInforType").html("");
-    var tableInfor
     if (index === 'teacher' || index === 'guardian') {
-        tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>email</th><th>role</th><th>sex</th><th>phone</th><th>address</th><th>birthday</th><th>More information</th></tr>"
+        var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>email</th><th>role</th><th>sex</th><th>phone</th><th>address</th><th>birthday</th><th>More information</th></tr>"
     } else {
-        tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
+        var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
     }
     $("#tableInforType").html(tableInfor);
-
     $.ajax({
         url: '/admin/getAccount',
         method: 'get',
@@ -125,9 +120,10 @@ function getAccount(index) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
                     if (index === 'teacher' || index === 'guardian') {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.sex + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><button onclick=updateForm('" + data._id + "')>Update " + data._id + "</button></td></tr>");
+                        if (data.avatar)
+                            $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.sex + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><button onclick=updateForm('" + data._id + "')>Update " + data._id + "</button></td></tr>");
                     } else {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='data:image/jpeg;base64," + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update " + data._id + "</button></td></tr>");
+                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update " + data._id + "</button></td></tr>");
                     }
                 });
                 $("#loading").hide();
@@ -139,12 +135,16 @@ function getAccount(index) {
     });
 }
 
-
+//phân loại đăng ký khóa học dựa vào role, teacher và guardian không cần cho cả create and update
 function routeType(action) {
     if (action === 'create') {
         var routeName = $('#routeTypeS').val();
+        $('#levelS').html('');
+        $("#Aim").html('');
     } else if (action === 'update') {
         var routeName = $('#routeTypeSUpdate').val();
+        $('#levelSUpdate').html('');
+        $("#AimUpdate").html('');
     }
     $.ajax({
         url: '/admin/getStage',
@@ -156,8 +156,6 @@ function routeType(action) {
         success: function(response) {
             if (response.msg == 'success') {
                 if (action === 'create') {
-                    $('#levelS').html('');
-                    $("#Aim").html('');
                     $.each(response.data, function(index, data) {
                         $.each(data.routeSchedual, function(index, routeSchedual) {
                             var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
@@ -166,15 +164,14 @@ function routeType(action) {
                         });
                     });
                 } else if (action === 'update') {
-                    $('#levelSUpdate').html('');
-                    $("#AimUpdate").html('');
                     $.each(response.data, function(index, data) {
-                        $.each(data.routeSchedual, function(index, routeSchedual) {
-                            var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
-                            $("#levelSUpdate").append(update);
-                            $("#AimUpdate").append(update);
-
-                        });
+                        if ($("#routeTypeSUpdate").val() == data.routeName) {
+                            $.each(data.routeSchedual, function(index, routeSchedual) {
+                                var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
+                                $("#levelSUpdate").append(update);
+                                $("#AimUpdate").append(update);
+                            });
+                        }
                     });
                 }
 
@@ -185,14 +182,13 @@ function routeType(action) {
         }
     })
 }
-
+//phân loại role cho cập nhật vào tạo tk
 function role(action) {
     if (action === 'create') {
         var accountRole = $('#role').val();
     } else if (action === 'update') {
         var accountRole = $('#roleUpdate').val();
         if (accountRole == "student") {
-            console.log("vào đây r")
             $('.typeRole').slideDown()
             $("#routeTypeSUpdate").html("")
             $.ajax({
@@ -218,6 +214,8 @@ function role(action) {
 }
 //ghi ra thông tin cũ trong form update
 function updateForm(id) {
+    $('#levelSUpdate').html('');
+    $("#AimUpdate").html('');
     $("#updateForm").fadeIn(2000);
     $.ajax({
         url: '/admin/editAccount',
@@ -228,8 +226,7 @@ function updateForm(id) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
                     $("#PersonID").val(data._id)
-                    var oldAva = "data:image/jpeg;base64," + data.avatar
-                    $("#oldAvatar").attr("src", oldAva);
+                    $("#oldAvatar").attr("src", data.avatar);
                     $("#usernameUpdate").val(data.username)
                     $("#emailUpdate").val(data.email)
                     $("#passwordUpdate").val(data.password)
@@ -269,12 +266,10 @@ function updateForm(id) {
 $("#closeUpdateForm").click(function() {
     $('#updateForm').fadeOut(2000);
 });
-
+//cập nhạta thông tin tk
 function doUpdate() {
     if (!fileDataUpdate) {
         fileDataUpdate = "none"
-    } else {
-        fileDataUpdate.split("data:image/jpeg;base64,")[1]
     }
     var formData = {
         _id: $("#PersonID").val(),
@@ -299,8 +294,7 @@ function doUpdate() {
                 alert('update success');
                 $('#updateForm').fadeOut(2000);
                 getAccount($("#roleUpdate").val());
-                $("#routeTypeSUpdate option[value='" + routeName + "']").attr('selected', 'selected');
-
+                $("#routeTypeSUpdate option[value='" + response.data.routeName + "']").attr('selected', 'selected');
             }
         },
         error: function(response) {

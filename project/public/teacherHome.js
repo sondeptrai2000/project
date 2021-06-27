@@ -76,8 +76,6 @@ function proposalT() {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
                     var content = "<div class='tr1' id='" + data._id + "'><div class='td' onclick=view('" + data.file + "')>" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.proposalType + "</div><div class='td'>" + data.uploadDate + "</div><div class='td'>" + data.Status + "</div><div class='td'><button onclick=updateProposal('" + data._id + "')>update</button><button onclick=deleteProposal('" + data._id + "')>delete</button></div>"
-                    console.log("sdf")
-                    console.log(data.file)
                     $("#table").append(content);
                 })
                 $("#loading").hide();
@@ -120,7 +118,7 @@ function doUpdateProposal() {
         proposalName: $("#proposalNameUpdate").val(),
         Content: $("#proposalContentUpdate").val(),
         proposalType: lol(),
-        file: fileDataUpdate.split("data:application/pdf;base64,")[1],
+        file: fileDataUpdate,
     }
     $.ajax({
         url: '/teacher/updateProposal',
@@ -144,25 +142,10 @@ function doUpdateProposal() {
 
 }
 
-function closeuploadNewProposal() {
-    $(".proposalUpdate").slideUp();
-}
 
-function view(base64) {
-    $('#viewProposal').append('<button onclick="cancelProposal()">&times;</button><iframe  src="data:application/pdf;base64,' + base64 + '" height="350px" width="100%"></iframe>');
-}
-
-function cancelProposal() {
-    $('#viewProposal').html('')
-}
-
-function closeProposal() {
-    $('.proposal').slideUp()
-}
 
 function uploadNewProposal() {
     var formData = {
-        filename: myFile.name,
         file: fileData,
         proposalName: $("#proposalName").val(),
         proposalContent: $("#proposalContent").val(),
@@ -222,4 +205,20 @@ function deleteProposal(id) {
             }
         })
     }
+}
+
+function closeuploadNewProposal() {
+    $(".proposalUpdate").slideUp();
+}
+
+function view(base64) {
+    $('#viewProposal').append('<button onclick="cancelProposal()">&times;</button><iframe  src="' + base64 + '" height="350px" width="100%"></iframe>');
+}
+
+function cancelProposal() {
+    $('#viewProposal').html('')
+}
+
+function closeProposal() {
+    $('.proposal').slideUp()
 }
