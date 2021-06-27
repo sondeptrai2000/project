@@ -2,6 +2,7 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const studyRouteModel = require('../models/studyRoute');
+const ProposalModel = require('../models/proposal');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const { data } = require('jquery');
@@ -287,15 +288,29 @@ class adminController {
             // res.json('Trang chỉ định giáo viên vào lớp ')
     }
 
-    allextracurricularActivities(req, res) {
-        res.render('admin/allextracurricularActivities')
-            // res.json('Trang xem tất cả các hoạt động ngoại khóa (chưa duyệt, đã duyệt và đã được thực hiện)')
+    allProposal(req, res) {
+        ProposalModel.find({}).populate('teacherID', { username: 1, avatar: 1 }).sort({ uploadDate: -1 }).exec((err, data) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
     }
 
-    extracurricularActivities(req, res) {
-        res.render('admin/extracurricularActivities')
-            // res.json('Trang xem thông tin hoạt động ngoại khóa đã chọn')
+    rateProppsal(req, res) {
+        let { _id, Status, comment } = req.body
+        ProposalModel.findOneAndUpdate({ _id: _id }, { Status, comment }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
+
     }
+
+
 
 
     dashboard(req, res) {

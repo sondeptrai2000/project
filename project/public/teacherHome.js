@@ -219,6 +219,6 @@ function cancelProposal() {
     $('#viewProposal').html('')
 }
 
-function closeProposal() {
+function closeProposalTable() {
     $('.proposal').slideUp()
 }

@@ -19,13 +19,17 @@ var proposalSchema = new mongoose.Schema({
         ref: 'account'
     },
     uploadDate: { type: Date, default: Date.now },
+    activityInfor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'extracurricularActivities'
+    },
     Status: {
         type: String,
         default: "None"
     },
-    activityInfor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'extracurricularActivities'
+    comment: {
+        type: String,
+        default: "None"
     }
 })
 
