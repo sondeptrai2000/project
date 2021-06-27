@@ -76,6 +76,8 @@ function proposalT() {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
                     var content = "<div class='tr1' id='" + data._id + "'><div class='td' onclick=view('" + data.file + "')>" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.proposalType + "</div><div class='td'>" + data.uploadDate + "</div><div class='td'>" + data.Status + "</div><div class='td'><button onclick=updateProposal('" + data._id + "')>update</button><button onclick=deleteProposal('" + data._id + "')>delete</button></div>"
+                    console.log("sdf")
+                    console.log(data.file)
                     $("#table").append(content);
                 })
                 $("#loading").hide();
@@ -102,7 +104,11 @@ function updateProposal(id) {
     $("#proposalNameUpdate").val(value[0])
     $("#proposalContentUpdate").val(value[1])
     $('#updateProposalType option:selected').removeAttr('selected');
-    $("#updateProposalType option[value='" + value[2] + "']").attr('selected', 'selected');
+    $("#updateProposalType option[value='" + value[2] + "']").attr('selected', true);;
+}
+
+function lol() {
+    return ($("#updateProposalType").val())
 }
 
 function doUpdateProposal() {
@@ -113,7 +119,7 @@ function doUpdateProposal() {
         _id: $("#IDproposalNameUpdate").val(),
         proposalName: $("#proposalNameUpdate").val(),
         Content: $("#proposalContentUpdate").val(),
-        proposalType: $("#proposalType ").val(),
+        proposalType: lol(),
         file: fileDataUpdate.split("data:application/pdf;base64,")[1],
     }
     $.ajax({

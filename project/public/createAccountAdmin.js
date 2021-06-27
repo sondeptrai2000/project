@@ -55,7 +55,7 @@ $("#myInput").on("keyup", function() {
 });
 
 
-
+// làm trống thông tin tạo tài khoản
 function reset() {
     document.getElementById('myFile').value = ''
     document.getElementById('username').value = ''
@@ -66,7 +66,7 @@ function reset() {
     document.getElementById('address').value = ''
     document.getElementById('output').src = ''
 }
-
+//thực hiện đăng ký và lưu tài khỏan vào đb
 function signUp() {
     var role = $("#role").val()
     var formData = {
@@ -103,7 +103,7 @@ function signUp() {
         }
     })
 }
-
+//lấy danh sách theo role (index)
 function getAccount(index) {
     $("#loading").show();
     $(".taskrow").html("");
@@ -191,6 +191,24 @@ function role(action) {
         var accountRole = $('#role').val();
     } else if (action === 'update') {
         var accountRole = $('#roleUpdate').val();
+        if (accountRole == "student") {
+            console.log("vào đây r")
+            $('.typeRole').slideDown()
+            $("#routeTypeSUpdate").html("")
+            $.ajax({
+                url: '/admin/getRoute',
+                method: 'get',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.msg == 'success') {
+                        $.each(response.data, function(index, data) {
+                            var update = "<option value=" + data.routeName + ">" + data.routeName + "</option>"
+                            $("#routeTypeSUpdate").append(update)
+                        });
+                    }
+                }
+            })
+        }
     }
     if (accountRole === "guardian" || accountRole === "teacher") {
         $('.typeRole').slideUp()
@@ -198,7 +216,7 @@ function role(action) {
         $('.typeRole').slideDown()
     }
 }
-
+//ghi ra thông tin cũ trong form update
 function updateForm(id) {
     $("#updateForm").fadeIn(2000);
     $.ajax({
@@ -267,6 +285,7 @@ function doUpdate() {
         role: $("#roleUpdate").val(),
         routeName: $("#routeTypeSUpdate").val(),
         stage: $("#levelSUpdate").val(),
+        aim: $("#AimUpdate").val(),
         phone: $("#phoneUpdate").val(),
         address: $("#addressUpdate").val(),
     };
@@ -278,6 +297,10 @@ function doUpdate() {
         success: function(response) {
             if (response.msg == 'success') {
                 alert('update success');
+                $('#updateForm').fadeOut(2000);
+                getAccount($("#roleUpdate").val());
+                $("#routeTypeSUpdate option[value='" + routeName + "']").attr('selected', 'selected');
+
             }
         },
         error: function(response) {

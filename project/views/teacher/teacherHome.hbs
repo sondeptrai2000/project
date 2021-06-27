@@ -115,7 +115,7 @@
                 <button onclick="createNewProposal()">Create New Proposal</button>
             </div>
             <div class="td">
-                <select id="proposalFilter" onchange="proposalFilter()">
+                <select id="proposalFilter" >
                     <option value="all">All</option>
                     <option value="extracurricularActivities">Extracurricular Activities</option>
                     <option value="event">Event</option>
@@ -141,7 +141,7 @@
     <input type="text" id="IDproposalNameUpdate">
     <input type="text" id="proposalNameUpdate">
     <input type="text" id="proposalContentUpdate">
-    <select id="updateProposalType">
+    <select id="updateProposalType" onchange="lol()">
         <option value="extracurricularActivities">Extracurricular Activities</option>
         <option value="event">Event</option>
         <option value="teaching">Teaching</option>
@@ -156,6 +156,4 @@
 
 <div id="viewProposal"></div>
 <script src=" /teacherHome.js"></script>
-
-
 </html>

@@ -32,7 +32,15 @@ class adminController {
         })
 
     }
-
+    getRoute(req, res) {
+        studyRouteModel.find({}, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
+    }
 
     getStage(req, res) {
         studyRouteModel.find({ routeName: req.query.abc }, function(err, targetxxx) {
