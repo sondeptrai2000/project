@@ -16,6 +16,10 @@ const AccountSchema = new Schema({
     aim: String,
     routeName: String,
     stage: String,
+    guardian: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'account'
+    },
     role: {
         type: String,
         default: "none"

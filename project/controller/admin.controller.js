@@ -14,13 +14,14 @@ class adminController {
     }
 
     getAccount(req, res) {
-        AccountModel.find({ role: req.query.role }, function(err, data) {
+        AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
                 res.json({ msg: 'success', data: data });
             }
         })
+
     }
     createAccount(req, res) {
         studyRouteModel.find({}, function(err, targetxxx) {
@@ -148,13 +149,11 @@ class adminController {
 
     editAccount(req, res) {
         studyRouteModel.find({}, function(err, targetxxx) {
-            AccountModel.find({ _id: req.query.updateid }, function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data, targetxxx });
-                }
-            })
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', targetxxx });
+            }
         })
     }
 
