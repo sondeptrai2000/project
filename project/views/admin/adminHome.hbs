@@ -60,8 +60,7 @@
     <div class="proposal" style="display: none;">
         <div id="table">
             <div class="tr">
-                <div class="td"><input type="text"></div>
-                <div class="td"><button>Find</button></div>
+                <div class="td">Tìm kiếm: <input type="text" id="myInput" placeholder="Enter proposal name"></div>
                 <div class="td">Filter:
                     <select id="proposalFilter">
                         <option value="all">All</option>
@@ -72,6 +71,12 @@
                     </select>
                 </div>
                 <div class="td">sss</div>
+                <div class="td">sss</div>
+                <div class="td">Filter by teacher:
+                    <select id="proposalFilterByTeacher">
+                        <option value="event">Event</option>
+                    </select>
+                </div>
                 <div class="td">sss</div>
                 <div class="td">sss</div>
                 <div class="td"><button onclick="closeProposalTable()">&times;</button></div>
@@ -92,7 +97,27 @@
 
 </body>
 <script>
+    //lọc bằng tên
+    $("#myInput").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $(".tr1 ").filter(function () {
+            $(this).toggle($(this).text().split("lol123")[0].toLowerCase().indexOf(value) > -1)
+        });
+    });
+    //lọc bằng loại đề xuất
+    $("#proposalFilter").on("change", function () {
+        var value = $(this).val().toLowerCase();
+        if (value == "all") {
+            $("#table .tr1").slideDown()
+        } else {
+            $(".tr1").filter(function () {
+                $(this).toggle($(this).text().split("lol123")[1].toLowerCase().indexOf(value) > -1)
+            });
+        }
+    });
+    //hiển thị bảng đề xuất
     function allProposal() {
+        $(".tr1").remove();
         $("#loading").show();
         $.ajax({
             url: '/admin/allProposal',
@@ -101,7 +126,7 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     $.each(response.data, function (index, data) {
-                        var content = "<div class='tr1' id='" + data._id + "'><div class='td'>" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.proposalType + "</div><div class='td'>" + data.uploadDate + "</div><div class='td' style='text-align: center;'><img src ='" + data.teacherID.avatar + "'style ='max-width:150px;max-height:200px'>" + data.teacherID.username + "</div><div class='td'>" + data.Status + "</div><div class='td'>" + data.comment + "</div><div class='td'><button onclick=rate('" + data._id + "','" + data.file + "')>Rate</button></div>"
+                        var content = "<div class='tr1' id='" + data._id + "'><div class='td'>" + data.proposalName + "<p style='display:none;'>lol123</p></div><div class='td'>" + data.proposalType + "<p style='display:none;'>lol123</p></div><div class='td'> " + data.Content + "</div><div class='td'>" + data.uploadDate + "</div><div class='td' style='text-align: center;'><img src ='" + data.teacherID.avatar + "'style ='max-width:150px;max-height:200px'>" + data.teacherID.username + "</div><div class='td'>" + data.Status + "</div><div class='td'>" + data.comment + "</div><div class='td'><button onclick=rate('" + data._id + "','" + data.file + "')>Rate</button></div></div>"
                         $("#table").append(content);
                     })
                     $("#loading").hide();
@@ -120,23 +145,21 @@
         })
     }
 
-    $("#proposalFilter").on("change", function () {
-        var value = $(this).val().toLowerCase();
-        if (value == "all") {
-            $("#table .tr1").slideDown()
-        } else {
-            $("#table .tr1").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        }
-    });
-
+    //lấy form đánh giá đề xuất
     function rate(id, file) {
+        $('#viewProposal').html('')
+        var lol = "#" + id + " .td"
+        var po = []
+        $(lol).each(function () {
+            po.push($(this).text())
+        })
         $('#viewProposal').append('<button onclick="cancelProposal()">&times;</button></br>');
         $('#viewProposal').append('<iframe  src="' + file + '" height="750px" width="70%"></iframe>');
-        $('#viewProposal').append('<div class="rateProposal" style="float:right;height="750px"; width="30%";> Rate: <select id="rateProposal"><option value="all">All</option><option value="extracurricularActivities">Extracurricular Activities</option><option value="event">Event</option><option value="teaching">Teaching</option><option value="other">Other</option></select><br>Comment: <input type="text" id="commentProposal"><br><button onclick=doRateProposal("' + id + '")>Submit</button></div>');
+        $('#viewProposal').append('<div class="rateProposal" style="float:right;height="750px"; width="30%";> Rate: <select id="rateProposal"><option value="all">All</option><option value="extracurricularActivities">Extracurricular Activities</option><option value="event">Event</option><option value="teaching">Teaching</option><option value="other">Other</option></select><br>Comment: <input type="text" id="commentProposal" value = "' + po[6] + '"><br><button onclick=doRateProposal("' + id + '")>Submit</button></div>');
+        $('#rateProposal option:selected').removeAttr('selected');
+        $("#rateProposal option[value='" + po[5] + "']").attr('selected', 'selected');
     }
-
+    //ddánh giá đề xuất
     function doRateProposal(id) {
         var formData = {
             _id: id,
@@ -151,7 +174,8 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     alert(' success');
-
+                    $('#viewProposal').html('')
+                    allProposal();
                 }
                 if (response.msg == 'error') {
                     alert(' error');
