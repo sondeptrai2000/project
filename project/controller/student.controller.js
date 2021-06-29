@@ -20,8 +20,28 @@ class studentController {
         })
     }
 
+
+
+    allClass(req, res) {
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        AccountModel.find({ _id: decodeAccount }).populate({
+            path: 'classID',
+            populate: {
+                path: 'teacherID',
+                username: 1
+            }
+        }).exec((err, data) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.render('student/allClass', { data: data });
+            }
+        })
+    }
+
     getTeacherProfile(req, res) {
-        AccountModel.find({ _id: req.query.abc }, function(err, data) {
+        AccountModel.find({ _id: req.query.abc }, { username: 1, email: 1, avatar: 1 }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -30,19 +50,13 @@ class studentController {
         })
     }
 
-    allClass(req, res) {
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.find({ _id: decodeAccount }).populate({
-            path: 'classID',
-            populate: {
-                path: 'teacherID'
-            }
-        }).exec((err, data) => {
+    allClassStudent(req, res) {
+        var _id = req.query.abc
+        ClassModel.find({ _id: _id }).populate('studentID.ID', { username: 1, email: 1, avatar: 1 }).exec((err, selectedClassInfor) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.render('student/allClass', { data: data });
+                res.json({ msg: 'success', data: selectedClassInfor });
             }
         })
     }

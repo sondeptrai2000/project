@@ -34,7 +34,7 @@ class teacherController {
 
     allClassStudent(req, res) {
         var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('studentID.ID').exec((err, selectedClassInfor) => {
+        ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).exec((err, selectedClassInfor) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -44,7 +44,11 @@ class teacherController {
     }
 
     addStudentToClass(req, res) {
-        AccountModel.find({ role: 'student', routeName: req.query.routeName, stage: req.query.stage }, function(err, data) {
+        AccountModel.find({
+            role: 'student',
+            routeName: req.query.routeName,
+            stage: req.query.stage,
+        }, { avatar: 1, username: 1, routeName: 1, stage: 1, email: 1, classID: 1 }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -118,7 +122,7 @@ class teacherController {
     allProposal(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        ProposalModel.find({ teacherID: decodeAccount }, function(err, data) {
+        ProposalModel.find({ teacherID: decodeAccount }, { file: 1, proposalName: 1, Content: 1, proposalType: 1, uploadDate: 1, Status: 1 }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {

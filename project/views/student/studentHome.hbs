@@ -71,7 +71,7 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     $(".content").show();
-                    $("#avatarProfile").html("<img style='max-width:150px;max-height:200px' src='data:image/jpeg;base64,"+response.data.avatar+"'>");
+                    $("#avatarProfile").html("<img style='max-width:150px;max-height:200px' src='"+response.data.avatar+"'>");
                     $("#usernameProfile").html(response.data.username);
                     $("#emailProfile").html(response.data.email);
                     $("#routeProfile").html(response.data.routeName);

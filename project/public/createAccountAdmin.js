@@ -56,7 +56,7 @@ $("#myInput").on("keyup", function() {
 function reset() {
     document.getElementById('myFile').value = ''
     document.getElementById('username').value = ''
-        // document.getElementById('password').value = ''
+    document.getElementById('password').value = ''
     document.getElementById('email').value = ''
     document.getElementById('levelS').value = ''
     document.getElementById('phone').value = ''
@@ -186,12 +186,30 @@ function routeType(action) {
         }
     })
 }
-//phân loại role cho cập nhật vào tạo tk
+
 function role(action) {
     if (action === 'create') {
         var accountRole = $('#role').val();
     } else if (action === 'update') {
         var accountRole = $('#roleUpdate').val();
+        var currentRole = $("#currentRole").val()
+        if ((currentRole == "techer" || currentRole == "guardian") != accountRole) {
+            $('.typeRole').slideDown()
+            $("#routeTypeSUpdate").html("")
+            $.ajax({
+                url: '/admin/getRoute',
+                method: 'get',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.msg == 'success') {
+                        $.each(response.data, function(index, data) {
+                            var update = "<option value=" + data.routeName + ">" + data.routeName + "</option>"
+                            $("#routeTypeSUpdate").append(update)
+                        });
+                    }
+                }
+            })
+        }
     }
     if (accountRole === "guardian" || accountRole === "teacher") {
         $('.typeRole').slideUp()
@@ -217,6 +235,7 @@ function updateForm(id) {
     $('#genderUpdate option:selected').removeAttr('selected');
     $("#genderUpdate option[value='" + infor4[2] + "']").attr('selected', 'selected');
     $("#emailUpdate").val(infor4[3])
+    $("#currentRole").val(infor4[4])
     $('#roleUpdate option:selected').removeAttr('selected');
     $("#roleUpdate option[value='" + infor4[4] + "']").attr('selected', 'selected');
     $("#phoneUpdate").val(infor4[6])

@@ -4,13 +4,37 @@
 <head>
         <script src="/jquery/jquery.js"></script>
 </head>
-<h1>
-        <form action="/admin/test" method="POST">
-                <button>sfasds</button>
-        </form>
-</h1>
+
 
 <body>
+        <table border="solid">
+                {{#each data}}
+                <tr>
+                <th><button>Update</button><button>Remove</button></th>
+                {{#each routeSchedual}}
+                <td >Stage {{@index}}: {{stage}}</td>
+                {{/each}}
+                </tr>
+                <tr>
+                        <td>
+                                <p>Lộ trình:{{routeName}}</p>
+                                <p>Miêu tả:{{description}}</p>
+                                <p><button onclick="viewSchedule('{{_id}}')">Lộ trình học</button></p>
+                        </td>
+                        {{#each routeSchedual}}
+                        <td >
+                                {{#each routeabcd}}
+                                <li>
+                                        {{this}}
+                                </li>
+                                {{/each}}
+                        </td>
+                        {{/each}}
+                </tr>
+                <tr>
+                </tr>
+                {{/each}}
+        </table>
         <h2>Create route</h2>
         <label>routeName </label>
         <input type="text" name="routeName" id="routeName">
@@ -25,33 +49,10 @@
         <br>
         <button type="submit" onclick="signUp()">Submit</button>
         <br><br><br><br><br><br><br><br>
-        {{#each data}}
-        <h1>Lộ trình:{{routeName}}</h1>
-        <h1>Miêu tả:{{description}}</h1>
-        <h1>Lộ trình học</h1>
-        <table border="solid">
-                {{#each routeSchedual}}
-                <th>Stage {{@index}}: {{stage}}</th>
-                {{/each}} <tr>
-                        {{#each routeSchedual}}
-                        <td>
-                                <ul>
-                                        {{#each routeabcd}}
-                                        <li>
-                                                {{this}}
-                                        </li>
-                                        {{/each}}
-                                </ul>
-                        </td>
-                        {{/each}}
-                </tr>
 
-        </table>
-        {{/each}}
 
 </body>
 <script>
-
         function totalStage() {
                 var stage = 1;
                 $('#addStage').html("");
@@ -72,7 +73,7 @@
                         uuuu = stage
                 }
                 var x = '#' + stage
-                var add = "<div id= 'remove_field" + route + "'><label>route</label><input type='text' value='route" + route + "' name='route" + stage + "'><p onclick=deleteRoute('remove_field" + route + "')>Bo route</p></div>"
+                var add = "<div id= 'remove_field" + route + "'><label>route</label><input type='text' value='route" + route + "' name='route" + stage + "'><button onclick=deleteRoute('remove_field" + route + "')>&times;</button></div>"
                 $(x).append(add)
         }
         function deleteRoute(abcx) {

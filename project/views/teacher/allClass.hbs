@@ -21,30 +21,15 @@
         <th>End date</th>
         <th>Student List</th>
         {{#each classInfor}}
-        <tr>
-            <td>
-                {{className }}
-            </td>
-            <td>
-                {{routeName }}
-            </td>
-            <td>
-                {{stage }}
-            </td>
-            <td>
-                {{subject }}
-            </td>
-            <td>
-                {{description }}
-            </td>
-            <td>
-                {{startDate }}
-            </td>
-            <td>
-                {{endDate }}
-            </td>
-            <td><button id="btn1" onclick="sendData('{{_id}}','{{routeName}}','{{stage}}','{{subject}}')">List
-                    of student</button></td>
+        <tr id="{{_id}}">
+            <td>{{className}}</td>
+            <td>{{routeName}}</td>
+            <td>{{stage}}</td>
+            <td>{{subject}}</td>
+            <td>{{description}}</td>
+            <td>{{startDate}}</td>
+            <td>{{endDate}}</td>
+            <td><button id="btn1" onclick="sendData('{{_id}}')">List of student</button></td>
         </tr>
         {{/each}}
     </table>
@@ -53,7 +38,6 @@
         <table border='solid'>
             <th>avatar</th>
             <th>username</th>
-            <th>stage</th>
             <th>Aim</th>
             <th>email</th>
             <th>grade</th>
@@ -72,10 +56,12 @@
             <thead>
                 <tr>
                     <th><input id="myInputxxxx" type="text" placeholder="Search.."></th>
+                    <th><button onclick="cancleTableAddTstudent()">&times;</button></th>
                 </tr>
                 <tr>
                     <th>avatar</th>
                     <th>username</th>
+                    <th>email</th>
                     <th>routeName</th>
                     <th>stage</th>
                     <th>Chose</th>

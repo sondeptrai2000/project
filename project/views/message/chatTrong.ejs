@@ -64,27 +64,14 @@
             border: 1px solid black;
         }
         
-        .messContent {
-            clear: both;
-            overflow: hidden;
-            width: 115px;
-        }
-        
-        .messContent {
-            width: 100%;
-        }
-        
         .sender {
-            overflow-wrap: break-word;
-            background: black;
             text-align: right;
             padding-right: 20px;
         }
         
         .receiver {
-            overflow-wrap: break-word;
-            background: black;
             text-align: left;
+            padding-left: 20px;
         }
         
         div.chatBox {
@@ -117,43 +104,11 @@
                 </h2>
             </div>
             <div class="history">
-                <div id="UpdateHistory"></div>
-                <% data1.forEach(function(data1) { %>
-                    <%if (data1.person1 !== formData.sender) { %>
-                        <ul class='<%=data1._id %>'>
-                            <div class='chatTo' onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')">
-                                Name:
-                                <%= data1.person1 %>
-                                    <p id='<%=data1._id %>'>
-                                        <%= data1.message[0].ownermessenger %>:
-                                            <%= data1.message[0].messContent %>
-                                    </p>
-                                    <input type="hidden" class='allID' value="<%=data1._id %>"></input>
-                            </div>
-                        </ul>
-                        <% } %>
-                            <%if (data1.person2 !== formData.sender) { %>
-                                <ul class='<%=data1._id %>'>
-                                    <div class='chatTo' onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')">
-                                        Name:
-                                        <%= data1.person2 %>
-                                            <p id='<%=data1._id %>'>
-                                                <%= data1.message[0].ownermessenger %>:
-                                                    <%= data1.message[0].messContent %>
-                                            </p> <input type="hidden" class='allID' value="<%=data1._id %>"></input>
-                                    </div>
-                                </ul>
-                                <% } %>
-                                    <% }); %>
+                <div id="UpdateHistory">None</div>
             </div>
         </div>
         <div class='chat'>
-            <div class='chatTitle'>
-                <h2>Conversation between
-                    <%=formData.sender %> and
-                        <%=formData.receiver %>
-                </h2>
-            </div>
+            <div class='chatTitle'></div>
             <div class="chatBox">
                 <div id='messContent'></div>
             </div>
@@ -165,9 +120,9 @@
         </div>
     </div>
     <div class="chatInformation" style="display: none;">
-        <input id="receiver" type="text" value="<%=formData.receiver %>" />
-        <input id="name" type="text" value="<%=formData.sender %>" />
-        <input id="_idRoom" type="text" value="<%=data1[0]._id %>" />
+        <input id="receiver" type="text" value="" />
+        <input id="name" type="text" value="" />
+        <input id="_idRoom" type="text" value="" />
     </div>
 </body>
 <script src="/socket.io/socket.io.js"></script>
@@ -256,7 +211,6 @@
     }
 
     function chatBox(receiver, sender, _idRoom) {
-        var click = 0;
         var Room = '#' + _idRoom
         $(Room).css("font-weight", "normal");
         $('#receiver').val(receiver)
@@ -338,6 +292,7 @@
     }
 
     function addChat() {
+        alert($('#addChat').val())
         $.ajax({
             url: '/messenger/addChat',
             method: 'post',
@@ -386,9 +341,9 @@
                     $('#_idRoom').val(response._idRoom)
                     $('.chatTitle').html("<h2>Conversation between" + response.sender + " and " + response.receiver + "</h2>")
                     $('#messContent').html("")
-                    $('#messContent').append("<ul style='text-align:center;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
+                    $('#messContent').append("<uy style='text-align:center;'>Hệ thống: Đã kết nối! Ấn vào để chat</uy>")
                     $('.chatBox').scrollTop($('#messContent').height())
-                    $("#UpdateHistory").append("<ul class='" + response._idRoom + "'> Name: " + response.receiver + "' ><input type='text' id='" + response._idRoom + "' value='Hệ thống: Đã kết nối! Ấn vào để chat' readonly><button onclick= chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Chat</button><input type='hidden' class='allID' value='" + response._idRoom + "'></input></ul>")
+                    $("#UpdateHistory").append("<ul class='" + response._idRoom + "'> Name: " + response.receiver + "'><input type='text' id='" + response._idRoom + "' value='Hệ thống: Đã kết nối! Ấn vào để chat' readonly><button onclick= chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Chat</button><input type='hidden' class='allID' value='" + response._idRoom + "'></input></ul>")
                     var idConversationList = [];
                     idConversationList.push(response._idRoom);
                     socket.emit("tao-room", {

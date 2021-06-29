@@ -1,10 +1,10 @@
 var click = 0;
 
-function sendData(id, routeName, stage, subject) {
+function sendData(id) {
     click = click + 1;
     if (click == 1) {
         var _id = id
-        $(".option").html("<button onclick=addStudent('" + id + "','" + routeName + "','" + stage + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
+        $(".option").html("<button onclick=addStudent('" + id + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
         $.ajax({
             url: '/teacher/allClassStudent',
             method: 'get',
@@ -16,9 +16,9 @@ function sendData(id, routeName, stage, subject) {
                     $.each(response.data, function(index, data) {
                         $.each(data.studentID, function(index, studentID) {
                             if (studentID.grade === "Has not been commented yet") {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
                             } else {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.stage + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
                             }
                         });
                     });
@@ -36,15 +36,19 @@ function sendData(id, routeName, stage, subject) {
 
 
 
-function addStudent(classID, routeName, stage, subject) {
+function addStudent(classID) {
+    var infor4 = []
+    $("#" + classID + " td").each(function() {
+        infor4.push($(this).text())
+    })
     var checkClassID = classID
     $.ajax({
         url: '/teacher/addStudentToClass',
         method: 'get',
         dataType: 'json',
         data: {
-            routeName: routeName,
-            stage: stage,
+            routeName: infor4[1],
+            stage: infor4[2],
         },
         success: function(response) {
             if (response.msg == 'success') {
@@ -52,7 +56,7 @@ function addStudent(classID, routeName, stage, subject) {
                 $('#studentTable').show();
                 $.each(response.data, function(index, data) {
                     if (data.classID.includes(checkClassID) == true) {} else if (data.classID.includes(checkClassID) == false) {
-                        $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                        $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.email + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
                     }
                 });
                 $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "')>Add to Class</button>");
@@ -65,6 +69,8 @@ function addStudent(classID, routeName, stage, subject) {
 }
 
 function doAddToClass(classID) {
+    var classID = classID
+
     var studentlist = [];
     $('.hobby').each(function() {
         if ($(this).is(":checked")) {
@@ -91,6 +97,9 @@ function doAddToClass(classID) {
         success: function(response) {
             if (response.msg == 'success') {
                 alert('add success ');
+                closeStudentList();
+                cancleTableAddTstudent();
+                sendData(classID);
             }
             if (response.msg == 'error') {
                 alert('add error ');
@@ -104,6 +113,7 @@ function doAddToClass(classID) {
 
 
 function removeStudent(classID) {
+    var classID = classID
     var studentlistcl = [];
     $('.removeFormClass').each(function() {
         if ($(this).is(":checked")) {
@@ -121,6 +131,8 @@ function removeStudent(classID) {
         success: function(response) {
             if (response.msg == 'success') {
                 alert('remove success ');
+                closeStudentList();
+                sendData(classID);
             }
             if (response.msg == 'error') {
                 alert('remove error ');
@@ -168,8 +180,7 @@ function takeFeedBack() {
                 closeStudentList();
                 var infor = response.data
                 var infor = response.data
-                sendData(infor._id, infor.routeName, infor.stage, infor.subject);
-                console.log(infor._id + infor.routeName + infor.stage + infor.subject)
+                sendData($("#classID").text());
                 alert("take feedback success")
             }
         },
@@ -195,8 +206,7 @@ function updateFeekBack() {
             if (response.msg == 'success') {
                 closeStudentList();
                 var infor = response.data
-                sendData(infor._id, infor.routeName, infor.stage, infor.subject);
-                console.log(infor._id + infor.routeName + infor.stage + infor.subject)
+                sendData($("#updateclassID").text());
                 alert("update feedback success")
             }
         },
@@ -205,6 +215,10 @@ function updateFeekBack() {
         }
     });
 
+}
+
+function cancleTableAddTstudent() {
+    $("#studentTable").hide();
 }
 
 function canclestudentAssessment() {

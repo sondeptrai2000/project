@@ -8,6 +8,7 @@
   <th>Stage</th>
   <th>description</th>
   <th>Teacher Name</th>
+  <th>Danh sách các bạn học sinh</th>
   <th>startDate</th>
   <th>endDate</th>
   <th>Class Status</th>
@@ -22,7 +23,7 @@
     </td>
     <td>
       {{routeName }}
-    </td> 
+    </td>
     <td>
       {{stage }}
     </td>
@@ -34,6 +35,7 @@
       <p onclick="viewTeacherProfile('{{_id}}')">{{username}}</p>
       {{/each}}
     </td>
+    <td><button id="btn1" onclick="sendData('{{_id}}')">List of student</button></td>
     <td>
       {{startDate }}
     </td>
@@ -47,6 +49,19 @@
   {{/each}}
   {{/each}}
 </table>
+
+
+<div class="inner" style="display:none">
+        <div class="option"></div>
+        <table border='solid'>
+            <th>avatar</th>
+            <th>username</th>
+            <th>email</th>
+            <th>Chat</th>
+            <th onclick='closeStudentList()'>X</th>
+            <tbody class='taskrow'></tbody>
+        </table>
+    </div>
 <div>
   <table id="teacherIn4" border='solid' style="display:none">
     <thead>

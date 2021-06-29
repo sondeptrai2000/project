@@ -71,19 +71,23 @@ class messtController {
                 // lấy tin nhắn cuối cùng trong mảng message
                 message: { $slice: -1 }
             }).sort({ updateTime: -1 }).exec(function(err, data1) {
-                if (sender.username != data1[0].person1) {
-                    var formData = {
-                        sender: sender.username,
-                        receiver: data1[0].person1
+                if (data1.length == "0") {
+                    res.render("message/chatTrong.ejs")
+                } else {
+                    if (sender.username != data1[0].person1) {
+                        var formData = {
+                            sender: sender.username,
+                            receiver: data1[0].person1
+                        }
                     }
-                }
-                if (sender.username != data1[0].person2) {
-                    var formData = {
-                        sender: sender.username,
-                        receiver: data1[0].person2
+                    if (sender.username != data1[0].person2) {
+                        var formData = {
+                            sender: sender.username,
+                            receiver: data1[0].person2
+                        }
                     }
+                    res.render("message/chatBoxHistory.ejs", { data1, formData })
                 }
-                res.render("message/chatBoxHistory.ejs", { data1, formData })
             })
         });
     }

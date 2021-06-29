@@ -16,6 +16,7 @@ studentRouter.get('/learningProgress', studentController.learningProgress)
 studentRouter.get('/viewschedule', studentController.viewschedule)
 
 
+studentRouter.get('/allClassStudent', studentController.allClassStudent)
 
 //liên quan đến hoạt động ngoại khóa
 studentRouter.get('/allextracurricularActivities', studentController.allextracurricularActivities)
