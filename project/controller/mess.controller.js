@@ -9,7 +9,7 @@ const mongodb = require("mongodb");
 
 class messtController {
     //ấn chat vào người bất kỳ r dẫn đến form chat và lịch sử
-    makeConnection(req, res) {
+    makeConnection(req, res, next) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
         AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
@@ -39,48 +39,11 @@ class messtController {
                         if (err) {
                             res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                         } else {
-                            chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, {
-                                message: { $slice: -1 } // lấy tin nhắn cuối cùng trong mảng message
-                            }).sort({ updateTime: -1 }).exec(function(err, data1) {
-                                if (data1.length == "0") {
-                                    res.render("message/chatTrong.ejs")
-                                } else {
-                                    if (sender.username != data1[0].person1) {
-                                        var formData = {
-                                            sender: sender.username,
-                                            receiver: data1[0].person1
-                                        }
-                                    }
-                                    if (sender.username != data1[0].person2) {
-                                        var formData = {
-                                            sender: sender.username,
-                                            receiver: data1[0].person2
-                                        }
-                                    }
-                                    res.render("message/chatBoxHistory.ejs", { data1, formData })
-                                }
-                            })
+                            next();
                         }
                     });
                 } else {
-                    chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, {
-                        // lấy tin nhắn cuối cùng trong mảng message
-                        message: { $slice: -1 }
-                    }).sort({ updateTime: -1 }).exec(function(err, data1) {
-                        if (sender.username != data1[0].person1) {
-                            var formData = {
-                                sender: sender.username,
-                                receiver: data1[0].person1
-                            }
-                        }
-                        if (sender.username != data1[0].person2) {
-                            var formData = {
-                                sender: sender.username,
-                                receiver: data1[0].person2
-                            }
-                        }
-                        res.render("message/chatBoxHistory.ejs", { data1, formData })
-                    })
+                    next();
                 }
             })
         })
@@ -104,7 +67,6 @@ class messtController {
                             senderAva: sender.avatar,
                             receiver: data1[0].person1,
                             receiverAva: data1[0].person1ID.avatar,
-
                         }
                     }
                     if (sender.username != data1[0].person2) {
@@ -113,7 +75,6 @@ class messtController {
                             senderAva: sender.avatar,
                             receiver: data1[0].person2,
                             receiverAva: data1[0].person2ID.avatar,
-
                         }
                     }
                     res.render("message/chatBoxHistory.ejs", { data1, formData })
@@ -136,36 +97,40 @@ class messtController {
     addChat(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        var receiver = req.body.receiver
-        AccountModel.findOne({ username: receiver }, function(err, data) {
+        var receiverName = req.body.receiver
+        AccountModel.findOne({ username: receiverName }, { username: 1, avatar: 1 }, function(err, data) {
             if (err) {
                 res.json({ msg: 'lỗi khi tìm kiếm user' });
             } else if (data) {
-                AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
-                    var sender = sender.username
-                    if (sender != receiver) {
-                        chatModel.find({ $or: [{ person1: sender, person2: receiver }, { person1: receiver, person2: sender }] }, function(err, data) {
+                var receiverAva = data.avatar
+                AccountModel.findOne({ _id: decodeAccount }, { username: 1, avatar: 1 }, function(err, sender) {
+                    var senderName = sender.username
+                    var senderAva = sender.avatar
+                    if (senderName != receiverName) {
+                        var createConnection = {
+                            person1: senderName,
+                            person1ID: sender._id,
+                            person2: receiverName,
+                            person2ID: data._id,
+                            message: {
+                                ownermessenger: "Hệ thống",
+                                messContent: "Đã kết nối! Ấn vào để chat",
+                            }
+                        }
+                        chatModel.find({ $or: [{ person1: senderName, person2: receiverName }, { person1: receiverName, person2: senderName }] }, function(err, data) {
                             if (err) {
                                 res.json({ msg: 'error' });
                             } else if (data.length === 0) {
-                                chatModel.create({
-                                    person1: sender,
-                                    person2: receiver,
-                                    message: {
-                                        ownermessenger: "Hệ thống",
-                                        messContent: "Đã kết nối! Ấn vào để chat",
-                                    }
-                                }, function(err, data) {
+                                chatModel.create(createConnection, function(err, data) {
                                     if (err) {
                                         res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                                     } else {
                                         var _idRoom = data._id
-                                        res.json({ msg: 'tạo cuộc hội thoại thành công', sender, _idRoom, receiver });
+                                        res.json({ msg: 'tạo cuộc hội thoại thành công', senderName, _idRoom, receiverName, senderAva, receiverAva });
                                     }
                                 });
                             } else {
-                                var _idRoom = data._id
-                                res.json({ msg: 'cuộc hội thoại đã được tạo', sender, _idRoom, data, receiver });
+                                res.json({ msg: 'cuộc hội thoại đã được tạo', senderName, data, receiverName, senderAva, receiverAva });
                             }
                         });
                     } else {
