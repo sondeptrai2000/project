@@ -123,16 +123,7 @@ class messtController {
     }
 
     getMessenger(req, res) {
-        var condition = {
-            person1: req.query.receiver,
-            person2: req.query.sender,
-        }
-
-        var condition1 = {
-            person1: req.query.sender,
-            person2: req.query.receiver,
-        }
-        chatModel.find({ $or: [condition, condition1] }).populate('person1ID', { avatar: 1 }).populate('person2ID', { avatar: 1 }).exec(function(err, data) {
+        chatModel.find({ _id: req.query._idRoom }).populate('person1ID', { avatar: 1 }).populate('person2ID', { avatar: 1 }).exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {

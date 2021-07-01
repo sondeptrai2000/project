@@ -177,7 +177,7 @@
                         </ul>
                         <% } %>
                             <%if (data1.person2 !== formData.sender) { %>
-                                <ul class='<%=data1._id %>' onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')">
+                                <ul class='<%=data1._id %>' onclick="chatBox('<%=data1.person2 %>','<%=data1._id %>')">
                                     <img src='<%=data1.person2ID.avatar %>'>
                                     <p>Name:
                                         <%= data1.person2 %>
@@ -210,7 +210,7 @@
             </div>
         </div>
     </div>
-    <div class="chatInformation">
+    <div class="chatInformation" style="display: none;">
         <input id="receiver" type="text" value="<%=formData.receiver %>" />
         <input id="name" type="text" value="<%=formData.sender %>" />
         <input id="_idRoom" type="text" value="<%=data1[0]._id %>" />
@@ -284,8 +284,7 @@
             method: 'get',
             dataType: 'json',
             data: {
-                sender: name.value,
-                receiver: receiver.value
+                _idRoom: _idRoom.value
             },
             success: function(response) {
                 if (response.msg == 'success') {
@@ -309,21 +308,20 @@
         });
     }
 
-    function chatBox(receiver, sender, _idRoom) {
+    function chatBox(receiver, _idRoom) {
         var click = 0;
         var Room = '#' + _idRoom
         $(Room).css("font-weight", "normal");
         $('#receiver').val(receiver)
         $('#_idRoom').val(_idRoom)
-        $('.chatTitle').html("<h2>Conversation between" + sender + " and " + receiver + "</h2>")
+        $('.chatTitle').html("<h2>Conversation between" + name.value + " and " + receiver + "</h2>")
         $('#messContent').html("")
         $.ajax({
             url: '/messenger/getMessenger',
             method: 'get',
             dataType: 'json',
             data: {
-                sender: sender,
-                receiver: receiver
+                _idRoom: _idRoom,
             },
             success: function(response) {
                 if (response.msg == 'success') {
