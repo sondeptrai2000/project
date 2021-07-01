@@ -55,17 +55,29 @@
             box-sizing: border-box;
             border: 1px solid black;
             border-radius: 10px;
-            padding: 5px;
-            padding-left: 10px;
+            padding-left: 5px;
             margin: 0;
             height: 60px;
             font-size: 16px;
             overflow: hidden;
         }
         
-        .chatTo {
+        .history ul img {
             box-sizing: border-box;
-            height: 100%;
+            height: 60px;
+            width: 60px;
+            margin: 0;
+            padding: 5px;
+            border-radius: 50%;
+            float: left;
+        }
+        
+        .history p {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 10px;
+            padding-left: 60px;
+            overflow-wrap: break-word;
         }
         
         div.chatTitle {
@@ -101,6 +113,14 @@
             width: auto;
             background: gray;
             border-radius: 15px;
+        }
+        
+        .sender img,
+        .receiver img {
+            height: 30px;
+            width: 30px;
+            margin-bottom: -10px;
+            border-radius: 50%;
         }
         
         .sender {
@@ -145,28 +165,27 @@
             <div class="history">
                 <% data1.forEach(function(data1) { %>
                     <%if (data1.person1 !== formData.sender) { %>
-                        <ul class='<%=data1._id %>'>
-                            <div class='chatTo' onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')">
-                                Name:
+                        <ul class='<%=data1._id %>' onclick="chatBox('<%=data1.person1 %>','<%=formData.sender%>','<%=data1._id %>')">
+                            <img src='<%=data1.person1ID.avatar %>'>
+                            <p>Name:
                                 <%= data1.person1 %>
-                                    <p id='<%=data1._id %>'>
-                                        <%= data1.message[0].ownermessenger %>:
-                                            <%= data1.message[0].messContent %>
-                                    </p>
-                                    <input type="hidden" class='allID' value="<%=data1._id %>"></input>
-                            </div>
+                                    <br>
+                                    <%= data1.message[0].ownermessenger %>:
+                                        <%= data1.message[0].messContent.slice(0, 7); %>...
+                                            <input type="hidden" class='allID' value="<%=data1._id %>"></input>
+                            </p>
                         </ul>
                         <% } %>
                             <%if (data1.person2 !== formData.sender) { %>
-                                <ul class='<%=data1._id %>'>
-                                    <div class='chatTo' onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')">
-                                        Name:
+                                <ul class='<%=data1._id %>' onclick="chatBox('<%=data1.person2 %>','<%=formData.sender %>','<%=data1._id %>')">
+                                    <img src='<%=data1.person2ID.avatar %>'>
+                                    <p>Name:
                                         <%= data1.person2 %>
-                                            <p id='<%=data1._id %>'>
-                                                <%= data1.message[0].ownermessenger %>:
-                                                    <%= data1.message[0].messContent %>
-                                            </p> <input type="hidden" class='allID' value="<%=data1._id %>"></input>
-                                    </div>
+                                            <br>
+                                            <%= data1.message[0].ownermessenger %>:
+                                                <%= data1.message[0].messContent.slice(0, 7); %>...
+                                    </p>
+                                    <input type="hidden" class='allID' value="<%=data1._id %>"></input>
                                 </ul>
                                 <% } %>
                                     <% }); %>
@@ -191,10 +210,12 @@
             </div>
         </div>
     </div>
-    <div class="chatInformation" style="display: none;">
+    <div class="chatInformation">
         <input id="receiver" type="text" value="<%=formData.receiver %>" />
         <input id="name" type="text" value="<%=formData.sender %>" />
         <input id="_idRoom" type="text" value="<%=data1[0]._id %>" />
+        <img id="nameAva" style='max-width:150px;max-height:200px' src='<%=formData.senderAva %>'>
+        <img id="receiverAva" style='max-width:150px;max-height:200px' src='<%=formData.receiverAva %>'>
     </div>
 </body>
 <script src="/socket.io/socket.io.js"></script>
@@ -202,6 +223,8 @@
     // select relevant elements
     const _idRoom = document.querySelector("#_idRoom");
     const receiver = document.querySelector("#receiver");
+    const receiverAva = document.querySelector("#receiverAva");
+    const nameAva = document.querySelector("#nameAva");
     const name = document.querySelector("#name");
     const mess = document.querySelector("#mess");
 
@@ -269,9 +292,9 @@
                     $.each(response.data, function(index, data) {
                         $.each(data.message, function(index, message) {
                             if (message.ownermessenger === name.value) {
-                                $('#messContent').append("<ul class='sender'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
+                                $('#messContent').append("<ul class='sender'><p>" + message.ownermessenger + ": " + message.messContent + "</p>" + "<img src='" + nameAva.src + "'></ul>")
                             } else if (message.ownermessenger === receiver.value) {
-                                $('#messContent').append("<ul class='receiver'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
+                                $('#messContent').append("<ul class='receiver'><img src='" + receiverAva.src + "'>" + "<p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
                             } else {
                                 $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
                             }
@@ -292,7 +315,6 @@
         $(Room).css("font-weight", "normal");
         $('#receiver').val(receiver)
         $('#_idRoom').val(_idRoom)
-        $('#name').val(sender)
         $('.chatTitle').html("<h2>Conversation between" + sender + " and " + receiver + "</h2>")
         $('#messContent').html("")
         $.ajax({
@@ -306,11 +328,19 @@
             success: function(response) {
                 if (response.msg == 'success') {
                     $.each(response.data, function(index, data) {
+                        if (data.person1 == $('#name').val()) {
+                            var senderAva = data.person1ID.avatar
+                            var receiverAva = data.person2ID.avatar
+                        } else {
+                            var senderAva = data.person2ID.avatar
+                            var receiverAva = data.person1ID.avatar
+                        }
+                        $('#receiverAva').attr("src", receiverAva);
                         $.each(data.message, function(index, message) {
                             if (message.ownermessenger === name.value) {
-                                $('#messContent').append("<ul class='sender'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
+                                $('#messContent').append("<ul class='sender'><p>" + message.ownermessenger + ": " + message.messContent + "</p>" + "<img src='" + senderAva + "'></ul>")
                             } else if (message.ownermessenger === receiver) {
-                                $('#messContent').append("<ul class='receiver'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
+                                $('#messContent').append("<ul class='receiver'><img src='" + receiverAva + "'>" + "<p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
                             } else {
                                 $('#messContent').append("<ul style='text-align: center;margin:0;padding:0;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
                             }
@@ -346,11 +376,11 @@
             var ul = document.createElement("ul");
             if (message.sender == name.value) {
                 ul.setAttribute("class", "sender");
+                ul.innerHTML = "<p>" + message.mess + ": " + message.sender + "</p>" + "<img src='" + nameAva.src + "'>";
             } else {
                 ul.setAttribute("class", "receiver");
+                ul.innerHTML = "<img src='" + receiverAva.src + "'>" + "<p>" + message.sender + ": " + message.mess + "</p>";
             }
-            // add message to the elements text
-            ul.innerHTML = "<p>" + message.sender + ": " + message.mess + "</p>";
             // add to list of messages
             $("#messContent").append(ul);
         }
@@ -422,7 +452,7 @@
                     $('#messContent').html("")
                     $('#messContent').append("<ul style='text-align:center;margin:0;padding:0;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
                     $('.chatBox').scrollTop($('#messContent').height())
-                    $(".history").append("<ul class='" + response._idRoom + "'> <div class='chatTo' onclick=chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Name: " + response.receiver + "<p id='" + response._idRoom + "'> Hệ thống: Đã kết nối! Ấn vào để chat<input type='hidden' class='allID' value='" + response._idRoom + "'></input></div></ul>")
+                    $(".history").append("<ul class='" + response._idRoom + "'onclick=chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')><div class='avatarReceiver'><img src=''></div><div class='infor4'> Name: " + response.receiver + "<br>Hệ thống: Đã kết nối! Ấn vào để chat<input type='hidden' class='allID' value='" + response._idRoom + "'> </div></input></div></ul>")
                     var idConversationList = [];
                     idConversationList.push(response._idRoom);
                     socket.emit("tao-room", {

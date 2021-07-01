@@ -90,24 +90,30 @@ class messtController {
     chatForm(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
+        AccountModel.findOne({ _id: decodeAccount }, { avatar: 1, username: 1 }, function(err, sender) {
             chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, {
                 // lấy tin nhắn cuối cùng trong mảng message
                 message: { $slice: -1 }
-            }).sort({ updateTime: -1 }).exec(function(err, data1) {
+            }).populate('person1ID', { avatar: 1 }).populate('person2ID', { avatar: 1 }).sort({ updateTime: -1 }).exec(function(err, data1) {
                 if (data1.length == "0") {
                     res.render("message/chatTrong.ejs")
                 } else {
                     if (sender.username != data1[0].person1) {
                         var formData = {
                             sender: sender.username,
-                            receiver: data1[0].person1
+                            senderAva: sender.avatar,
+                            receiver: data1[0].person1,
+                            receiverAva: data1[0].person1ID.avatar,
+
                         }
                     }
                     if (sender.username != data1[0].person2) {
                         var formData = {
                             sender: sender.username,
-                            receiver: data1[0].person2
+                            senderAva: sender.avatar,
+                            receiver: data1[0].person2,
+                            receiverAva: data1[0].person2ID.avatar,
+
                         }
                     }
                     res.render("message/chatBoxHistory.ejs", { data1, formData })
@@ -126,14 +132,13 @@ class messtController {
             person1: req.query.sender,
             person2: req.query.receiver,
         }
-        chatModel.find({ $or: [condition, condition1] },
-            function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data: data });
-                }
-            })
+        chatModel.find({ $or: [condition, condition1] }).populate('person1ID', { avatar: 1 }).populate('person2ID', { avatar: 1 }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
     }
 
 
