@@ -7,34 +7,8 @@
 
 
 <body>
-        <table border="solid">
-                {{#each data}}
-                <tr>
-                <th><button>Update</button><button>Remove</button></th>
-                {{#each routeSchedual}}
-                <td >Stage {{@index}}: {{stage}}</td>
-                {{/each}}
-                </tr>
-                <tr>
-                        <td>
-                                <p>Lộ trình:{{routeName}}</p>
-                                <p>Miêu tả:{{description}}</p>
-                                <p><button onclick="viewSchedule('{{_id}}')">Lộ trình học</button></p>
-                        </td>
-                        {{#each routeSchedual}}
-                        <td >
-                                {{#each routeabcd}}
-                                <li>
-                                        {{this}}
-                                </li>
-                                {{/each}}
-                        </td>
-                        {{/each}}
-                </tr>
-                <tr>
-                </tr>
-                {{/each}}
-        </table>
+
+
         <h2>Create route</h2>
         <label>routeName </label>
         <input type="text" name="routeName" id="routeName">
@@ -50,9 +24,48 @@
         <button type="submit" onclick="signUp()">Submit</button>
         <br><br><br><br><br><br><br><br>
 
+        <table border="solid">
+                {{#each data}}
+                <th
+                        style="background-image: url('https://tiemanhsky.com/wp-content/uploads/2021/03/PHUS7968-Edit-scaled.jpg');width: 25%;height: 200px;">
+                        {{!-- <button>Update</button><button>Remove</button> --}}
+                        <p>Lộ trình: {{routeName}}</p>
+                        <p>Miêu tả: {{description}}</p>
+                        <p><button onclick="viewSchedule('{{_id}}')">Lộ trình học</button></p>
 
+                </th>
+                {{/each}}
+        </table>
+
+
+        <table border="solid">
+                <tr id='stage'>sdfghj</tr>
+                <tr id='routeSchedual'>sdfghj,</tr>
+        </table>
 </body>
 <script>
+
+        function viewSchedule(id) {
+                var _id = id
+                $.ajax({
+                        url: '/admin/lol',
+                        method: 'get',
+                        dataType: 'json',
+                        data: { _id: _id },
+                        success: function (response) {
+                                if (response.msg == 'success') {
+                                        console.log(response.data)
+                                        $('#stage').html('');
+                                        $('#routeSchedual').html('');
+                                }
+                        },
+                        error: function (response) {
+                                alert('server error');
+                        }
+                });
+
+        }
+
         function totalStage() {
                 var stage = 1;
                 $('#addStage').html("");

@@ -8,97 +8,126 @@
     <script src="/jquery/jquery.js"></script>
 
     <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         div.chatForm {
+            box-sizing: border-box;
             width: 100%;
-            border: 1px solid blue;
         }
         
         div.chatHistory {
+            box-sizing: border-box;
             height: 100%;
-            max-width: 30%;
-            padding-top: 1em;
-            padding-right: 1em;
-            padding-left: 1em;
-            padding-bottom: 0;
+            max-width: 20%;
             float: left;
-            border: 1px solid red;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
         }
         
         div.chat {
+            box-sizing: border-box;
             height: 100%;
-            max-width: 70%;
-            padding-top: 1em;
-            padding-right: 1em;
-            padding-left: 1em;
+            max-width: 80%;
             overflow: hidden;
-            border: 1px solid black;
-        }
-        
-        div.chatOption {
-            border: 1px solid black;
         }
         
         div.history {
-            height: 430px;
-            width: 100%;
-            overflow: auto;
-            border: 1px solid #CCCCCC;
-            margin: 1em 0;
-            border: 1px solid black;
-            background-color: gray;
-        }
-        
-        .history ul {
-            border: 1px solid black;
-            border-radius: 10px;
-            background-color: rgb(161, 160, 160);
-            height: 70px;
-        }
-        
-        .chatTo {
-            height: 100%;
-            padding: 1em;
-        }
-        
-        div.chatTitle {
-            border: 1px solid black;
-        }
-        
-        .messContent {
-            clear: both;
-            overflow: hidden;
-            width: 115px;
-        }
-        
-        .messContent {
-            width: 100%;
-        }
-        
-        .sender {
-            overflow-wrap: break-word;
-            background: black;
-            text-align: right;
-            padding-right: 20px;
-        }
-        
-        .receiver {
-            overflow-wrap: break-word;
-            background: black;
-            text-align: left;
-        }
-        
-        div.chatBox {
+            box-sizing: border-box;
             height: 400px;
             width: 100%;
             overflow: auto;
-            border: 1px solid #CCCCCC;
-            margin: 1em 0;
+        }
+        
+        div.chatOption {
+            box-sizing: border-box;
+            height: 70px;
+            width: 100%;
+            padding: 10px;
+            font-size: 20px;
+            border-bottom: 1px solid black;
+        }
+        
+        .history ul {
+            box-sizing: border-box;
             border: 1px solid black;
-            background-color: dimgray;
-            color: ghostwhite;
+            border-radius: 10px;
+            padding: 5px;
+            padding-left: 10px;
+            margin: 0;
+            height: 60px;
+            font-size: 16px;
+            overflow: hidden;
+        }
+        
+        .chatTo {
+            box-sizing: border-box;
+            height: 100%;
+        }
+        
+        div.chatTitle {
+            box-sizing: border-box;
+            height: 70px;
+            width: 100%;
+            padding: 10px;
+            font-size: 20px;
+            border: 1px solid black;
+        }
+        
+        #messContent {
+            box-sizing: border-box;
+            clear: both;
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        #messContent ul {
+            box-sizing: border-box;
+            margin: 5px;
+            border-radius: 15px;
+            color: white;
+        }
+        
+        .sender p,
+        .receiver p {
+            display: inline-block;
+            box-sizing: border-box;
+            margin: 10px;
+            padding: 10px;
+            overflow-wrap: break-word;
+            width: auto;
+            background: gray;
+            border-radius: 15px;
+        }
+        
+        .sender {
+            text-align: right;
+            padding: 0;
+            padding-right: 10px;
+            font-size: 16px;
+        }
+        
+        .receiver {
+            padding: 0;
+            padding-left: 10px;
+            text-align: left;
+            font-size: 16px;
+        }
+        
+        div.chatBox {
+            box-sizing: border-box;
+            height: 350px;
+            width: auto;
+            overflow: auto;
+            border: 1px solid #CCCCCC;
+            background-color: rgb(40, 40, 40);
         }
         
         div.sendMess {
+            box-sizing: border-box;
             height: 50px;
             max-width: 100%;
             border: 1px solid black;
@@ -111,10 +140,7 @@
     <div class="chatForm">
         <div class="chatHistory">
             <div class="chatOption">
-                <h2>
-                    Add chat: <input type='text' id='addChat'>
-                    <button onclick='addChat() '>Add to Chat</button>
-                </h2>
+                Find: <br><input type='text' id='addChat'><button onclick='addChat() '>Search</button>
             </div>
             <div class="history">
                 <div id="UpdateHistory"></div>
@@ -149,18 +175,20 @@
         </div>
         <div class='chat'>
             <div class='chatTitle'>
-                <h2>Conversation between
+                <div style="height:auto;position: relative;  padding-top: 10px;">
+                    Conversation between
                     <%=formData.sender %> and
                         <%=formData.receiver %>
-                </h2>
+                </div>
             </div>
             <div class="chatBox">
                 <div id='messContent'></div>
+                <p id="action" style="display: none;color:blanchedalmond;height: 20px;padding-left:20px;"></p>
             </div>
-            <p id="action" style="display: none;"></p>
+
             <div class="sendMess">
-                <input id="mess" type="text" style="height:40px;width: 77%;float: left;" />
-                <button id="btnChat" style="height:46px;width: 20%;float: left;">Send</button>
+                <input id="mess" type="text" style="box-sizing: border-box;height:50px;width: 80%;float: left;" />
+                <button id="btnChat" style="box-sizing: border-box;height:50px;width: 20%;float: left;">Send</button>
             </div>
         </div>
     </div>
@@ -238,9 +266,9 @@
                     $.each(response.data, function(index, data) {
                         $.each(data.message, function(index, message) {
                             if (message.ownermessenger === name.value) {
-                                $('#messContent').append("<ul class='sender'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                                $('#messContent').append("<ul class='sender'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
                             } else if (message.ownermessenger === receiver.value) {
-                                $('#messContent').append("<ul class='receiver'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                                $('#messContent').append("<ul class='receiver'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
                             } else {
                                 $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
                             }
@@ -277,11 +305,11 @@
                     $.each(response.data, function(index, data) {
                         $.each(data.message, function(index, message) {
                             if (message.ownermessenger === name.value) {
-                                $('#messContent').append("<ul class='sender'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                                $('#messContent').append("<ul class='sender'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
                             } else if (message.ownermessenger === receiver) {
-                                $('#messContent').append("<ul class='receiver'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                                $('#messContent').append("<ul class='receiver'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
                             } else {
-                                $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                                $('#messContent').append("<ul style='text-align: center;margin:0;padding:0;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
                             }
                         });
                     });
@@ -318,7 +346,7 @@
             ul.setAttribute("class", "receiver");
         }
         // add message to the elements text
-        ul.innerText = message.sender + ": " + message.mess;
+        ul.innerHTML = "<p>" + message.sender + ": " + message.mess + "</p>";
         // add to list of messages
         $("#messContent").append(ul);
 
@@ -364,9 +392,9 @@
                         $(newestMess).prependTo("#UpdateHistory");
                         $.each(data.message, function(index, message) {
                             if (message.ownermessenger === name.value) {
-                                $('#messContent').append("<ul class='sender'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                                $('#messContent').append("<ul class='sender'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
                             } else if (message.ownermessenger === receiver.value) {
-                                $('#messContent').append("<ul class='receiver'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                                $('#messContent').append("<ul class='receiver'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
                             } else {
                                 $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
                             }
@@ -386,7 +414,7 @@
                     $('#_idRoom').val(response._idRoom)
                     $('.chatTitle').html("<h2>Conversation between" + response.sender + " and " + response.receiver + "</h2>")
                     $('#messContent').html("")
-                    $('#messContent').append("<ul style='text-align:center;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
+                    $('#messContent').append("<ul style='text-align:center;margin:0;padding:0;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
                     $('.chatBox').scrollTop($('#messContent').height())
                     $("#UpdateHistory").append("<ul class='" + response._idRoom + "'> Name: " + response.receiver + "' ><input type='text' id='" + response._idRoom + "' value='Hệ thống: Đã kết nối! Ấn vào để chat' readonly><button onclick= chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Chat</button><input type='hidden' class='allID' value='" + response._idRoom + "'></input></ul>")
                     var idConversationList = [];

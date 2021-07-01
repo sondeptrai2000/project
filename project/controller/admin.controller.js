@@ -58,8 +58,18 @@ class adminController {
         })
     }
     createRoute(req, res) {
-        studyRouteModel.find({}, function(err, data) {
+        studyRouteModel.find({}, { _id: 1, routeName: 1, description: 1 }, function(err, data) {
             res.render('admin/createRoute', { data: data })
+        })
+    }
+
+    lol(req, res) {
+        studyRouteModel.find({ _id: req.query._id }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
         })
     }
 
