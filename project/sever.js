@@ -95,7 +95,8 @@ io.on("connection", function(socket) {
         var action = 'typing'
         var infor = {
             action: action,
-            person: data.sender
+            person: data.sender,
+            _idRoom: data._idRoom
         }
         io.sockets.in(socket.Phong).emit("Typing", infor)
     })
@@ -105,7 +106,8 @@ io.on("connection", function(socket) {
         var action = 'notTyping'
         var infor = {
             action: action,
-            person: data.sender
+            person: data.sender,
+            _idRoom: data._idRoom
         }
         io.sockets.in(socket.Phong).emit("notTyping", infor)
     })

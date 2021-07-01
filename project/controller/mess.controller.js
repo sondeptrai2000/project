@@ -13,23 +13,19 @@ class messtController {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
         AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
-            var formData = {
-                studentName: req.body.studentName,
-                sender: sender.username,
-            }
             var condition = {
                 person1: sender.username,
                 person2: req.body.studentName,
             }
-
             var condition1 = {
                 person1: req.body.studentName,
                 person2: sender.username,
             }
-
             var createConnection = {
                 person1: sender.username,
+                person1ID: sender._id,
                 person2: req.body.studentName,
+                person2ID: req.body.studentID,
                 message: {
                     ownermessenger: "Hệ thống",
                     messContent: "Đã kết nối! Ấn vào để chat",
@@ -43,10 +39,26 @@ class messtController {
                         if (err) {
                             res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                         } else {
-                            chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }).sort({ updateTime: -1 }).exec(function(err, data1) {
-                                chatModel.find({ $or: [condition, condition1] }, function(err, data) {
-                                    res.render("message/chat.ejs", { formData, data, data1 })
-                                });
+                            chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, {
+                                message: { $slice: -1 } // lấy tin nhắn cuối cùng trong mảng message
+                            }).sort({ updateTime: -1 }).exec(function(err, data1) {
+                                if (data1.length == "0") {
+                                    res.render("message/chatTrong.ejs")
+                                } else {
+                                    if (sender.username != data1[0].person1) {
+                                        var formData = {
+                                            sender: sender.username,
+                                            receiver: data1[0].person1
+                                        }
+                                    }
+                                    if (sender.username != data1[0].person2) {
+                                        var formData = {
+                                            sender: sender.username,
+                                            receiver: data1[0].person2
+                                        }
+                                    }
+                                    res.render("message/chatBoxHistory.ejs", { data1, formData })
+                                }
                             })
                         }
                     });
@@ -55,7 +67,19 @@ class messtController {
                         // lấy tin nhắn cuối cùng trong mảng message
                         message: { $slice: -1 }
                     }).sort({ updateTime: -1 }).exec(function(err, data1) {
-                        res.render("message/chat.ejs", { formData, data, data1 })
+                        if (sender.username != data1[0].person1) {
+                            var formData = {
+                                sender: sender.username,
+                                receiver: data1[0].person1
+                            }
+                        }
+                        if (sender.username != data1[0].person2) {
+                            var formData = {
+                                sender: sender.username,
+                                receiver: data1[0].person2
+                            }
+                        }
+                        res.render("message/chatBoxHistory.ejs", { data1, formData })
                     })
                 }
             })

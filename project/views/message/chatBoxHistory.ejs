@@ -143,7 +143,6 @@
                 Find: <br><input type='text' id='addChat'><button onclick='addChat() '>Search</button>
             </div>
             <div class="history">
-                <div id="UpdateHistory"></div>
                 <% data1.forEach(function(data1) { %>
                     <%if (data1.person1 !== formData.sender) { %>
                         <ul class='<%=data1._id %>'>
@@ -242,15 +241,17 @@
     socket.on("notTyping", TypingOrNot)
 
     function TypingOrNot(data) {
-        if (data.action === 'typing') {
-            $("#action").show()
-            $("#action").html(data.person + 'is typing')
-            $('.chatBox').scrollTop($('#messContent').height())
+        if (data._idRoom == _idRoom.value) {
+            if (data.action === 'typing') {
+                $("#action").show()
+                $("#action").html(data.person + 'is typing')
+                $('.chatBox').scrollTop($('#messContent').height())
 
-        }
-        if (data.action === 'notTyping') {
-            $("#action").hide()
-            $("#action").html('')
+            }
+            if (data.action === 'notTyping') {
+                $("#action").hide()
+                $("#action").html('')
+            }
         }
     }
 
@@ -340,17 +341,20 @@
 
     // add message to our page
     function addMessageToHTML(message) {
-        // create a new li element
-        var ul = document.createElement("ul");
-        if (message.sender == name.value) {
-            ul.setAttribute("class", "sender");
-        } else {
-            ul.setAttribute("class", "receiver");
+        if (message._idRoom == _idRoom.value) {
+            // create a new li element
+            var ul = document.createElement("ul");
+            if (message.sender == name.value) {
+                ul.setAttribute("class", "sender");
+            } else {
+                ul.setAttribute("class", "receiver");
+            }
+            // add message to the elements text
+            ul.innerHTML = "<p>" + message.sender + ": " + message.mess + "</p>";
+            // add to list of messages
+            $("#messContent").append(ul);
         }
-        // add message to the elements text
-        ul.innerHTML = "<p>" + message.sender + ": " + message.mess + "</p>";
-        // add to list of messages
-        $("#messContent").append(ul);
+
 
         var newMess = '#' + message._idRoom
         $(newMess).text(message.sender + ": " + message.mess)
@@ -364,7 +368,7 @@
         $('.chatBox').scrollTop($('#messContent').height())
         var newestMess = '.' + message._idRoom
             //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
-        $(newestMess).prependTo("#UpdateHistory");
+        $(newestMess).prependTo(".history");
     }
 
     function addChat() {
@@ -391,7 +395,7 @@
                         $('#_idRoom').val(data._id)
                         var newestMess = '.' + data._id
                             //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
-                        $(newestMess).prependTo("#UpdateHistory");
+                        $(newestMess).prependTo(".history");
                         $.each(data.message, function(index, message) {
                             if (message.ownermessenger === name.value) {
                                 $('#messContent').append("<ul class='sender'><p>" + message.ownermessenger + ": " + message.messContent + "</p></ul>")
@@ -418,7 +422,7 @@
                     $('#messContent').html("")
                     $('#messContent').append("<ul style='text-align:center;margin:0;padding:0;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
                     $('.chatBox').scrollTop($('#messContent').height())
-                    $("#UpdateHistory").append("<ul class='" + response._idRoom + "'> Name: " + response.receiver + "' ><input type='text' id='" + response._idRoom + "' value='Hệ thống: Đã kết nối! Ấn vào để chat' readonly><button onclick= chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Chat</button><input type='hidden' class='allID' value='" + response._idRoom + "'></input></ul>")
+                    $(".history").append("<ul class='" + response._idRoom + "'> <div class='chatTo' onclick=chatBox('" + response.receiver + "','" + response.sender + "','" + response._idRoom + "')> Name: " + response.receiver + "<p id='" + response._idRoom + "'> Hệ thống: Đã kết nối! Ấn vào để chat<input type='hidden' class='allID' value='" + response._idRoom + "'></input></div></ul>")
                     var idConversationList = [];
                     idConversationList.push(response._idRoom);
                     socket.emit("tao-room", {
