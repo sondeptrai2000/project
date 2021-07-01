@@ -183,7 +183,7 @@
             </div>
             <div class="chatBox">
                 <div id='messContent'></div>
-                <p id="action" style="display: none;color:blanchedalmond;height: 20px;padding-left:20px;"></p>
+                <p id="action" style="display: none;color:blanchedalmond;height:20px;padding-left:20px;"></p>
             </div>
 
             <div class="sendMess">
@@ -245,6 +245,8 @@
         if (data.action === 'typing') {
             $("#action").show()
             $("#action").html(data.person + 'is typing')
+            $('.chatBox').scrollTop($('#messContent').height())
+
         }
         if (data.action === 'notTyping') {
             $("#action").hide()
