@@ -65,13 +65,14 @@ function closeProfile() {
 }
 
 
-function proposalT() {
+function proposalT(page) {
     $("#loading").show();
     $(".tr1").remove();
     $.ajax({
         url: '/teacher/allProposal',
         method: 'get',
         dataType: 'json',
+        data: { page: page },
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
@@ -80,6 +81,11 @@ function proposalT() {
                 })
                 $("#loading").hide();
                 $('.proposal').slideDown(1000)
+                $("#soTrang").html("")
+                for (let i = 1; i < response.soTrang; i++) {
+                    let u = i - 1
+                    $("#soTrang").append("<button onclick=proposalT(" + u + ")>" + i + "</button>")
+                }
             }
             if (response.msg == 'error') {
                 alert(' error');

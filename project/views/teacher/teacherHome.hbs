@@ -54,7 +54,7 @@
     <p><a href='/account/homeTeacher'>Trang chủ Teacher</a></p>
     <p><a onclick='teacherProfile()'>Teacher Profile</a></p>
     <p><a href='/teacher/allClass'>Class</a></p>
-    <p><a onclick="proposalT()">Teacher All Extracurricular Activities</a></p>
+    <p><a onclick="proposalT(0)">Teacher All Extracurricular Activities</a></p>
     <p><a href='/messenger/chatForm'>Teacher Messenge</a></p>
 </body>
 <div class="content" style="text-align: center; display:none">
@@ -91,10 +91,12 @@
         </tr>
     </table>
 </div>
+
 <div id="loading" style="display:none">
     <img src="/images/loadingWalking.gif" alt="Loading..." />
 </div>
 <div class="proposal" style="display: none;">
+    <div id="soTrang"></div>
     <div id="table">
         <div class="tr">
             <div class="td"><input type="text"></div>
@@ -115,7 +117,7 @@
                 <button onclick="createNewProposal()">Create New Proposal</button>
             </div>
             <div class="td">
-                <select id="proposalFilter" >
+                <select id="proposalFilter">
                     <option value="all">All</option>
                     <option value="extracurricularActivities">Extracurricular Activities</option>
                     <option value="event">Event</option>
@@ -134,6 +136,7 @@
             <div class="td">Status</div>
             <div class="td">Action</div>
         </div>
+
     </div>
 </div>
 
@@ -156,4 +159,5 @@
 
 <div id="viewProposal"></div>
 <script src=" /teacherHome.js"></script>
+
 </html>

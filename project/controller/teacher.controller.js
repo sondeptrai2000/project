@@ -122,12 +122,16 @@ class teacherController {
     allProposal(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        ProposalModel.find({ teacherID: decodeAccount }, { file: 1, proposalName: 1, Content: 1, proposalType: 1, uploadDate: 1, Status: 1 }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
+        ProposalModel.find({ teacherID: decodeAccount }).countDocuments(function(err, numberOfAccount) {
+            var skip = parseInt(req.query.page) * 2
+            var soTrang = numberOfAccount / 2 + 1
+            ProposalModel.find({ teacherID: decodeAccount }, { file: 1, proposalName: 1, Content: 1, proposalType: 1, uploadDate: 1, Status: 1 }).skip(skip).limit(2).exec((err, data) => {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data, numberOfAccount, soTrang });
+                }
+            })
         })
     }
 
