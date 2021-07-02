@@ -14,23 +14,29 @@ class adminController {
     }
 
     getAccount(req, res) {
-        AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
+        AccountModel.find({ role: req.query.role }).countDocuments(function(err, numberOfAccount) {
+            var skip = parseInt(req.query.sotrang) * 3
+            var soTrang = numberOfAccount / 3 + 1
+            AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).skip(skip).limit(3).exec((err, data) => {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data, numberOfAccount, soTrang });
+                }
+            })
         })
-
     }
+
     createAccount(req, res) {
-        studyRouteModel.find({}, function(err, targetxxx) {
-            AccountModel.find({ role: "teacher" })
-                .then(data => {
-                    ClassModel.find({}, function(err, classInfor) {
-                        res.render('admin/createAccount', { data, classInfor, targetxxx })
+        AccountModel.find({ role: "teacher" }).countDocuments(function(err, numberOfAccount) {
+            studyRouteModel.find({}, function(err, targetxxx) {
+                AccountModel.find({ role: "teacher" })
+                    .then(data => {
+                        ClassModel.find({}, function(err, classInfor) {
+                            res.render('admin/createAccount', { data, classInfor, targetxxx, numberOfAccount })
+                        })
                     })
-                })
+            })
         })
 
     }
@@ -283,14 +289,19 @@ class adminController {
     }
 
     editClass(req, res) {
-        res.render('admin/editClass')
-            // res.json('Trang trỉnh sủa thông tin các lớp học')
+        var skip = parseInt(req.query.sotrang)
+        AccountModel.find({ role: req.query.role }).countDocuments(function(err, numberOfAccount) {
+            AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).skip(skip).limit(1).exec((err, data) => {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data, numberOfAccount });
+                }
+            })
+        })
     }
 
-    addStudentToClass(req, res) {
-        res.render('admin/addStudentToClass')
-            // res.json('Trang thêm học sinh vào lớp ')
-    }
+    addStudentToClass(req, res) {}
 
     addTeacherToClass(req, res) {
         res.render('admin/addTeacherToClass')

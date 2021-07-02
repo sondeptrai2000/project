@@ -4,6 +4,7 @@
 <head>
       <script src="/jquery/jquery.js"></script>
       <style>
+      
             #loading {
                   position: fixed;
                   display: block;
@@ -74,7 +75,7 @@
 
       </div>
       <button id="btnxx">Create new account</button>
-      <select id="accountFilter" onchange="getAccount(this.value)">
+      <select id="accountFilter" onchange="getAccount(this.value,0)">
             <option value="teacher">teacher</option>
             <option value="guardian">guardian</option>
             <option value="student">student</option>
@@ -88,14 +89,14 @@
             <thead id="tableInforType"></thead>
             <tbody class='taskrow'></tbody>
       </table>
-
+      <div id="soTrang"></div>
       <br>
       <div id="updateForm" style="display: none;">
             <button id="closeUpdateForm"> Close updateForm </button>
             <label>PersonID</label><input type='text' id='PersonID'><br>
             <h2>ACCOUNT update INFORMATION</h2>
             <label>Old Avatar</label>
-            <img id='oldAvatar' style='max-width:150px;max-height:200px'></img><br>
+            <img id='oldAvatar' style='max-width:100px;max-height:100px'></img><br>
             <label>Update Avatar</label> Select images:
             <input type='file' id='myFileUpdate'><br>
             <img id='outputUpdate' style='height:3cm; width:3cm'><br>

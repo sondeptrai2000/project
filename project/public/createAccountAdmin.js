@@ -16,7 +16,7 @@ $("#btnxx").click(function() {
 //     $("#loading").hide();
 // });
 $(document).ready(function() {
-    getAccount('teacher')
+    getAccount('teacher', 0)
     $("#createAccount").slideUp();
     //xử lý file khi tạo tài khoản
     $('#myFile').on('change', function() {
@@ -87,7 +87,7 @@ function signUp() {
         success: function(response) {
             if (response.msg == 'success') {
                 reset();
-                getAccount(role);
+                getAccount(role, 0);
                 $("#createAccount").slideUp();
                 alert('Sign Up success');
             }
@@ -101,8 +101,9 @@ function signUp() {
     })
 }
 //lấy danh sách theo role (index)
-function getAccount(index) {
+function getAccount(index, page) {
     var role = index
+    var page = page
     $("#loading").show();
     $(".taskrow").html("");
     $(".tableInforType").html("");
@@ -116,20 +117,25 @@ function getAccount(index) {
         url: '/admin/getAccount',
         method: 'get',
         dataType: 'json',
-        data: { role: index },
+        data: { role: index, sotrang: page },
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
                     if (role == 'teacher' || role == 'guardian') {
-                        $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
+                        $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
                     } else {
                         if (data.guardian) {
-                            $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><img style ='max-width:150px;max-height:200px' src='" + data.guardian.avatar + "'><br>" + data.guardian.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
+                            $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><img style ='max-width:100px;max-height:100px' src='" + data.guardian.avatar + "'><br>" + data.guardian.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
                         } else {
-                            $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td>None</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
+                            $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td>None</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
                         }
                     }
                 });
+                $("#soTrang").html("")
+                for (let i = 1; i < response.soTrang; i++) {
+                    let u = i - 1
+                    $("#soTrang").append("<button onclick=getAccount('" + role + "','" + u + "')>" + i + "</button>")
+                }
                 $("#loading").hide();
             }
         },
@@ -304,7 +310,7 @@ function doUpdate() {
             if (response.msg == 'success') {
                 alert('update success');
                 $('#updateForm').fadeOut(2000);
-                getAccount($("#roleUpdate").val());
+                getAccount($("#roleUpdate").val(), 0);
                 $("#routeTypeSUpdate option[value='" + response.data.routeName + "']").attr('selected', 'selected');
             }
         },

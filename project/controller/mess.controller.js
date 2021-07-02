@@ -84,7 +84,7 @@ class messtController {
     }
 
     getMessenger(req, res) {
-        chatModel.find({ _id: req.query._idRoom }).populate('person1ID', { avatar: 1 }).populate('person2ID', { avatar: 1 }).exec(function(err, data) {
+        chatModel.findOne({ _id: req.query._idRoom }).populate('person1ID', { avatar: 1 }).populate('person2ID', { avatar: 1 }).exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -117,7 +117,7 @@ class messtController {
                                 messContent: "Đã kết nối! Ấn vào để chat",
                             }
                         }
-                        chatModel.find({ $or: [{ person1: senderName, person2: receiverName }, { person1: receiverName, person2: senderName }] }, function(err, data) {
+                        chatModel.findOne({ $or: [{ person1: senderName, person2: receiverName }, { person1: receiverName, person2: senderName }] }, function(err, data) {
                             if (err) {
                                 res.json({ msg: 'error' });
                             } else if (data.length === 0) {

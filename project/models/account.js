@@ -16,6 +16,9 @@ const AccountSchema = new Schema({
     aim: String,
     routeName: String,
     stage: String,
+    chat: [{
+        type: String,
+    }],
     guardian: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'account'
