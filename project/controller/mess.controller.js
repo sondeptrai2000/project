@@ -12,44 +12,45 @@ class messtController {
     makeConnection(req, res, next) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.findOne({ _id: decodeAccount }, function(err, sender) {
-            var condition = {
-                person1: sender.username,
-                person2: req.body.studentName,
-            }
-            var condition1 = {
-                person1: req.body.studentName,
-                person2: sender.username,
-            }
-            var createConnection = {
-                person1: sender.username,
-                person1ID: sender._id,
-                person2: req.body.studentName,
-                person2ID: req.body.studentID,
-                message: {
-                    ownermessenger: "Hệ thống",
-                    messContent: "Đã kết nối! Ấn vào để chat",
+        AccountModel.findOne({ _id: decodeAccount }, { username: 1, avatar: 1 }, function(err, sender) {
+            AccountModel.findOne({ username: req.body.studentName }, { avatar: 1 }, function(err, receiver) {
+                var condition = {
+                    person1: sender.username,
+                    person2: req.body.studentName,
                 }
-            }
-            chatModel.find({ $or: [condition, condition1] }, function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else if (data.length == 0) {
-                    chatModel.create(createConnection, function(err, data) {
-                        if (err) {
-                            res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
-                        } else {
-                            next();
-                        }
-                    });
-                } else {
-                    next();
+                var condition1 = {
+                    person1: req.body.studentName,
+                    person2: sender.username,
                 }
+                var createConnection = {
+                    person1: sender.username,
+                    person1Ava: sender.avatar,
+                    person2: req.body.studentName,
+                    person2Ava: receiver.avatar,
+                    message: {
+                        ownermessenger: "Hệ thống",
+                        messContent: "Đã kết nối! Ấn vào để chat",
+                    }
+                }
+                chatModel.find({ $or: [condition, condition1] }, function(err, data) {
+                    if (err) {
+                        res.json({ msg: 'error' });
+                    } else if (data.length == 0) {
+                        chatModel.create(createConnection, function(err, data) {
+                            if (err) {
+                                res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
+                            } else {
+                                next();
+                            }
+                        });
+                    } else {
+                        next();
+                    }
+                })
             })
         })
     }
 
-    //lịch sử chat, hiển thị tin nhắn đầu trong danh sách
     chatForm(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
@@ -57,7 +58,7 @@ class messtController {
             chatModel.find({ $or: [{ person1: sender.username }, { person2: sender.username }] }, {
                 // lấy tin nhắn cuối cùng trong mảng message
                 message: { $slice: -1 }
-            }).populate('person1ID', { avatar: 1 }).populate('person2ID', { avatar: 1 }).sort({ updateTime: -1 }).exec(function(err, data1) {
+            }).sort({ updateTime: -1 }).exec(function(err, data1) {
                 if (data1.length == "0") {
                     res.render("message/chatTrong.ejs")
                 } else {
@@ -66,7 +67,7 @@ class messtController {
                             sender: sender.username,
                             senderAva: sender.avatar,
                             receiver: data1[0].person1,
-                            receiverAva: data1[0].person1ID.avatar,
+                            receiverAva: data1[0].person1Ava,
                         }
                     }
                     if (sender.username != data1[0].person2) {
@@ -74,7 +75,7 @@ class messtController {
                             sender: sender.username,
                             senderAva: sender.avatar,
                             receiver: data1[0].person2,
-                            receiverAva: data1[0].person2ID.avatar,
+                            receiverAva: data1[0].person2Ava,
                         }
                     }
                     res.render("message/chatBoxHistory.ejs", { data1, formData })
@@ -84,11 +85,11 @@ class messtController {
     }
 
     getMessenger(req, res) {
-        chatModel.findOne({ _id: req.query._idRoom }).populate('person1ID', { avatar: 1 }).populate('person2ID', { avatar: 1 }).exec(function(err, data) {
+        chatModel.findOne({ _id: req.query._idRoom }).exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.json({ msg: 'success', data: data });
+                res.json({ msg: 'success', data });
             }
         })
     }
@@ -109,9 +110,9 @@ class messtController {
                     if (senderName != receiverName) {
                         var createConnection = {
                             person1: senderName,
-                            person1ID: sender._id,
+                            person1Ava: senderAva,
                             person2: receiverName,
-                            person2ID: data._id,
+                            person2Ava: receiverAva,
                             message: {
                                 ownermessenger: "Hệ thống",
                                 messContent: "Đã kết nối! Ấn vào để chat",
@@ -120,7 +121,7 @@ class messtController {
                         chatModel.findOne({ $or: [{ person1: senderName, person2: receiverName }, { person1: receiverName, person2: senderName }] }, function(err, data) {
                             if (err) {
                                 res.json({ msg: 'error' });
-                            } else if (data.length === 0) {
+                            } else if (!data) {
                                 chatModel.create(createConnection, function(err, data) {
                                     if (err) {
                                         res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });

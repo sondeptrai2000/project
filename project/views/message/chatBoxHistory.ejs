@@ -166,7 +166,7 @@
                 <% data1.forEach(function(data1) { %>
                     <%if (data1.person1 !== formData.sender) { %>
                         <ul class='<%=data1._id %>' onclick="chatBox('<%=data1.person1 %>','<%=data1._id %>')">
-                            <img src='<%=data1.person1ID.avatar %>'>
+                            <img src='<%=data1.person1Ava %>'>
                             <p id="<%=data1._id %>">Name:
                                 <%= data1.person1 %>
                                     <br>
@@ -178,7 +178,7 @@
                         <% } %>
                             <%if (data1.person2 !== formData.sender) { %>
                                 <ul class='<%=data1._id %>' onclick="chatBox('<%=data1.person2 %>','<%=data1._id %>')">
-                                    <img src='<%=data1.person2ID.avatar %>'>
+                                    <img src='<%=data1.person2Ava %>'>
                                     <p id="<%=data1._id %>">Name:
                                         <%= data1.person2 %>
                                             <br>
@@ -325,11 +325,11 @@
             success: function(response) {
                 if (response.msg == 'success') {
                     if (response.data.person1 == $('#name').val()) {
-                        var senderAva = response.data.person1ID.avatar
-                        var receiverAva = response.data.person2ID.avatar
+                        var senderAva = response.data.person1Ava
+                        var receiverAva = response.data.person2Ava
                     } else {
-                        var senderAva = response.data.person2ID.avatar
-                        var receiverAva = response.data.person1ID.avatar
+                        var senderAva = response.data.person2Ava
+                        var receiverAva = response.data.person1Ava
                     }
                     $('#receiverAva').attr("src", receiverAva);
                     $.each(response.data.message, function(index, message) {
@@ -382,7 +382,7 @@
 
         //hiển thị tin nhắn mới nhất ở lịch sử chat
         var newMess = '#' + message._idRoom
-        $(newMess).html("Name: " + message.sender + "<br>" + message.receiver + ": " + message.mess)
+        $(newMess).html("Name: " + message.receiver + "<br>" + message.sender + ": " + message.mess)
 
         //tin nhắn gửi đến nếu chưa xem thì in đậm, xem r thì in bt
         if (message._idRoom != _idRoom.value) {
