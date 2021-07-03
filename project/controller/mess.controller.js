@@ -13,7 +13,9 @@ class messtController {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
         AccountModel.findOne({ _id: decodeAccount }, { username: 1, avatar: 1, chat: 1 }, function(err, sender) {
+            var senderName = sender.username
             AccountModel.findOne({ username: req.body.studentName }, { avatar: 1, chat: 1 }, function(err, receiver) {
+                var receiverName = req.body.studentName
                 var person1ListChat = sender.chat
                 var person2ListChat = receiver.chat
                 var check = false
@@ -40,12 +42,7 @@ class messtController {
                         if (err) {
                             res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                         } else {
-                            AccountModel.updateOne({ username: req.body.studentName }, { $push: { chat: data._id } }, function(err, data) {
-                                if (err) {
-                                    res.json({ msg: 'Lỗi' });
-                                }
-                            })
-                            AccountModel.updateOne({ _id: decodeAccount }, { $push: { chat: data._id } }, function(err, data) {
+                            AccountModel.updateMany({ username: { $in: [senderName, receiverName] } }, { $push: { chat: data._id } }, function(err, data) {
                                 if (err) {
                                     res.json({ msg: 'Lỗi' });
                                 }
@@ -144,12 +141,7 @@ class messtController {
                                 if (err) {
                                     res.json({ msg: 'có lỗi trogn khi tạo cuộc trò chuyện' });
                                 } else {
-                                    AccountModel.updateOne({ username: receiverName }, { $push: { chat: data._id } }, function(err, data) {
-                                        if (err) {
-                                            res.json({ msg: 'Lỗi' });
-                                        }
-                                    })
-                                    AccountModel.updateOne({ _id: decodeAccount }, { $push: { chat: data._id } }, function(err, data) {
+                                    AccountModel.updateMany({ username: { $in: [senderName, receiverName] } }, { $push: { chat: data._id } }, function(err, data) {
                                         if (err) {
                                             res.json({ msg: 'Lỗi' });
                                         }
