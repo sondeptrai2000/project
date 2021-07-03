@@ -14,6 +14,7 @@ class messtController {
         let decodeAccount = jwt.verify(token, 'minhson')
         AccountModel.findOne({ _id: decodeAccount }, { username: 1, avatar: 1 }, function(err, sender) {
             AccountModel.findOne({ username: req.body.studentName }, { avatar: 1 }, function(err, receiver) {
+
                 var condition = {
                     person1: sender.username,
                     person2: req.body.studentName,

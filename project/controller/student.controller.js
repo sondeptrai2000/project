@@ -25,17 +25,18 @@ class studentController {
     allClass(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.find({ _id: decodeAccount }).populate({
+        AccountModel.find({ _id: decodeAccount }, { classID: 1 }).populate({
             path: 'classID',
             populate: {
                 path: 'teacherID',
-                username: 1
+                select: 'username',
             }
         }).exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.render('student/allClass', { data: data });
+                // res.json(data)
+                res.render('student/allClass', { data });
             }
         })
     }
