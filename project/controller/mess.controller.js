@@ -18,14 +18,13 @@ class messtController {
                 var person2ListChat = receiver.chat
                 var check = false
                 for (let i = 0; i < person1ListChat.length; i++) {
-                    for (let u = 0; i < person2ListChat.length; u++) {
+                    for (let u = 0; u < person2ListChat.length; u++) {
                         if (person1ListChat[i] == person2ListChat[u]) {
                             check = true;
                             break;
                         }
                     }
                 }
-                console.log(check)
                 if (check == false) {
                     var createConnection = {
                         person1: sender.username,
@@ -122,15 +121,14 @@ class messtController {
                         var person1ListChat = sender.chat
                         var person2ListChat = data.chat
                         var check = false
-                        for (let i = 0; i < person1ListChat.length; i++) {
-                            for (let u = 0; i < person2ListChat.length; u++) {
+                        for (var i = 0; i < person1ListChat.length; i++) {
+                            for (var u = 0; u < person2ListChat.length; u++) {
                                 if (person1ListChat[i] == person2ListChat[u]) {
                                     check = true;
                                     break;
                                 }
                             }
                         }
-                        console.log(check)
                         if (check == false) {
                             var createConnection = {
                                 person1: senderName,

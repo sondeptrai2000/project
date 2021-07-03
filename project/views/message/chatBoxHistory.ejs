@@ -418,7 +418,7 @@
                     $('#receiver').val(response.receiverName)
                     $('#name').val(response.senderName)
                     $('#receiverAva').attr("src", response.receiverAva)
-                    $('#nameAva').attr("src", response.nameAva)
+                    $('#nameAva').attr("src", response.senderAva)
                     $.each(response.data, function(index, data) {
                         $('#_idRoom').val(data._id)
                             //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
@@ -449,7 +449,7 @@
                     $('#name').val(response.senderName)
                     $('#_idRoom').val(response._idRoom)
                     $('#receiverAva').attr("src", response.receiverAva)
-                    $('#nameAva').attr("src", response.nameAva)
+                    $('#nameAva').attr("src", response.senderAva)
                     $('#messContent').append("<ul style='text-align:center;margin:0;padding:0;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
                     $('.chatBox').scrollTop($('#messContent').height())
                     $(".history").prepend("<ul class='" + response._idRoom + "'onclick=chatBox('" + response.receiverName + "','" + response._idRoom + "')><div class='avatarReceiver'><img src='" + response.receiverAva + "'></div><div class='infor4'> Name: " + response.receiverName + "<br>Hệ thống: Đã kết nối! Ấn vào để chat<input type='hidden' class='allID' value='" + response._idRoom + "'> </div></input></div></ul>")
