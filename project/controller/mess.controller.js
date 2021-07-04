@@ -59,33 +59,38 @@ class messtController {
     }
 
     chatForm(req, res) {
+        var lol = new Date
+        console.log("mới vào" + lol)
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.findOne({ _id: decodeAccount }, { avatar: 1, username: 1, chat: 1 }, function(err, sender) {
+        AccountModel.findOne({ _id: decodeAccount }, { username: 1, chat: 1 }, function(err, sender) {
             chatModel.find({ _id: { $in: sender.chat } }, {
                 // lấy tin nhắn cuối cùng trong mảng message
                 message: { $slice: -1 }
             }).sort({ updateTime: -1 }).exec(function(err, data1) {
+                var lol = new Date
+                console.log("lấy lsu chat" + lol)
                 if (data1.length == "0") {
                     res.render("message/chatTrong.ejs")
                 } else {
                     if (sender.username != data1[0].person1) {
                         var formData = {
-                            sender: sender.username,
-                            senderAva: sender.avatar,
+                            sender: data1[0].person2,
+                            senderAva: data1[0].person2Ava,
                             receiver: data1[0].person1,
                             receiverAva: data1[0].person1Ava,
                         }
                     }
                     if (sender.username != data1[0].person2) {
                         var formData = {
-                            sender: sender.username,
-                            senderAva: sender.avatar,
+                            sender: data1[0].person1,
+                            senderAva: data1[0].person1Ava,
                             receiver: data1[0].person2,
                             receiverAva: data1[0].person2Ava,
                         }
                     }
-                    res.render("message/chatBoxHistory.ejs", { data1, formData })
+                    var listID = sender.chat
+                    res.render("message/chatBoxHistory.ejs", { data1, formData, listID })
                 }
             })
         });
@@ -96,6 +101,8 @@ class messtController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
+                var lol = new Date
+                console.log("lấy cuộc hội thoại" + lol)
                 res.json({ msg: 'success', data });
             }
         })

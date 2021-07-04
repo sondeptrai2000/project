@@ -60,6 +60,8 @@ io.on("connection", function(socket) {
             socket.Phong = data[i]
             socket.join(data[i]);
         }
+        var lol = new Date
+        console.log("tao-room" + lol)
     })
 
     socket.on("user-chat", function(data) {

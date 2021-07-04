@@ -173,7 +173,6 @@
                                     <%= data1.message[0].ownermessenger %>:
                                         <%= data1.message[0].messContent.slice(0, 16); %>...
                             </p>
-                            <input type="hidden" class='allID' value="<%=data1._id %>"></input>
                         </ul>
                         <% } %>
                             <%if (data1.person2 !== formData.sender) { %>
@@ -185,7 +184,6 @@
                                             <%= data1.message[0].ownermessenger %>:
                                                 <%= data1.message[0].messContent.slice(0, 16); %>...
                                     </p>
-                                    <input type="hidden" class='allID' value="<%=data1._id %>"></input>
                                 </ul>
                                 <% } %>
                                     <% }); %>
@@ -210,8 +208,9 @@
             </div>
         </div>
     </div>
-
-    <div class="chatInformation" style="display: none;">
+    <!-- style="display: none;" -->
+    <div class="chatInformation">
+        <input id="allID" type="text" value="<%=listID %>" />
         <input id="receiver" type="text" value="<%=formData.receiver %>" />
         <input id="name" type="text" value="<%=formData.sender %>" />
         <input id="_idRoom" type="text" value="<%=data1[0]._id %>" />
@@ -239,9 +238,8 @@
     //tạo room cho tất cả cuọco trò chuyện "online" để nhận thông báo khi người khác gửi tin nhắn
     function connectAllConversation() {
         var idConversationList = [];
-        $('.allID').each(function() {
-            idConversationList.push($(this).attr('value'));
-        });
+        var object = $("#allID").val()
+        idConversationList = object.split(",");
         socket.emit("tao-room", {
             idConversationList
         });
@@ -341,8 +339,8 @@
                             $('#messContent').append("<ul style='text-align: center;margin:0;padding:0;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
                         }
                     });
+                    $('.chatBox').scrollTop($('#messContent').height())
                 }
-                $('.chatBox').scrollTop($('#messContent').height())
             },
             error: function(response) {
                 alert('server error');
@@ -452,7 +450,7 @@
                     $('#nameAva').attr("src", response.senderAva)
                     $('#messContent').append("<ul style='text-align:center;margin:0;padding:0;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
                     $('.chatBox').scrollTop($('#messContent').height())
-                    $(".history").prepend("<ul class='" + response._idRoom + "'onclick=chatBox('" + response.receiverName + "','" + response._idRoom + "')><div class='avatarReceiver'><img src='" + response.receiverAva + "'></div><div class='infor4'> Name: " + response.receiverName + "<br>Hệ thống: Đã kết nối! Ấn vào để chat<input type='hidden' class='allID' value='" + response._idRoom + "'> </div></input></div></ul>")
+                    $(".history").prepend("<ul class='" + response._idRoom + "'onclick=chatBox('" + response.receiverName + "','" + response._idRoom + "')><div class='avatarReceiver'><img src='" + response.receiverAva + "'></div><div class='infor4'> Name: " + response.receiverName + "<br>Hệ thống: Đã kết nối! Ấn vào để chat </div></div></ul>")
                     var idConversationList = [];
                     idConversationList.push(response._idRoom);
                     socket.emit("tao-room", {
