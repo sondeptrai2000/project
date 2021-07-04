@@ -198,18 +198,41 @@
                 </div>
             </div>
             <div class="chatBox">
-                <div id='messContent'></div>
+                <div id='messContent'>
+                    <% data.message.forEach(function(message) { %>
+                        <%if (message.ownermessenger == formData.sender) { %>
+                            <ul class='sender'>
+                                <p>
+                                    <%= message.messContent %>
+                                </p>
+                                <img src='<%=formData.senderAva %>'>
+                            </ul>
+                            <% } else if (message.ownermessenger == formData.receiver) { %>
+                                <ul class='receiver'>
+                                    <img src='<%=formData.receiverAva %>'>
+                                    <p>
+                                        <%= message.messContent %>
+                                    </p>
+                                </ul>
+                                <% } else { %>
+                                    <ul style="text-align: center;margin:0;padding:0;">
+                                        <p>
+                                            <%= message.ownermessenger %>
+                                                <%= message.messContent %>
+                                        </p>
+                                    </ul>
+                                    <% } %>
+                                        <% }); %>
+                </div>
                 <p id="action" style="display: none;color:blanchedalmond;height:20px;padding-left:20px;"></p>
             </div>
-
             <div class="sendMess">
                 <input id="mess" type="text" style="box-sizing: border-box;height:50px;width: 80%;float: left;" />
                 <button id="btnChat" style="box-sizing: border-box;height:50px;width: 20%;float: left;">Send</button>
             </div>
         </div>
     </div>
-    <!-- style="display: none;" -->
-    <div class="chatInformation">
+    <div class="chatInformation" style="display: none;">
         <input id="allID" type="text" value="<%=listID %>" />
         <input id="receiver" type="text" value="<%=formData.receiver %>" />
         <input id="name" type="text" value="<%=formData.sender %>" />
@@ -232,8 +255,8 @@
     const socket = io();
 
     $(document).ready(function() {
+        $(".chatBox").scrollTop($('#messContent').height())
         connectAllConversation();
-        firstConversation();
     });
     //tạo room cho tất cả cuọco trò chuyện "online" để nhận thông báo khi người khác gửi tin nhắn
     function connectAllConversation() {
@@ -275,34 +298,6 @@
                 $("#action").html('')
             }
         }
-    }
-
-    function firstConversation() {
-        $.ajax({
-            url: '/messenger/getMessenger',
-            method: 'get',
-            dataType: 'json',
-            data: {
-                _idRoom: _idRoom.value
-            },
-            success: function(response) {
-                if (response.msg == 'success') {
-                    $.each(response.data.message, function(index, message) {
-                        if (message.ownermessenger === name.value) {
-                            $('#messContent').append("<ul class='sender'><p>" + message.messContent + "</p>" + "<img src='" + nameAva.src + "'></ul>")
-                        } else if (message.ownermessenger === receiver.value) {
-                            $('#messContent').append("<ul class='receiver'><img src='" + receiverAva.src + "'>" + "<p>" + message.messContent + "</p></ul>")
-                        } else {
-                            $('#messContent').append("<ul style='text-align: center;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
-                        }
-                    });
-                    $(".chatBox").scrollTop($('#messContent').height())
-                }
-            },
-            error: function(response) {
-                alert('server error');
-            }
-        });
     }
 
     function chatBox(receiver, _idRoom) {

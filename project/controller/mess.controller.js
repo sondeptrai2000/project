@@ -59,8 +59,8 @@ class messtController {
     }
 
     chatForm(req, res) {
-        var lol = new Date
-        console.log("mới vào" + lol)
+        // var lol = new Date
+        // console.log("mới vào" + lol)
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
         AccountModel.findOne({ _id: decodeAccount }, { username: 1, chat: 1 }, function(err, sender) {
@@ -68,8 +68,8 @@ class messtController {
                 // lấy tin nhắn cuối cùng trong mảng message
                 message: { $slice: -1 }
             }).sort({ updateTime: -1 }).exec(function(err, data1) {
-                var lol = new Date
-                console.log("lấy lsu chat" + lol)
+                // var lol = new Date
+                // console.log("lấy lsu chat" + lol)
                 if (data1.length == "0") {
                     res.render("message/chatTrong.ejs")
                 } else {
@@ -90,7 +90,15 @@ class messtController {
                         }
                     }
                     var listID = sender.chat
-                    res.render("message/chatBoxHistory.ejs", { data1, formData, listID })
+                    chatModel.findOne({ _id: data1[0]._id }, { message: 1 }).exec(function(err, data) {
+                        if (err) {
+                            res.json({ msg: 'error' });
+                        } else {
+                            // var lol = new Date
+                            // console.log("lấy cuộc hội thoại" + lol)
+                            res.render("message/chatBoxHistory.ejs", { data1, data, formData, listID })
+                        }
+                    })
                 }
             })
         });
