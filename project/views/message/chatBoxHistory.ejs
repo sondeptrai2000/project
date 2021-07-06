@@ -167,7 +167,7 @@
                     <%if (data1.person1 !== formData.sender) { %>
                         <ul class='<%=data1._id %>' onclick="chatBox('<%=data1.person1 %>','<%=data1._id %>')">
                             <img src='<%=data1.person1Ava %>'>
-                            <p id="<%=data1._id %>">Name:
+                            <p id="<%=data1._id %>">
                                 <%= data1.person1 %>
                                     <br>
                                     <%= data1.message[0].ownermessenger %>:
@@ -178,7 +178,7 @@
                             <%if (data1.person2 !== formData.sender) { %>
                                 <ul class='<%=data1._id %>' onclick="chatBox('<%=data1.person2 %>','<%=data1._id %>')">
                                     <img src='<%=data1.person2Ava %>'>
-                                    <p id="<%=data1._id %>">Name:
+                                    <p id="<%=data1._id %>">
                                         <%= data1.person2 %>
                                             <br>
                                             <%= data1.message[0].ownermessenger %>:
@@ -232,7 +232,7 @@
             </div>
         </div>
     </div>
-    <div class="chatInformation" style="display: none;">
+    <div class="chatInformation">
         <input id="allID" type="text" value="<%=listID %>" />
         <input id="receiver" type="text" value="<%=formData.receiver %>" />
         <input id="name" type="text" value="<%=formData.sender %>" />
@@ -378,7 +378,7 @@
 
         //hiển thị tin nhắn mới nhất ở lịch sử chat
         var newMess = '#' + message._idRoom
-        $(newMess).html("Name: " + message.receiver + "<br>" + message.sender + ": " + message.mess)
+        $(newMess).html(" " + message.receiver + "<br>" + message.sender + ": " + message.mess)
 
         //tin nhắn gửi đến nếu chưa xem thì in đậm, xem r thì in bt
         if (message._idRoom != _idRoom.value) {
@@ -399,7 +399,8 @@
             method: 'post',
             dataType: 'json',
             data: {
-                receiver: $('#addChat').val()
+                receiver: $('#addChat').val(),
+                sender: name.value
             },
             success: function(response) {
                 if (response.msg == 'error') {
@@ -415,21 +416,20 @@
                     $('#name').val(response.senderName)
                     $('#receiverAva').attr("src", response.receiverAva)
                     $('#nameAva').attr("src", response.senderAva)
-                    $.each(response.data, function(index, data) {
-                        $('#_idRoom').val(data._id)
-                            //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
-                        var newestMess = '.' + data._id
-                        $(newestMess).prependTo(".history");
-                        $.each(data.message, function(index, message) {
-                            if (message.ownermessenger === name.value) {
-                                $('#messContent').append("<ul class='sender'><p>" + message.messContent + "</p>" + "<img src='" + response.senderAva + "'></ul>")
-                            } else if (message.ownermessenger === receiver.value) {
-                                $('#messContent').append("<ul class='receiver'><img src='" + response.receiverAva + "'>" + "<p>" + message.messContent + "</p></ul>")
-                            } else {
-                                $('#messContent').append("<ul style='text-align: center;margin:0;padding:0;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
-                            }
-                        });
+                    $('#_idRoom').val(response.data._id)
+                        //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
+                    var newestMess = '.' + response.data._id
+                    $(newestMess).prependTo(".history");
+                    $.each(response.data.message, function(index, message) {
+                        if (message.ownermessenger == name.value) {
+                            $('#messContent').append("<ul class='sender'><p>" + message.messContent + "</p>" + "<img src='" + response.senderAva + "'></ul>")
+                        } else if (message.ownermessenger == receiver.value) {
+                            $('#messContent').append("<ul class='receiver'><img src='" + response.receiverAva + "'>" + "<p>" + message.messContent + "</p></ul>")
+                        } else {
+                            $('#messContent').append("<ul style='text-align: center;margin:0;padding:0;'>" + message.ownermessenger + ": " + message.messContent + "</ul>")
+                        }
                     });
+
                     $('.chatBox').scrollTop($('#messContent').height())
                 }
                 if (response.msg == 'lỗi khi tìm kiếm user') {
@@ -448,7 +448,7 @@
                     $('#nameAva').attr("src", response.senderAva)
                     $('#messContent').append("<ul style='text-align:center;margin:0;padding:0;'>Hệ thống: Đã kết nối! Ấn vào để chat</ul>")
                     $('.chatBox').scrollTop($('#messContent').height())
-                    $(".history").prepend("<ul class='" + response._idRoom + "'onclick=chatBox('" + response.receiverName + "','" + response._idRoom + "')><div class='avatarReceiver'><img src='" + response.receiverAva + "'></div><div class='infor4'> Name: " + response.receiverName + "<br>Hệ thống: Đã kết nối! Ấn vào để chat </div></div></ul>")
+                    $(".history").prepend("<ul class='" + response._idRoom + "'onclick=chatBox('" + response.receiverName + "','" + response._idRoom + "')><div class='avatarReceiver'><img src='" + response.receiverAva + "'></div><div class='infor4'>  " + response.receiverName + "<br>Hệ thống: Đã kết nối! Ấn vào để chat </div></div></ul>")
                     var idConversationList = [];
                     idConversationList.push(response._idRoom);
                     socket.emit("tao-room", {

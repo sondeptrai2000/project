@@ -133,9 +133,11 @@ class messtController {
                         var person1ListChat = sender.chat
                         var person2ListChat = data.chat
                         var check = false
+                        var _id
                         for (var i = 0; i < person1ListChat.length; i++) {
                             for (var u = 0; u < person2ListChat.length; u++) {
                                 if (person1ListChat[i] == person2ListChat[u]) {
+                                    _id = person1ListChat[i]
                                     check = true;
                                     break;
                                 }
@@ -166,7 +168,13 @@ class messtController {
                                 }
                             });
                         } else {
-                            res.json({ msg: 'cuộc hội thoại đã được tạo', senderName, data, receiverName, senderAva, receiverAva });
+                            chatModel.findOne({ _id: _id }).lean().exec(function(err, data) {
+                                if (err) {
+                                    res.json({ msg: 'error' });
+                                } else {
+                                    res.json({ msg: 'cuộc hội thoại đã được tạo', senderName, data, receiverName, senderAva, receiverAva });
+                                }
+                            })
                         }
                     } else {
                         res.json({ msg: 'Bạn không thể tạo cuộc trò chuyện với chính mình' });
