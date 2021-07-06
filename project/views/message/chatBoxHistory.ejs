@@ -288,9 +288,12 @@
     function TypingOrNot(data) {
         if (data._idRoom == _idRoom.value) {
             if (data.action === 'typing') {
-                $("#action").show()
-                $("#action").html(data.person + 'is typing')
-                $('.chatBox').scrollTop($('#messContent').height())
+                if (data.person == receiver.value) {
+                    $("#action").show()
+                    $("#action").html(data.person + 'is typing')
+                    $('.chatBox').scrollTop($('#messContent').height())
+                }
+
 
             }
             if (data.action === 'notTyping') {

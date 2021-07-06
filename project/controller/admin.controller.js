@@ -14,10 +14,10 @@ class adminController {
     }
 
     getAccount(req, res) {
-        AccountModel.find({ role: req.query.role }).countDocuments(function(err, numberOfAccount) {
+        AccountModel.find({ role: req.query.role }).lean().countDocuments(function(err, numberOfAccount) {
             var skip = parseInt(req.query.sotrang) * 3
             var soTrang = numberOfAccount / 3 + 1
-            AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).skip(skip).limit(3).exec((err, data) => {
+            AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).skip(skip).limit(3).lean().exec((err, data) => {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else {
@@ -28,20 +28,19 @@ class adminController {
     }
 
     createAccount(req, res) {
-        AccountModel.find({ role: "teacher" }).countDocuments(function(err, numberOfAccount) {
-            studyRouteModel.find({}, function(err, targetxxx) {
-                AccountModel.find({ role: "teacher" })
-                    .then(data => {
-                        ClassModel.find({}, function(err, classInfor) {
-                            res.render('admin/createAccount', { data, classInfor, targetxxx, numberOfAccount })
-                        })
+        AccountModel.find({ role: "teacher" }).lean().countDocuments(function(err, numberOfAccount) {
+            studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
+                AccountModel.find({ role: "teacher" }).lean().then(data => {
+                    ClassModel.find({}).lean().exec(function(err, classInfor) {
+                        res.render('admin/createAccount', { data, classInfor, targetxxx, numberOfAccount })
                     })
+                })
             })
         })
 
     }
     getRoute(req, res) {
-        studyRouteModel.find({}, function(err, data) {
+        studyRouteModel.find({}).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -51,9 +50,9 @@ class adminController {
     }
 
     getStage(req, res) {
-        studyRouteModel.find({ routeName: req.query.abc }, function(err, targetxxx) {
-            AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }, function(err, student) {
-                studyRouteModel.find({ routeName: req.query.abc }, function(err, data) {
+        studyRouteModel.find({ routeName: req.query.abc }).lean().exec(function(err, targetxxx) {
+            AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }).lean().exec(function(err, student) {
+                studyRouteModel.find({ routeName: req.query.abc }).lean().exec(function(err, data) {
                     if (err) {
                         res.json({ msg: 'error' });
                     } else {
@@ -64,13 +63,13 @@ class adminController {
         })
     }
     createRoute(req, res) {
-        studyRouteModel.find({}, { _id: 1, routeName: 1, description: 1 }, function(err, data) {
+        studyRouteModel.find({}, { _id: 1, routeName: 1, description: 1 }).lean().exec(function(err, data) {
             res.render('admin/createRoute', { data: data })
         })
     }
 
     lol(req, res) {
-        studyRouteModel.find({ _id: req.query._id }, function(err, data) {
+        studyRouteModel.find({ _id: req.query._id }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -123,7 +122,7 @@ class adminController {
                 routeName = "none"
                 aim = "none"
             }
-            AccountModel.find({ username: username }, function(err, result) {
+            AccountModel.find({ username: username }).lean().exec(function(err, result) {
                 if (result.length !== 0) {
                     res.json({ msg: 'Account already exists' });
                 } else {
@@ -164,7 +163,7 @@ class adminController {
     }
 
     editAccount(req, res) {
-        studyRouteModel.find({}, function(err, targetxxx) {
+        studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -212,9 +211,9 @@ class adminController {
     }
 
     createClass(req, res) {
-        studyRouteModel.find({}, function(err, targetxxx) {
-            AccountModel.find({ role: 'student' }, function(err, student) {
-                AccountModel.find({ role: 'teacher' }, function(err, teacher) {
+        studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
+            AccountModel.find({ role: 'student' }).lean().exec(function(err, student) {
+                AccountModel.find({ role: 'teacher' }).lean().exec(function(err, teacher) {
                     res.render('admin/createClass.ejs', { student, teacher, targetxxx })
                 })
             })
@@ -271,7 +270,7 @@ class adminController {
     }
 
     allClassLevel(req, res) {
-        ClassModel.find({}).populate('studentID').populate('teacherID').exec((err, classInfor) => {
+        ClassModel.find({}).populate('studentID').populate('teacherID').lean().exec((err, classInfor) => {
             res.render('admin/allClassLevel.hbs', { classInfor })
                 // res.json(classInfor)
         })
@@ -279,7 +278,7 @@ class adminController {
 
     allClassStudent(req, res) {
         var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('studentID').populate('teacherID').exec((err, selectedClassInfor) => {
+        ClassModel.find({ _id: _id }).populate('studentID').populate('teacherID').lean().exec((err, selectedClassInfor) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -290,8 +289,8 @@ class adminController {
 
     editClass(req, res) {
         var skip = parseInt(req.query.sotrang)
-        AccountModel.find({ role: req.query.role }).countDocuments(function(err, numberOfAccount) {
-            AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).skip(skip).limit(1).exec((err, data) => {
+        AccountModel.find({ role: req.query.role }).lean().countDocuments(function(err, numberOfAccount) {
+            AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).skip(skip).limit(1).lean().exec((err, data) => {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else {
@@ -309,7 +308,7 @@ class adminController {
     }
 
     allProposal(req, res) {
-        ProposalModel.find({}).populate('teacherID', { username: 1, avatar: 1 }).sort({ uploadDate: -1 }).exec((err, data) => {
+        ProposalModel.find({}).populate('teacherID', { username: 1, avatar: 1 }).sort({ uploadDate: -1 }).lean().exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {

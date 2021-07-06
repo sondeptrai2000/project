@@ -11,7 +11,7 @@ class studentController {
     studentProfile(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.find({ _id: decodeAccount }).populate('classID').exec((err, data) => {
+        AccountModel.find({ _id: decodeAccount }).populate('classID').lean().exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -31,7 +31,7 @@ class studentController {
                 path: 'teacherID',
                 select: 'username',
             }
-        }).exec((err, data) => {
+        }).lean().exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -42,7 +42,7 @@ class studentController {
     }
 
     getTeacherProfile(req, res) {
-        AccountModel.find({ _id: req.query.abc }, { username: 1, email: 1, avatar: 1 }, function(err, data) {
+        AccountModel.find({ _id: req.query.abc }, { username: 1, email: 1, avatar: 1 }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -53,7 +53,7 @@ class studentController {
 
     allClassStudent(req, res) {
         var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('studentID.ID', { username: 1, email: 1, avatar: 1 }).exec((err, selectedClassInfor) => {
+        ClassModel.find({ _id: _id }).populate('studentID.ID', { username: 1, email: 1, avatar: 1 }).lean().exec((err, selectedClassInfor) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {

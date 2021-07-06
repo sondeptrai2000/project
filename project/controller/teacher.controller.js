@@ -12,7 +12,7 @@ class teacherController {
     teacherProfile(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.findOne({ _id: decodeAccount }, function(err, data) {
+        AccountModel.findOne({ _id: decodeAccount }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -24,7 +24,7 @@ class teacherController {
     allClass(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        ClassModel.find({ teacherID: decodeAccount }).exec((err, classInfor) => {
+        ClassModel.find({ teacherID: decodeAccount }).lean().exec((err, classInfor) => {
             res.render('teacher/allClass', { classInfor })
         })
     }
@@ -34,7 +34,7 @@ class teacherController {
 
     allClassStudent(req, res) {
         var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).exec((err, selectedClassInfor) => {
+        ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean().exec((err, selectedClassInfor) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -48,7 +48,7 @@ class teacherController {
             role: 'student',
             routeName: req.query.routeName,
             stage: req.query.stage,
-        }, { avatar: 1, username: 1, routeName: 1, stage: 1, email: 1, classID: 1 }, function(err, data) {
+        }, { avatar: 1, username: 1, routeName: 1, stage: 1, email: 1, classID: 1 }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -70,7 +70,7 @@ class teacherController {
                             $each: req.body.studentlist
                         }
                     }
-                }, function(err, teacher) {
+                }).lean().exec(function(err, teacher) {
                     if (err) {
                         res.json({ msg: 'error' });
                     } else {
@@ -122,10 +122,10 @@ class teacherController {
     allProposal(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        ProposalModel.find({ teacherID: decodeAccount }).countDocuments(function(err, numberOfAccount) {
+        ProposalModel.find({ teacherID: decodeAccount }).lean().countDocuments(function(err, numberOfAccount) {
             var skip = parseInt(req.query.page) * 2
             var soTrang = numberOfAccount / 2 + 1
-            ProposalModel.find({ teacherID: decodeAccount }, { file: 1, proposalName: 1, Content: 1, proposalType: 1, uploadDate: 1, Status: 1 }).skip(skip).limit(2).exec((err, data) => {
+            ProposalModel.find({ teacherID: decodeAccount }, { file: 1, proposalName: 1, Content: 1, proposalType: 1, uploadDate: 1, Status: 1 }).skip(skip).limit(2).lean().exec((err, data) => {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else {
