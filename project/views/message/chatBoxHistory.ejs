@@ -255,6 +255,8 @@
     const socket = io();
 
     $(document).ready(function() {
+        document.cookie = "promo_shown=1; SameSite=None;Secure"
+
         $(".chatBox").scrollTop($('#messContent').height())
         connectAllConversation();
     });
@@ -293,8 +295,6 @@
                     $("#action").html(data.person + 'is typing')
                     $('.chatBox').scrollTop($('#messContent').height())
                 }
-
-
             }
             if (data.action === 'notTyping') {
                 $("#action").hide()

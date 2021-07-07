@@ -133,8 +133,7 @@ class adminController {
 
     async doCreateAccount(req, res) {
         var fileID
-        var path = __dirname.replace("controller", "public/images/avatar") + '/' + req.body.filename;
-        console.log(path)
+        var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
         var image = req.body.file;
         var data = image.split(',')[1];
         fs.writeFileSync(path, data, { encoding: 'base64' });
@@ -144,15 +143,15 @@ class adminController {
         try {
             const response = await drive.files.create({
                 requestBody: {
-                    name: req.body.filename, //This can be name of your choice
+                    name: req.body.filename, //đặt tên
+                    parents: ['11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
                 },
                 media: {
                     body: fs.createReadStream(path),
                 },
             });
 
-            console.log(response.data);
-            fileID = response.data.id
+            // console.log(response.data);
             await drive.permissions.create({
                 fileId: response.data.id,
                 requestBody: {
@@ -386,6 +385,23 @@ class adminController {
 
 
     dashboard(req, res) {
+        // tạo foolder mới
+        //link hướng dẫn: https://developers.google.com/drive/api/v3/folder#node.js
+        var fileMetadata = {
+            'name': 'Invoices',
+            'mimeType': 'application/vnd.google-apps.folder'
+        };
+        var folder = drive.files.create({
+            resource: fileMetadata,
+            fields: 'id'
+        }, function(err, file) {
+            if (err) {
+                // Handle error
+                console.error(err);
+            } else {
+                console.log('Folder Id: ', file.data.id);
+            }
+        });
         res.render('admin/dashboard')
             // res.json('Trang xem thông tin dashboard')
     }
