@@ -6,6 +6,7 @@ const { data, param, css } = require('jquery')
 var jwt = require('jsonwebtoken')
 var bcrypt = require('bcrypt');
 const mongodb = require("mongodb");
+const sizeof = require('object-sizeof');
 
 class messtController {
     //ấn chat vào người bất kỳ r dẫn đến form chat và lịch sử
@@ -57,7 +58,6 @@ class messtController {
             })
         })
     }
-
     chatForm(req, res) {
         var lol = new Date
         console.log("mới vào" + lol)
@@ -66,10 +66,12 @@ class messtController {
         AccountModel.findOne({ _id: decodeAccount }, { username: 1, chat: 1 }).lean().exec(function(err, sender) {
             chatModel.find({ _id: { $in: sender.chat } }, {
                 // lấy tin nhắn cuối cùng trong mảng message
-                message: { $slice: -1 }
+                message: { $slice: -1 },
+
             }).sort({ updateTime: -1 }).lean().exec(function(err, data1) {
                 var lol = new Date
                 console.log("lấy lsu chat" + lol)
+                console.log(sizeof(data1))
                 if (data1.length == "0") {
                     res.render("message/chatTrong.ejs")
                 } else {
