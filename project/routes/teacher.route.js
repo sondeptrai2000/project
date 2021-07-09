@@ -23,7 +23,7 @@ teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 teacherRouter.post('/uploadNewProposal', teacherController.uploadNewProposal)
 teacherRouter.get('/allProposal', teacherController.allProposal)
 teacherRouter.post('/updateProposal', teacherController.updateProposal)
-teacherRouter.post('/deleteProposal', teacherController.deleteProposal)
+teacherRouter.delete('/deleteProposal', teacherController.deleteProposal)
 teacherRouter.get('/extracurricularActivities', teacherController.extracurricularActivities)
 teacherRouter.get('/allActivityProposal', teacherController.allActivityProposal)
 

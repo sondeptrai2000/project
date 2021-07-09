@@ -49,18 +49,7 @@ $('.uploadProposal').on('change', function() {
     filereader.readAsDataURL(myFile)
 });
 
-var fileDataUpdate;
-var myFileUpdate;
-$('.updateProposal').on('change', function() {
-    var filereaderUpdate = new FileReader();
-    filereaderUpdate.onload = function(event) {
-        fileDataUpdate = event.target.result;
-        var dataURLUpdate = filereaderUpdate.result;
-    };
-    myFileUpdate = $('.updateProposal').prop('files')[0];
-    console.log('updateProposal', myFileUpdate)
-    filereaderUpdate.readAsDataURL(myFileUpdate)
-});
+
 
 function uploadProposal(id) {
     $.ajax({
@@ -106,6 +95,20 @@ function updateProposal(id) {
     })
 }
 
+var fileDataUpdate;
+var myFileUpdate;
+$('.updateProposal').on('change', function() {
+    console.log("vào đây")
+    var filereaderUpdate = new FileReader();
+    filereaderUpdate.onload = function(event) {
+        fileDataUpdate = event.target.result;
+        var dataURLUpdate = filereaderUpdate.result;
+    };
+    myFileUpdate = $('.updateProposal').prop('files')[0];
+    console.log('updateProposal', myFileUpdate)
+    filereaderUpdate.readAsDataURL(myFileUpdate)
+});
+
 function allActivityProposal() {
     $.ajax({
         url: '/teacher/allActivityProposal',
@@ -113,8 +116,9 @@ function allActivityProposal() {
         dataType: 'json',
         success: function(response) {
             if (response.msg == 'success') {
+                $(".allActivityProposalBody").html("")
                 $.each(response.data, function(index, data) {
-                    $(".allActivityProposalBody").append("<tr><td>" + data.classID._id + "</td><td>" + data.classID.className + "</td><td><a href='" + data.fileLink + "'>Proposal File</a></td><td>" + data.status + "</td><td>" + data.comment + "</td><td><div class='updateOutDoor" + data.classID._id + "' style='display:none;'><input type='file' class='updateProposal'><button onclick=updateProposal('" + data._id + "')>Submit file</button></div><button onclick=updateFileOutDoor('" + data.classID._id + "')>Update File</button><button>Delete</button></button></td></tr>");
+                    $(".allActivityProposalBody").append("<tr><td>" + data.classID._id + "</td><td>" + data.classID.className + "</td><td><a href='" + data.fileLink + "'>Proposal File</a></td><td>" + data.status + "</td><td>" + data.comment + "</td><td><div class='updateOutDoor" + data.classID._id + "' style='display:none;'><input type='file' class='updateProposal'><button onclick=updateProposal('" + data._id + "')>Submit file</button></div><button onclick=updateFileOutDoor('" + data.classID._id + "')>Update File</button><button onclick=deleteProposal('" + data._id + "')>Delete</button></button></td></tr>");
                 });
             }
             $(".allActivityProposal").show()
@@ -124,6 +128,26 @@ function allActivityProposal() {
             alert('server error');
         }
     })
+}
+
+function deleteProposal(id) {
+    console.log(id)
+    $.ajax({
+        url: '/teacher/deleteProposal',
+        method: 'delete',
+        dataType: 'json',
+        data: { id: id },
+        success: function(response) {
+            if (response.msg == 'success') {
+                allActivityProposal()
+            }
+            $(".allActivityProposal").show()
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+
 }
 
 function updateFileOutDoor(classID) {

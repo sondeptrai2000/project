@@ -20,6 +20,7 @@
         "express": "^4.17.1",
         "googleapis": "^80.1.0",
         "hbs": "^4.1.1",
+        "increase-memory-limit": "^1.0.7",
         "jquery": "^3.6.0",
         "jsonwebtoken": "^8.5.1",
         "moment": "^2.29.1",

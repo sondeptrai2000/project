@@ -7,7 +7,8 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
 
 
-const { google } = require("googleapis")
+const { google } = require("googleapis");
+const classModel = require('../models/class');
 const CLIENT_ID = "279772268126-bdo0c5g58jriuo7l057rdphld66t8cmj.apps.googleusercontent.com"
 const CLIENT_SECRET = "4FHV8fvNK4ZLyfPBzi5SDs7a"
 const REDIRECT_URI = "https://developers.google.com/oauthplayground"
@@ -176,8 +177,8 @@ class teacherController {
                     body: fs.createReadStream(path),
                 },
             });
-
-            // console.log(response.data.id);
+            fs.unlinkSync(path)
+                // console.log(response.data.id);
             await drive.permissions.create({
                 fileId: response.data.id,
                 requestBody: {
@@ -268,8 +269,30 @@ class teacherController {
 
     // }
 
-    deleteProposal(req, res) {
+    async deleteProposal(req, res) {
+        try {
+            extracurricularActivitiesModel.findOne({ _id: req.body.id }, function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    var idfile = data.fileLink.replace("https://docs.google.com/file/d/", "")
+                    idfile = idfile.replace("/preview", "")
+                    const response = drive.files.delete({
+                        fileId: idfile,
+                    });
+                }
+            })
 
+        } catch (error) {
+            console.log(error.message);
+        }
+        extracurricularActivitiesModel.deleteOne({ _id: req.body.id }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
 
     }
 
