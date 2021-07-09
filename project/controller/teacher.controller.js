@@ -1,9 +1,28 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
-const ProposalModel = require('../models/proposal');
+const extracurricularActivitiesModel = require('../models/extracurricularActivities');
+var fs = require('fs')
 
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
+
+
+const { google } = require("googleapis")
+const CLIENT_ID = "279772268126-bdo0c5g58jriuo7l057rdphld66t8cmj.apps.googleusercontent.com"
+const CLIENT_SECRET = "4FHV8fvNK4ZLyfPBzi5SDs7a"
+const REDIRECT_URI = "https://developers.google.com/oauthplayground"
+const REFRESH_TOKEN = "1//04hkstXaqmlvyCgYIARAAGAQSNwF-L9Irk7DfaT5oiNwsQdGnTolco5UEP96BNf-cSHjWGfXfbE9b5RVb_ieNd01P7oyahLOtTZY"
+
+const oauth2Client = new google.auth.OAuth2(
+    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+);
+
+oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
+
+const drive = google.drive({
+    version: 'v3',
+    auth: oauth2Client
+})
 class teacherController {
     teacherHome(req, res) {
         res.render('teacher/teacherHome')
@@ -120,78 +139,137 @@ class teacherController {
     }
 
     allProposal(req, res) {
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
-        ProposalModel.find({ teacherID: decodeAccount }).lean().countDocuments(function(err, numberOfAccount) {
-            var skip = parseInt(req.query.page) * 2
-            var soTrang = numberOfAccount / 2 + 1
-            ProposalModel.find({ teacherID: decodeAccount }, { file: 1, proposalName: 1, Content: 1, proposalType: 1, uploadDate: 1, Status: 1 }).skip(skip).limit(2).lean().exec((err, data) => {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data, numberOfAccount, soTrang });
-                }
-            })
-        })
+
     }
 
     extracurricularActivities(req, res) {
         res.json('Trang xem thông tin hoạt động ngoại khóa đã thực hiện và tiến hành đánh giá học sinh trong hoạt động ngoại khóa ')
     }
 
-    uploadNewProposal(req, res) {
+    allActivityProposal(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        ProposalModel.create({
-            proposalName: req.body.proposalName,
-            Content: req.body.proposalContent,
-            file: req.body.file,
-            teacherID: decodeAccount,
-            proposalType: req.body.proposalType,
-            uploadDate: new Date
+        extracurricularActivitiesModel.find({ teacherID: decodeAccount }).populate({ path: 'classID', select: 'className' }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
+    }
+
+    async uploadNewProposal(req, res) {
+        var path = __dirname.replace("controller", "public/outDoorActivity") + '/' + req.body.filename;
+        var image = req.body.file;
+        var data = image.split(',')[1];
+        fs.writeFileSync(path, data, { encoding: 'base64' });
+        var temp = fs.readFileSync(path);
+        var buff = new Buffer(temp);
+        var base64data = buff.toString('base64');
+        try {
+            const response = await drive.files.create({
+                requestBody: {
+                    name: req.body.filename, //đặt tên
+                    parents: ['1evgjhxMA8DujwwkvMpaXIAqA_GigLJes'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+                },
+                media: {
+                    body: fs.createReadStream(path),
+                },
+            });
+
+            // console.log(response.data.id);
+            await drive.permissions.create({
+                fileId: response.data.id,
+                requestBody: {
+                    role: 'reader',
+                    type: 'anyone',
+                },
+            });
+            var fileLink = "https://docs.google.com/file/d/" + response.data.id + "/preview"
+
+        } catch (error) {
+            console.log(error.message);
+        }
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        extracurricularActivitiesModel.create({
+            fileLink: fileLink,
+            classID: req.body.classID,
+            teacherID: decodeAccount
         }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.json({ msg: 'success' });
+                res.json({ msg: 'success', data });
             }
         })
     }
 
-    updateProposal(req, res) {
-        if (req.body.file == "none") {
-            var update = {
-                proposalName: req.body.proposalName,
-                Content: req.body.Content,
-                proposalType: req.body.proposalType,
-                uploadDate: new Date
+    async updateProposal(req, res) {
+            console.log("vào")
+            var path = __dirname.replace("controller", "public/outDoorActivity") + '/' + req.body.filename;
+            var image = req.body.file;
+            var data = image.split(',')[1];
+            fs.writeFileSync(path, data, { encoding: 'base64' });
+            var temp = fs.readFileSync(path);
+            var buff = new Buffer(temp);
+            var base64data = buff.toString('base64');
+            try {
+                const response = await drive.files.create({
+                    requestBody: {
+                        name: req.body.filename, //đặt tên
+                        parents: ['1evgjhxMA8DujwwkvMpaXIAqA_GigLJes'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+                    },
+                    media: {
+                        body: fs.createReadStream(path),
+                    },
+                });
+
+                // console.log(response.data.id);
+                await drive.permissions.create({
+                    fileId: response.data.id,
+                    requestBody: {
+                        role: 'reader',
+                        type: 'anyone',
+                    },
+                });
+                var fileLink = "https://docs.google.com/file/d/" + response.data.id + "/preview"
+
+            } catch (error) {
+                console.log(error.message);
             }
-        } else {
-            var update = {
-                proposalName: req.body.proposalName,
-                Content: req.body.Content,
-                file: req.body.file,
-                proposalType: req.body.proposalType,
-                uploadDate: new Date
-            }
+            let token = req.cookies.token
+            let decodeAccount = jwt.verify(token, 'minhson')
+            extracurricularActivitiesModel.findOneAndUpdate({ _id: req.body.id }, { fileLink: fileLink }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data });
+                }
+            })
         }
-        ProposalModel.updateOne({ _id: req.body._id }, update, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
-            }
-        })
-    }
+        // updateProposal(req, res) {
+        // if (req.body.file == "none") {
+        //     var update = {
+        //         proposalName: req.body.proposalName,
+        //         Content: req.body.Content,
+        //         proposalType: req.body.proposalType,
+        //         uploadDate: new Date
+        //     }
+        // } else {
+        //     var update = {
+        //         proposalName: req.body.proposalName,
+        //         Content: req.body.Content,
+        //         file: req.body.file,
+        //         proposalType: req.body.proposalType,
+        //         uploadDate: new Date
+        //     }
+        // }
+
+    // }
 
     deleteProposal(req, res) {
-        ProposalModel.deleteOne({ _id: req.body.abc }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
-            }
-        })
+
 
     }
 

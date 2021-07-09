@@ -33,8 +33,106 @@ function sendData(id) {
 
 }
 
+function openSubmitProposal(id) {
+    $("." + id).toggle(200);
+}
+var fileData;
+var myFile;
+$('.uploadProposal').on('change', function() {
+    var filereader = new FileReader();
+    filereader.onload = function(event) {
+        fileData = event.target.result;
+        var dataURL = filereader.result;
+    };
+    myFile = $('.uploadProposal').prop('files')[0];
+    console.log('uploadProposal', myFile)
+    filereader.readAsDataURL(myFile)
+});
 
+var fileDataUpdate;
+var myFileUpdate;
+$('.updateProposal').on('change', function() {
+    var filereaderUpdate = new FileReader();
+    filereaderUpdate.onload = function(event) {
+        fileDataUpdate = event.target.result;
+        var dataURLUpdate = filereaderUpdate.result;
+    };
+    myFileUpdate = $('.updateProposal').prop('files')[0];
+    console.log('updateProposal', myFileUpdate)
+    filereaderUpdate.readAsDataURL(myFileUpdate)
+});
 
+function uploadProposal(id) {
+    $.ajax({
+        url: '/teacher/uploadNewProposal',
+        method: 'post',
+        dataType: 'json',
+        data: {
+            classID: id,
+            file: fileData,
+            filename: myFile.name,
+        },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("." + id).fadeOut(2000);
+                alert("upload successed")
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+function updateProposal(id) {
+    $.ajax({
+        url: '/teacher/updateProposal',
+        method: 'get',
+        dataType: 'json',
+        data: {
+            id: id,
+            file: fileDataUpdate,
+            filename: myFileUpdate.name,
+        },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $(".updateOutDoor" + id).hide()
+                alert("Update successed")
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+function allActivityProposal() {
+    $.ajax({
+        url: '/teacher/allActivityProposal',
+        method: 'get',
+        dataType: 'json',
+        success: function(response) {
+            if (response.msg == 'success') {
+                $.each(response.data, function(index, data) {
+                    $(".allActivityProposalBody").append("<tr><td>" + data.classID._id + "</td><td>" + data.classID.className + "</td><td><a href='" + data.fileLink + "'>Proposal File</a></td><td>" + data.status + "</td><td>" + data.comment + "</td><td><div class='updateOutDoor" + data.classID._id + "' style='display:none;'><input type='file' class='updateProposal'><button onclick=updateProposal('" + data._id + "')>Submit file</button></div><button onclick=updateFileOutDoor('" + data.classID._id + "')>Update File</button><button>Delete</button></button></td></tr>");
+                });
+            }
+            $(".allActivityProposal").show()
+
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+function updateFileOutDoor(classID) {
+    $(".updateOutDoor" + classID).show()
+}
+
+function cancleAllActivityProposal() {
+    $(".allActivityProposal").hide()
+}
 
 function addStudent(classID) {
     var infor4 = []

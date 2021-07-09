@@ -2,7 +2,6 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const studyRouteModel = require('../models/studyRoute');
-const ProposalModel = require('../models/proposal');
 var path = require('path');
 
 const { google } = require("googleapis")

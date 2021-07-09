@@ -11,6 +11,7 @@ mongoose.set('useCreateIndex', true);
 
 
 var extracurricularActivitiesSchema = new mongoose.Schema({
+    fileLink: String,
     classID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'class'
@@ -29,14 +30,23 @@ var extracurricularActivitiesSchema = new mongoose.Schema({
             default: "Not Considered Implementation Yet"
         },
     }],
-    teacherID: [{
+    teacherID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'account'
-    }],
+    },
     extracurricularActivitiesContent: {
         type: String,
         default: "Has not been commented yet"
     },
+    status: {
+        type: String,
+        default: "Has not been commented yet"
+    },
+    comment: {
+        type: String,
+        default: "Has not been commented yet"
+    },
+    uploadDate: { type: Date, default: Date.now }
 })
 
 var extracurricularActivitiesModel = mongoose.model('extracurricularActivities', extracurricularActivitiesSchema);
