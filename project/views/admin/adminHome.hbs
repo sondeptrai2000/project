@@ -78,15 +78,13 @@
                     </select>
                 </div>
                 <div class="td">sss</div>
-                <div class="td">sss</div>
                 <div class="td"><button onclick="closeProposalTable()">&times;</button></div>
             </div>
             <div class="tr">
-                <div class="td">Name</div>
-                <div class="td">Content</div>
-                <div class="td">Type</div>
-                <div class="td">Upload Date </div>
-                <div class="td">Teacher Name</div>
+                <div class="td">Class Name</div>
+                <div class="td">Teacher</div>
+                <div class="td">extracurricularActivitiesContent</div>
+                <div class="td">uploadDate</div>
                 <div class="td">Status</div>
                 <div class="td">Comment</div>
                 <div class="td">Action</div>
@@ -97,24 +95,6 @@
 
 </body>
 <script>
-    //lọc bằng tên
-    $("#myInput").on("keyup", function () {
-        var value = $(this).val().toLowerCase();
-        $(".tr1 ").filter(function () {
-            $(this).toggle($(this).text().split("lol123")[0].toLowerCase().indexOf(value) > -1)
-        });
-    });
-    //lọc bằng loại đề xuất
-    $("#proposalFilter").on("change", function () {
-        var value = $(this).val().toLowerCase();
-        if (value == "all") {
-            $("#table .tr1").slideDown()
-        } else {
-            $(".tr1").filter(function () {
-                $(this).toggle($(this).text().split("lol123")[1].toLowerCase().indexOf(value) > -1)
-            });
-        }
-    });
     //hiển thị bảng đề xuất
     function allProposal() {
         $(".tr1").remove();
@@ -126,7 +106,7 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     $.each(response.data, function (index, data) {
-                        var content = "<div class='tr1' id='" + data._id + "'><div class='td'>" + data.proposalName + "<p style='display:none;'>lol123</p></div><div class='td'>" + data.proposalType + "<p style='display:none;'>lol123</p></div><div class='td'> " + data.Content + "</div><div class='td'>" + data.uploadDate + "</div><div class='td' style='text-align: center;'><img src ='" + data.teacherID.avatar + "'style ='max-width:150px;max-height:200px'>" + data.teacherID.username + "</div><div class='td'>" + data.Status + "</div><div class='td'>" + data.comment + "</div><div class='td'><button onclick=rate('" + data._id + "','" + data.file + "')>Rate</button></div></div>"
+                        var content = "<div class='tr1' id='" + data._id + "'><div class='td'>" + data.classID.className + "</div><div class='td' style='text-align: center;'><img src ='" + data.teacherID.avatar + "'style ='max-width:100px;max-height:100px'></br>" + data.teacherID.username + "</div><div class='td'> " + data.extracurricularActivitiesContent + "</div><div class='td' >" + data.uploadDate + "</div><div class='td'>" + data.status + "</div><div class='td'>" + data.comment + "</div><div class='td'><button onclick=rate('" + data._id + "','" + data.fileLink + "')>Rate</button></div></div>"
                         $("#table").append(content);
                     })
                     $("#loading").hide();
@@ -155,7 +135,7 @@
         })
         $('#viewProposal').append('<button onclick="cancelProposal()">&times;</button></br>');
         $('#viewProposal').append('<iframe  src="' + file + '" height="750px" width="70%"></iframe>');
-        $('#viewProposal').append('<div class="rateProposal" style="float:right;height="750px"; width="30%";> Rate: <select id="rateProposal"><option value="all">All</option><option value="extracurricularActivities">Extracurricular Activities</option><option value="event">Event</option><option value="teaching">Teaching</option><option value="other">Other</option></select><br>Comment: <input type="text" id="commentProposal" value = "' + po[6] + '"><br><button onclick=doRateProposal("' + id + '")>Submit</button></div>');
+        $('#viewProposal').append('<div class="rateProposal" style="float:right;height="750px"; width="30%";> Rate: <select id="rateProposal"><option value="yes">Yes</option><option value="no">No</option><option value="reArrange">ReArrange</option></select><br>Comment: <input type="text" id="commentProposal" value = "' + po[5] + '"><br><button onclick=doRateProposal("' + id + '")>Submit</button></div>');
         $('#rateProposal option:selected').removeAttr('selected');
         $("#rateProposal option[value='" + po[5] + "']").attr('selected', 'selected');
     }
@@ -164,7 +144,7 @@
         var formData = {
             _id: id,
             comment: $("#commentProposal").val(),
-            Status: $("#rateProposal").val(),
+            status: $("#rateProposal").val(),
         }
         $.ajax({
             url: '/admin/rateProppsal',
@@ -187,7 +167,7 @@
             }
         })
     }
-
+    
     function cancelProposal() {
         $('#viewProposal').html('')
     }

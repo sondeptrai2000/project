@@ -73,19 +73,20 @@ function uploadProposal(id) {
     })
 }
 
-function updateProposal(id) {
+function updateProposal() {
+    console.log($(".updateProposalID").text())
     $.ajax({
         url: '/teacher/updateProposal',
-        method: 'get',
+        method: 'post',
         dataType: 'json',
         data: {
-            id: id,
+            id: $(".updateProposalID").text(),
             file: fileDataUpdate,
             filename: myFileUpdate.name,
         },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".updateOutDoor" + id).hide()
+                $(".updateOutDoor").hide()
                 alert("Update successed")
             }
         },
@@ -118,7 +119,7 @@ function allActivityProposal() {
             if (response.msg == 'success') {
                 $(".allActivityProposalBody").html("")
                 $.each(response.data, function(index, data) {
-                    $(".allActivityProposalBody").append("<tr><td>" + data.classID._id + "</td><td>" + data.classID.className + "</td><td><a href='" + data.fileLink + "'>Proposal File</a></td><td>" + data.status + "</td><td>" + data.comment + "</td><td><div class='updateOutDoor" + data.classID._id + "' style='display:none;'><input type='file' class='updateProposal'><button onclick=updateProposal('" + data._id + "')>Submit file</button></div><button onclick=updateFileOutDoor('" + data.classID._id + "')>Update File</button><button onclick=deleteProposal('" + data._id + "')>Delete</button></button></td></tr>");
+                    $(".allActivityProposalBody").append("<tr><td>" + data.classID._id + "</td><td>" + data.classID.className + "</td><td><a href='" + data.fileLink + "'>Proposal File</a></td><td>" + data.status + "</td><td>" + data.comment + "</td><td><button onclick=updateFileOutDoor('" + data._id + "')>Update File</button><button onclick=deleteProposal('" + data._id + "')>Delete</button></button></td></tr>");
                 });
             }
             $(".allActivityProposal").show()
@@ -149,9 +150,13 @@ function deleteProposal(id) {
     })
 
 }
+$("#closeUpdateOutdoor").click(function() {
+    $(".updateOutDoor").hide()
+});
 
-function updateFileOutDoor(classID) {
-    $(".updateOutDoor" + classID).show()
+function updateFileOutDoor(id) {
+    $(".updateProposalID").html(id)
+    $(".updateOutDoor").show()
 }
 
 function cancleAllActivityProposal() {

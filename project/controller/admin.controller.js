@@ -2,6 +2,8 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const studyRouteModel = require('../models/studyRoute');
+const extracurricularActivitiesModel = require('../models/extracurricularActivities');
+
 var path = require('path');
 
 const { google } = require("googleapis")
@@ -359,7 +361,7 @@ class adminController {
     }
 
     allProposal(req, res) {
-        ProposalModel.find({}).populate('teacherID', { username: 1, avatar: 1 }).sort({ uploadDate: -1 }).lean().exec((err, data) => {
+        extracurricularActivitiesModel.find({}).populate({ path: 'classID', select: 'className' }).populate({ path: 'teacherID', select: 'username avatar' }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -369,8 +371,8 @@ class adminController {
     }
 
     rateProppsal(req, res) {
-        let { _id, Status, comment } = req.body
-        ProposalModel.findOneAndUpdate({ _id: _id }, { Status, comment }, function(err, data) {
+        let { _id, status, comment } = req.body
+        extracurricularActivitiesModel.findOneAndUpdate({ _id: _id }, { status, comment }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
