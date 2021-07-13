@@ -44,6 +44,12 @@ adminRouter.post('/rateProppsal', adminController.rateProppsal)
 adminRouter.get('/dashboard', adminController.dashboard)
 
 
+// tạo sự kiện (noel,etc)
+adminRouter.post('/createEvent', adminController.createEvent)
+adminRouter.get('/allEvent', adminController.allEvent)
+adminRouter.delete('/deleteEvent', adminController.deleteEvent)
+adminRouter.post('/updateEvent', adminController.updateEvent)
+
 
 
 module.exports = adminRouter

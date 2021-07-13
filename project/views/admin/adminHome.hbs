@@ -53,6 +53,7 @@
     <p><a href='/account/homeAdmin'>Trang chủ admin</a></p>
     <p><a href='/admin/createAccount'>Create account</a></p>
     <p><a onclick="allProposal()">All Extracurricular Activities</a></p>
+    <p><a onclick="allEvent()">Events</a></p>
     <p><a href='/admin/dashboard'>Dashboard</a></p>
     <div id="loading" style="display:none">
         <img src="/images/loadingWalking.gif" alt="Loading..." />
@@ -92,9 +93,99 @@
         </div>
     </div>
     <div id="viewProposal"></div>
+    <div class='createEvent'>
+        <div class="tr">Event Name: <input type="text" id='eventName'></div>
+        <div class="tr">Content: <input type="text" id='eventContent'></div>
+        <div class="tr">Address: <input type="text" id='eventAddress'></div>
+        <div class="tr">At: <input type="date" id='eventAt'></div>
+        <div class="tr"><button onclick="doCreateEvent()">Submit</button></div>
+    </div>
 
+    <div class="allEvent" style="display: none;">
+        <div id="table1">
+        </div>
+    </div>
 </body>
 <script>
+    function updateEvent(id) {
+        console.log(id)
+    }
+
+    function deleteEvent(id) {
+        $.ajax({
+            url: '/admin/deleteEvent',
+            method: 'delete',
+            dataType: 'json',
+            data: { id: id },
+            success: function (response) {
+                if (response.msg == 'success') {
+                    alert(' success');
+                    allEvent();
+                }
+                if (response.msg == 'error') {
+                    alert(' error');
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+    function closeAllEvent() {
+        $("#table1").html("")
+        $(".allEvent").hide()
+    }
+    function allEvent() {
+        $.ajax({
+            url: '/admin/allEvent',
+            method: 'get',
+            dataType: 'json',
+            success: function (response) {
+                if (response.msg == 'success') {
+                    $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td" onclick="closeAllEvent()">&times;</div></div>')
+                    $.each(response.data, function (index, data) {
+                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = updateEvent("' + data._id + '")>Update</button><button onclick = deleteEvent("' + data._id + '")>Delete</button></div></div>'
+                        $("#table1").append(content);
+                    })
+                    $(".allEvent").show()
+                }
+                if (response.msg == 'error') {
+                    alert(' error');
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+    function doCreateEvent() {
+        formData = {
+            eventName: $("#eventName").val(),
+            eventContent: $("#eventContent").val(),
+            eventAddress: $("#eventAddress").val(),
+            eventAt: $("#eventAt").val(),
+        }
+        $.ajax({
+            url: '/admin/createEvent',
+            method: 'post',
+            dataType: 'json',
+            data: formData,
+            success: function (response) {
+                if (response.msg == 'success') {
+                    alert(' success');
+                }
+                if (response.msg == 'error') {
+                    alert(' error');
+                }
+                if (response.msg == 'hạn nộp đề xuất phải sớm hơn sự kiện 4 ngày') {
+                    alert(' hạn nộp đề xuất phải sớm hơn sự kiện 4 ngày');
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
     //hiển thị bảng đề xuất
     function allProposal() {
         $(".tr1").remove();
@@ -167,13 +258,18 @@
             }
         })
     }
-    
+
     function cancelProposal() {
         $('#viewProposal').html('')
     }
 
     function closeProposalTable() {
         $('.proposal').slideUp()
+    }
+
+
+    function createEvent() {
+
     }
 </script>
 

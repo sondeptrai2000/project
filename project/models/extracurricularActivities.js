@@ -9,6 +9,15 @@ mongoose.connect(url, {
 });
 mongoose.set('useCreateIndex', true);
 
+function dateNow() {
+    var date = new Date()
+    var month = date.getMonth() + 1
+    var lol = date.getFullYear() + "-" + month + "-" + date.getDate()
+    return lol
+}
+
+
+
 
 var extracurricularActivitiesSchema = new mongoose.Schema({
     fileLink: String,
@@ -46,7 +55,7 @@ var extracurricularActivitiesSchema = new mongoose.Schema({
         type: String,
         default: "Has not been commented yet"
     },
-    uploadDate: { type: Date, default: Date.now }
+    uploadDate: { type: String, default: dateNow() }
 })
 
 var extracurricularActivitiesModel = mongoose.model('extracurricularActivities', extracurricularActivitiesSchema);

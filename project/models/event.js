@@ -16,9 +16,11 @@ var eventSchema = new mongoose.Schema({
         default: "1viJllQj3Yy-_yJCxZ1ZnCCNxSJB1-KQV"
     },
     eventName: String,
-    dateOfOrganization: Date,
-    deadlineForProposal: Date,
-    proposalID: [{
+    eventContent: String,
+    eventAddress: String,
+    eventAt: String,
+    eventProposal: String,
+    proposals: [{
         fileID: String,
         teacherID: {
             type: mongoose.Schema.Types.ObjectId,
