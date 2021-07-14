@@ -11,7 +11,7 @@ const { google } = require("googleapis")
 const CLIENT_ID = "279772268126-bdo0c5g58jriuo7l057rdphld66t8cmj.apps.googleusercontent.com"
 const CLIENT_SECRET = "4FHV8fvNK4ZLyfPBzi5SDs7a"
 const REDIRECT_URI = "https://developers.google.com/oauthplayground"
-const REFRESH_TOKEN = "1//04hkstXaqmlvyCgYIARAAGAQSNwF-L9Irk7DfaT5oiNwsQdGnTolco5UEP96BNf-cSHjWGfXfbE9b5RVb_ieNd01P7oyahLOtTZY"
+const REFRESH_TOKEN = "1//04xeSnjZKKcfaCgYIARAAGAQSNwF-L9IrN6NmdkqyT9alRQbe02kIyWbwQZVzQ6h_6kXRKlEjkQPKW9b9LqwWyRYvDob5HJwVLs0"
 
 const oauth2Client = new google.auth.OAuth2(
     CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
@@ -417,19 +417,35 @@ class adminController {
         if (eventAt < req.body.eventProposal) {
             res.json({ msg: 'hạn nộp đề xuất phải sớm hơn sự kiện 4 ngày' });
         } else {
-            eventModel.create({
-                eventName: req.body.eventName,
-                eventContent: req.body.eventContent,
-                eventAddress: req.body.eventAddress,
-                eventAt: req.body.eventAt,
-                eventProposal: eventAt,
-            }, function(err, data) {
+            var fileMetadata = {
+                'name': req.body.eventName,
+                'mimeType': 'application/vnd.google-apps.folder',
+                parents: ['1qQ47mPS-x1lG7SzdCw_XrHzime9wpmkg'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+            };
+            var folder = drive.files.create({
+                resource: fileMetadata,
+                fields: 'id'
+            }, function(err, file) {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else {
-                    res.json({ msg: 'success' });
+                    eventModel.create({
+                        eventName: req.body.eventName,
+                        eventContent: req.body.eventContent,
+                        eventAddress: req.body.eventAddress,
+                        eventAt: req.body.eventAt,
+                        eventProposal: eventAt,
+                        folderID: file.data.id,
+                    }, function(err, data) {
+                        if (err) {
+                            res.json({ msg: 'error' });
+                        } else {
+                            res.json({ msg: 'success' });
+                        }
+                    })
                 }
-            })
+            });
+
         }
 
     }
@@ -444,7 +460,20 @@ class adminController {
         })
     }
 
-    deleteEvent(req, res) {
+    async deleteEvent(req, res) {
+        var folderID
+        try {
+            folderID = await eventModel.findOne({ _id: req.body.id }, { folderID: 1 }).lean()
+        } catch (err) {
+            res.json({ msg: 'error' });
+        }
+        try {
+            const response = await drive.files.delete({
+                fileId: folderID.folderID,
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
         eventModel.deleteOne({ _id: req.body.id }).lean().sort({ eventAt: -1 }).exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });

@@ -55,6 +55,7 @@
     <p><a onclick='teacherProfile()'>Teacher Profile</a></p>
     <p><a href='/teacher/allClass'>Class</a></p>
     <p><a onclick="proposalT(0)">Teacher All Extracurricular Activities</a></p>
+    <p><a onclick="allEvent()">Events</a></p>
     <p><a href='/messenger/chatForm'>Teacher Messenge</a></p>
 </body>
 <div class="content" style="text-align: center; display:none">
@@ -95,69 +96,21 @@
 <div id="loading" style="display:none">
     <img src="/images/loadingWalking.gif" alt="Loading..." />
 </div>
-<div class="proposal" style="display: none;">
-    <div id="soTrang"></div>
-    <div id="table">
-        <div class="tr">
-            <div class="td"><input type="text"></div>
-            <div class="td"><button>Find</button></div>
-            <div class="td">
-                <div class="uploadFile" style="display: none;">
-                    <input type="text" id="proposalName">
-                    <input type="text" id="proposalContent">
-                    <select id="proposalType">
-                        <option value="extracurricularActivities">Extracurricular Activities</option>
-                        <option value="event">Event</option>
-                        <option value="teaching">Teaching</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <input type="file" id="myUploadProposal">
-                    <button onclick="uploadNewProposal()">Upload New file</button>
-                </div>
-                <button onclick="createNewProposal()">Create New Proposal</button>
-            </div>
-            <div class="td">
-                <select id="proposalFilter">
-                    <option value="all">All</option>
-                    <option value="extracurricularActivities">Extracurricular Activities</option>
-                    <option value="event">Event</option>
-                    <option value="teaching">Teaching</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div class="td"></div>
-            <div class="td"><button onclick="closeProposalTable()">&times;</button></div>
-        </div>
-        <div class="tr">
-            <div class="td">Name</div>
-            <div class="td">Content</div>
-            <div class="td">Type</div>
-            <div class="td">Upload Date</div>
-            <div class="td">Status</div>
-            <div class="td">Action</div>
-        </div>
 
-    </div>
-</div>
-
-<div class="proposalUpdate" style="display: none;">
-    <input type="text" id="IDproposalNameUpdate">
-    <input type="text" id="proposalNameUpdate">
-    <input type="text" id="proposalContentUpdate">
-    <select id="updateProposalType" onchange="lol()">
-        <option value="extracurricularActivities">Extracurricular Activities</option>
-        <option value="event">Event</option>
-        <option value="teaching">Teaching</option>
-        <option value="other">Other</option>
-    </select>
-    <input type="file" id="updateProposal">
-    <button onclick="doUpdateProposal()">Upload New file</button>
-    <button onclick="closeuploadNewProposal()">&times;</button>
-
-</div>
 
 
 <div id="viewProposal"></div>
+<div class="allEvent" style="display: none;">
+        <div id="table1">
+        </div>
+    </div>
+
+
+    <div class="uploadEventProposal" style="display:none;">
+        <p id="uploadEventProposalID"></p>
+        <input type="file" id='myUploadProposal'>
+        <button onclick="doUploadEventProposal()">Submit</button>
+    </div>
 <script src=" /teacherHome.js"></script>
 
 </html>

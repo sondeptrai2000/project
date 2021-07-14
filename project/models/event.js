@@ -11,17 +11,14 @@ mongoose.set('useCreateIndex', true);
 
 
 var eventSchema = new mongoose.Schema({
-    folderID: {
-        type: String,
-        default: "1viJllQj3Yy-_yJCxZ1ZnCCNxSJB1-KQV"
-    },
+    folderID: String,
     eventName: String,
     eventContent: String,
     eventAddress: String,
     eventAt: String,
     eventProposal: String,
     proposals: [{
-        fileID: String,
+        fileLink: String,
         teacherID: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'account'

@@ -213,6 +213,72 @@ function deleteProposal(id) {
     }
 }
 
+function allEvent() {
+    $.ajax({
+        url: '/teacher/allEvent',
+        method: 'get',
+        dataType: 'json',
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td" onclick="closeAllEvent()">&times;</div></div>')
+                $.each(response.data, function(index, data) {
+                    $.each(data.proposals, function(index, proposals) {
+                        console.log(proposals)
+                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '")>Delete</button></div></div>'
+                        $("#table1").append(content);
+                        if (response.decodeAccount._id == proposals.teacherID) {
+                            console.log("có")
+                        }
+                    })
+                })
+                $(".allEvent").show()
+            }
+            if (response.msg == 'error') {
+                alert(' error');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+function uploadProposalEvent(id) {
+    $("#uploadEventProposalID").html(id)
+    $(".uploadEventProposal").show()
+}
+
+function doUploadEventProposal() {
+    console.log($("#uploadEventProposalID").text())
+    var formData = {
+        _id: $("#uploadEventProposalID").text(),
+        filename: myFile.name,
+        file: fileData,
+    }
+    $.ajax({
+        url: '/teacher/updateProposalEvent',
+        method: 'post',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                alert('update proposal success');
+            }
+            if (response.msg == 'error') {
+                alert('update proposal error');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+function closeAllEvent() {
+    $("#table1").html("")
+    $(".allEvent").hide()
+}
+
 function closeuploadNewProposal() {
     $(".proposalUpdate").slideUp();
 }

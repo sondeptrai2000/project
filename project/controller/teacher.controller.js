@@ -1,6 +1,7 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const extracurricularActivitiesModel = require('../models/extracurricularActivities');
+const eventModel = require('../models/event');
 var fs = require('fs')
 
 const { JsonWebTokenError } = require('jsonwebtoken');
@@ -12,13 +13,15 @@ const classModel = require('../models/class');
 const CLIENT_ID = "279772268126-bdo0c5g58jriuo7l057rdphld66t8cmj.apps.googleusercontent.com"
 const CLIENT_SECRET = "4FHV8fvNK4ZLyfPBzi5SDs7a"
 const REDIRECT_URI = "https://developers.google.com/oauthplayground"
-const REFRESH_TOKEN = "1//04hkstXaqmlvyCgYIARAAGAQSNwF-L9Irk7DfaT5oiNwsQdGnTolco5UEP96BNf-cSHjWGfXfbE9b5RVb_ieNd01P7oyahLOtTZY"
+const REFRESH_TOKEN = "1//04xeSnjZKKcfaCgYIARAAGAQSNwF-L9IrN6NmdkqyT9alRQbe02kIyWbwQZVzQ6h_6kXRKlEjkQPKW9b9LqwWyRYvDob5HJwVLs0"
 
 const oauth2Client = new google.auth.OAuth2(
     CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 );
 
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
+
+
 
 const drive = google.drive({
     version: 'v3',
@@ -207,71 +210,52 @@ class teacherController {
     }
 
     async updateProposal(req, res) {
-            console.log("vào")
-            var path = __dirname.replace("controller", "public/outDoorActivity") + '/' + req.body.filename;
-            var image = req.body.file;
-            var data = image.split(',')[1];
-            fs.writeFileSync(path, data, { encoding: 'base64' });
-            var temp = fs.readFileSync(path);
-            var buff = new Buffer(temp);
-            var base64data = buff.toString('base64');
-            try {
-                const response = await drive.files.create({
-                    requestBody: {
-                        name: req.body.filename, //đặt tên
-                        parents: ['1evgjhxMA8DujwwkvMpaXIAqA_GigLJes'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
-                    },
-                    media: {
-                        body: fs.createReadStream(path),
-                    },
-                });
+        console.log("vào")
+        var path = __dirname.replace("controller", "public/outDoorActivity") + '/' + req.body.filename;
+        var image = req.body.file;
+        var data = image.split(',')[1];
+        fs.writeFileSync(path, data, { encoding: 'base64' });
+        var temp = fs.readFileSync(path);
+        var buff = new Buffer(temp);
+        var base64data = buff.toString('base64');
+        try {
+            const response = await drive.files.create({
+                requestBody: {
+                    name: req.body.filename, //đặt tên
+                    parents: ['1qQ47mPS-x1lG7SzdCw_XrHzime9wpmkg'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+                },
+                media: {
+                    body: fs.createReadStream(path),
+                },
+            });
 
-                // console.log(response.data.id);
-                await drive.permissions.create({
-                    fileId: response.data.id,
-                    requestBody: {
-                        role: 'reader',
-                        type: 'anyone',
-                    },
-                });
-                var fileLink = "https://docs.google.com/file/d/" + response.data.id + "/preview"
+            // console.log(response.data.id);
+            await drive.permissions.create({
+                fileId: response.data.id,
+                requestBody: {
+                    role: 'reader',
+                    type: 'anyone',
+                },
+            });
+            var fileLink = "https://docs.google.com/file/d/" + response.data.id + "/preview"
 
-            } catch (error) {
-                console.log(error.message);
-            }
-            let token = req.cookies.token
-            let decodeAccount = jwt.verify(token, 'minhson')
-            extracurricularActivitiesModel.findOneAndUpdate({ _id: req.body.id }, { fileLink: fileLink }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data });
-                }
-            })
+        } catch (error) {
+            console.log(error.message);
         }
-        // updateProposal(req, res) {
-        // if (req.body.file == "none") {
-        //     var update = {
-        //         proposalName: req.body.proposalName,
-        //         Content: req.body.Content,
-        //         proposalType: req.body.proposalType,
-        //         uploadDate: new Date
-        //     }
-        // } else {
-        //     var update = {
-        //         proposalName: req.body.proposalName,
-        //         Content: req.body.Content,
-        //         file: req.body.file,
-        //         proposalType: req.body.proposalType,
-        //         uploadDate: new Date
-        //     }
-        // }
-
-    // }
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        extracurricularActivitiesModel.findOneAndUpdate({ _id: req.body.id }, { fileLink: fileLink }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
+    }
 
     async deleteProposal(req, res) {
         try {
-            extracurricularActivitiesModel.findOne({ _id: req.body.id }, function(err, data) {
+            extracurricularActivitiesModel.findOne({ _id: req.body._id }, function(err, data) {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else {
@@ -286,7 +270,7 @@ class teacherController {
         } catch (error) {
             console.log(error.message);
         }
-        extracurricularActivitiesModel.deleteOne({ _id: req.body.id }, function(err, data) {
+        extracurricularActivitiesModel.deleteOne({ _id: req.body._id }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -294,6 +278,73 @@ class teacherController {
             }
         })
 
+    }
+
+    allEvent(req, res) {
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        eventModel.find({}).lean().sort({ eventAt: -1 }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data, decodeAccount });
+            }
+        })
+    }
+
+
+    async updateProposalEvent(req, res) {
+        var path = __dirname.replace("controller", "public/events") + '/' + req.body.filename;
+        var image = req.body.file;
+        var data = image.split(',')[1];
+        fs.writeFileSync(path, data, { encoding: 'base64' });
+        var temp = fs.readFileSync(path);
+        var buff = new Buffer(temp);
+        var base64data = buff.toString('base64');
+        var folderID
+        try {
+            folderID = await eventModel.findOne({ _id: req.body._id }, { folderID: 1 }).lean()
+        } catch (err) {
+            res.json({ msg: 'error' });
+        }
+        try {
+            const response = await drive.files.create({
+                requestBody: {
+                    name: req.body.filename, //đặt tên
+                    parents: [folderID.folderID] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+                },
+                media: {
+                    body: fs.createReadStream(path),
+                },
+            });
+            // console.log(response.data.id);
+            await drive.permissions.create({
+                fileId: response.data.id,
+                requestBody: {
+                    role: 'reader',
+                    type: 'anyone',
+                },
+            });
+            var fileLink = "https://docs.google.com/file/d/" + response.data.id + "/preview"
+        } catch (error) {
+            console.log(error.message);
+        }
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        eventModel.findOneAndUpdate({ _id: req.body._id }, {
+            $push: {
+                proposals: {
+                    teacherID: decodeAccount,
+                    fileLink: fileLink,
+                }
+            }
+        }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
     }
 
     allChat(req, res) {
