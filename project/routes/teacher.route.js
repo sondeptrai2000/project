@@ -28,6 +28,7 @@ teacherRouter.get('/extracurricularActivities', teacherController.extracurricula
 teacherRouter.get('/allActivityProposal', teacherController.allActivityProposal)
 teacherRouter.get('/allEvent', teacherController.allEvent)
 teacherRouter.post('/updateProposalEvent', teacherController.updateProposalEvent)
+teacherRouter.delete('/deleteProposalEvent', teacherController.deleteProposalEvent)
 
 //chat
 teacherRouter.get('/allChat', teacherController.allChat)

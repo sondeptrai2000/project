@@ -220,16 +220,17 @@ function allEvent() {
         dataType: 'json',
         success: function(response) {
             if (response.msg == 'success') {
-                $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td" onclick="closeAllEvent()">&times;</div></div>')
+                $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td">fileLink</div><div class="td">status</div><div class="td">comment</div><div class="td" onclick="closeAllEvent()">&times;</div></div>')
                 $.each(response.data, function(index, data) {
-                    $.each(data.proposals, function(index, proposals) {
-                        console.log(proposals)
-                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '")>Delete</button></div></div>'
+                    if (data.proposals.length == 0) {
+                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '")>Delete</button></div></div>'
                         $("#table1").append(content);
-                        if (response.decodeAccount._id == proposals.teacherID) {
-                            console.log("có")
-                        }
-                    })
+                    } else {
+                        $.each(data.proposals, function(index, proposals) {
+                            var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><a href="' + proposals.fileLink + '" target="_blank">Your Proposal</a></div><div class="td">' + proposals.status + '</div><div class="td">' + proposals.comment + '</div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '","' + proposals.fileLink + '")>Delete</button></div></div>'
+                            $("#table1").append(content);
+                        })
+                    }
                 })
                 $(".allEvent").show()
             }
@@ -272,6 +273,27 @@ function doUploadEventProposal() {
             alert('server error');
         }
     })
+}
+
+function deleteProposalEvent(id, fileLink) {
+    $.ajax({
+        url: '/teacher/deleteProposalEvent',
+        method: 'delete',
+        dataType: 'json',
+        data: { id: id, fileLink: fileLink },
+        success: function(response) {
+            if (response.msg == 'success') {
+                alert('delete proposal success');
+            }
+            if (response.msg == 'error') {
+                alert('delete proposal error');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+
 }
 
 function closeAllEvent() {

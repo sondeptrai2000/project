@@ -255,7 +255,7 @@ class teacherController {
 
     async deleteProposal(req, res) {
         try {
-            extracurricularActivitiesModel.findOne({ _id: req.body._id }, function(err, data) {
+            extracurricularActivitiesModel.findOne({ _id: req.body.id }, function(err, data) {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else {
@@ -270,7 +270,7 @@ class teacherController {
         } catch (error) {
             console.log(error.message);
         }
-        extracurricularActivitiesModel.deleteOne({ _id: req.body._id }, function(err, data) {
+        extracurricularActivitiesModel.deleteOne({ _id: req.body.id }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -343,6 +343,36 @@ class teacherController {
                 res.json({ msg: 'error' });
             } else {
                 res.json({ msg: 'success', data });
+            }
+        })
+    }
+
+
+    async deleteProposalEvent(req, res) {
+        var fileLink = req.body.fileLink
+        fileLink = fileLink.replace("https://docs.google.com/file/d/", "")
+        fileLink = fileLink.replace("/preview", "")
+        try {
+            const response = await drive.files.delete({
+                fileId: fileLink,
+            });
+            console.log(response.data, response.status);
+        } catch (error) {
+            console.log(error.message);
+        }
+        let token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        eventModel.findOneAndUpdate({ _id: req.body.id }, {
+            $pull: {
+                proposals: {
+                    teacherID: decodeAccount,
+                }
+            }
+        }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
             }
         })
     }
