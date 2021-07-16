@@ -23,8 +23,14 @@ var eventSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'account'
         },
-        status: String,
-        comment: String
+        status: {
+            type: String,
+            default: 'not rate'
+        },
+        comment: {
+            type: String,
+            default: 'not rate'
+        }
     }]
 })
 

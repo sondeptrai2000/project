@@ -2,6 +2,7 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const eventModel = require('../models/event');
 const studyRouteModel = require('../models/studyRoute');
+const ClassModel = require('../models/class');
 
 const extracurricularActivitiesModel = require('../models/extracurricularActivities');
 
@@ -53,13 +54,10 @@ class adminController {
         AccountModel.find({ role: "teacher" }).lean().countDocuments(function(err, numberOfAccount) {
             studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
                 AccountModel.find({ role: "teacher" }).lean().then(data => {
-                    ClassModel.find({}).lean().exec(function(err, classInfor) {
-                        res.render('admin/createAccount', { data, classInfor, targetxxx, numberOfAccount })
-                    })
+                    res.render('admin/createAccount', { data, targetxxx, numberOfAccount })
                 })
             })
         })
-
     }
     getRoute(req, res) {
         studyRouteModel.find({}).lean().exec(function(err, data) {
