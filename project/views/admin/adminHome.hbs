@@ -105,6 +105,21 @@
         <div id="table1">
         </div>
     </div>
+
+
+    <div class="allEventProposal">
+        <div id="table2">
+        </div>
+    </div>
+
+    <div class='rateEventProposal'>
+        <div class="tr"><iframe src="" height="750px" width="70%"></iframe> </div>
+        <div class="tr">id <input type="text" id="idProposal"></div>
+        <div class="tr">IDlink <input type="text" id="IDlinkProposal"></div>
+        <div class="tr">Status <input type="text" id="statusRateEventProposal"></div>
+        <div class="tr">Comment <input type="text" id="commentRateEventProposal"></div>
+        <div><button onclick="dorateEventProposal()">Submit</button></div>
+    </div>
 </body>
 <script>
     function updateEvent(id) {
@@ -144,7 +159,7 @@
                 if (response.msg == 'success') {
                     $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td" onclick="closeAllEvent()">&times;</div></div>')
                     $.each(response.data, function (index, data) {
-                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = updateEvent("' + data._id + '")>Update</button><button onclick = deleteEvent("' + data._id + '")>Delete</button></div></div>'
+                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = updateEvent("' + data._id + '")>Update</button><button onclick = deleteEvent("' + data._id + '")>Delete</button><button onclick = allEventProposal("' + data._id + '")>Proposal</button></div></div>'
                         $("#table1").append(content);
                     })
                     $(".allEvent").show()
@@ -158,6 +173,71 @@
             }
         })
     }
+
+    function allEventProposal(id) {
+        $.ajax({
+            url: '/admin/allEventProposal',
+            method: 'get',
+            dataType: 'json',
+            data: { id: id },
+            success: function (response) {
+                if (response.msg == 'success') {
+                    console.log(response.data)
+                    $("#table2").html('<div class="tr"><div class="td">File Link</div><div class="td">Teacher Name</div><div class="td">comment</div><div class="td">status</div><div class="td" onclick="closeAllEventProposal()">&times;</div></div>')
+                    $.each(response.data, function (index, data) {
+                        $.each(data.proposals, function (index, proposals) {
+                            var content = '<div class="tr' + proposals._id + '"><div class="td"><a href="' + proposals.fileLink + '" target="_blank">Your Proposal</a></div><div class="td"><img src = "' + proposals.teacherID.avatar + '"style ="max-width:100px;max-height:100px"></br>' + proposals.teacherID.username + '</div><div class="td">' + proposals.comment + '</div><div class="td">' + proposals.status + '</div><div class="td"><button onclick = rateEventProposal("' + data._id + '","' + proposals._id + '")>Rate</button></div></div>'
+                            $("#table2").append(content);
+                        })
+                    })
+                    $(".allEvent").show()
+                }
+                if (response.msg == 'error') {
+                    alert(' error');
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+
+    function rateEventProposal(id, proposalID) {
+        $("#idProposal").val(id)
+        $("#IDlinkProposal").val(proposalID)
+        var data = []
+        $(".tr" + proposalID + " .td").each(function () {
+            data.push($(this).text())
+        })
+        $("#statusRateEventProposal").val(data[2])
+        $("#commentRateEventProposal").val(data[3])
+    }
+    function dorateEventProposal(){
+        formData={
+            idProposal:$("#idProposal").val(),
+            IDlinkProposal:$("#IDlinkProposal").val(),
+            status:$("#statusRateEventProposal").val(),
+            comment:$("#commentRateEventProposal").val(),
+        }
+         $.ajax({
+            url: '/admin/dorateEventProposal',
+            method: 'post',
+            dataType: 'json',
+            data: formData,
+            success: function (response) {
+                if (response.msg == 'success') {
+                    alert(' success');
+                }
+                if (response.msg == 'error') {
+                    alert(' error');
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+
     function doCreateEvent() {
         formData = {
             eventName: $("#eventName").val(),

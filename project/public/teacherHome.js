@@ -221,15 +221,18 @@ function allEvent() {
         success: function(response) {
             if (response.msg == 'success') {
                 $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td">fileLink</div><div class="td">status</div><div class="td">comment</div><div class="td" onclick="closeAllEvent()">&times;</div></div>')
+                var check = false;
                 $.each(response.data, function(index, data) {
-                    if (data.proposals.length == 0) {
-                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '")>Delete</button></div></div>'
-                        $("#table1").append(content);
-                    } else {
-                        $.each(data.proposals, function(index, proposals) {
+                    $.each(data.proposals, function(index, proposals) {
+                        if (proposals.teacherID == response.decodeAccount._id) {
                             var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><a href="' + proposals.fileLink + '" target="_blank">Your Proposal</a></div><div class="td">' + proposals.status + '</div><div class="td">' + proposals.comment + '</div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '","' + proposals.fileLink + '")>Delete</button></div></div>'
                             $("#table1").append(content);
-                        })
+                            check = true;
+                        }
+                    })
+                    if (check == false) {
+                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '")>Delete</button></div></div>'
+                        $("#table1").append(content);
                     }
                 })
                 $(".allEvent").show()

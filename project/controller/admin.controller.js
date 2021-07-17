@@ -491,6 +491,30 @@ class adminController {
         })
     }
 
+    allEventProposal(req, res) {
+        eventModel.find({ _id: req.query.id }, { proposals: 1 }).populate({ path: 'proposals.teacherID', select: 'username avatar' }).lean().exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
+    }
+
+    dorateEventProposal(req, res) {
+        eventModel.findOneAndUpdate({ _id: req.body.idProposal, "proposals._id": req.body.IDlinkProposal }, {
+            $set: {
+                "proposals.$.status": req.body.status,
+                "proposals.$.comment": req.body.comment,
+            }
+        }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
+    }
 
 }
 module.exports = new adminController
