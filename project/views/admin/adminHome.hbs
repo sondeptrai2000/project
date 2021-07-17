@@ -50,11 +50,18 @@
 </head>
 
 <body>
-    <p><a href='/account/homeAdmin'>Trang chủ admin</a></p>
-    <p><a href='/admin/createAccount'>Create account</a></p>
-    <p><a onclick="allProposal()">All Extracurricular Activities</a></p>
-    <p><a onclick="allEvent()">Events</a></p>
-    <p><a href='/admin/dashboard'>Dashboard</a></p>
+    <div>
+        <div class="tr">
+            <div class="td"><a href='/account/homeAdmin'>Trang chủ admin</a></div>
+            <div class="td"><a href='/admin/createAccount'>Create account</a></div>
+            <div class="td"><a onclick="allProposal()">All Extracurricular Activities</a></div>
+            <div class="td"><a onclick="allEvent()">Events</a></div>
+            <div class="td"><button onclick='$(".createEvent").toggle()'>Tạo sự kiện</button></div>
+            <div class="td"><a href='/admin/dashboard'>Dashboard</a></div>
+            <div class="td">Log Out</div>
+        </div>
+    </div>
+
     <div id="loading" style="display:none">
         <img src="/images/loadingWalking.gif" alt="Loading..." />
     </div>
@@ -79,7 +86,7 @@
                     </select>
                 </div>
                 <div class="td">sss</div>
-                <div class="td"><button onclick="closeProposalTable()">&times;</button></div>
+                <div class="td"><button onclick="$('.proposal').slideUp()">&times;</button></div>
             </div>
             <div class="tr">
                 <div class="td">Class Name</div>
@@ -92,36 +99,59 @@
             </div>
         </div>
     </div>
-    <div id="viewProposal"></div>
-    <div class='createEvent'>
+    <div id="viewProposal" style="display:none;">
+        <button onclick="$('#viewProposalPart').html('');$('#viewProposal').hide()">&times;</button></br>
+        <div id="viewProposalPart">
+        </div>
+    </div>
+
+    <div class="allEvent" style="display: none;">
+        <div class="tr">
+            <div class="td">eventName</div>
+            <div class="td">eventContent</div>
+            <div class="td">eventAddress</div>
+            <div class="td">eventAt</div>
+            <div class="td">eventProposal</div>
+            <div class="td" onclick='$("#table1").html("");$(".allEvent").hide()'>&times;</div>
+        </div>
+        <div id="table1">
+        </div>
+    </div>
+
+    <div class='createEvent' style="display: none;">
         <div class="tr">Event Name: <input type="text" id='eventName'></div>
         <div class="tr">Content: <input type="text" id='eventContent'></div>
         <div class="tr">Address: <input type="text" id='eventAddress'></div>
         <div class="tr">At: <input type="date" id='eventAt'></div>
         <div class="tr"><button onclick="doCreateEvent()">Submit</button></div>
     </div>
-
-    <div class="allEvent" style="display: none;">
-        <div id="table1">
+    <div class="allEventProposal" style='display:none;'>
+        <div class="tr">
+            <div class="td">File Link</div>
+            <div class="td">Teacher Name</div>
+            <div class="td">comment</div>
+            <div class="td">status</div>
+            <div class="td" onclick='$(".allEventProposal").fadeOut(500);'>&times;</div>
         </div>
-    </div>
-
-
-    <div class="allEventProposal">
         <div id="table2">
         </div>
     </div>
 
-    <div class='rateEventProposal'>
-        <div class="tr"><iframe src="" height="750px" width="70%"></iframe> </div>
-        <div class="tr">id <input type="text" id="idProposal"></div>
-        <div class="tr">IDlink <input type="text" id="IDlinkProposal"></div>
-        <div class="tr">Status <input type="text" id="statusRateEventProposal"></div>
-        <div class="tr">Comment <input type="text" id="commentRateEventProposal"></div>
-        <div><button onclick="dorateEventProposal()">Submit</button></div>
-    </div>
+    <div class='rateEventProposal' style="display: none;">
+        <div class="tr">
+            <div class="td"><iframe src="" id="fileEventProposalRate" height="500px" width="750px"></iframe> </div>
+            <div class="td" style="vertical-align: top;">
+                <input type="hidden" id="idProposal"></br>
+                <input type="hidden" id="IDlinkProposal"></br>
+                Status <input type="text" id="statusRateEventProposal"></br>
+                Comment <input type="text" id="commentRateEventProposal"></br>
+                <button onclick="dorateEventProposal()">Submit</button>
+                <button onclick='$(".rateEventProposal").fadeOut(500);'>Close</button>
+            </div>
+        </div>
 </body>
 <script>
+
     function updateEvent(id) {
         console.log(id)
     }
@@ -146,10 +176,7 @@
             }
         })
     }
-    function closeAllEvent() {
-        $("#table1").html("")
-        $(".allEvent").hide()
-    }
+
     function allEvent() {
         $.ajax({
             url: '/admin/allEvent',
@@ -157,7 +184,7 @@
             dataType: 'json',
             success: function (response) {
                 if (response.msg == 'success') {
-                    $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td" onclick="closeAllEvent()">&times;</div></div>')
+                    $("#table1").html("");
                     $.each(response.data, function (index, data) {
                         var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = updateEvent("' + data._id + '")>Update</button><button onclick = deleteEvent("' + data._id + '")>Delete</button><button onclick = allEventProposal("' + data._id + '")>Proposal</button></div></div>'
                         $("#table1").append(content);
@@ -182,15 +209,14 @@
             data: { id: id },
             success: function (response) {
                 if (response.msg == 'success') {
-                    console.log(response.data)
-                    $("#table2").html('<div class="tr"><div class="td">File Link</div><div class="td">Teacher Name</div><div class="td">comment</div><div class="td">status</div><div class="td" onclick="closeAllEventProposal()">&times;</div></div>')
+                    $("#table2").html("");
                     $.each(response.data, function (index, data) {
                         $.each(data.proposals, function (index, proposals) {
                             var content = '<div class="tr' + proposals._id + '"><div class="td"><a href="' + proposals.fileLink + '" target="_blank">Your Proposal</a></div><div class="td"><img src = "' + proposals.teacherID.avatar + '"style ="max-width:100px;max-height:100px"></br>' + proposals.teacherID.username + '</div><div class="td">' + proposals.comment + '</div><div class="td">' + proposals.status + '</div><div class="td"><button onclick = rateEventProposal("' + data._id + '","' + proposals._id + '")>Rate</button></div></div>'
                             $("#table2").append(content);
                         })
                     })
-                    $(".allEvent").show()
+                    $(".allEventProposal").show()
                 }
                 if (response.msg == 'error') {
                     alert(' error');
@@ -202,6 +228,7 @@
         })
     }
 
+
     function rateEventProposal(id, proposalID) {
         $("#idProposal").val(id)
         $("#IDlinkProposal").val(proposalID)
@@ -209,17 +236,21 @@
         $(".tr" + proposalID + " .td").each(function () {
             data.push($(this).text())
         })
+        $("#fileEventProposalRate").attr("src", $(".tr" + proposalID + " .td a").attr('href'))
         $("#statusRateEventProposal").val(data[2])
         $("#commentRateEventProposal").val(data[3])
+        $(".rateEventProposal").show()
     }
-    function dorateEventProposal(){
-        formData={
-            idProposal:$("#idProposal").val(),
-            IDlinkProposal:$("#IDlinkProposal").val(),
-            status:$("#statusRateEventProposal").val(),
-            comment:$("#commentRateEventProposal").val(),
+
+
+    function dorateEventProposal() {
+        formData = {
+            idProposal: $("#idProposal").val(),
+            IDlinkProposal: $("#IDlinkProposal").val(),
+            status: $("#statusRateEventProposal").val(),
+            comment: $("#commentRateEventProposal").val(),
         }
-         $.ajax({
+        $.ajax({
             url: '/admin/dorateEventProposal',
             method: 'post',
             dataType: 'json',
@@ -298,17 +329,16 @@
 
     //lấy form đánh giá đề xuất
     function rate(id, file) {
-        $('#viewProposal').html('')
-        var lol = "#" + id + " .td"
+        $('#viewProposalPart').html('')
         var po = []
-        $(lol).each(function () {
+        $("#" + id + " .td").each(function () {
             po.push($(this).text())
         })
-        $('#viewProposal').append('<button onclick="cancelProposal()">&times;</button></br>');
-        $('#viewProposal').append('<iframe  src="' + file + '" height="750px" width="70%"></iframe>');
-        $('#viewProposal').append('<div class="rateProposal" style="float:right;height="750px"; width="30%";> Rate: <select id="rateProposal"><option value="yes">Yes</option><option value="no">No</option><option value="reArrange">ReArrange</option></select><br>Comment: <input type="text" id="commentProposal" value = "' + po[5] + '"><br><button onclick=doRateProposal("' + id + '")>Submit</button></div>');
-        $('#rateProposal option:selected').removeAttr('selected');
-        $("#rateProposal option[value='" + po[5] + "']").attr('selected', 'selected');
+        $('#viewProposalPart').append('<iframe  src="' + file + '" height="750px" width="70%"></iframe>');
+        $('#viewProposalPart').append('<div class="rateProposal" style="float:right;height="750px"; width="30%";> Rate: <select id="rateProposal"><option value="yes">Yes</option><option value="no">No</option><option value="reArrange">ReArrange</option></select><br>Comment: <input type="text" id="commentProposal" value = "' + po[5] + '"><br><button onclick=doRateProposal("' + id + '")>Submit</button></div>');
+        $('#viewProposalPart option:selected').removeAttr('selected');
+        $("#viewProposalPart option[value='" + po[4] + "']").attr('selected', 'selected');
+        $('#viewProposal').show()
     }
     //ddánh giá đề xuất
     function doRateProposal(id) {
@@ -325,7 +355,8 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     alert(' success');
-                    $('#viewProposal').html('')
+                    $('#viewProposalPart').html('')
+                    $('#viewProposal').hide()
                     allProposal();
                 }
                 if (response.msg == 'error') {
@@ -338,15 +369,6 @@
             }
         })
     }
-
-    function cancelProposal() {
-        $('#viewProposal').html('')
-    }
-
-    function closeProposalTable() {
-        $('.proposal').slideUp()
-    }
-
 
     function createEvent() {
 
