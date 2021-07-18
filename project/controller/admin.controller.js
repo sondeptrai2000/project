@@ -443,9 +443,7 @@ class adminController {
                     })
                 }
             });
-
         }
-
     }
 
     allEvent(req, res) {
@@ -481,14 +479,29 @@ class adminController {
         })
     }
 
-    updateEvent(req, res) {
-        eventModel.find({}).lean().sort({ eventAt: -1 }).exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
+    doUpdateEvent(req, res) {
+        var eventAt = new Date(req.body.eventAt);
+        eventAt.setDate(eventAt.getDate() - 4);
+        let date = eventAt.getDate().toString().padStart(2, "0");;
+        let month = (eventAt.getMonth() + 1).toString().padStart(2, "0");
+        eventAt = eventAt.getFullYear() + "-" + month + "-" + date
+        if (eventAt < req.body.eventProposal) {
+            res.json({ msg: 'hạn nộp đề xuất phải sớm hơn sự kiện 4 ngày' });
+        } else {
+            eventModel.findOneAndUpdate({ _id: req.body.id }, {
+                eventName: req.body.eventName,
+                eventContent: req.body.eventContent,
+                eventAddress: req.body.eventAddress,
+                eventAt: req.body.eventAt,
+                eventProposal: eventAt,
+            }, function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success' });
+                }
+            })
+        }
     }
 
     allEventProposal(req, res) {

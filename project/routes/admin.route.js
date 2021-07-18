@@ -48,7 +48,7 @@ adminRouter.get('/dashboard', adminController.dashboard)
 adminRouter.post('/createEvent', adminController.createEvent)
 adminRouter.get('/allEvent', adminController.allEvent)
 adminRouter.delete('/deleteEvent', adminController.deleteEvent)
-adminRouter.post('/updateEvent', adminController.updateEvent)
+adminRouter.post('/doUpdateEvent', adminController.doUpdateEvent)
 
 adminRouter.get('/allEventProposal', adminController.allEventProposal)
 adminRouter.post('/dorateEventProposal', adminController.dorateEventProposal)
