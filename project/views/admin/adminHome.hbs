@@ -55,12 +55,12 @@
 <body>
     <div>
         <div class="tr">
-            <div class="td" onclick="location.href='/admin';" >Trang chủ admin</div>
+            <div class="td" onclick="location.href='/admin';">Trang chủ admin</div>
             <div class="td" onclick="location.href='/admin/createAccount';">Create account</div>
             <div class="td" onclick="allProposal()">allProposal</div>
             <div class="td" onclick="allEvent()">allEvent</div>
             <div class="td" onclick='$(".createEvent").toggle()'>createEvent</div>
-            <div class="td" onclick="location.href='/admin/dashboard';" >Dashboard</div>
+            <div class="td" onclick="location.href='/admin/dashboard';">Dashboard</div>
             <div class="td">Log Out</div>
         </div>
     </div>
@@ -163,6 +163,7 @@
                 <button onclick='$(".rateEventProposal").fadeOut(500);'>Close</button>
             </div>
         </div>
+    </div>
 </body>
 <script>
     // CURD event
@@ -366,8 +367,10 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     $.each(response.data, function (index, data) {
-                        var content = "<div class='tr1' id='" + data._id + "'><div class='td'>" + data.classID.className + "</div><div class='td' style='text-align: center;'><img src ='" + data.teacherID.avatar + "'style ='max-width:100px;max-height:100px'></br>" + data.teacherID.username + "</div><div class='td'> " + data.extracurricularActivitiesContent + "</div><div class='td' >" + data.uploadDate + "</div><div class='td'>" + data.status + "</div><div class='td'>" + data.comment + "</div><div class='td'><button onclick=rate('" + data._id + "','" + data.fileLink + "')>Rate</button></div></div>"
-                        $("#table").append(content);
+                        if (data.fileLink) {
+                            var content = "<div class='tr1' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td' style='text-align: center;'><img src ='" + data.teacherID.avatar + "'style ='max-width:100px;max-height:100px'></br>" + data.teacherID.username + "</div><div class='td'> " + data.extracurricularActivitiesContent + "</div><div class='td' >" + data.uploadDate + "</div><div class='td'>" + data.status + "</div><div class='td'>" + data.comment + "</div><div class='td'><button onclick=rate('" + data._id + "','" + data.fileLink + "')>Rate</button></div></div>"
+                            $("#table").append(content);
+                        }
                     })
                     $("#loading").hide();
                     $('.proposal').slideDown(1000)

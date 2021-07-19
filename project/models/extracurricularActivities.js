@@ -16,15 +16,8 @@ function dateNow() {
     return lol
 }
 
-
-
-
 var extracurricularActivitiesSchema = new mongoose.Schema({
     fileLink: String,
-    classID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'class'
-    },
     StudentID: [{
         ID: {
             type: mongoose.Schema.Types.ObjectId,
@@ -39,10 +32,6 @@ var extracurricularActivitiesSchema = new mongoose.Schema({
             default: "Not Considered Implementation Yet"
         },
     }],
-    teacherID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'account'
-    },
     extracurricularActivitiesContent: {
         type: String,
         default: "Has not been commented yet"

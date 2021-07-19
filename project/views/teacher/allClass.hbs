@@ -19,6 +19,9 @@
         <th>Description</th>
         <th>Start date</th>
         <th>End date</th>
+        <th>fileLink</th>
+        <th>status </th>
+        <th>comment</th>
         <th>Student List</th>
         <th>Out Door Activity</th>
         {{#each classInfor}}
@@ -30,12 +33,26 @@
             <td>{{description}}</td>
             <td>{{startDate}}</td>
             <td>{{endDate}}</td>
+            <td>
+                {{#if fileLink}}<a href="{{fileLink}}" target="_blank" rel="noopener noreferrer">File</a> {{/if}}
+            </td>
+            <td>{{status}}</td>
+            <td>{{comment}}</td>
             <td><button id="btn1" onclick="sendData('{{_id}}')">List of student</button></td>
             <td>
-                <div class="{{_id}}" style="display:none;"><input type="file" class="uploadProposal"><button
-                        onclick="uploadProposal('{{_id}}')">Submit file</button></div>
+                {{#if fileLink}}
+                <div class="{{_id}}" style="display:none;"><input type="file" class="uploadProposal">
+                    <input type="text" class="contentProposal">
+                    <button onclick="uploadProposal('{{_id}}')">Submit file</button>
+                </div>
+                <button onclick="openSubmitProposal('{{_id}}')">Update proposal</button>
+                {{else}}
+                <div class="{{_id}}" style="display:none;"><input type="file" class="uploadProposal">
+                    <input type="text" class="contentProposal">
+                    <button onclick="uploadProposal('{{_id}}')">Submit file</button>
+                </div>
                 <button onclick="openSubmitProposal('{{_id}}')">Upload proposal</button>
-
+                {{/if}}
             </td>
         </tr>
         {{/each}}
@@ -56,8 +73,6 @@
             <tbody class='taskrow'></tbody>
         </table>
     </div>
-
-
     <div id="studentTable" style="display: none;">
         <table border='solid'>
             <thead>
@@ -142,7 +157,7 @@
     </div>
 
     <div class='updateOutDoor' style='display:none;'>
-        <p class= "updateProposalID"></p>
+        <p class="updateProposalID"></p>
         <input type='file' class='updateProposal'>
         <button onclick="updateProposal()">Submit file</button>
         <button id="closeUpdateOutdoor">&times;</button>

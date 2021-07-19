@@ -360,7 +360,7 @@ class adminController {
     }
 
     allProposal(req, res) {
-        extracurricularActivitiesModel.find({}).populate({ path: 'classID', select: 'className' }).populate({ path: 'teacherID', select: 'username avatar' }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
+        ClassModel.find().populate({ path: 'teacherID', select: 'username avatar' }).sort({ uploadDate: -1 }).lean().exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -371,14 +371,13 @@ class adminController {
 
     rateProppsal(req, res) {
         let { _id, status, comment } = req.body
-        extracurricularActivitiesModel.findOneAndUpdate({ _id: _id }, { status, comment }, function(err, data) {
+        ClassModel.findOneAndUpdate({ _id: _id }, { status, comment }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.json({ msg: 'success', data });
+                res.json({ msg: 'success' });
             }
         })
-
     }
 
 

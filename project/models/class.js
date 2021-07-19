@@ -8,6 +8,14 @@ mongoose.connect(url, {
 });
 mongoose.set('useCreateIndex', true);
 
+
+function dateNow() {
+    var date = new Date()
+    var month = date.getMonth() + 1
+    var lol = date.getFullYear() + "-" + month + "-" + date.getDate()
+    return lol
+}
+
 const Schema = mongoose.Schema;
 const classSchema = new Schema({
     className: String,
@@ -44,6 +52,34 @@ const classSchema = new Schema({
             attended: String,
         }]
     }],
+    fileLink: String,
+    StudentIDoutdoor: [{
+        ID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'account'
+        },
+        FeedBackStudent: {
+            type: String,
+            default: "Has not been commented yet"
+        },
+        ConsideredImplementation: {
+            type: String,
+            default: "Not Considered Implementation Yet"
+        },
+    }],
+    extracurricularActivitiesContent: {
+        type: String,
+        default: "Has not been commented yet"
+    },
+    status: {
+        type: String,
+        default: "Has not been commented yet"
+    },
+    comment: {
+        type: String,
+        default: "Has not been commented yet"
+    },
+    uploadDate: String,
     endDate: String,
     startDate: String,
     classStatus: String,

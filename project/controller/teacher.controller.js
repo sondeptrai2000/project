@@ -27,6 +27,14 @@ const drive = google.drive({
     version: 'v3',
     auth: oauth2Client
 })
+
+function dateNow() {
+    var date = new Date()
+    var month = date.getMonth() + 1
+    var lol = date.getFullYear() + "-" + month + "-" + date.getDate()
+    return lol
+}
+
 class teacherController {
     teacherHome(req, res) {
         res.render('teacher/teacherHome')
@@ -91,6 +99,9 @@ class teacherController {
                     $push: {
                         studentID: {
                             $each: req.body.studentlist
+                        },
+                        StudentIDoutdoor: {
+                            $each: req.body.studentlist
                         }
                     }
                 }).lean().exec(function(err, teacher) {
@@ -113,6 +124,9 @@ class teacherController {
                 ClassModel.updateMany({ _id: req.body.classID }, {
                     $pull: {
                         studentID: {
+                            ID: { $in: req.body.studentlistcl }
+                        },
+                        StudentIDoutdoor: {
                             ID: { $in: req.body.studentlistcl }
                         }
                     }
@@ -150,17 +164,7 @@ class teacherController {
         res.json('Trang xem thông tin hoạt động ngoại khóa đã thực hiện và tiến hành đánh giá học sinh trong hoạt động ngoại khóa ')
     }
 
-    allActivityProposal(req, res) {
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
-        extracurricularActivitiesModel.find({ teacherID: decodeAccount }).populate({ path: 'classID', select: 'className' }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
-    }
+
 
     async uploadNewProposal(req, res) {
         var path = __dirname.replace("controller", "public/outDoorActivity") + '/' + req.body.filename;
@@ -194,68 +198,18 @@ class teacherController {
         } catch (error) {
             console.log(error.message);
         }
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
-        extracurricularActivitiesModel.create({
-            fileLink: fileLink,
-            classID: req.body.classID,
-            teacherID: decodeAccount
-        }, function(err, data) {
+        ClassModel.findOneAndUpdate({ _id: req.body.classID }, { fileLink: fileLink, uploadDate: dateNow(), extracurricularActivitiesContent: req.body.content }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.json({ msg: 'success', data });
-            }
-        })
-    }
-
-    async updateProposal(req, res) {
-        console.log("vào")
-        var path = __dirname.replace("controller", "public/outDoorActivity") + '/' + req.body.filename;
-        var image = req.body.file;
-        var data = image.split(',')[1];
-        fs.writeFileSync(path, data, { encoding: 'base64' });
-        var temp = fs.readFileSync(path);
-        var buff = new Buffer(temp);
-        var base64data = buff.toString('base64');
-        try {
-            const response = await drive.files.create({
-                requestBody: {
-                    name: req.body.filename, //đặt tên
-                    parents: ['1qQ47mPS-x1lG7SzdCw_XrHzime9wpmkg'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
-                },
-                media: {
-                    body: fs.createReadStream(path),
-                },
-            });
-
-            // console.log(response.data.id);
-            await drive.permissions.create({
-                fileId: response.data.id,
-                requestBody: {
-                    role: 'reader',
-                    type: 'anyone',
-                },
-            });
-            var fileLink = "https://docs.google.com/file/d/" + response.data.id + "/preview"
-
-        } catch (error) {
-            console.log(error.message);
-        }
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
-        extracurricularActivitiesModel.findOneAndUpdate({ _id: req.body.id }, { fileLink: fileLink }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
+                res.json({ msg: 'success' });
             }
         })
     }
 
     async deleteProposal(req, res) {
         try {
-            extracurricularActivitiesModel.findOne({ _id: req.body.id }, function(err, data) {
+            ClassModel.findOne({ _id: req.body.id }, function(err, data) {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else {
@@ -270,7 +224,7 @@ class teacherController {
         } catch (error) {
             console.log(error.message);
         }
-        extracurricularActivitiesModel.deleteOne({ _id: req.body.id }, function(err, data) {
+        ClassModel.findOneAndUpdate({ _id: req.body.id }, { fileLink: "", uploadDate: "" }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
