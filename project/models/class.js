@@ -66,6 +66,14 @@ const classSchema = new Schema({
             type: String,
             default: "Not Considered Implementation Yet"
         },
+        attend: {
+            type: String,
+            default: "None"
+        },
+        attendComment: {
+            type: String,
+            default: "None"
+        }
     }],
     extracurricularActivitiesContent: {
         type: String,

@@ -24,6 +24,7 @@
         <th>comment</th>
         <th>Student List</th>
         <th>Out Door Activity</th>
+        <th>Take attended</th>
         {{#each classInfor}}
         <tr id="{{_id}}">
             <td>{{className}}</td>
@@ -54,9 +55,25 @@
                 <button onclick="openSubmitProposal('{{_id}}')">Upload proposal</button>
                 {{/if}}
             </td>
+            <td>
+                <button onclick="attendedOutDoor('{{_id}}')">attendedOutDoor </button>
+                <button onclick="attended('{{_id}}')">attended </button>
+            </td>
         </tr>
         {{/each}}
     </table>
+    <table class='attendedOutDoor' border='solid'>
+        <thead>
+            <tr>
+                <th>username</th>
+                <th>note</th>
+                <th>atended</th>
+            </tr>
+        </thead>
+        <tbody class='attendedOutDoorBody'></tbody>
+        <button onclick='$(".attendedOutDoorBody").html("")'>Close</button>
+    </table>
+
     <div class="inner" style="display:none">
         <div class="option"></div>
         <table border='solid'>
@@ -156,12 +173,7 @@
         </table>
     </div>
 
-    <div class='updateOutDoor' style='display:none;'>
-        <p class="updateProposalID"></p>
-        <input type='file' class='updateProposal'>
-        <button onclick="updateProposal()">Submit file</button>
-        <button id="closeUpdateOutdoor">&times;</button>
-    </div>
+
 </body>
 <script src=" /allClassTeacher.js"></script>
 

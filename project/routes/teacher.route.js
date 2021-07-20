@@ -34,4 +34,9 @@ teacherRouter.get('/connectToChat', teacherController.connectToChat)
 teacherRouter.get('/chatConversation', teacherController.chatConversation)
 
 
+//takeAttend
+teacherRouter.get('/attendedOutDoor', teacherController.attendedOutDoor)
+teacherRouter.post('/takeAttendOutDoor', teacherController.takeAttendOutDoor)
+
+
 module.exports = teacherRouter

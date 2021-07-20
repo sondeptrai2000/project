@@ -291,3 +291,59 @@ function closeStudentList() {
     click = 0;
     $(".inner").hide();
 }
+
+function attendedOutDoor(id) {
+    $.ajax({
+        url: '/teacher/attendedOutDoor',
+        method: 'get',
+        dataType: 'json',
+        data: { id: id },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $(".attendedOutDoorBody").html("")
+                $.each(response.data, function(index, data) {
+                    $.each(data.StudentIDoutdoor, function(index, StudentIDoutdoor) {
+                        $(".attendedOutDoorBody").append("<tr><th><img src='" + StudentIDoutdoor.ID.avatar + "' style='hieght:100px;width:100px'></br>" + StudentIDoutdoor.ID.username + "</th><th><input type='text' value='" + StudentIDoutdoor.attendComment + "' class='outDoorComment" + data._id + "'></th><th><select class='outDoorAttend" + data._id + "' id ='" + StudentIDoutdoor.ID._id + "'><option value='attended'>attended </option><option value='absent'>absent</option><option value='None'>none</option></select></th></tr>")
+                        $('#' + StudentIDoutdoor.ID._id + ' option:selected').removeAttr('selected');
+                        $('#' + StudentIDoutdoor.ID._id + ' option[value="' + StudentIDoutdoor.attend + '"]').attr('selected', 'selected');
+                    });
+                    $(".attendedOutDoorBody").append("<button onclick=takeAttendOutDoor('" + data._id + "')>Submit</button>")
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+
+function takeAttendOutDoor(id) {
+    var outDoorAttend = []
+    var outDoorComment = []
+    $(".outDoorAttend" + id).each(function() {
+        outDoorAttend.push($(this).val())
+    })
+    $(".outDoorComment" + id).each(function() {
+        outDoorComment.push($(this).val())
+    })
+    var formData = {
+        outDoorAttend: outDoorAttend,
+        outDoorComment: outDoorComment,
+        id: id,
+    }
+    $.ajax({
+        url: '/teacher/takeAttendOutDoor',
+        method: 'post',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                alert('ok');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}

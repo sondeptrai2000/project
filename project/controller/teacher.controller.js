@@ -55,11 +55,45 @@ class teacherController {
     allClass(req, res) {
         let token = req.cookies.token
         let decodeAccount = jwt.verify(token, 'minhson')
-        ClassModel.find({ teacherID: decodeAccount }).lean().exec((err, classInfor) => {
+        ClassModel.find({ teacherID: decodeAccount }, { StudentIDoutdoor: 0 }).lean().exec((err, classInfor) => {
             res.render('teacher/allClass', { classInfor })
         })
     }
 
+    attendedOutDoor(req, res) {
+        ClassModel.find({ _id: req.query.id }, { StudentIDoutdoor: 1 }).populate({ path: "StudentIDoutdoor.ID", select: "username avatar" }).lean().exec((err, data) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
+    }
+
+    takeAttendOutDoor(req, res) {
+        console.log(req.body.id)
+        console.log(req.body.outDoorAttend)
+        console.log(req.body.outDoorComment)
+            // ClassModel.findOneAndUpdate({ _id: req.body.id }, {
+            //         $set: {
+            //             StudentIDoutdoor: {
+            //                 FeedBackStudent: {
+            //                     $each: req.body.outDoorComment
+            //                 },
+            //                 attend: {
+            //                     $each: req.body.outDoorAttend
+            //                 }
+            //             }
+            //         }
+            //     },
+            //     function(err, data) {
+            //         if (err) {
+            //             res.json({ msg: 'error' });
+            //         } else {
+            //             res.json({ msg: 'success', data: data });
+            //         }
+            //     })
+    }
 
 
 
