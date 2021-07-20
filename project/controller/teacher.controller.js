@@ -71,28 +71,17 @@ class teacherController {
     }
 
     takeAttendOutDoor(req, res) {
-        console.log(req.body.id)
-        console.log(req.body.outDoorAttend)
-        console.log(req.body.outDoorComment)
-            // ClassModel.findOneAndUpdate({ _id: req.body.id }, {
-            //         $set: {
-            //             StudentIDoutdoor: {
-            //                 FeedBackStudent: {
-            //                     $each: req.body.outDoorComment
-            //                 },
-            //                 attend: {
-            //                     $each: req.body.outDoorAttend
-            //                 }
-            //             }
-            //         }
-            //     },
-            //     function(err, data) {
-            //         if (err) {
-            //             res.json({ msg: 'error' });
-            //         } else {
-            //             res.json({ msg: 'success', data: data });
-            //         }
-            //     })
+        ClassModel.findOneAndUpdate({ _id: req.body.id }, {
+            $set: {
+                StudentIDoutdoor: req.body.atended
+            }
+        }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
     }
 
 

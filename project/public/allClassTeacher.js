@@ -291,6 +291,7 @@ function closeStudentList() {
     click = 0;
     $(".inner").hide();
 }
+var studentlistOutDoor = []
 
 function attendedOutDoor(id) {
     $.ajax({
@@ -302,7 +303,9 @@ function attendedOutDoor(id) {
             if (response.msg == 'success') {
                 $(".attendedOutDoorBody").html("")
                 $.each(response.data, function(index, data) {
+                    console.log(data)
                     $.each(data.StudentIDoutdoor, function(index, StudentIDoutdoor) {
+                        studentlistOutDoor.push(StudentIDoutdoor.ID._id)
                         $(".attendedOutDoorBody").append("<tr><th><img src='" + StudentIDoutdoor.ID.avatar + "' style='hieght:100px;width:100px'></br>" + StudentIDoutdoor.ID.username + "</th><th><input type='text' value='" + StudentIDoutdoor.attendComment + "' class='outDoorComment" + data._id + "'></th><th><select class='outDoorAttend" + data._id + "' id ='" + StudentIDoutdoor.ID._id + "'><option value='attended'>attended </option><option value='absent'>absent</option><option value='None'>none</option></select></th></tr>")
                         $('#' + StudentIDoutdoor.ID._id + ' option:selected').removeAttr('selected');
                         $('#' + StudentIDoutdoor.ID._id + ' option[value="' + StudentIDoutdoor.attend + '"]').attr('selected', 'selected');
@@ -327,10 +330,13 @@ function takeAttendOutDoor(id) {
     $(".outDoorComment" + id).each(function() {
         outDoorComment.push($(this).val())
     })
+    var atended = []
+    for (let a = 0; a < studentlistOutDoor.length; a++) {
+        atended.push({ "ID": studentlistOutDoor[a], "attend": outDoorAttend[a], "attendComment": outDoorComment[a] })
+    }
     var formData = {
-        outDoorAttend: outDoorAttend,
-        outDoorComment: outDoorComment,
         id: id,
+        atended: atended,
     }
     $.ajax({
         url: '/teacher/takeAttendOutDoor',
