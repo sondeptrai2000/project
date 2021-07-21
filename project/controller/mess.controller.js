@@ -104,8 +104,6 @@ class messtController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                var lol = new Date
-                console.log("lấy cuộc hội thoại" + lol)
                 res.json({ msg: 'success', data });
             }
         })
