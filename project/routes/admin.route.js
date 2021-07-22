@@ -53,5 +53,8 @@ adminRouter.post('/doUpdateEvent', adminController.doUpdateEvent)
 adminRouter.get('/allEventProposal', adminController.allEventProposal)
 adminRouter.post('/dorateEventProposal', adminController.dorateEventProposal)
 
+//Thông tin tư vấn
+adminRouter.get('/consultingAll', adminController.consultingAll)
+
 
 module.exports = adminRouter

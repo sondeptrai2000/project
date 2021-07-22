@@ -3,7 +3,7 @@ const AccountModel = require('../models/account');
 const eventModel = require('../models/event');
 const studyRouteModel = require('../models/studyRoute');
 const ClassModel = require('../models/class');
-
+const consultingInformationModel = require('../models/consultingInformation');
 const extracurricularActivitiesModel = require('../models/extracurricularActivities');
 
 var path = require('path');
@@ -527,6 +527,18 @@ class adminController {
             }
         })
     }
+
+    consultingAll(req, res) {
+        var month = req.query.month
+        consultingInformationModel.find({ signTime: { $gt: req.query.start, $lt: req.query.end } }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data, month });
+            }
+        })
+    }
+
 
 }
 module.exports = new adminController

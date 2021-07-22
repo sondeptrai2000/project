@@ -10,7 +10,7 @@ mongoose.connect(url, {
 function dateNow() {
     var date = new Date()
     var month = date.getMonth() + 1
-    var lol = date.getFullYear() + "-" + month + "-" + date.getDate()
+    var lol = date.getFullYear() + "-" + month.toString().padStart(2, "0") + "-" + date.getDate().toString().padStart(2, "0")
     return lol
 }
 const Schema = mongoose.Schema;

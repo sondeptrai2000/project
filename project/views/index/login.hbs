@@ -3,6 +3,7 @@
 
 <head>
   <script src="/jquery/jquery.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script>
 
   <style>
     * {
@@ -214,6 +215,8 @@
 
   </table>
   <article>
+    <button onclick="ExportData()">ExportData</button>
+
     <h1>đăng nhập</h1>
     <form action="/account/dologin" method="post">
       <p>Username</p>
@@ -252,12 +255,23 @@
   </div>
 
 
-
 </body>
 
 
 <script>
-
+  function ExportData() {
+    var filename = 'reports.xlsx';
+    data = [
+      { "Market": "IN", "New Arrivals": "6", "Upcoming Appointments": "2", "Pending - 1st Attempt": "4"},
+  { "Market": "KS/MO", "New Arrivals": "4", "Upcoming Appointments": "4", "Pending - 1st Attempt": "2" },
+  { "Market": "KS/MO", "New Arrivals": "4", "Upcoming Appointments": "4","Pending - 1st Attempt": "2" },
+  { "Market": "KS/MO", "New Arrivals": "4", "Upcoming Appointments": "4", "Pending - 1st Attempt": "2" }
+  ]
+  var ws = XLSX.utils.json_to_sheet(data);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "People");
+  XLSX.writeFile(wb, filename);
+     }
   function consulting() {
     formData = {
       name: $("#consultingName").val(),
@@ -271,7 +285,7 @@
       url: '/consulting',
       method: 'post',
       dataType: 'json',
-      data:formData,
+      data: formData,
       success: function (response) {
         if (response.msg == 'success') {
           alert(' success');

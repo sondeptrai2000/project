@@ -11,14 +11,14 @@ class indexController {
     }
 
     aboutus(req, res) {
-        // consultingInformationModel.find({}, function(err, data) {
-        //         if (err) {
-        //             res.json({ msg: 'error' });
-        //         } else {
-        //             res.json(data);
-        //         }
-        //     })
-        res.json('Trang thông tin trung tâm')
+        consultingInformationModel.find({}, function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json(data);
+                }
+            })
+            // res.json('Trang thông tin trung tâm')
     }
 
     consulting(req, res) {
