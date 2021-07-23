@@ -8,79 +8,58 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 
 </head>
+{{!-- $('header').css('background-color', 'rgba(209, 189, 189, 0.4)') --}}
 
 <body>
   <header>
-    <div id="menu">
-      <ul>
-        <li><a href="#">Trang chủ</a></li>
-        <li><a href="#">Thông tin khóa học</a></li>
-        <li><a href="/aboutus">Về chúng tôi</a></li>
-        <li><a onclick="$('#consulting').fadeIn(1000);">Đăng ký tư vấn</a></li>
-        <li><a onclick="$('#loginForm').fadeIn(1000);">Đăng nhập</a></li>
-      </ul>
-    </div>
+    <ul>
+      <li><a href="#">Home page</a></li>
+      <li><a href="#">About Course</a></li>
+      <li><a href="/aboutus">About Us</a></li>
+      <li><a onclick="$('#consulting').fadeIn(1000);">Consultation</a></li>
+      <li><a onclick="$('#loginForm').fadeIn(1000);">Log In</a></li>
+    </ul>
   </header>
-  <table id='consulting' border="solid" style="display:none;">
-    <tr>
-      <th>Điền thông tin tại đây</th>
-    </tr>
-    <tr>
-      <th>Name:</th>
-      <th><input type='text' id='consultingName'></th>
-    </tr>
-    <tr>
-      <th>Email:</th>
-      <th><input type='text' id='consultingEmail'></th>
-    </tr>
-    <tr>
-      <th>Phone:</th>
-      <th><input type='text' id='consultingPhone'></th>
-    </tr>
-    <tr>
-      <th>Purpose:</th>
-      <th><input type='text' id='consultingPurpose'></th>
-    </tr>
-    <tr>
-      <th>What time of day consultation?:</th>
-      <th><input type='time' id='consultingTime'></th>
-    </tr>
-    <tr>
-      <th>Consulting via:</th>
-      <th>
-        <select id="consultingVia">
-          <option value="email">Email</option>
-          <option value="phone">Phone</option>
-        </select>
-      </th>
-    </tr>
-    <tr>
-      <th><button onclick="consulting()">submit</button></th>
-      <th><button onclick="$('#consulting').fadeOut(1000);">CLose</button></th>
-    </tr>
 
-  </table>
-  <div id="loginForm">
-    <p>Đăng nhập</p>
-    <hr style="  box-shadow: 0 10px 10px -10px #8c8c8c inset;">
-    {{!-- <br action="/account/dologin" method="post"> --}}
-      {{!-- <p>Username:</p> --}}
+  <div id='consulting' border="solid">
+    <div id='consultingContent'>
+      <p>Điền thông tin tại đây</p>
+      <hr style="  box-shadow: 0 10px 10px -10px #8c8c8c inset;">
+      <input type="text" id='consultingName' placeholder="Your Name">
+      <input type="text" id='consultingEmail' placeholder="Your email">
+      <input type='text' id='consultingPhone' placeholder="Your phone">
+      <input type='text' id='consultingPurpose' placeholder="Ask for">
+      <p id='xx'>Consulting via:</p>
+      <select id="consultingVia" placeholder="Your email">
+        <option value="email">Email</option>
+        <option value="phone">Phone</option>
+      </select>
+      <div>
+        <button onclick="consulting()">submit</button>
+        <button onclick="$('#consulting').fadeOut(1000);">CLose</button></button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div id="loginForm" style="display: none;">
+    <div id="loginFormContent">
+      <p>Đăng nhập</p>
+      <hr style="  box-shadow: 0 10px 10px -10px #8c8c8c inset;">
       <input type="text" name="username" placeholder="Username">
-      {{!-- <p>Password:</p> --}}
-
       <input type="password" name="password" placeholder="Password">
       <div>
         <button>Log In</button>
-        <button onclick="$('#loginForm').fadeOut(1000);"><i class="fas fa-times fa-lg" ></i></button>
+        <button onclick="$('#loginForm').fadeOut(1000);"><i class="fas fa-times fa-lg"></i></button>
       </div>
-
-      {{!--
-    </form> --}}
-
+    </div>
   </div>
 
   <article>
-
+    Văn bản là một loại hình phương tiện để ghi nhận, lưu giữ và truyền đạt các thông tin từ chủ thể này sang chủ thể
+    khác bằng ký hiệu gọi là chữ viết. Nó gồm tập hợp các câu có tính trọn vẹn về nội dung, hoàn chỉnh về hình thức, có
+    tính liên kết chặt chẽ và hướng tới một mục tiêu giao tiếp nhất định.
   </article>
 
   <footer>Copyright &copy; 2016 dammio.com</footer>
@@ -114,6 +93,15 @@
 
 
 <script>
+
+  $(window).on('click', function (e) {
+    if ($(e.target).is('#loginForm')) {
+      $('#loginForm').fadeOut(500);
+    }
+     if ($(e.target).is('#consulting')) {
+      $('#consulting').fadeOut(500);
+    }
+  });
   function consulting() {
     formData = {
       name: $("#consultingName").val(),

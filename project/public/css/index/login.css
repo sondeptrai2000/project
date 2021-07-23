@@ -2,29 +2,64 @@
     box-sizing: border-box
 }
 
-h2 {
-    text-align: center;
+body {
+    height: auto;
+    width: 100%;
+}
+
+article {
+    margin-left: 170px;
+    border-left: 1px solid gray;
+    padding: 1em;
+    overflow: hidden;
+}
+
+nav {
+    float: right;
+    max-width: 160px;
+    margin: 0;
+    padding: 1em;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul a {
+    text-decoration: none;
 }
 
 #loginForm,
 #consulting {
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: rgb(215, 225, 230);
+    /* Fallback color */
+    background-color: rgba(209, 189, 189, 0.4);
+    /* Black w/ opacity */
+}
+
+#loginFormContent,
+#consultingContent {
     padding: 15px;
     border: lightblue 4px solid;
     box-shadow: 10px 10px 10px 10px lightblue;
     width: 30%;
     height: 100%;
-    z-index: 10;
     margin-left: 35%;
     border-radius: 30px;
 }
 
-#loginForm {
-    background: no-repeat url("https://img.pikbest.com/png-images/qiantu/cartoon-character-kid-studying-hard_2722904.png!c1024wm0/compress/true/progressive/true/format/webp/fw/1024");
-    background-size: contain;
+#loginFormContent,
+#consultingContent {
+    background: repeat url("https://img.pikbest.com/png-images/qiantu/cartoon-character-kid-studying-hard_2722904.png!c1024wm0/compress/true/progressive/true/format/webp/fw/1024");
+    background-size: 100%;
     padding: 10px;
 }
 
-#loginForm p {
+#loginFormContent p {
     padding-left: 5%;
     display: inline-block;
     /* background: rgba(139, 69, 110, 0.8); */
@@ -38,7 +73,7 @@ h2 {
     opacity: 0.8;
 }
 
-#loginForm input {
+#loginFormContent input {
     opacity: 0.8;
     width: 90%;
     height: 50px;
@@ -50,7 +85,7 @@ h2 {
     font-size: 22px;
 }
 
-#loginForm input::placeholder {
+#loginFormContent input::placeholder {
     opacity: 1;
     color: rgb(0, 0, 0);
     height: 30px;
@@ -58,17 +93,89 @@ h2 {
     padding-left: 5%;
 }
 
-#loginForm div {
+#loginFormContent div {
     width: 90%;
     height: 50px;
     padding: 0;
     padding-left: 20%;
 }
 
-#loginForm button {
+#loginFormContent button {
     width: 40%;
     height: 50px;
     border-radius: 30px;
+}
+
+#consultingContent p:nth-child(1) {
+    padding-left: 5%;
+    display: inline-block;
+    /* background: rgba(139, 69, 110, 0.8); */
+    font-family: "Fantasy";
+    color: black;
+    font-weight: bold;
+    font-size: 30px;
+    height: 40px;
+    margin: 0;
+    background-color: white;
+    opacity: 0.8;
+}
+
+#xx {
+    padding-left: 5%;
+    display: inline-block;
+    font-family: "Fantasy";
+    color: black;
+    font-weight: bold;
+    font-size: 20px;
+    height: 40px;
+    margin: 0;
+    background-color: white;
+    opacity: 0.8;
+}
+
+#consultingContent input {
+    opacity: 0.8;
+    width: 90%;
+    height: 50px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    font-family: "Fantasy";
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 22px;
+}
+
+#consultingContent input::placeholder {
+    opacity: 1;
+    color: rgb(0, 0, 0);
+    height: 30px;
+    padding: 0;
+    padding-left: 5%;
+}
+
+#consultingContent div {
+    width: 90%;
+    height: 50px;
+    padding: 0;
+    padding-left: 20%;
+}
+
+#consultingContent button {
+    width: 40%;
+    height: 50px;
+    border-radius: 30px;
+}
+
+#consultingContent select {
+    opacity: 0.8;
+    width: 49%;
+    height: 50px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    font-family: "Fantasy";
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 22px;
 }
 
 
@@ -154,68 +261,52 @@ body {
     height: 100%;
     width: 100%;
     margin: 0;
-    margin-block-start: -4mm;
+    padding: 10px;
 }
 
 header,
 footer {
+    border: blue solid;
     height: 50px;
     width: 100%;
     color: black;
     background-color: wheat;
     clear: left;
     text-align: center;
+    padding: 0;
+    margin: 0;
 }
 
-#menu ul {
+header ul {
+    margin: 0;
     overflow: hidden;
     list-style-type: none;
+    height: 100%;
+    width: auto;
     padding: 0;
+    font-size: 20px;
 }
 
-#menu li {
+header li {
+    padding: 0;
+    height: 100%;
     color: black;
     float: left;
-    width: 150px;
-    height: 50px;
-    line-height: 50px;
+    width: 190.5px;
 }
 
-#menu a {
+header a {
     display: block;
     text-decoration: none;
     color: black;
     width: 100%;
     height: 100%;
-    line-height: 100%;
-    padding-top: 15px;
+    text-align: center;
+    padding: 5%;
     border: 1px solid white;
 }
 
-#menu a:hover {
+header a:hover {
     background: #F1F1F1;
     color: #333;
-}
-
-article {
-    margin-left: 170px;
-    border-left: 1px solid gray;
-    padding: 1em;
-    overflow: hidden;
-}
-
-nav {
-    float: right;
-    max-width: 160px;
-    margin: 0;
-    padding: 1em;
-}
-
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-nav ul a {
-    text-decoration: none;
 }
