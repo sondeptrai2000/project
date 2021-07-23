@@ -1,0 +1,217 @@
+* {
+    box-sizing: border-box
+}
+
+h2 {
+    text-align: center;
+}
+
+#loginForm,
+#consulting {
+    padding: 15px;
+    border: lightblue 4px solid;
+    box-shadow: 10px 10px 10px 10px lightblue;
+    width: 30%;
+    height: 100%;
+    z-index: 10;
+    margin-left: 35%;
+    border-radius: 30px;
+}
+
+#loginForm {
+    background: no-repeat url("https://img.pikbest.com/png-images/qiantu/cartoon-character-kid-studying-hard_2722904.png!c1024wm0/compress/true/progressive/true/format/webp/fw/1024");
+    background-size: contain;
+    padding: 10px;
+}
+
+#loginForm p {
+    display: inline-block;
+    /* background: rgba(139, 69, 110, 0.8); */
+    font-family: "Fantasy";
+    color: rgb(30, 130, 148);
+    font-weight: bold;
+    font-size: 30px;
+    height: 40px;
+    margin: 0;
+    background-color: white;
+    opacity: 0.8;
+}
+
+#loginForm input {
+    opacity: 0.8;
+    width: 90%;
+    height: 50px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+}
+
+#loginForm input::placeholder {
+    opacity: 1;
+    font-family: "Fantasy";
+    color: rgb(30, 130, 148);
+    font-weight: bold;
+    font-size: 30px;
+    height: 30px;
+}
+
+#loginForm div {
+    width: 90%;
+    height: 50px;
+    padding: 0;
+    padding-left: 20%;
+}
+
+#loginForm button {
+    width: 40%;
+    height: 50px;
+    border-radius: 30px;
+}
+
+
+/* Slideshow container */
+
+.slideshow-container {
+    max-width: 500px;
+    position: relative;
+    margin: auto;
+}
+
+
+/* Ẩn các slider */
+
+.mySlides {
+    display: none;
+}
+
+
+/* Định dạng nội dung Caption */
+
+.text {
+    color: #f2f2f2;
+    font-size: 15px;
+    padding: 8px 12px;
+    position: absolute;
+    bottom: 8px;
+    width: 100%;
+    text-align: center;
+}
+
+
+/* định dạng các chấm chuyển đổi các slide */
+
+.dot {
+    cursor: pointer;
+    height: 13px;
+    width: 13px;
+    margin: 0 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+
+
+/* khi được hover, active đổi màu nền */
+
+.active,
+.dot:hover {
+    background-color: #717171;
+}
+
+
+/* Thêm hiệu ứng khi chuyển đổi các slide */
+
+.fade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 3s;
+    animation-name: fade;
+    animation-duration: 3s;
+}
+
+@-webkit-keyframes fade {
+    from {
+        opacity: .4
+    }
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: .4
+    }
+    to {
+        opacity: 1
+    }
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    margin-block-start: -4mm;
+}
+
+header,
+footer {
+    height: 50px;
+    width: 100%;
+    color: black;
+    background-color: wheat;
+    clear: left;
+    text-align: center;
+}
+
+#menu ul {
+    overflow: hidden;
+    list-style-type: none;
+    padding: 0;
+}
+
+#menu li {
+    color: black;
+    float: left;
+    width: 150px;
+    height: 50px;
+    line-height: 50px;
+}
+
+#menu a {
+    display: block;
+    text-decoration: none;
+    color: black;
+    width: 100%;
+    height: 100%;
+    line-height: 100%;
+    padding-top: 15px;
+    border: 1px solid white;
+}
+
+#menu a:hover {
+    background: #F1F1F1;
+    color: #333;
+}
+
+article {
+    margin-left: 170px;
+    border-left: 1px solid gray;
+    padding: 1em;
+    overflow: hidden;
+}
+
+nav {
+    float: right;
+    max-width: 160px;
+    margin: 0;
+    padding: 1em;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul a {
+    text-decoration: none;
+}

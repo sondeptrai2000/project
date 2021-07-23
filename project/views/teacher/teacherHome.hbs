@@ -3,6 +3,7 @@
 
 <head>
     <script src="/jquery/jquery.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 
     <style>
         #loading {
@@ -47,48 +48,80 @@
             border: #000000 solid 1px;
             margin: 5px;
         }
+
+        i {
+            font-size: 30px;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            margin: auto;
+            text-align: center;
+            font-family: arial;
+        }
+
+        .title {
+            color: grey;
+            font-size: 18px;
+        }
+
+        .content img {
+            height:150px;
+            border-radius: 100%;
+        }
+
+        .content button {
+            border: none;
+            outline: 0;
+            display: inline-block;
+            padding: 8px;
+            color: white;
+            background-color: #000;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+        }
+
+        a {
+            text-decoration: none;
+            font-size: 22px;
+            color: black;
+        }
+
+        button:hover,
+        a:hover {
+            opacity: 0.7;
+        }
     </style>
 </head>
 
 <body>
-    <p><a href='/account/homeTeacher'>Trang chủ Teacher</a></p>
-    <p><a onclick='teacherProfile()'>Teacher Profile</a></p>
-    <p><a href='/teacher/allClass'>Class</a></p>
-    <p><a onclick="allEvent()">Events</a></p>
-    <p><a href='/messenger/chatForm'>Teacher Messenge</a></p>
+    <div class="tr">
+        <div class="td" onclick="location.href='/account/homeTeacher';"><i class="fas fa-house-user"></i> Trang chủ
+            teacher</div>
+        <div class="td" onclick='teacherProfile()'><i class="fas fa-address-card"></i> teacherProfile </div>
+        <div class="td" onclick="location.href='/teacher/allClass'"><i class="fas fa-list-alt"></i> Class </div>
+        <div class="td" onclick="allEvent()"><i class="fas fa-list-alt"></i> allEvent</div>
+        <div class="td" onclick="location.href='/messenger/chatForm';"><i class="fas fa-comment-dots"></i>Teacher
+            Messenge</div>
+        <div class="td"><i class="fas fa-sign-out-alt"></i> Log Out</div>
+    </div>
 </body>
 <div class="content" style="text-align: center; display:none">
-    <h1>Marketing Coordinator profile</h1>
+    <h1>Teacher profile</h1>
     <table border="solid">
-        <tr>
-            <th onclick="closeProfile()">Close</th>
-        </tr>
-        <tr>
-            <th>Username</th>
-            <td id='usernameProfile'></td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td id='emailProfile'></td>
-        </tr>
-        <tr>
-            <th>classID</th>
-            <td id='classIDProfile'></td>
-        </tr>
-        <tr>
-            <th>Phone</th>
-            <td id='phoneProfile'></td>
-        </tr>
-        <tr>
-            <th>Birthday</th>
-            <td id='birthdayProfile'></td>
-        </tr>
-        <tr>
-            <th>Address</th>
-            <td id='addressProfile'></td>
-        </tr>
-        <td><a href="/coordinator/update{{_id}}">Update</a></td>
-        </tr>
+        <div class="card">
+            <button onclick="$('.content').fadeOut(1000);"><i class="fas fa-window-close"></i></button><img
+                id='avatarProfile' src="" >
+            <h1 id='usernameProfile'></h1>
+            <p class="title" id='emailProfile'></p>
+            <p id='phoneProfile'></p>
+            <p id='birthdayProfile'></p>
+            <p id='addressProfile'></p>
+            <p><button onclick="location.href='/coordinator/update{{_id}}';">Update</button></p>
+        </div>
     </table>
 </div>
 
@@ -100,16 +133,16 @@
 
 <div id="viewProposal"></div>
 <div class="allEvent" style="display: none;">
-        <div id="table1">
-        </div>
+    <div id="table1">
     </div>
+</div>
 
 
-    <div class="uploadEventProposal" style="display:none;">
-        <p id="uploadEventProposalID"></p>
-        <input type="file" id='myUploadProposal'>
-        <button onclick="doUploadEventProposal()">Submit</button>
-    </div>
+<div class="uploadEventProposal" style="display:none;">
+    <p id="uploadEventProposalID"></p>
+    <input type="file" id='myUploadProposal'>
+    <button onclick="doUploadEventProposal()">Submit</button>
+</div>
 <script src=" /teacherHome.js"></script>
 
 </html>

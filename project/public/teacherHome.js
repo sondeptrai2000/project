@@ -46,12 +46,12 @@ function teacherProfile() {
         success: function(response) {
             if (response.msg == 'success') {
                 $(".content").show();
+                $("#avatarProfile").attr("src", response.data.avatar);
                 $("#usernameProfile").html(response.data.username);
-                $("#emailProfile").html(response.data.email);
-                $("#classIDProfile").html(response.data.classID);
-                $("#phoneProfile").html(response.data.phone);
-                $("#birthdayProfile").html(response.data.birthday);
-                $("#addressProfile").html(response.data.address);
+                $("#emailProfile").html('<i class="fas fa-envelope-square"></i>' + response.data.email);
+                $("#phoneProfile").html('<i class="fas fa-phone-square-alt"></i>' + response.data.phone);
+                $("#birthdayProfile").html('<i class="fas fa-birthday-cake"></i>' + response.data.birthday);
+                $("#addressProfile").html('<i class="fas fa-map-marker-alt"></i>' + response.data.address);
             }
         },
         error: function(response) {
@@ -220,18 +220,18 @@ function allEvent() {
         dataType: 'json',
         success: function(response) {
             if (response.msg == 'success') {
-                $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td">fileLink</div><div class="td">status</div><div class="td">comment</div><div class="td" onclick="closeAllEvent()">&times;</div></div>')
+                $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td">fileLink</div><div class="td">status</div><div class="td">comment</div><div class="td" onclick="closeAllEvent()"><i class="fas fa-window-close"></i></div></div>')
                 var check = false;
                 $.each(response.data, function(index, data) {
                     $.each(data.proposals, function(index, proposals) {
                         if (proposals.teacherID == response.decodeAccount._id) {
-                            var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><a href="' + proposals.fileLink + '" target="_blank">Your Proposal</a></div><div class="td">' + proposals.status + '</div><div class="td">' + proposals.comment + '</div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '","' + proposals.fileLink + '")>Delete</button></div></div>'
+                            var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><a href="' + proposals.fileLink + '" target="_blank">Your Proposal</a></div><div class="td">' + proposals.status + '</div><div class="td">' + proposals.comment + '</div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")><i class="fas fa-edit"></i></button><button onclick = deleteProposalEvent("' + data._id + '","' + proposals.fileLink + '")><i class="fas fa-trash-alt"></i></button></div></div>'
                             $("#table1").append(content);
                             check = true;
                         }
                     })
                     if (check == false) {
-                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")>Update</button><button onclick = deleteProposalEvent("' + data._id + '")>Delete</button></div></div>'
+                        var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")><i class="fas fa-edit"></i></button><button onclick = deleteProposalEvent("' + data._id + '")><i class="fas fa-trash-alt"></i></button></div></div>'
                         $("#table1").append(content);
                     }
                 })
@@ -309,7 +309,7 @@ function closeuploadNewProposal() {
 }
 
 function view(base64) {
-    $('#viewProposal').append('<button onclick="cancelProposal()">&times;</button><iframe  src="' + base64 + '" height="350px" width="100%"></iframe>');
+    $('#viewProposal').append('<button onclick="cancelProposal()"><i class="fas fa-window-close"></i></button><iframe  src="' + base64 + '" height="350px" width="100%"></iframe>');
 }
 
 function cancelProposal() {

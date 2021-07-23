@@ -2,11 +2,16 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+
     <script src="/jquery/jquery.js"></script>
     {{!-- jsonToExcel --}}
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script>
 
     <style>
+        i {
+            font-size:30px;
+        }
         #loading {
             position: fixed;
             display: block;
@@ -58,14 +63,14 @@
 <body>
     <div>
         <div class="tr">
-            <div class="td" onclick="location.href='/admin';">Trang chủ admin</div>
-            <div class="td" onclick="location.href='/admin/createAccount';">Create account</div>
-            <div class="td" onclick="consultingAll('0')">consulting All</div>
-            <div class="td" onclick="allProposal()">allProposal</div>
-            <div class="td" onclick="allEvent()">allEvent</div>
-            <div class="td" onclick='$(".createEvent").toggle()'>createEvent</div>
-            <div class="td" onclick="location.href='/admin/dashboard';">Dashboard</div>
-            <div class="td">Log Out</div>
+            <div class="td" onclick="location.href='/admin';"><i class="fas fa-house-user"></i> Trang chủ admin</div>
+            <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i> Create account</div>
+            <div class="td" onclick="consultingAll('0')"><i class="fas fa-list-alt"></i> Consulting All</div>
+            <div class="td" onclick="allProposal()"><i class="fas fa-list-alt"></i> AllProposal</div>
+            <div class="td" onclick="allEvent()"><i class="fas fa-list-alt"></i> AllEvent</div>
+            <div class="td" onclick='$(".createEvent").toggle()'><i class="fas fa-calendar-plus"></i> Create Event</div>
+            <div class="td" onclick="location.href='/admin/dashboard';"><i class="fas fa-chart-line"></i> Dashboard</div>
+            <div class="td"><i class="fas fa-sign-out-alt"></i> Log Out</div>
         </div>
     </div>
 
@@ -93,7 +98,7 @@
                     </select>
                 </div>
                 <div class="td">sss</div>
-                <div class="td"><button onclick="$('.proposal').slideUp()">&times;</button></div>
+                <div class="td"><button onclick="$('.proposal').slideUp()"><i class="fas fa-times"></i></button></div>
             </div>
             <div class="tr">
                 <div class="td">Class Name</div>
@@ -107,7 +112,7 @@
         </div>
     </div>
     <div id="viewProposal" style="display:none;">
-        <button onclick="$('#viewProposalPart').html('');$('#viewProposal').hide()">&times;</button></br>
+        <button onclick="$('#viewProposalPart').html('');$('#viewProposal').hide()"><i class="fas fa-times"></i></button></br>
         <div id="viewProposalPart">
         </div>
     </div>
@@ -119,7 +124,7 @@
             <div class="td">eventAddress</div>
             <div class="td">eventAt</div>
             <div class="td">eventProposal</div>
-            <div class="td" onclick='$(".allEvent").hide()'>&times;</div>
+            <div class="td" onclick='$(".allEvent").hide()'><i class="fas fa-times"></i></div>
         </div>
     </div>
 
@@ -131,7 +136,7 @@
             <div class="td">Address: <input type="text" id='updateeventAddress'></div>
             <div class="td">At: <input type="date" id='updateeventAt'></div>
             <div class="td"><button onclick="doUpdateEvent()">Submit</button></div>
-            <div class="td" onclick='$(".updateEvent").hide()'>&times;</div>
+            <div class="td" onclick='$(".updateEvent").hide()'><i class="fas fa-times"></i></div>
         </div>
     </div>
 
@@ -142,7 +147,7 @@
             <div class="td">Address: <input type="text" id='eventAddress'></div>
             <div class="td">At: <input type="date" id='eventAt'></div>
             <div class="td"><button onclick="doCreateEvent()">Submit</button></div>
-            <div class="td"><button onclick='$(".createEvent").hide()'>&times;</button></div>
+            <div class="td"><button onclick='$(".createEvent").hide()'><i class="fas fa-times"></i></button></div>
         </div>
     </div>
     <div class="allEventProposal" style='display:none;'>
@@ -151,7 +156,7 @@
             <div class="td">Teacher Name</div>
             <div class="td">comment</div>
             <div class="td">status</div>
-            <div class="td" onclick='$(".allEventProposal").fadeOut(500);'>&times;</div>
+            <div class="td" onclick='$(".allEventProposal").fadeOut(500);'><i class="fas fa-times"></i></div>
         </div>
     </div>
 
@@ -170,16 +175,17 @@
     </div>
 
     <div class="consultingAll" style="display:none;">
-        <div class="tr">
+        <div class="tr" style="font-size:15px;font-weight: bolder;">
             <div class="td" id="consultingAllTile"></div>
             <div class="td">
                 Time: <input type="month" id="consultingFilterByMonth" onchange="consultingAll('1')">
             </div>
-            <div class="td" onclick='$(".consultingAll").hide()'>&times;</div>
+            <div class="td" id="downloadExcel"></div>
+            <div class="td" onclick='$(".consultingAll").hide()'><i class="fas fa-times"></i></div>
 
         </div>
-        <div class="tr">
-            <div class="td">name</div>
+        <div class="tr" style="font-size:15px;font-weight: bolder;">
+            <div class="td">Name</div>
             <div class="td">Email</div>
             <div class="td">phone</div>
             <div class="td">purpose</div>
@@ -187,7 +193,6 @@
             <div class="td">consultingVia</div>
         </div>
     </div>
-
 </body>
 <script>
     // CURD event
@@ -198,9 +203,10 @@
             dataType: 'json',
             success: function (response) {
                 if (response.msg == 'success') {
-                    $(".allEvent").html($(".allEvent .tr:nth-child(1)"));
+                    $(".allEvent .tr:not(:nth-child(1))").remove();
+                    // $(".allEvent").html($(".allEvent .tr:nth-child(1)"));
                     $.each(response.data, function (index, data) {
-                        var content = '<div class="tr" id="' + data._id + '"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = updateEvent("' + data._id + '")>Update</button><button onclick = deleteEvent("' + data._id + '")>Delete</button><button onclick = allEventProposal("' + data._id + '")>Proposal</button></div></div>'
+                        var content = '<div class="tr" id="' + data._id + '"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = updateEvent("' + data._id + '")><i class="fas fa-edit"></i></button><button onclick = deleteEvent("' + data._id + '")><i class="fas fa-trash-alt"></i></button><button onclick = allEventProposal("' + data._id + '")><i class="fas fa-clipboard-list"></i></button></div></div>'
                         $(".allEvent").append(content);
                     })
                     $(".allEvent").show()
@@ -317,10 +323,11 @@
             data: { id: id },
             success: function (response) {
                 if (response.msg == 'success') {
-                    $(".allEventProposal").html($(".allEventProposal .tr:nth-child(1)"));
+                    $(".allEventProposal .tr:not(:nth-child(1))").remove();
+                    //                    $(".allEventProposal").html($(".allEventProposal .tr:nth-child(1)"));
                     $.each(response.data, function (index, data) {
                         $.each(data.proposals, function (index, proposals) {
-                            var content = '<div class="tr" id="' + proposals._id + '"><div class="td"><a href="' + proposals.fileLink + '" target="_blank">Your Proposal</a></div><div class="td"><img src = "' + proposals.teacherID.avatar + '"style ="max-width:100px;max-height:100px"></br>' + proposals.teacherID.username + '</div><div class="td">' + proposals.comment + '</div><div class="td">' + proposals.status + '</div><div class="td"><button onclick = rateEventProposal("' + data._id + '","' + proposals._id + '")>Rate</button></div></div>'
+                            var content = '<div class="tr" id="' + proposals._id + '"><div class="td"><a href="' + proposals.fileLink + '" target="_blank"><i class="fas fa-link"></i>View proposal</a></div><div class="td"><img src = "' + proposals.teacherID.avatar + '"style ="max-width:100px;max-height:100px"></br>' + proposals.teacherID.username + '</div><div class="td">' + proposals.comment + '</div><div class="td">' + proposals.status + '</div><div class="td"><button onclick = rateEventProposal("' + data._id + '","' + proposals._id + '")>Rate</button></div></div>'
                             $(".allEventProposal").append(content);
                         })
                     })
@@ -338,16 +345,13 @@
 
     //rateEventProposal
     function rateEventProposal(id, proposalID) {
-        console.log(id)
-        console.log(proposalID)
         $("#idProposal").val(id)
         $("#IDlinkProposal").val(proposalID)
         var data = []
         $("#" + proposalID + " .td").each(function () {
             data.push($(this).text())
         })
-        console.log(data)
-        $("#fileEventProposalRate").attr("src", $(".tr" + proposalID + " .td a").attr('href'))
+        $("#fileEventProposalRate").attr("src", $("#" + proposalID + " .td a").attr('href'))
         $("#statusRateEventProposal").val(data[2])
         $("#commentRateEventProposal").val(data[3])
         $(".rateEventProposal").show()
@@ -477,7 +481,7 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     jsonToExcel = response.data
-                    $(".consultingAll").html($(".consultingAll .tr:nth-child(1)"));
+                    $(".consultingAll .tr:not(:nth-child(1)):not(:nth-child(2))").remove();
                     $("#consultingAllTile").text("Danh sách đăng ký tư vấn tháng " + response.month)
                     if (response.data.length == 0) {
                         $(".consultingAll").append("<div class='tr' ><div class='td'>Không có dữ liệu</div></div>")
@@ -485,7 +489,7 @@
                     $.each(response.data, function (index, data) {
                         $(".consultingAll").append("<div class='tr' ><div class='td'>" + data.name + "</div><div class='td'>" + data.Email + "</div><div class='td'> " + data.phone + "</div><div class='td' >" + data.purpose + "</div><div class='td'>" + data.consultingTime + "</div><div class='td'>" + data.consultingVia + "</div></div>")
                     })
-                    $(".consultingAll").append("<div class='tr'><button onclick=exportExcel('" + response.month + "')>xuất file excel</button></div>")
+                    $("#downloadExcel").html("Xuất file excel: <button onclick=exportExcel('" + response.month + "')><i class='fas fa-download' style='color: black;'></i></button>")
                     $(".consultingAll").fadeIn(500);
                 }
                 if (response.msg == 'error') {
