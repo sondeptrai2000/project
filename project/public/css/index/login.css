@@ -25,10 +25,11 @@ h2 {
 }
 
 #loginForm p {
+    padding-left: 5%;
     display: inline-block;
     /* background: rgba(139, 69, 110, 0.8); */
     font-family: "Fantasy";
-    color: rgb(30, 130, 148);
+    color: black;
     font-weight: bold;
     font-size: 30px;
     height: 40px;
@@ -43,15 +44,18 @@ h2 {
     height: 50px;
     border-radius: 30px;
     margin-bottom: 20px;
+    font-family: "Fantasy";
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 22px;
 }
 
 #loginForm input::placeholder {
     opacity: 1;
-    font-family: "Fantasy";
-    color: rgb(30, 130, 148);
-    font-weight: bold;
-    font-size: 30px;
+    color: rgb(0, 0, 0);
     height: 30px;
+    padding: 0;
+    padding-left: 5%;
 }
 
 #loginForm div {
