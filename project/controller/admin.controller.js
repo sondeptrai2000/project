@@ -6,31 +6,27 @@ const ClassModel = require('../models/class');
 const consultingInformationModel = require('../models/consultingInformation');
 const extracurricularActivitiesModel = require('../models/extracurricularActivities');
 
+const fs = require("fs")
+const readline = require("readline")
+const { google } = require("googleapis")
 var path = require('path');
 
-const { google } = require("googleapis")
-const CLIENT_ID = "279772268126-bdo0c5g58jriuo7l057rdphld66t8cmj.apps.googleusercontent.com"
-const CLIENT_SECRET = "4FHV8fvNK4ZLyfPBzi5SDs7a"
-const REDIRECT_URI = "https://developers.google.com/oauthplayground"
-const REFRESH_TOKEN = "1//043w8o2ZNH_JLCgYIARAAGAQSNwF-L9Ir404wfjaf4sSfYkOTKrpnukXaMXYBzSSGi3CxQk9FrYTo9jBIZJxKO6VDdQmxnHzkLAI"
+//setup kết nối tới ggdrive
+const KEYFILEPATH = path.join(__dirname, 'service_account.json')
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
-const oauth2Client = new google.auth.OAuth2(
-    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+const auth = new google.auth.GoogleAuth(
+    opts = {
+        keyFile: KEYFILEPATH,
+        scopes: SCOPES
+    }
 );
+const driveService = google.drive(options = { version: 'v3', auth });
 
-oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
-
-const drive = google.drive({
-    version: 'v3',
-    auth: oauth2Client
-})
-
-const filePath = path.join(__dirname, 'slide-1.jpg')
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const { data } = require('jquery');
 const saltRounds = 10;
-var fs = require('fs')
 class adminController {
     adminHome(req, res) {
         res.render('admin/adminHome')
@@ -99,7 +95,6 @@ class adminController {
     }
 
     docreateRoute(req, res) {
-
         var stageContent = req.body.stageContent
         var route = req.body.route
         var testthu = route.toString();
@@ -141,19 +136,17 @@ class adminController {
         var buff = new Buffer(temp);
         var base64data = buff.toString('base64');
         try {
-            const response = await drive.files.create({
-                requestBody: {
-                    name: req.body.filename, //đặt tên
-                    parents: ['11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+            var responese = await driveService.files.create(param = {
+                resource: {
+                    "name": req.body.filename,
+                    "parents": ["11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1"]
                 },
                 media: {
-                    body: fs.createReadStream(path),
+                    body: fs.createReadStream(path = path)
                 },
-            });
-
-            // console.log(response.data);
-            await drive.permissions.create({
-                fileId: response.data.id,
+            })
+            await driveService.permissions.create({
+                fileId: responese.data.id,
                 requestBody: {
                     role: 'reader',
                     type: 'anyone',
@@ -163,11 +156,11 @@ class adminController {
             console.log(error.message);
         }
         try {
-            let { username, password, email, phone, address, birthday } = req.body
-            let role = req.body.role
-            let stage = req.body.stage
-            let routeName = req.body.routeName
-            let aim = req.body.aim
+            var { username, password, email, phone, address, birthday } = req.body
+            var role = req.body.role
+            var stage = req.body.stage
+            var routeName = req.body.routeName
+            var aim = req.body.aim
             if (role === "guardian" || role === "teacher") {
                 stage = "none"
                 routeName = "none"
@@ -226,16 +219,16 @@ class adminController {
 
     //làm cuối
     doeditAccount(req, res) {
-        let role = req.body.role
-        let stage = req.body.stage
-        let routeName = req.body.routeName
-        let aim = req.body.aim
+        var role = req.body.role
+        var stage = req.body.stage
+        var routeName = req.body.routeName
+        var aim = req.body.aim
         if (role === "guardian" || role === "teacher") {
             stage = "none"
             routeName = "none"
             aim = "none"
         }
-        let password = req.body.password
+        var password = req.body.password
         const salt = bcrypt.genSaltSync(saltRounds);
         const hash = bcrypt.hashSync(password, salt);
         var update = {
@@ -275,7 +268,7 @@ class adminController {
 
     docreateClass(req, res) {
         try {
-            let getStudentID = req.body.hobby
+            var getStudentID = req.body.hobby
             var studentID = []
             if (Array.isArray(getStudentID) == false) {
                 studentID.push(req.body.hobby)
@@ -370,7 +363,7 @@ class adminController {
     }
 
     rateProppsal(req, res) {
-        let { _id, status, comment } = req.body
+        var { _id, status, comment } = req.body
         ClassModel.findOneAndUpdate({ _id: _id }, { status, comment }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
@@ -390,7 +383,7 @@ class adminController {
             'name': 'Invoices',
             'mimeType': 'application/vnd.google-apps.folder'
         };
-        var folder = drive.files.create({
+        var folder = driveService.files.create({
             resource: fileMetadata,
             fields: 'id'
         }, function(err, file) {
@@ -405,43 +398,49 @@ class adminController {
             // res.json('Trang xem thông tin dashboard')
     }
 
-    createEvent(req, res) {
+    async createEvent(req, res) {
         var eventAt = new Date(req.body.eventAt);
         eventAt.setDate(eventAt.getDate() - 4);
-        let date = eventAt.getDate().toString().padStart(2, "0");;
-        let month = (eventAt.getMonth() + 1).toString().padStart(2, "0");
+        var date = eventAt.getDate().toString().padStart(2, "0");;
+        var month = (eventAt.getMonth() + 1).toString().padStart(2, "0");
         eventAt = eventAt.getFullYear() + "-" + month + "-" + date
         if (eventAt < req.body.eventProposal) {
             res.json({ msg: 'hạn nộp đề xuất phải sớm hơn sự kiện 4 ngày' });
         } else {
-            var fileMetadata = {
-                'name': req.body.eventName,
-                'mimeType': 'application/vnd.google-apps.folder',
-                parents: ['1qQ47mPS-x1lG7SzdCw_XrHzime9wpmkg'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
-            };
-            var folder = drive.files.create({
-                resource: fileMetadata,
-                fields: 'id'
-            }, function(err, file) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    eventModel.create({
-                        eventName: req.body.eventName,
-                        eventContent: req.body.eventContent,
-                        eventAddress: req.body.eventAddress,
-                        eventAt: req.body.eventAt,
-                        eventProposal: eventAt,
-                        folderID: file.data.id,
-                    }, function(err, data) {
-                        if (err) {
-                            res.json({ msg: 'error' });
-                        } else {
-                            res.json({ msg: 'success' });
-                        }
-                    })
-                }
-            });
+            try {
+                var fileMetadata = {
+                    'name': req.body.eventName,
+                    'mimeType': 'application/vnd.google-apps.folder',
+                    'parents': ['1qQ47mPS-x1lG7SzdCw_XrHzime9wpmkg'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+                };
+                var folder = await driveService.files.create({
+                    resource: fileMetadata,
+                    fields: 'id'
+                }, function(err, file) {
+                    if (err) {
+                        console.log("ádfv")
+                        res.json({ msg: 'error' });
+                    } else {
+                        eventModel.create({
+                            eventName: req.body.eventName,
+                            eventContent: req.body.eventContent,
+                            eventAddress: req.body.eventAddress,
+                            eventAt: req.body.eventAt,
+                            eventProposal: eventAt,
+                            folderID: file.data.id,
+                        }, function(err, data) {
+                            if (err) {
+                                res.json({ msg: 'error' });
+                            } else {
+                                res.json({ msg: 'success' });
+                            }
+                        })
+                    }
+                });
+            } catch (err) {
+                res.json({ msg: 'error' });
+            }
+
         }
     }
 
@@ -463,9 +462,9 @@ class adminController {
             res.json({ msg: 'error' });
         }
         try {
-            const response = await drive.files.delete({
+            var responese = await driveService.files.delete({
                 fileId: folderID.folderID,
-            });
+            })
         } catch (error) {
             console.log(error.message);
         }
@@ -481,8 +480,8 @@ class adminController {
     doUpdateEvent(req, res) {
         var eventAt = new Date(req.body.eventAt);
         eventAt.setDate(eventAt.getDate() - 4);
-        let date = eventAt.getDate().toString().padStart(2, "0");;
-        let month = (eventAt.getMonth() + 1).toString().padStart(2, "0");
+        var date = eventAt.getDate().toString().padStart(2, "0");;
+        var month = (eventAt.getMonth() + 1).toString().padStart(2, "0");
         eventAt = eventAt.getFullYear() + "-" + month + "-" + date
         if (eventAt < req.body.eventProposal) {
             res.json({ msg: 'hạn nộp đề xuất phải sớm hơn sự kiện 4 ngày' });

@@ -2,31 +2,27 @@ const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const extracurricularActivitiesModel = require('../models/extracurricularActivities');
 const eventModel = require('../models/event');
-var fs = require('fs')
 
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
 
 
-const { google } = require("googleapis");
-const classModel = require('../models/class');
-const CLIENT_ID = "279772268126-bdo0c5g58jriuo7l057rdphld66t8cmj.apps.googleusercontent.com"
-const CLIENT_SECRET = "4FHV8fvNK4ZLyfPBzi5SDs7a"
-const REDIRECT_URI = "https://developers.google.com/oauthplayground"
-const REFRESH_TOKEN = "1//043w8o2ZNH_JLCgYIARAAGAQSNwF-L9Ir404wfjaf4sSfYkOTKrpnukXaMXYBzSSGi3CxQk9FrYTo9jBIZJxKO6VDdQmxnHzkLAI"
+const fs = require("fs")
+const readline = require("readline")
+const { google } = require("googleapis")
+var path = require('path');
 
-const oauth2Client = new google.auth.OAuth2(
-    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+//setup kết nối tới ggdrive
+const KEYFILEPATH = path.join(__dirname, 'service_account.json')
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
+
+const auth = new google.auth.GoogleAuth(
+    opts = {
+        keyFile: KEYFILEPATH,
+        scopes: SCOPES
+    }
 );
-
-oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
-
-
-
-const drive = google.drive({
-    version: 'v3',
-    auth: oauth2Client
-})
+const driveService = google.drive(options = { version: 'v3', auth });
 
 function dateNow() {
     var date = new Date()
@@ -41,8 +37,8 @@ class teacherController {
     }
 
     teacherProfile(req, res) {
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
         AccountModel.findOne({ _id: decodeAccount }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
@@ -53,8 +49,8 @@ class teacherController {
     }
 
     allClass(req, res) {
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
         ClassModel.find({ teacherID: decodeAccount }, { StudentIDoutdoor: 0 }).lean().exec((err, classInfor) => {
             res.render('teacher/allClass', { classInfor })
         })
@@ -113,7 +109,7 @@ class teacherController {
 
     doaddStudentToClass(req, res) {
         var classID = req.body.classID
-        let studentID = req.body.studentlist
+        var studentID = req.body.studentlist
         AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID } }, function(err, data) {
             if (err) {
                 console.log("lỗi trong quá trình thêm lớp vào thông tin học sinh")
@@ -198,26 +194,24 @@ class teacherController {
         var buff = new Buffer(temp);
         var base64data = buff.toString('base64');
         try {
-            const response = await drive.files.create({
-                requestBody: {
-                    name: req.body.filename, //đặt tên
-                    parents: ['1evgjhxMA8DujwwkvMpaXIAqA_GigLJes'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+            var responese = await driveService.files.create(param = {
+                resource: {
+                    "name": req.body.filename,
+                    "parents": ["1evgjhxMA8DujwwkvMpaXIAqA_GigLJes"]
                 },
                 media: {
-                    body: fs.createReadStream(path),
+                    body: fs.createReadStream(path = path)
                 },
-            });
-            fs.unlinkSync(path)
-                // console.log(response.data.id);
-            await drive.permissions.create({
-                fileId: response.data.id,
+            })
+            await driveService.permissions.create({
+                fileId: responese.data.id,
                 requestBody: {
                     role: 'reader',
                     type: 'anyone',
                 },
             });
+            fs.unlinkSync(path)
             var fileLink = "https://docs.google.com/file/d/" + response.data.id + "/preview"
-
         } catch (error) {
             console.log(error.message);
         }
@@ -238,9 +232,9 @@ class teacherController {
                 } else {
                     var idfile = data.fileLink.replace("https://docs.google.com/file/d/", "")
                     idfile = idfile.replace("/preview", "")
-                    const response = drive.files.delete({
+                    var responese = driveService.files.delete({
                         fileId: idfile,
-                    });
+                    })
                 }
             })
 
@@ -258,8 +252,8 @@ class teacherController {
     }
 
     allEvent(req, res) {
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
         eventModel.find({}).lean().sort({ eventAt: -1 }).exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
@@ -285,7 +279,7 @@ class teacherController {
             res.json({ msg: 'error' });
         }
         try {
-            const response = await drive.files.create({
+            const response = await driveService.files.create({
                 requestBody: {
                     name: req.body.filename, //đặt tên
                     parents: [folderID.folderID] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
@@ -295,7 +289,7 @@ class teacherController {
                 },
             });
             // console.log(response.data.id);
-            await drive.permissions.create({
+            await driveService.permissions.create({
                 fileId: response.data.id,
                 requestBody: {
                     role: 'reader',
@@ -306,8 +300,8 @@ class teacherController {
         } catch (error) {
             console.log(error.message);
         }
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
         eventModel.findOneAndUpdate({ _id: req.body._id }, {
             $push: {
                 proposals: {
@@ -330,15 +324,15 @@ class teacherController {
         fileLink = fileLink.replace("https://docs.google.com/file/d/", "")
         fileLink = fileLink.replace("/preview", "")
         try {
-            const response = await drive.files.delete({
+            var responese = await driveService.files.delete({
                 fileId: fileLink,
-            });
-            console.log(response.data, response.status);
+            })
+            console.log(responese.data, responese.status);
         } catch (error) {
             console.log(error.message);
         }
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
         eventModel.findOneAndUpdate({ _id: req.body.id }, {
             $pull: {
                 proposals: {
