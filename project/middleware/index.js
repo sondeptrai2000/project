@@ -3,92 +3,87 @@
 let AccountModel = require('../models/account');
 var jwt = require('jsonwebtoken');
 
-let checkLogin = async (req,res,next)=>{
+let checkLogin = async(req, res, next) => {
     try {
         let user = req.body.username;
         await AccountModel.findOne({
-            username:user
-        }).then(user=>{
-            if(!user){
-                var message= "Username or password is invalid"
-                res.render('index/login',{message:message}) 
-            }else{
+            username: user
+        }).then(user => {
+            if (!user) {
+                res.json({ msg: 'invalid_Info', message: "Username or password is invalid" });
+            } else {
                 req.user = user
                 next();
             }
-        }) 
+        })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({
-            message : "loi sever",
-            status: 500,
-            error : true
-        })
+        res.json({ message: "error" })
     }
 }
 
-let getUserById = function getUserById(id){
-    return AccountModel.findOne({_id:id})
+let getUserById = function getUserById(id) {
+    return AccountModel.findOne({ _id: id })
 }
-let checkAuth = async (req,res,next)=>{
+let checkAuth = async(req, res, next) => {
     try {
         var token = req.cookies.token || req.body.token
-        let decodeAccount = jwt.verify(token,'minh')
+        let decodeAccount = jwt.verify(token, 'minh')
         let user = await getUserById(decodeAccount._id)
-        if(user){
+        if (user) {
             req.userLocal = user;
             next();
-        }else{
+        } else {
             return res.status(400).json({
-                message : "tk k ton tai",
+                message: "tk k ton tai",
                 status: 400,
-                error : true,
+                error: true,
             })
         }
     } catch (error) {
         res.status(500).json({
-            message : "hay dang nhap",
-            status: 500,
-            error : true
-        },
-        res.redirect('/'))
+                message: "hay dang nhap",
+                status: 500,
+                error: true
+            },
+            res.redirect('/'))
     }
 }
 
-let checkAdmin = (req,res,next)=>{
-    if (req.userLocal.role === "admin"){
+let checkAdmin = (req, res, next) => {
+    if (req.userLocal.role === "admin") {
         next()
-    }else{
+    } else {
         return res.status(400).json({
-            message : "no permission",
+            message: "no permission",
             status: 400,
-            error : true,
+            error: true,
         })
     }
 }
-let checkCoordinator = (req,res,next)=>{
-    if (req.userLocal.role === "coordinator"){
+let checkCoordinator = (req, res, next) => {
+    if (req.userLocal.role === "coordinator") {
         next()
-    }else{
+    } else {
         return res.status(400).json({
-            message : "no permission",
+            message: "no permission",
             status: 400,
-            error : true,
+            error: true,
         })
     }
 }
-let checkStudent = (req,res,next)=>{
-    if (req.userLocal.role === "student"){
+let checkStudent = (req, res, next) => {
+    if (req.userLocal.role === "student") {
         next()
-    }else{
+    } else {
         return res.status(400).json({
-            message : "no permission",
+            message: "no permission",
             status: 400,
-            error : true,
+            error: true,
         })
     }
 }
-module.exports ={
+module.exports = {
     checkLogin,
     checkAdmin,
     checkAuth,

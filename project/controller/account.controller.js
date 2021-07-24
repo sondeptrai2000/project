@@ -64,31 +64,32 @@ let homeStudent = (req, res) => {
 let loginController = function(req, res) {
     bcrypt.compare(req.body.password, req.user.password, function(err, result) {
         if (err) {
-            return res.status(500).json({
-                message: "loi sever",
-                status: 500,
-                error: true
-            })
+            res.json({ message: "error" })
         }
         if (result) {
             let token = jwt.sign({ _id: req.user._id }, 'minhson', { expiresIn: '1d' })
             res.cookie("token", token, { maxAge: 24 * 60 * 60 * 10000 });
             let user = req.user
             if (user.role === "admin") {
-                res.redirect("./homeAdmin")
+                res.json({ msg: 'success', data: "./homeAdmin" });
+                // res.redirect("./homeAdmin")
             }
             if (user.role === "student") {
-                res.redirect("./homeStudent")
+                res.json({ msg: 'success', data: "./homeStudent" });
+                // res.redirect("./homeStudent")
             }
             if (user.role === "guardian") {
-                res.redirect("./homeGuardian")
+                res.json({ msg: 'success', data: "./homeGuardian" });
+                // res.redirect("./homeGuardian")
             }
             if (user.role === "teacher") {
-                res.redirect("./homeTeacher")
+                res.json({ msg: 'success', data: "./homeTeacher" });
+                // res.redirect("./homeTeacher")
             }
         } else {
-            var message = "Username or password is invalid"
-            res.render('index/login', { message: message })
+            console.log("234")
+            res.json({ msg: 'invalid_Info', message: "Username or password is invalid" });
+            // res.render('index/login', { message: message })
         }
     })
 }
