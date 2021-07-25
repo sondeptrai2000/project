@@ -26,7 +26,7 @@
         <select id="levelS" name="stage" onchange="level()"></select>
         <br>
         <label>Subject</label>
-        <select id="subject" name="subject"></select>
+        <select id="subject" name="subject" onchange="getStudent()"></select>
         <br>
         <label for="topic">Class Name</label>
         <input type="text" name="className">
@@ -147,9 +147,38 @@
                             }
                         });
                     });
-                    $.each(response.student, function(index, student) {
-                        $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
-                    });
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
+
+    function getStudent() {
+        var routeName = $('#routeTypeS').val();
+        var levelS = $('#levelS').val();
+        $.ajax({
+            url: '/admin/getStudent',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                abc: routeName,
+                levelS: levelS,
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    if (response.student.length == 0) {
+                        $('.taskrow').html('');
+                    } else {
+                        $('.taskrow').html('');
+                        $('#studentTable').show();
+                        $.each(response.student, function(index, student) {
+                            if (!student.subject.includes($("#subject").val())) {
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
+                            }
+                        });
+                    }
                 }
             },
             error: function(response) {

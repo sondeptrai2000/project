@@ -95,7 +95,7 @@ class teacherController {
             role: 'student',
             routeName: req.query.routeName,
             stage: req.query.stage,
-        }, { avatar: 1, username: 1, routeName: 1, stage: 1, email: 1, classID: 1 }).lean().exec(function(err, data) {
+        }, { avatar: 1, username: 1, subject: 1, routeName: 1, stage: 1, email: 1, classID: 1 }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -107,7 +107,7 @@ class teacherController {
     doaddStudentToClass(req, res) {
         var classID = req.body.classID
         var studentID = req.body.studentlist
-        AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID } }, function(err, data) {
+        AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID, subject: req.body.subject } }, function(err, data) {
             if (err) {
                 console.log("lỗi trong quá trình thêm lớp vào thông tin học sinh")
             } else {
@@ -133,7 +133,7 @@ class teacherController {
 
     doremoveStudentToClass(req, res) {
         var classID = req.body.classID
-        AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID } }, function(err, data) {
+        AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID, subject: req.body.subject } }, function(err, data) {
             if (err) {
                 console.log("lỗi trong quá trình xóa lớp trong thông tin học sinh")
             } else {

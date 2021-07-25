@@ -31,6 +31,9 @@ const AccountSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'class'
     }],
+    subject: [{
+        type: String,
+    }],
     sex: String,
     phone: String,
     address: String,

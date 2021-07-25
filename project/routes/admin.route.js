@@ -8,6 +8,7 @@ adminRouter.get('/getAccount', adminController.getAccount)
 
 
 adminRouter.get('/getStage', adminController.getStage)
+adminRouter.get('/getStudent', adminController.getStudent)
 adminRouter.get('/getRoute', adminController.getRoute)
 
 

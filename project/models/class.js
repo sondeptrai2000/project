@@ -60,11 +60,9 @@ const classSchema = new Schema({
         },
         FeedBackStudent: {
             type: String,
-            default: "Has not been commented yet"
         },
         ConsideredImplementation: {
             type: String,
-            default: "Not Considered Implementation Yet"
         },
         attend: {
             type: String,
@@ -77,15 +75,12 @@ const classSchema = new Schema({
     }],
     extracurricularActivitiesContent: {
         type: String,
-        default: "Has not been commented yet"
     },
     status: {
         type: String,
-        default: "Has not been commented yet"
     },
     comment: {
         type: String,
-        default: "Has not been commented yet"
     },
     uploadDate: String,
     endDate: String,

@@ -15,7 +15,7 @@ body {
     width: 100%;
     height: auto;
     padding: 5px;
-    margin-top: 50px;
+    margin-top: 70px;
 }
 
 #img1 img {
@@ -183,7 +183,7 @@ footer {
     box-sizing: border-box;
     border: peru solid;
     border-radius: 30px;
-    height: 50px;
+    height: 70px;
     width: 100%;
     color: black;
     background-color: wheat;
@@ -196,7 +196,7 @@ footer {
 header {
     z-index: 5;
     position: fixed;
-    margin-top: -50px;
+    margin-top: -70px;
 }
 
 header ul {
@@ -207,10 +207,12 @@ header ul {
     width: auto;
     padding: 0;
     font-size: 20px;
+    float: right;
 }
 
 header ul:nth-child(1) {
-    border-radius: 30px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
 }
 
 header li {

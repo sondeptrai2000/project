@@ -26,9 +26,17 @@ const driveService = google.drive(options = { version: 'v3', auth });
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const { data } = require('jquery');
+const { inflate } = require('zlib');
 const saltRounds = 10;
 class adminController {
     adminHome(req, res) {
+        AccountModel.updateMany({}, { subject: '' }, function(err, data) {
+            if (err) {
+                console.log("k ok")
+            } else {
+                console.log(" ok")
+            }
+        })
         res.render('admin/adminHome')
     }
 
@@ -76,6 +84,16 @@ class adminController {
                     }
                 })
             })
+        })
+    }
+
+    getStudent(req, res) {
+        AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }).lean().exec(function(err, student) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', student });
+            }
         })
     }
     createRoute(req, res) {
@@ -275,6 +293,12 @@ class adminController {
             } else {
                 studentID = getStudentID
             }
+            var listStudent = []
+            for (var i = 0; i < studentID.length + 1; i++) {
+                listStudent.push({ 'ID': studentID[i] });
+            }
+
+            console.log(listStudent)
             ClassModel.create({
                 className: req.body.className,
                 subject: req.body.subject,
@@ -288,14 +312,22 @@ class adminController {
                 if (err) {
                     res.json("lỗi k tạo được")
                 } else {
-                    for (var i = 0; i < studentID.length; i++) {
-                        AccountModel.findOneAndUpdate({ _id: studentID[i] }, { $push: { classID: data._id } }, function(err, teacher) {})
-                        ClassModel.findOneAndUpdate({ _id: data._id }, { $push: { studentID: { ID: studentID[i] } } }, function(err, teacher) {
-                            if (err) {
-                                console.log("lỗi k tạo được")
+                    AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } }, function(err, teacher) {})
+                    console.log(data._id)
+                    ClassModel.findOneAndUpdate({ _id: data._id }, {
+                        $push: {
+                            studentID: {
+                                $each: listStudent
+                            },
+                            StudentIDoutdoor: {
+                                $each: listStudent
                             }
-                        })
-                    }
+                        }
+                    }, function(err, teacher) {
+                        if (err) {
+                            console.log("lỗi k tạo được2")
+                        }
+                    })
                     AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
                         return res.status(200).json({
                             message: "Sign Up success",

@@ -1,10 +1,10 @@
 var click = 0;
 
-function sendData(id) {
+function sendData(id, subject) {
     click = click + 1;
     if (click == 1) {
         var _id = id
-        $(".option").html("<button onclick=addStudent('" + id + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
+        $(".option").html("<button onclick=addStudent('" + id + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "','" + subject + "')>Xóa học sinh trong lớp</button>")
         $.ajax({
             url: '/teacher/allClassStudent',
             method: 'get',
@@ -13,14 +13,20 @@ function sendData(id) {
             success: function(response) {
                 if (response.msg == 'success') {
                     $(".taskrow").html("")
+
                     $.each(response.data, function(index, data) {
-                        $.each(data.studentID, function(index, studentID) {
-                            if (studentID.grade === "Has not been commented yet") {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
-                            } else {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
-                            }
-                        });
+                        console.log(data.studentID)
+                        if (data.studentID.length == 0) {
+                            alert('không có học sinh trong lớp')
+                        } else {
+                            $.each(data.studentID, function(index, studentID) {
+                                if (studentID.grade === "Has not been commented yet") {
+                                    $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
+                                } else {
+                                    $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td>" + studentID.grade + "</td><td id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td><td>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
+                                }
+                            });
+                        }
                     });
                     $(".inner").fadeIn(2000);
                 }
@@ -94,12 +100,13 @@ function deleteProposal(id) {
 
 }
 
-function addStudent(classID) {
+function addStudent(classID, subject) {
     var infor4 = []
     $("#" + classID + " td").each(function() {
         infor4.push($(this).text())
     })
     var checkClassID = classID
+    var checksubject = subject
     $.ajax({
         url: '/teacher/addStudentToClass',
         method: 'get',
@@ -112,12 +119,13 @@ function addStudent(classID) {
             if (response.msg == 'success') {
                 $('.taskrow111').html('');
                 $('#studentTable').show();
+                console.log(response.data)
                 $.each(response.data, function(index, data) {
-                    if (data.classID.includes(checkClassID) == true) {} else if (data.classID.includes(checkClassID) == false) {
+                    if (data.classID.includes(checkClassID) == true) {} else if ((data.classID.includes(checkClassID) == false) && (data.subject.includes(checksubject) == false)) {
                         $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.email + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
                     }
                 });
-                $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "')>Add to Class</button>");
+                $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "','" + subject + "')>Add to Class</button>");
             }
         },
         error: function(response) {
@@ -126,7 +134,7 @@ function addStudent(classID) {
     })
 }
 
-function doAddToClass(classID) {
+function doAddToClass(classID, subject) {
     var classID = classID
 
     var studentlist = [];
@@ -150,7 +158,8 @@ function doAddToClass(classID) {
         data: {
             studentlistcl: studentlistcl,
             studentlist: studentlist,
-            classID: classID
+            classID: classID,
+            subject: subject
         },
         success: function(response) {
             if (response.msg == 'success') {
@@ -170,7 +179,7 @@ function doAddToClass(classID) {
 }
 
 
-function removeStudent(classID) {
+function removeStudent(classID, subject) {
     var classID = classID
     var studentlistcl = [];
     $('.removeFormClass').each(function() {
@@ -184,7 +193,8 @@ function removeStudent(classID) {
         dataType: 'json',
         data: {
             studentlistcl: studentlistcl,
-            classID: classID
+            classID: classID,
+            subject: subject
         },
         success: function(response) {
             if (response.msg == 'success') {
