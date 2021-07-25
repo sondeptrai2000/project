@@ -2,11 +2,8 @@ const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const extracurricularActivitiesModel = require('../models/extracurricularActivities');
 const eventModel = require('../models/event');
-
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
-
-
 const fs = require("fs")
 const readline = require("readline")
 const { google } = require("googleapis")

@@ -10,8 +10,9 @@
 
     <style>
         i {
-            font-size:30px;
+            font-size: 30px;
         }
+
         #loading {
             position: fixed;
             display: block;
@@ -57,6 +58,48 @@
             border: #000000 solid 1px;
             margin: 5px;
         }
+
+        .flip-card {
+            background-color: transparent;
+            width: 300px;
+            height: 300px;
+            perspective: 1000px;
+            float: left;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .flip-card-front {
+            background-color: #bbb;
+            color: black;
+        }
+
+        .flip-card-back {
+            background-color: #2980b9;
+            color: white;
+            transform: rotateY(180deg);
+        }
     </style>
 </head>
 
@@ -64,12 +107,14 @@
     <div>
         <div class="tr">
             <div class="td" onclick="location.href='/admin';"><i class="fas fa-house-user"></i> Trang chủ admin</div>
-            <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i> Create account</div>
+            <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i> Create
+                account</div>
             <div class="td" onclick="consultingAll('0')"><i class="fas fa-list-alt"></i> Consulting All</div>
             <div class="td" onclick="allProposal()"><i class="fas fa-list-alt"></i> AllProposal</div>
             <div class="td" onclick="allEvent()"><i class="fas fa-list-alt"></i> AllEvent</div>
             <div class="td" onclick='$(".createEvent").toggle()'><i class="fas fa-calendar-plus"></i> Create Event</div>
-            <div class="td" onclick="location.href='/admin/dashboard';"><i class="fas fa-chart-line"></i> Dashboard</div>
+            <div class="td" onclick="location.href='/admin/dashboard';"><i class="fas fa-chart-line"></i> Dashboard
+            </div>
             <div class="td"><i class="fas fa-sign-out-alt"></i> Log Out</div>
         </div>
     </div>
@@ -112,12 +157,13 @@
         </div>
     </div>
     <div id="viewProposal" style="display:none;">
-        <button onclick="$('#viewProposalPart').html('');$('#viewProposal').hide()"><i class="fas fa-times"></i></button></br>
+        <button onclick="$('#viewProposalPart').html('');$('#viewProposal').hide()"><i
+                class="fas fa-times"></i></button></br>
         <div id="viewProposalPart">
         </div>
     </div>
 
-    <div class="allEvent" style="display: none;">
+    {{!-- <div class="allEvent" style="display: none;">
         <div class="tr">
             <div class="td">eventName</div>
             <div class="td">eventContent</div>
@@ -126,7 +172,7 @@
             <div class="td">eventProposal</div>
             <div class="td" onclick='$(".allEvent").hide()'><i class="fas fa-times"></i></div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="updateEvent" style="display:none;">
         <div class="tr">
@@ -193,6 +239,9 @@
             <div class="td">consultingVia</div>
         </div>
     </div>
+    <div id="card" style="display: none;">
+        <div class="tr" onclick='$("#card").hide()'><i class="fas fa-times"></i></div>
+    </div>
 </body>
 <script>
     // CURD event
@@ -203,13 +252,17 @@
             dataType: 'json',
             success: function (response) {
                 if (response.msg == 'success') {
-                    $(".allEvent .tr:not(:nth-child(1))").remove();
+                    //$(".allEvent .tr:not(:nth-child(1))").remove();
                     // $(".allEvent").html($(".allEvent .tr:nth-child(1)"));
-                    $.each(response.data, function (index, data) {
-                        var content = '<div class="tr" id="' + data._id + '"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = updateEvent("' + data._id + '")><i class="fas fa-edit"></i></button><button onclick = deleteEvent("' + data._id + '")><i class="fas fa-trash-alt"></i></button><button onclick = allEventProposal("' + data._id + '")><i class="fas fa-clipboard-list"></i></button></div></div>'
-                        $(".allEvent").append(content);
+                     $("#card").html($("#card .tr:nth-child(1)"));
+                    $.each(response.data, function (index, data) {            
+                        /*var content = '<div class="tr" id="' + data._id + '"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><button onclick = updateEvent("' + data._id + '")><i class="fas fa-edit"></i></button><button onclick = deleteEvent("' + data._id + '")><i class="fas fa-trash-alt"></i></button><button onclick = allEventProposal("' + data._id + '")><i class="fas fa-clipboard-list"></i></button></div></div>'
+                        $(".allEvent").append(content);*/
+                        var content = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front"><img src="img_avatar.png" alt="Avatar" style="width:300px;height:300px;"></div><div class="flip-card-back" ><h1 class="' + data._id + '">' + data.eventName + '</h1><p class="' + data._id + '">Content: ' + data.eventContent + '</p><p class="' + data._id + '">Address: ' + data.eventAddress + '</p><p class="' + data._id + '">Time: ' + data.eventAt + '</p><button onclick = updateEvent("' + data._id + '")><i class="fas fa-edit"></i></button><button onclick = deleteEvent("' + data._id + '")><i class="fas fa-trash-alt"></i></button><button onclick = allEventProposal("' + data._id + '")><i class="fas fa-clipboard-list"></i></button></div></div></div>'
+                        $("#card").append(content);
+
                     })
-                    $(".allEvent").show()
+                    $("#card").show()
                 }
                 if (response.msg == 'error') {
                     alert(' error');
@@ -272,15 +325,15 @@
 
     function updateEvent(id) {
         var data = []
-        $("#" + id + " .td").each(function () {
+        $("." + id).each(function () {
             data.push($(this).text())
         })
         console.log(data)
         $("#updateeventID").val(id)
         $("#updateeventName").val(data[0])
-        $("#updateeventContent").val(data[1])
-        $("#updateeventAddress").val(data[2])
-        $("#updateeventAt").val(data[3])
+        $("#updateeventContent").val(data[1].split('Content: ')[1])
+        $("#updateeventAddress").val(data[2].split('Address: ')[1])
+        $("#updateeventAt").val(data[3].split('Time: ')[1])
         $(".updateEvent").show()
     }
 
