@@ -76,7 +76,7 @@ function proposalT(page) {
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
-                    var content = "<div class='tr1' id='" + data._id + "'><div class='td' onclick=view('" + data.file + "')>" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.proposalType + "</div><div class='td'>" + data.uploadDate + "</div><div class='td'>" + data.Status + "</div><div class='td'><button onclick=updateProposal('" + data._id + "')>update</button><button onclick=deleteProposal('" + data._id + "')>delete</button></div>"
+                    var content = "<div class='tr1' id='" + data._id + "'><div class='td' onclick=view('" + data.file + "')>sssss" + data.proposalName + "</div><div class='td'>" + data.Content + "</div><div class='td'>" + data.proposalType + "</div><div class='td'>" + data.uploadDate + "</div><div class='td'>" + data.Status + "</div><div class='td'><button onclick=updateProposal('" + data._id + "')>update</button><button onclick=deleteProposal('" + data._id + "')>delete</button></div>"
                     $("#table").append(content);
                 })
                 $("#loading").hide();
@@ -149,7 +149,7 @@ function doUpdateProposal() {
 }
 
 
-
+// chưa có backend sử lý upfile
 function uploadNewProposal() {
     var formData = {
         file: fileData,
@@ -221,8 +221,8 @@ function allEvent() {
         success: function(response) {
             if (response.msg == 'success') {
                 $("#table1").html('<div class="tr"><div class="td">eventName</div><div class="td">eventContent</div><div class="td">eventAddress</div><div class="td">eventAt</div><div class="td">eventProposal</div><div class="td">fileLink</div><div class="td">status</div><div class="td">comment</div><div class="td" onclick="closeAllEvent()"><i class="fas fa-window-close"></i></div></div>')
-                var check = false;
                 $.each(response.data, function(index, data) {
+                    var check = false;
                     $.each(data.proposals, function(index, proposals) {
                         if (proposals.teacherID == response.decodeAccount._id) {
                             var content = '<div class="tr"><div class="td">' + data.eventName + '</div><div class="td">' + data.eventContent + '</div><div class="td">' + data.eventAddress + '</div><div class="td">' + data.eventAt + '</div><div class="td">' + data.eventProposal + '</div><div class="td"><a href="' + proposals.fileLink + '" target="_blank">Your Proposal</a></div><div class="td">' + proposals.status + '</div><div class="td">' + proposals.comment + '</div><div class="td"><button onclick = uploadProposalEvent("' + data._id + '")><i class="fas fa-edit"></i></button><button onclick = deleteProposalEvent("' + data._id + '","' + proposals.fileLink + '")><i class="fas fa-trash-alt"></i></button></div></div>'
@@ -250,9 +250,36 @@ function allEvent() {
 function uploadProposalEvent(id) {
     $("#uploadEventProposalID").html(id)
     $(".uploadEventProposal").show()
+
 }
 
 function doUploadEventProposal() {
+    console.log($("#uploadEventProposalID").text())
+    var formData = {
+        _id: $("#uploadEventProposalID").text(),
+        filename: myFile.name,
+        file: fileData,
+    }
+    $.ajax({
+        url: '/teacher/uploadProposalEvent',
+        method: 'post',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                alert('update proposal success');
+            }
+            if (response.msg == 'error') {
+                alert('update proposal error');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+function doUpdateEventProposal() {
     console.log($("#uploadEventProposalID").text())
     var formData = {
         _id: $("#uploadEventProposalID").text(),

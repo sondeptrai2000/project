@@ -14,6 +14,7 @@ const AccountSchema = new Schema({
     password: String,
     email: String,
     aim: String,
+    achive: String,
     routeName: String,
     stage: String,
     chat: [{
@@ -25,7 +26,6 @@ const AccountSchema = new Schema({
     },
     role: {
         type: String,
-        default: "none"
     },
     classID: [{
         type: mongoose.Schema.Types.ObjectId,

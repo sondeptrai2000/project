@@ -15,7 +15,6 @@ function sendData(id, subject) {
                     $(".taskrow").html("")
 
                     $.each(response.data, function(index, data) {
-                        console.log(data.studentID)
                         if (data.studentID.length == 0) {
                             alert('không có học sinh trong lớp')
                         } else {
@@ -81,7 +80,6 @@ function uploadProposal(id) {
 }
 
 function deleteProposal(id) {
-    console.log(id)
     $.ajax({
         url: '/teacher/deleteProposal',
         method: 'delete',
@@ -119,7 +117,6 @@ function addStudent(classID, subject) {
             if (response.msg == 'success') {
                 $('.taskrow111').html('');
                 $('#studentTable').show();
-                console.log(response.data)
                 $.each(response.data, function(index, data) {
                     if (data.classID.includes(checkClassID) == true) {} else if ((data.classID.includes(checkClassID) == false) && (data.subject.includes(checksubject) == false)) {
                         $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.email + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
@@ -313,7 +310,6 @@ function attendedOutDoor(id) {
             if (response.msg == 'success') {
                 $(".attendedOutDoorBody").html("")
                 $.each(response.data, function(index, data) {
-                    console.log(data)
                     $.each(data.StudentIDoutdoor, function(index, StudentIDoutdoor) {
                         studentlistOutDoor.push(StudentIDoutdoor.ID._id)
                         $(".attendedOutDoorBody").append("<tr><th><img src='" + StudentIDoutdoor.ID.avatar + "' style='hieght:100px;width:100px'></br>" + StudentIDoutdoor.ID.username + "</th><th><input type='text' value='" + StudentIDoutdoor.attendComment + "' class='outDoorComment" + data._id + "'></th><th><select class='outDoorAttend" + data._id + "' id ='" + StudentIDoutdoor.ID._id + "'><option value='attended'>attended </option><option value='absent'>absent</option><option value='None'>none</option></select></th></tr>")

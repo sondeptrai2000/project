@@ -1,7 +1,0 @@
-http://localhost:3000
-mk 123
-admin: admin@gmail.com
-manager: manage@gmail.com
-student: minhpham8502@gmail.com
-guest: guest@gmail.com
-teacher: minhpqgch18572@fpt.edu.vn

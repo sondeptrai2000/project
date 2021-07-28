@@ -21,10 +21,11 @@ teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 
 //liên quan đến hoạt động ngoại khóa
 teacherRouter.post('/uploadNewProposal', teacherController.uploadNewProposal)
-teacherRouter.get('/allProposal', teacherController.allProposal)
 teacherRouter.delete('/deleteProposal', teacherController.deleteProposal)
-teacherRouter.get('/extracurricularActivities', teacherController.extracurricularActivities)
+
+//lieen quan den su kien
 teacherRouter.get('/allEvent', teacherController.allEvent)
+teacherRouter.post('/uploadProposalEvent', teacherController.uploadProposalEvent)
 teacherRouter.post('/updateProposalEvent', teacherController.updateProposalEvent)
 teacherRouter.delete('/deleteProposalEvent', teacherController.deleteProposalEvent)
 

@@ -32,6 +32,7 @@ function dateNow() {
 async function uploadFile(name, rootID, path) {
     var id = []
     id.push(rootID)
+    console.log(id)
     var responese = await driveService.files.create(param = {
         resource: {
             "name": name,
@@ -209,21 +210,35 @@ class teacherController {
         var buff = new Buffer(temp);
         var base64data = buff.toString('base64');
         try {
-            uploadFile(req.body.filename, "1evgjhxMA8DujwwkvMpaXIAqA_GigLJes", path).then(function(response) {
-
-                var fileLink = "https://docs.google.com/file/d/" + response + "/preview"
-                ClassModel.findOneAndUpdate({ _id: req.body.classID }, { fileLink: fileLink, uploadDate: dateNow(), extracurricularActivitiesContent: req.body.content }, function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success' });
-                    }
-                })
-            })
-
+            // var responese = await driveService.files.create(param = {
+            //     resource: {
+            //         "name": req.body.filename,
+            //         "parents": ["1evgjhxMA8DujwwkvMpaXIAqA_GigLJes"]
+            //     },
+            //     media: {
+            //         body: fs.createReadStream(path = path)
+            //     },
+            // })
+            // await driveService.permissions.create({
+            //     fileId: responese.data.id,
+            //     requestBody: {
+            //         role: 'reader',
+            //         type: 'anyone',
+            //     },
+            // });
+            var response = uploadFile(req.body.filename, "1evgjhxMA8DujwwkvMpaXIAqA_GigLJes", path)
+            fs.unlinkSync(path)
+            var fileLink = "https://docs.google.com/file/d/" + response + "/preview"
         } catch (error) {
             console.log(error.message);
         }
+        ClassModel.findOneAndUpdate({ _id: req.body.classID }, { fileLink: fileLink, uploadDate: dateNow(), extracurricularActivitiesContent: req.body.content }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
     }
 
     async deleteProposal(req, res) {
@@ -234,9 +249,12 @@ class teacherController {
                 } else {
                     var idfile = data.fileLink.replace("https://docs.google.com/file/d/", "")
                     idfile = idfile.replace("/preview", "")
-                    var responese = driveService.files.delete({ fileId: idfile })
+                    var responese = driveService.files.delete({
+                        fileId: idfile,
+                    })
                 }
             })
+
         } catch (error) {
             console.log(error.message);
         }
@@ -278,29 +296,44 @@ class teacherController {
             res.json({ msg: 'error' });
         }
         try {
-            var response = uploadFile(req.body.filename, folderID.folderID, path).then(function(response) {
-
-                var fileLink = "https://docs.google.com/file/d/" + response + "/preview"
-                var token = req.cookies.token
-                var decodeAccount = jwt.verify(token, 'minhson')
-                eventModel.findOneAndUpdate({ _id: req.body._id }, {
-                    $push: {
-                        proposals: {
-                            teacherID: decodeAccount,
-                            fileLink: fileLink,
-                        }
-                    }
-                }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success', data });
-                    }
-                })
-            })
+            // const response = await driveService.files.create({
+            //     requestBody: {
+            //         name: req.body.filename, //đặt tên
+            //         parents: [folderID.folderID] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+            //     },
+            //     media: {
+            //         body: fs.createReadStream(path),
+            //     },
+            // });
+            // // console.log(response.data.id);
+            // await driveService.permissions.create({
+            //     fileId: response.data.id,
+            //     requestBody: {
+            //         role: 'reader',
+            //         type: 'anyone',
+            //     },
+            // });
+            var response = uploadFile(req.body.filename, folderID.folderID, path)
+            var fileLink = "https://docs.google.com/file/d/" + response + "/preview"
         } catch (error) {
             console.log(error.message);
         }
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
+        eventModel.findOneAndUpdate({ _id: req.body._id }, {
+            $push: {
+                proposals: {
+                    teacherID: decodeAccount,
+                    fileLink: fileLink,
+                }
+            }
+        }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
     }
 
     async updateProposalEvent(req, res) {
@@ -308,7 +341,9 @@ class teacherController {
         var image = req.body.file;
         var data = image.split(',')[1];
         fs.writeFileSync(path, data, { encoding: 'base64' });
-
+        var temp = fs.readFileSync(path);
+        var buff = new Buffer(temp);
+        var base64data = buff.toString('base64');
         var folderID
         try {
             folderID = await eventModel.findOne({ _id: req.body._id }, { folderID: 1 }).lean()
@@ -316,30 +351,44 @@ class teacherController {
             res.json({ msg: 'error' });
         }
         try {
-            uploadFile(req.body.filename, folderID.folderID, path).then(function(ID) {
-
-                var fileLink = "https://docs.google.com/file/d/" + ID + "/preview"
-                console.log("fileLink", fileLink)
-                var token = req.cookies.token
-                var decodeAccount = jwt.verify(token, 'minhson')
-                eventModel.findOneAndUpdate({ _id: req.body._id, "proposals.teacherID": decodeAccount }, {
-                    $set: {
-                        proposals: {
-                            teacherID: decodeAccount,
-                            fileLink: fileLink,
-                        }
-                    }
-                }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success', data });
-                    }
-                })
-            })
+            // const response = await driveService.files.create({
+            //     requestBody: {
+            //         name: req.body.filename, //đặt tên
+            //         parents: [folderID.folderID] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
+            //     },
+            //     media: {
+            //         body: fs.createReadStream(path),
+            //     },
+            // });
+            // // console.log(response.data.id);
+            // await driveService.permissions.create({
+            //     fileId: response.data.id,
+            //     requestBody: {
+            //         role: 'reader',
+            //         type: 'anyone',
+            //     },
+            // });
+            var response = uploadFile(req.body.filename, folderID.folderID, path)
+            var fileLink = "https://docs.google.com/file/d/" + response + "/preview"
         } catch (error) {
-            res.json({ msg: 'error' });
+            console.log(error.message);
         }
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
+        eventModel.findOneAndUpdate({ _id: req.body._id, "proposals.teacherID": decodeAccount }, {
+            $set: {
+                proposals: {
+                    teacherID: decodeAccount,
+                    fileLink: fileLink,
+                }
+            }
+        }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
     }
 
 
