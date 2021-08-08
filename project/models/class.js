@@ -43,13 +43,15 @@ const classSchema = new Schema({
     },
     schedule: [{
         date: String,
-        room: String,
+        day: String,
         attend: [{
             studentID: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'account'
             },
-            attended: String,
+            attended: {
+                type: String,
+            }
         }]
     }],
     fileLink: String,

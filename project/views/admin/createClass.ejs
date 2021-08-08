@@ -16,29 +16,26 @@
         <tbody id="routeTuyBien"> </tbody>
         <tr id='trss'></tr>
     </table>
-    <form method="post" action="/admin/createClass">
+    <div>
         <p>Create class</p>
         <label>Chọn lộ trình học</label>
-        <select id="routeTypeS" name="routeName" onchange="routeType()">
+        <select id="routeTypeS" class="routeName" onchange="routeType()">
                         <% targetxxx.forEach(function(targetxxx) { %>
                 <option value="<%= targetxxx.routeName %>"><%= targetxxx.routeName %></option>
                 <% }); %>
               </select>
         <br>
         <label for="level">Level</label>
-        <select id="levelS" name="stage" onchange="level()"></select>
+        <select id="levelS" class="stage" onchange="level()"></select>
         <br>
         <label>Subject</label>
-        <select id="subject" name="subject" onchange="getStudent()"></select>
+        <select id="subject" class="subject" onchange="getStudent()"></select>
         <br>
         <label for="topic">Class Name</label>
-        <input type="text" name="className">
+        <input type="text" class="className">
         <br>
         <label for="topic">Description</label>
-        <input type="text" name="description">
-        <br>
-        <label for="topic">Total slot</label>
-        <input type="number" name="totalSlot" onchange="totalSlot()">
+        <input type="text" class="description">
         <br>
         <label for="topic">Student</label>
 
@@ -59,7 +56,7 @@
             <tbody class='taskrow'></tbody>
         </table>
         <label for="topic">Teacher</label>
-        <select name="facultyID">
+        <select class="teacherID">
           <% teacher.forEach(function(teacher) { %>
             <option value="<%= teacher._id %>" ><%= teacher.username %> </option>
           <% }); %>
@@ -67,9 +64,9 @@
         <br>
 
         <label for="topic">startDate</label>
-        <input type="date" name="startDate" id="startDate">
+        <input type="date" class="startDate" id="startDate">
         <label for="topic">endDate</label>
-        <input type="date" name="endDate" id="endDate">
+        <input type="date" class="endDate" id="endDate">
         <br>
         <label for="topic">Số buổi học 1 tuần</label>
         <input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
@@ -79,9 +76,8 @@
 
 
         <br>
-        <button type="submit" class="btn5">Submit</button>
-    </form>
-    <button type="submit" class="btn5" onclick="abc()">Submit1</button>
+        <button type="submit" class="btn5" onclick="abc()">Submit1</button>
+    </div>
 
 </body>
 <script>
@@ -101,6 +97,21 @@
     }
 
     function abc() {
+
+        var studentID = []
+        var listStudent = []
+        var attend = []
+        $("input[name='hobby']").each(function(data) {
+            studentID.push($(this).val())
+            listStudent.push({
+                'ID': $(this).val()
+            });
+            attend.push({
+                "studentID": $(this).val(),
+                "attended": ""
+            })
+        })
+
         //lấy các thứ trong tuần
         var buoihoc = []
         $(".buoihocthu").each(function(data) {
@@ -108,18 +119,53 @@
         })
         var schedual = []
         var range = getDaysArray(new Date($("#startDate").val()), new Date($("#endDate").val()));
-        // range.map((v) => v.toISOString().slice(0, 10)).join("")
         //lấy các buổi học trong khoảng thời gian
         for (var i = 0; i < range.length; i++) {
             for (var u = 0; u < buoihoc.length; u++) {
                 if (range[i].getDay() == buoihoc[u]) {
-                    schedual.push(range[i].getFullYear() + "-" + (range[i].getMonth() + 1) + "-" + range[i].getDate())
+                    var date = range[i].getFullYear() + "-" + (range[i].getMonth() + 1) + "-" + range[i].getDate()
+                    var day = range[i].getDay()
+                    schedual.push({
+                        "date": date,
+                        "day": day,
+                        "attend": attend
+                    })
                     break;
                 }
             }
-
         }
-        console.log(schedual)
+
+        var formData = {
+            className: $(".className").val(),
+            subject: $(".subject").val(),
+            routeName: $(".routeName").val(),
+            stage: $(".stage").val(),
+            description: $(".description").val(),
+            teacherID: $(".teacherID").val(),
+            endDate: $(".endDate").val(),
+            startDate: $(".startDate").val(),
+            studentID: studentID,
+            listStudent: listStudent,
+            schedual: schedual,
+        }
+        $.ajax({
+            url: '/admin/createClass',
+            method: 'post',
+            dataType: 'json',
+            data: formData,
+            success: function(response) {
+                if (response.msg == 'success') {
+                    alert("OK")
+                }
+                if (response.msg == 'error') {
+                    alert("error")
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+
     }
 
     function routeType() {

@@ -30,13 +30,13 @@ const { inflate } = require('zlib');
 const saltRounds = 10;
 class adminController {
     adminHome(req, res) {
-        AccountModel.updateMany({}, { subject: '' }, function(err, data) {
-            if (err) {
-                console.log("k ok")
-            } else {
-                console.log(" ok")
-            }
-        })
+        // AccountModel.updateMany({}, { $set: { classID: [], subject: [] } }, function(err, data) {
+        //     if (err) {
+        //         console.log("k ok")
+        //     } else {
+        //         console.log(" ok")
+        //     }
+        // })
         res.render('admin/adminHome')
     }
 
@@ -284,69 +284,59 @@ class adminController {
     }
 
     docreateClass(req, res) {
-        var abc = req.body.Schedule
-        var stopDate = req.body.endDate
-        var startDate = req.body.startDate
-        console.log(abc)
-        console.log(stopDate)
-        console.log(startDate)
-            // try {
-            //     var getStudentID = req.body.hobby
-            //     var studentID = []
-            //     if (Array.isArray(getStudentID) == false) {
-            //         studentID.push(req.body.hobby)
-            //     } else {
-            //         studentID = getStudentID
-            //     }
-            //     var listStudent = []
-            //     for (var i = 0; i < studentID.length + 1; i++) {
-            //         listStudent.push({ 'ID': studentID[i] });
-            //     }
-            //     ClassModel.create({
-            //         className: req.body.className,
-            //         subject: req.body.subject,
-            //         routeName: req.body.routeName,
-            //         stage: req.body.stage,
-            //         description: req.body.description,
-            //         teacherID: req.body.facultyID,
-            //         endDate: req.body.endDate,
-            //         startDate: req.body.startDate,
-            //     }, function(err, data) {
-            //         if (err) {
-            //             res.json("lỗi k tạo được")
-            //         } else {
-            //             AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } }, function(err, teacher) {})
-            //             console.log(data._id)
-            //             ClassModel.findOneAndUpdate({ _id: data._id }, {
-            //                 $push: {
-            //                     studentID: {
-            //                         $each: listStudent
-            //                     },
-            //                     StudentIDoutdoor: {
-            //                         $each: listStudent
-            //                     }
-            //                 }
-            //             }, function(err, teacher) {
-            //                 if (err) {
-            //                     console.log("lỗi k tạo được2")
-            //                 }
-            //             })
-            //             AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
-            //                 return res.status(200).json({
-            //                     message: "Sign Up success",
-            //                     error: false
-            //                 })
-            //             })
-            //         }
-            //     });
-            // } catch (error) {
-            //     if (error) {
-            //         res.status(400).json({
-            //             message: "Sign Up fail",
-            //             error: true
-            //         })
-            //     }
-            // }
+        try {
+            var studentID = req.body.studentID
+            var listStudent = req.body.listStudent
+            console.log(req.body.schedual)
+            ClassModel.create({
+                className: req.body.className,
+                subject: req.body.subject,
+                routeName: req.body.routeName,
+                stage: req.body.stage,
+                description: req.body.description,
+                teacherID: req.body.teacherID,
+                endDate: req.body.endDate,
+                startDate: req.body.startDate,
+            }, function(err, data) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } }, function(err, teacher) {
+                        if (err) {
+                            res.json({ msg: 'error' });
+                        }
+                    })
+                    ClassModel.findOneAndUpdate({ _id: data._id }, {
+                        $push: {
+                            studentID: {
+                                $each: listStudent
+                            },
+                            StudentIDoutdoor: {
+                                $each: listStudent
+                            },
+                            schedule: {
+                                $each: req.body.schedual
+                            }
+                        }
+                    }, function(err, teacher) {
+                        if (err) {
+                            res.json({ msg: 'error' });
+                        }
+                    })
+                    AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
+                        if (err) {
+                            res.json({ msg: 'error' });
+                        }
+                    })
+                    res.json({ msg: 'success' });
+
+                }
+            });
+        } catch (error) {
+            if (err) {
+                res.json({ msg: 'error' });
+            }
+        }
     }
 
     allClassLevel(req, res) {
