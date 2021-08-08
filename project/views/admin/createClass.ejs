@@ -3,6 +3,9 @@
 
 <head>
     <script src="/jquery/jquery.js"></script>
+    <!-- checkdate -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.29.0/date_fns.min.js"></script>
+
 </head>
 
 <body>
@@ -62,21 +65,63 @@
           <% }); %>
         </select>
         <br>
-        <label for="topic">endDate</label>
-        <input type="date" name="endDate">
-        <br>
+
         <label for="topic">startDate</label>
-        <input type="date" name="startDate">
-        <!-- {{!-- tìm cách tạo lịch r tạo sự kiện chọn ngày giờ từ lịch r ms lưu vào db --}} -->
-        <!-- {{!-- <br>
-        <label for="topic">Schedule</label>
-        <input type="date" name="Schedule"> 
-        --}}  -->
+        <input type="date" name="startDate" id="startDate">
+        <label for="topic">endDate</label>
+        <input type="date" name="endDate" id="endDate">
+        <br>
+        <label for="topic">Số buổi học 1 tuần</label>
+        <input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
+        <br>
+        <div id="datlich"></div>
+
+
+
         <br>
         <button type="submit" class="btn5">Submit</button>
     </form>
+    <button type="submit" class="btn5" onclick="abc()">Submit1</button>
+
 </body>
 <script>
+    //lấy các ngày trong khoảng thời gian học
+    var getDaysArray = function(start, end) {
+        for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+            arr.push(new Date(dt));
+        }
+        return arr;
+    };
+
+    function tuan() {
+        $("#datlich").html("")
+        for (var i = 0; i < $("#Schedule").val(); i++) {
+            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule" min=2 max=8> giờ học: <input type="time" name="Schedule">Room <input type="number" name="Schedule" min=2 max=8><br> ')
+        }
+    }
+
+    function abc() {
+        //lấy các thứ trong tuần
+        var buoihoc = []
+        $(".buoihocthu").each(function(data) {
+            buoihoc.push($(this).val())
+        })
+        var schedual = []
+        var range = getDaysArray(new Date($("#startDate").val()), new Date($("#endDate").val()));
+        // range.map((v) => v.toISOString().slice(0, 10)).join("")
+        //lấy các buổi học trong khoảng thời gian
+        for (var i = 0; i < range.length; i++) {
+            for (var u = 0; u < buoihoc.length; u++) {
+                if (range[i].getDay() == buoihoc[u]) {
+                    schedual.push(range[i].getFullYear() + "-" + (range[i].getMonth() + 1) + "-" + range[i].getDate())
+                    break;
+                }
+            }
+
+        }
+        console.log(schedual)
+    }
+
     function routeType() {
         var routeName = $('#routeTypeS').val();
         $.ajax({

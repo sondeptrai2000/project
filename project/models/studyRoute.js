@@ -12,6 +12,7 @@ const studyRoute = new Schema({
     description: String,
     routeSchedual: [{
         stage: String,
+        price: String,
         routeabcd: []
     }],
 }, {

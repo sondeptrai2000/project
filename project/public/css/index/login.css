@@ -12,17 +12,31 @@ body {
 }
 
 #img1 {
-    width: 100%;
-    height: auto;
-    padding: 5px;
-    margin-top: 70px;
-}
-
-#img1 img {
-    border: chocolate solid;
-    border-radius: 30px;
+    box-sizing: border-box;
     width: 100%;
     height: 550px;
+    background-image: url("/index.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    text-align: center;
+    padding-top: 10%;
+    color: seashell;
+    margin-bottom: 30px;
+}
+
+#img1 button {
+    height: 60px;
+    width: auto;
+    padding: 15px;
+    background-color: steelblue;
+    color: whitesmoke;
+    font-size: 25px;
+    border-radius: 30px;
+}
+
+#img1 button:hover {
+    background-color: black;
+    color: whitesmoke;
 }
 
 #loginForm,
@@ -44,7 +58,7 @@ body {
     padding: 15px;
     border: lightblue 4px solid;
     box-shadow: 10px 10px 10px 10px lightblue;
-    width: 30%;
+    width: 40%;
     height: auto;
     margin-left: 35%;
     border-radius: 30px;
@@ -181,12 +195,9 @@ body {
 header,
 footer {
     box-sizing: border-box;
-    border: peru solid;
-    border-radius: 30px;
-    height: 70px;
+    height: 60px;
     width: 100%;
     color: black;
-    background-color: wheat;
     clear: left;
     text-align: center;
     padding: 0;
@@ -196,7 +207,7 @@ footer {
 header {
     z-index: 5;
     position: fixed;
-    margin-top: -70px;
+    background-color: whitesmoke;
 }
 
 header ul {
@@ -210,15 +221,9 @@ header ul {
     float: right;
 }
 
-header ul:nth-child(1) {
-    border-top-right-radius: 30px;
-    border-bottom-right-radius: 30px;
-}
-
 header li {
     padding: 0;
     height: 100%;
-    color: black;
     float: left;
     width: 190.5px;
 }
@@ -230,13 +235,13 @@ header a {
     width: 100%;
     height: 100%;
     text-align: center;
-    padding: 5%;
-    border: 1px solid white;
+    padding-top: 9%;
+    color: black;
 }
 
 header a:hover {
-    background: #F1F1F1;
-    color: #333;
+    background: #333;
+    color: #F1F1F1;
 }
 
 #aboutUs {
@@ -245,6 +250,8 @@ header a:hover {
     padding: 0 20px;
     margin: 0;
     border-radius: 30px;
+    margin-bottom: 30px;
+    border: black solid;
 }
 
 #aboutUs div:nth-child(1) {
@@ -255,18 +262,28 @@ header a:hover {
     height: 400px;
     float: left;
     border-radius: 30px;
+    font-size: 20px;
+}
+
+#aboutUs div:nth-child(1) img {
+    float: left;
 }
 
 #aboutUs div:nth-child(2) {
-    font-family: "Fantasy";
-    font-size: 20px;
     box-sizing: border-box;
     margin: 0;
-    padding: 0;
+    padding: 2.5% 7.5%;
     width: 60%;
-    height: 400px;
+    height: 100%;
     float: right;
-    overflow: scroll;
+    border-radius: 30px;
+}
+
+#aboutUs div:nth-child(2) iframe {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0;
 }
 
 #aboutCourse {
@@ -277,6 +294,7 @@ header a:hover {
     height: 400px;
     padding: 0 20px;
     border-radius: 30px;
+    font-size: 20px;
 }
 
 #aboutCourse div:nth-child(1) {
@@ -289,6 +307,10 @@ header a:hover {
     overflow: scroll;
     float: left;
     font-size: 20px;
+}
+
+#aboutCourse div:nth-child(2) img {
+    float: left;
 }
 
 #aboutCourse div:nth-child(2) {

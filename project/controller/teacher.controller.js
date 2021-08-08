@@ -27,7 +27,6 @@ function dateNow() {
     var lol = date.getFullYear() + "-" + month + "-" + date.getDate()
     return lol
 }
-// "parents": ["1evgjhxMA8DujwwkvMpaXIAqA_GigLJes"]
 
 async function uploadFile(name, rootID, path) {
     var id = []
@@ -195,19 +194,11 @@ class teacherController {
         })
     }
 
-
-
-
-
-
     async uploadNewProposal(req, res) {
         var path = __dirname.replace("controller", "public/outDoorActivity") + '/' + req.body.filename;
         var image = req.body.file;
         var data = image.split(',')[1];
         fs.writeFileSync(path, data, { encoding: 'base64' });
-        var temp = fs.readFileSync(path);
-        var buff = new Buffer(temp);
-        var base64data = buff.toString('base64');
         try {
             uploadFile(req.body.filename, "1evgjhxMA8DujwwkvMpaXIAqA_GigLJes", path).then(function(response) {
 
@@ -220,7 +211,6 @@ class teacherController {
                     }
                 })
             })
-
         } catch (error) {
             console.log(error.message);
         }
@@ -247,7 +237,6 @@ class teacherController {
                 res.json({ msg: 'success' });
             }
         })
-
     }
 
     allEvent(req, res) {
@@ -268,9 +257,6 @@ class teacherController {
         var image = req.body.file;
         var data = image.split(',')[1];
         fs.writeFileSync(path, data, { encoding: 'base64' });
-        var temp = fs.readFileSync(path);
-        var buff = new Buffer(temp);
-        var base64data = buff.toString('base64');
         var folderID
         try {
             folderID = await eventModel.findOne({ _id: req.body._id }, { folderID: 1 }).lean()
@@ -279,7 +265,6 @@ class teacherController {
         }
         try {
             var response = uploadFile(req.body.filename, folderID.folderID, path).then(function(response) {
-
                 var fileLink = "https://docs.google.com/file/d/" + response + "/preview"
                 var token = req.cookies.token
                 var decodeAccount = jwt.verify(token, 'minhson')
@@ -308,7 +293,6 @@ class teacherController {
         var image = req.body.file;
         var data = image.split(',')[1];
         fs.writeFileSync(path, data, { encoding: 'base64' });
-
         var folderID
         try {
             folderID = await eventModel.findOne({ _id: req.body._id }, { folderID: 1 }).lean()
@@ -317,7 +301,6 @@ class teacherController {
         }
         try {
             uploadFile(req.body.filename, folderID.folderID, path).then(function(ID) {
-
                 var fileLink = "https://docs.google.com/file/d/" + ID + "/preview"
                 console.log("fileLink", fileLink)
                 var token = req.cookies.token

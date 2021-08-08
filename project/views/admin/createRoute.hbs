@@ -7,8 +7,6 @@
 
 
 <body>
-
-
         <h2>Create route</h2>
         <label>routeName </label>
         <input type="text" name="routeName" id="routeName">
@@ -17,34 +15,49 @@
         <input type="text" name="description" id="description">
         <br>
         <label>Total of stage</label>
-        <input type="number" name="totalStage" id="totalStage" onchange="totalStage()">
+        <input type="number" name="totalStage" id="totalStage" onchange="totalStage('create')">
         <br>
         <div id="addStage"></div>
         <br>
         <button type="submit" onclick="signUp()">Submit</button>
-        <br><br><br><br><br><br><br><br>
 
         <table border="solid">
                 {{#each data}}
-                <th
-                        style="background-image: url('https://tiemanhsky.com/wp-content/uploads/2021/03/PHUS7968-Edit-scaled.jpg');width: 25%;height: 200px;">
-                        {{!-- <button>Update</button><button>Remove</button> --}}
-                        <p>Lộ trình: {{routeName}}</p>
-                        <p>Miêu tả: {{description}}</p>
-                        <p><button onclick="viewSchedule('{{_id}}')">Lộ trình học</button></p>
-
-                </th>
+                <tr>
+                        <th>Tên lộ trình</th>
+                        <th>Miêu tả</th>
+                        <th>action</th>
+                </tr>
+                <tr id="{{_id}}">
+                        <td>{{routeName}}</td>
+                        <td>{{description}}</td>
+                        <td><button onclick="updateRoute('{{_id}}')">Update</button>
+                                <button onclick="deleteRoute('{{_id}}')">Remove</button>
+                                <button onclick="viewSchedule('{{_id}}')">Lộ trình học</button>
+                        </td>
+                </tr>
                 {{/each}}
         </table>
 
-
         <table border="solid">
-                <tr id='stage'>sdfghj</tr>
-                <tr id='routeSchedual'>sdfghj,</tr>
+                <h2>update route</h2>
+                <label>routeName </label>
+                <input type="text" name="routeName" id="routeNameUpdate">
+                <br>
+                <label>Description</label>
+                <input type="text" name="description" id="descriptionUpdate">
+                <br>
+                <label>Total of stage</label>
+                <input type="number" name="totalStageUpdate" id="totalStageUpdate" onchange="totalStage('update')">
+                <br>
+                <div id="addStageUpdate"></div>
+                <br>
+                <button type="submit" onclick="signUp()">Submit</button>
         </table>
+
 </body>
 <script>
-
+    
         function viewSchedule(id) {
                 var _id = id
                 $.ajax({
@@ -63,49 +76,52 @@
                                 alert('server error');
                         }
                 });
-
         }
 
-        function totalStage() {
+        function totalStage(create) {
                 var stage = 1;
-                $('#addStage').html("");
-                var totalStage = parseInt($('#totalStage').val());
-                for (stage = 1; stage < totalStage + 1; stage++) {
-                        var add = "<label>stage" + stage + "</label><input type='text' value='" + stage + "' name='stage'><br><label onclick='addRoute(" + stage + ")'>add route</label><br><div id='" + stage + "'></div>"
-                        $('#addStage').append(add)
+                if (create == 'create') {
+                        $('#addStage').html("");
+                        var totalStage = parseInt($('#totalStage').val());
+                        for (stage = 1; stage < totalStage + 1; stage++) {
+                                var add = "<label>stage" + stage + "</label><input type='text' value='" + stage + "' name='stage'><input type='text' value='" + stage + "' name='stageMoney'><br><label onclick='addRoute(" + stage + ")'>add route</label><div id='" + stage + "'></div>"
+                                $('#addStage').append(add)
+                        }
+                } else if (create == 'update') {
+                        $('#addStageUpdate').html("");
+                        var totalStage = parseInt($('#totalStageUpdate').val());
+                        for (stage = 1; stage < totalStage + 1; stage++) {
+                                var add = "<label>stage" + stage + "</label><input type='text' value='" + stage + "' name='stageUpdate'><input type='text' value='" + stage + "' name='stageMoneyUpdate'><br><label onclick='addRouteUpdate(" + stage + ")'>add route</label><div id='" + stage + "Update'></div>"
+                                $('#addStageUpdate').append(add)
+                        }
                 }
+
         }
-        var route = 0;
-        var uuuu = 1;
         function addRoute(stage) {
-                if (stage === uuuu) {
-                        route = route + 1
-                        uuuu = stage
-                } else if (stage != uuuu) {
-                        route = 1
-                        uuuu = stage
-                }
                 var x = '#' + stage
-                var add = "<div id= 'remove_field" + route + "'><label>route</label><input type='text' value='route" + route + "' name='route" + stage + "'><button onclick=deleteRoute('remove_field" + route + "')>&times;</button></div>"
+                var add = "<div class='class'><label>route</label><input type='text' value='route" + stage + "' name='route" + stage + "'><button onclick=$(this).parents('.class').remove();>Xóa</button></div>"
                 $(x).append(add)
         }
-        function deleteRoute(abcx) {
-                abcx = "#" + abcx
-                $(abcx).remove();
 
+        function addRouteUpdate(stage) {
+                var x = '#' + stage + 'Update'
+                var add = "<div class='class'><label>route</label><input type='text' value='route" + stage + "' name='routeUpdate" + stage + "'><button onclick=$(this).parents('.class').remove();>Xóa</button></div>"
+                $(x).append(add)
         }
+
         function signUp() {
                 var stageContent = [];
                 var totalStage = parseInt($('#totalStage').val());
                 $("input[name='stage']").each(function () {
                         stageContent.push($(this).val())
                 });
+                var stageMoney = [];
+                $("input[name='stageMoney']").each(function () {
+                        stageMoney.push($(this).val())
+                });
                 route = [];
-                pre = 1;
                 for (stage = 1; stage < totalStage + 1; stage++) {
-                        if (pre < stage) {
-                                route.push("space")
-                        }
+                        if (1 < stage) route.push("space")
                         var y = "input[name='route" + stage + "']"
                         $(y).each(function () {
                                 route.push($(this).val())
@@ -113,6 +129,7 @@
                 }
                 var formData = {
                         stageContent: stageContent,
+                        stageMoney: stageMoney,
                         route: route,
                         totalStage: totalStage,
                         routeName: $("#routeName").val(),
@@ -125,14 +142,6 @@
                         data: formData,
                         success: function (response) {
                                 if (response.msg == 'success') {
-                                        if (formData.role == "student") {
-                                                getStudent();
-                                        } else if (formData.role == "teacher") {
-                                                getTeacher();
-                                        } else if (formData.role == "guardian") {
-                                                a
-                                                getGuardian();
-                                        }
                                         alert('Sign Up success');
                                 }
                                 if (response.msg == 'Account already exists') {
@@ -143,7 +152,30 @@
                                 alert('server error');
                         }
                 })
+        }
 
+        function updateRoute(id) {
+
+        }
+
+        function deleteRoute(id) {
+                $.ajax({
+                        url: '/admin/deleteRoute',
+                        method: 'delete',
+                        dataType: 'json',
+                        data: { id: id },
+                        success: function (response) {
+                                if (response.msg == 'success') {
+                                        alert('success');
+                                }
+                                if (response.msg == 'error') {
+                                        alert('error');
+                                }
+                        },
+                        error: function (response) {
+                                alert('server error');
+                        }
+                })
         }
 </script>
 

@@ -114,10 +114,13 @@ class adminController {
 
     docreateRoute(req, res) {
         var stageContent = req.body.stageContent
+        var stageMoney = req.body.stageMoney
         var route = req.body.route
         var testthu = route.toString();
         testthu = testthu.split(",space,")
         var totalStage = req.body.totalStage
+
+
         studyRouteModel.create({
             routeName: req.body.routeName,
             description: req.body.description,
@@ -129,6 +132,7 @@ class adminController {
                     $push: {
                         routeSchedual: {
                             stage: stageContent[i],
+                            price: stageMoney[i],
                             routeabcd: testthu[i],
                         }
                     }
@@ -144,15 +148,23 @@ class adminController {
     }
 
 
+    deleteRoute(req, res) {
+        studyRouteModel.deleteOne({ _id: req.body.id }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
+    }
+
+
     async doCreateAccount(req, res) {
         var fileID
         var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
         var image = req.body.file;
         var data = image.split(',')[1];
         fs.writeFileSync(path, data, { encoding: 'base64' });
-        var temp = fs.readFileSync(path);
-        var buff = new Buffer(temp);
-        var base64data = buff.toString('base64');
         try {
             var responese = await driveService.files.create(param = {
                 resource: {
@@ -192,19 +204,7 @@ class adminController {
                     if (username && password) {
                         const salt = bcrypt.genSaltSync(saltRounds);
                         const hash = bcrypt.hashSync(password, salt);
-                        AccountModel.create({
-                            avatar: fileID,
-                            username,
-                            password: hash,
-                            email,
-                            role,
-                            routeName,
-                            aim,
-                            stage,
-                            phone,
-                            address,
-                            birthday
-                        }, function(err, data) {
+                        AccountModel.create({ avatar: fileID, username, password: hash, email, role, routeName, aim, stage, phone, address, birthday }, function(err, data) {
                             if (err) {
                                 res.json({ msg: 'error' });
                             } else {
@@ -212,7 +212,6 @@ class adminController {
                             }
                         });
                     }
-
                 }
             })
         } catch (error) {
@@ -285,65 +284,69 @@ class adminController {
     }
 
     docreateClass(req, res) {
-        try {
-            var getStudentID = req.body.hobby
-            var studentID = []
-            if (Array.isArray(getStudentID) == false) {
-                studentID.push(req.body.hobby)
-            } else {
-                studentID = getStudentID
-            }
-            var listStudent = []
-            for (var i = 0; i < studentID.length + 1; i++) {
-                listStudent.push({ 'ID': studentID[i] });
-            }
-
-            console.log(listStudent)
-            ClassModel.create({
-                className: req.body.className,
-                subject: req.body.subject,
-                routeName: req.body.routeName,
-                stage: req.body.stage,
-                description: req.body.description,
-                teacherID: req.body.facultyID,
-                endDate: req.body.endDate,
-                startDate: req.body.startDate,
-            }, function(err, data) {
-                if (err) {
-                    res.json("lỗi k tạo được")
-                } else {
-                    AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } }, function(err, teacher) {})
-                    console.log(data._id)
-                    ClassModel.findOneAndUpdate({ _id: data._id }, {
-                        $push: {
-                            studentID: {
-                                $each: listStudent
-                            },
-                            StudentIDoutdoor: {
-                                $each: listStudent
-                            }
-                        }
-                    }, function(err, teacher) {
-                        if (err) {
-                            console.log("lỗi k tạo được2")
-                        }
-                    })
-                    AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
-                        return res.status(200).json({
-                            message: "Sign Up success",
-                            error: false
-                        })
-                    })
-                }
-            });
-        } catch (error) {
-            if (error) {
-                res.status(400).json({
-                    message: "Sign Up fail",
-                    error: true
-                })
-            }
-        }
+        var abc = req.body.Schedule
+        var stopDate = req.body.endDate
+        var startDate = req.body.startDate
+        console.log(abc)
+        console.log(stopDate)
+        console.log(startDate)
+            // try {
+            //     var getStudentID = req.body.hobby
+            //     var studentID = []
+            //     if (Array.isArray(getStudentID) == false) {
+            //         studentID.push(req.body.hobby)
+            //     } else {
+            //         studentID = getStudentID
+            //     }
+            //     var listStudent = []
+            //     for (var i = 0; i < studentID.length + 1; i++) {
+            //         listStudent.push({ 'ID': studentID[i] });
+            //     }
+            //     ClassModel.create({
+            //         className: req.body.className,
+            //         subject: req.body.subject,
+            //         routeName: req.body.routeName,
+            //         stage: req.body.stage,
+            //         description: req.body.description,
+            //         teacherID: req.body.facultyID,
+            //         endDate: req.body.endDate,
+            //         startDate: req.body.startDate,
+            //     }, function(err, data) {
+            //         if (err) {
+            //             res.json("lỗi k tạo được")
+            //         } else {
+            //             AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } }, function(err, teacher) {})
+            //             console.log(data._id)
+            //             ClassModel.findOneAndUpdate({ _id: data._id }, {
+            //                 $push: {
+            //                     studentID: {
+            //                         $each: listStudent
+            //                     },
+            //                     StudentIDoutdoor: {
+            //                         $each: listStudent
+            //                     }
+            //                 }
+            //             }, function(err, teacher) {
+            //                 if (err) {
+            //                     console.log("lỗi k tạo được2")
+            //                 }
+            //             })
+            //             AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
+            //                 return res.status(200).json({
+            //                     message: "Sign Up success",
+            //                     error: false
+            //                 })
+            //             })
+            //         }
+            //     });
+            // } catch (error) {
+            //     if (error) {
+            //         res.status(400).json({
+            //             message: "Sign Up fail",
+            //             error: true
+            //         })
+            //     }
+            // }
     }
 
     allClassLevel(req, res) {
@@ -569,7 +572,6 @@ class adminController {
             }
         })
     }
-
 
 }
 module.exports = new adminController
