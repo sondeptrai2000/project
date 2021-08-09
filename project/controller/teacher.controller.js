@@ -97,7 +97,9 @@ class teacherController {
     }
 
     attendedListStudent(req, res) {
-        ClassModel.find({ _id: req.query.idClass, "schedule.$._id": req.query.idattend }, { schedule: 1 }).lean().exec((err, data) => {
+        console.log(req.query.idattend)
+        console.log(req.query.idClass)
+        ClassModel.find({ _id: req.query.idClass, "schedule._id": req.query.idattend }, { schedule: 1 }).populate({ path: "schedule.attend.studentID", select: "username avatar" }).lean().exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {

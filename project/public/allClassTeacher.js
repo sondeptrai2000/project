@@ -371,7 +371,8 @@ function attendedList(id) {
             if (response.msg == 'success') {
                 $("#attendedList").html($("#attendedList tr:first-child"))
                 $.each(response.data[0].schedule, function(index, data) {
-                    $("#attendedList").append('<tr><td>' + data.date + '</td><td>' + data.day + '</td><td><button onclick=takeAttend("' + data._id + ',' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="text" value="' + data + '"></td></tr>    ')
+                    $("#attendedList").append('<tr><td>' + data.date + '</td><td>' + data.day + '</td><td><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="text" value="' + data + '"></td></tr>    ')
+
                 });
             }
         },
@@ -382,19 +383,27 @@ function attendedList(id) {
 }
 
 function takeAttend(idattend, idClass) {
+    var formData = {
+        idattend: idattend,
+        idClass: idClass,
+    }
     $.ajax({
         url: '/teacher/attendedListStudent',
         method: 'get',
         dataType: 'json',
-        data: { idattend: idClass, idClass: idClass },
+        data: formData,
         success: function(response) {
             if (response.msg == 'success') {
                 $("#lola").html($("#lola tr:first-child"))
                 console.log(response.data[0].schedule)
-                $.each(response.data.schedule, function(index, data) {
-                    $.each(data.attend, function(index, attend) {
-                        $("#lola").append('<tr><td>' + attend.studentID + '</td><>' + attend.attended + '</td></tr>')
-                    });
+                $.each(response.data[0].schedule, function(index, data) {
+                    if (data._id == idattend) {
+                        $.each(data.attend, function(index, attend) {
+                            $("#lola").append('<tr><td>' + attend.studentID.username + '</td><td><select id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></td></tr>')
+                            $('#' + attend.studentID._id + ' option:selected').removeAttr('selected');
+                            $('#' + attend.studentID._id + ' option[value="' + attend.attended + '"]').attr('selected', 'selected');
+                        });
+                    }
                 });
             }
         },
