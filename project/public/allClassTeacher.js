@@ -399,6 +399,7 @@ function takeAttend(idattend, idClass) {
                 $.each(response.data[0].schedule, function(index, data) {
                     if (data._id == idattend) {
                         $.each(data.attend, function(index, attend) {
+                            $("#loladate").html(data.date)
                             $("#lola").append('<tr><td>' + attend.studentID.username + '</td><td><select id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></td></tr>')
                             $('#' + attend.studentID._id + ' option:selected').removeAttr('selected');
                             $('#' + attend.studentID._id + ' option[value="' + attend.attended + '"]').attr('selected', 'selected');
