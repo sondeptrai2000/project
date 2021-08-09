@@ -359,3 +359,47 @@ function takeAttendOutDoor(id) {
         }
     });
 }
+
+function attendedList(id) {
+    var idClass = id
+    $.ajax({
+        url: '/teacher/attendedList',
+        method: 'get',
+        dataType: 'json',
+        data: { id: id },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#attendedList").html($("#attendedList tr:first-child"))
+                $.each(response.data[0].schedule, function(index, data) {
+                    $("#attendedList").append('<tr><td>' + data.date + '</td><td>' + data.day + '</td><td><button onclick=takeAttend("' + data._id + ',' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="text" value="' + data + '"></td></tr>    ')
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+function takeAttend(idattend, idClass) {
+    $.ajax({
+        url: '/teacher/attendedListStudent',
+        method: 'get',
+        dataType: 'json',
+        data: { idattend: idClass, idClass: idClass },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#lola").html($("#lola tr:first-child"))
+                console.log(response.data[0].schedule)
+                $.each(response.data.schedule, function(index, data) {
+                    $.each(data.attend, function(index, attend) {
+                        $("#lola").append('<tr><td>' + attend.studentID + '</td><>' + attend.attended + '</td></tr>')
+                    });
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}

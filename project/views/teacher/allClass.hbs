@@ -57,11 +57,21 @@
             </td>
             <td>
                 <button onclick="attendedOutDoor('{{_id}}')">attendedOutDoor </button>
-                <button onclick="attended('{{_id}}')">attended </button>
+                <button onclick="attendedList('{{_id}}')">attended </button>
             </td>
         </tr>
         {{/each}}
     </table>
+
+    <table border="solid" id="attendedList">
+        <tr>
+            <th>Date</th>
+            <th>Day of week</th>
+            <th>Day of week</th>
+        </tr>
+
+    </table>
+
     <table class='attendedOutDoor' border='solid'>
         <thead>
             <tr>
@@ -173,6 +183,12 @@
         </table>
     </div>
 
+    <table border="solid" id='lola'>
+        <tr>
+            <th>ID</th>
+            <th>Status</th>
+        </tr>
+    </table>
 
 </body>
 <script src=" /allClassTeacher.js"></script>

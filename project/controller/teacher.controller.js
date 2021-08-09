@@ -85,6 +85,27 @@ class teacherController {
         })
     }
 
+
+    attendedList(req, res) {
+        ClassModel.find({ _id: req.query.id }, { schedule: 1 }).lean().exec((err, data) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
+    }
+
+    attendedListStudent(req, res) {
+        ClassModel.find({ _id: req.query.idClass, "schedule.$._id": req.query.idattend }, { schedule: 1 }).lean().exec((err, data) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                console.log(data)
+                res.json({ msg: 'success', data: data });
+            }
+        })
+    }
     takeAttendOutDoor(req, res) {
         ClassModel.findOneAndUpdate({ _id: req.body.id }, {
             $set: {
