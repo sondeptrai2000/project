@@ -103,11 +103,28 @@ class teacherController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                console.log(data)
                 res.json({ msg: 'success', data: data });
             }
         })
     }
+
+    doTakeAttended(req, res) {
+        console.log(req.body.idClass)
+        console.log(req.body.schedule)
+        ClassModel.updateOne({ _id: req.body.idClass, "schedule._id": req.body.schedule }, {
+            $set: {
+                "schedule.$.attend": req.body.attend
+            }
+        }).lean().exec((err, data) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data: data });
+            }
+        })
+    }
+
+
     takeAttendOutDoor(req, res) {
         ClassModel.findOneAndUpdate({ _id: req.body.id }, {
             $set: {

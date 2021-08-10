@@ -40,7 +40,7 @@ teacherRouter.get('/attendedOutDoor', teacherController.attendedOutDoor)
 teacherRouter.post('/takeAttendOutDoor', teacherController.takeAttendOutDoor)
 teacherRouter.get('/attendedList', teacherController.attendedList)
 teacherRouter.get('/attendedListStudent', teacherController.attendedListStudent)
-    // teacherRouter.post('/doTakeAttended', teacherController.doTakeAttended)
+teacherRouter.post('/doTakeAttended', teacherController.doTakeAttended)
 
 
 module.exports = teacherRouter
