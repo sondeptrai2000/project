@@ -333,7 +333,7 @@ function attendedList(id) {
                 $("#attendedList").html($("#attendedList tr:first-child"))
                 $.each(response.data[0].schedule, function(index, data) {
                     console.log(data._id + '","' + idClass + '","' + data.attend._id)
-                    $("#attendedList").append('<tr><td>' + data.date + '</td><td>' + data.day + '</td><td><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></td></tr>    ')
+                    $("#attendedList").append('<tr><td>' + data.date.split("T00:00:00.000Z")[0] + '</td><td>' + data.day + '</td><td><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></td></tr>    ')
                 });
                 $(".attendedListOut").fadeIn(500)
             }
@@ -360,7 +360,7 @@ function takeAttend(idattend, idClass) {
                 $.each(response.data[0].schedule, function(index, data) {
                     if (data._id == idattend) {
                         $.each(data.attend, function(index, attend) {
-                            $("#loladate").val(data.date)
+                            $("#loladate").val(data.date.split("T00:00:00.000Z")[0])
                             $("#loladate1").val(data._id)
                             $("#loladate3").val(idClass)
                             $("#lola").append('<tr><td><input class ="attendStudentID" type="hidden" value="' + attend.studentID._id + '">' + attend.studentID.username + '</td><td><select class ="attendStudentStatus" id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></td></tr>')

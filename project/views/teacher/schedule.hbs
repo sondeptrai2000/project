@@ -127,7 +127,10 @@
         var end = moment(new Date(cuoiTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
         var a = getDaysArray(new Date(dauTuan), new Date(cuoiTuan));
         $("#ngay").html("<th>Ngày</th>")
-        a.forEach(element => $("#ngay").append("<td>" + (element.getFullYear() + "-" + (element.getMonth() + 1).toString().padStart(2, "0") + "-" + element.getDate()) + "</td>"));
+        a.forEach(element => {
+            $("#ngay").append("<td>" + (element.getFullYear() + "-" + (element.getMonth() + 1).toString().padStart(2, "0") + "-" + element.getDate()) + "</td>")
+        });
+
         $.ajax({
             url: '/teacher/getSchedule',
             method: 'get',
@@ -139,10 +142,8 @@
                     console.log(response.classInfor)
                     $.each(response.classInfor, function (index, classInfor) {
                         $.each(classInfor.schedule, function (index, schedule) {
-                            console.log(schedule.date < end)
                             if (start <= schedule.date && schedule.date <= end) {
-                                console.log(schedule.day)
-                                $("#lichhoc td:nth-child(" + schedule.day + ")").append(classInfor.className+"<br>")
+                                $("#lichhoc td:nth-child(" + schedule.day + ")").append(classInfor.className + "<br>")
                             }
                         });
                     });
