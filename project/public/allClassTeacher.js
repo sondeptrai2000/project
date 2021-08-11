@@ -332,6 +332,7 @@ function attendedList(id) {
             if (response.msg == 'success') {
                 $("#attendedList").html($("#attendedList tr:first-child"))
                 $.each(response.data[0].schedule, function(index, data) {
+                    console.log(data._id + '","' + idClass + '","' + data.attend._id)
                     $("#attendedList").append('<tr><td>' + data.date + '</td><td>' + data.day + '</td><td><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></td></tr>    ')
                 });
                 $(".attendedListOut").fadeIn(500)

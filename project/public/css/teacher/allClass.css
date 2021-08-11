@@ -105,7 +105,7 @@ header a:hover {
 .studentAssessment,
 .studentAssessmentUpdate {
     background-color: aquamarine;
-    height: 500px;
+    height: 100%;
     width: 100%;
     overflow: scroll;
 }
@@ -129,10 +129,5 @@ header a:hover {
     background-color: aquamarine;
     height: 100%;
     width: 100%;
-    overflow: scroll;
-}
-
-.attendedOutDoorBody1 {
-    height: 400px;
     overflow: scroll;
 }

@@ -123,8 +123,8 @@
         for (var i = 0; i < range.length; i++) {
             for (var u = 0; u < buoihoc.length; u++) {
                 if (range[i].getDay() == buoihoc[u]) {
-                    var date = range[i].getFullYear() + "-" + (range[i].getMonth() + 1) + "-" + range[i].getDate()
-                    var day = range[i].getDay()
+                    var date = range[i].getFullYear() + "-" + (range[i].getMonth() + 1).toString().padStart(2, "0") + "-" + range[i].getDate().toString().padStart(2, "0")
+                    var day = range[i].getDay().toString().padStart(2, "0")
                     schedual.push({
                         "date": date,
                         "day": day,

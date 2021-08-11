@@ -23,6 +23,12 @@ teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 teacherRouter.post('/uploadNewProposal', teacherController.uploadNewProposal)
 teacherRouter.delete('/deleteProposal', teacherController.deleteProposal)
 
+//lịch học
+teacherRouter.get('/schedule', teacherController.schedule)
+teacherRouter.get('/getSchedule', teacherController.getSchedule)
+
+
+
 //lieen quan den su kien
 teacherRouter.get('/allEvent', teacherController.allEvent)
 teacherRouter.post('/uploadProposalEvent', teacherController.uploadProposalEvent)

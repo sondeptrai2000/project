@@ -75,6 +75,23 @@ class teacherController {
         })
     }
 
+    schedule(req, res) {
+        res.render('teacher/schedule')
+    }
+
+    getSchedule(req, res) {
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
+
+        ClassModel.find({ teacherID: decodeAccount, startDate: { $lt: "2021-08-09" }, endDate: { $gt: "2021-08-09" } }).lean().exec((err, classInfor) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', classInfor });
+            }
+        })
+    }
+
     attendedOutDoor(req, res) {
         ClassModel.find({ _id: req.query.id }, { StudentIDoutdoor: 1 }).populate({ path: "StudentIDoutdoor.ID", select: "username avatar" }).lean().exec((err, data) => {
             if (err) {
