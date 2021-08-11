@@ -9,13 +9,6 @@ mongoose.connect(url, {
 mongoose.set('useCreateIndex', true);
 
 
-function dateNow() {
-    var date = new Date()
-    var month = date.getMonth() + 1
-    var lol = date.getFullYear() + "-" + month + "-" + date.getDate()
-    return lol
-}
-
 const Schema = mongoose.Schema;
 const classSchema = new Schema({
     className: String,
@@ -42,7 +35,7 @@ const classSchema = new Schema({
         ref: 'account'
     },
     schedule: [{
-        date: String,
+        date: Date,
         day: String,
         attend: [{
             studentID: {
@@ -85,8 +78,8 @@ const classSchema = new Schema({
         type: String,
     },
     uploadDate: String,
-    endDate: String,
-    startDate: String,
+    endDate: Date,
+    startDate: Date,
     classStatus: String,
 }, {
     collection: 'class',
@@ -95,9 +88,3 @@ const classSchema = new Schema({
 
 var classModel = mongoose.model('class', classSchema)
 module.exports = classModel
-
-
-// user:{
-//     type: Schema.Types.ObjectId,
-//     ref: 'users'
-// }

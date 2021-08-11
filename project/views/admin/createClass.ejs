@@ -96,7 +96,7 @@
         }
     }
 
-    function abc() {
+    async function abc() {
 
         var studentID = []
         var listStudent = []
@@ -118,6 +118,7 @@
             buoihoc.push($(this).val())
         })
         var schedual = []
+
         var range = getDaysArray(new Date($("#startDate").val()), new Date($("#endDate").val()));
         //lấy các buổi học trong khoảng thời gian
         for (var i = 0; i < range.length; i++) {

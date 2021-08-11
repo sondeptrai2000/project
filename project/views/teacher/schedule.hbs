@@ -4,7 +4,8 @@
 <head>
     <script src="/jquery/jquery.js"></script>
     <link rel="stylesheet" href="/css/teacher/schedule.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />\
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 </head>
 
 <body>
@@ -41,6 +42,7 @@
                     <td>CN</td>
                 </tr>
                 <tr id='lichhoc'>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -120,6 +122,9 @@
             dauTuan: dauTuan,
             cuoiTuan: cuoiTuan
         }
+
+        var start = moment(new Date(dauTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
+        var end = moment(new Date(cuoiTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
         var a = getDaysArray(new Date(dauTuan), new Date(cuoiTuan));
         $("#ngay").html("<th>Ngày</th>")
         a.forEach(element => $("#ngay").append("<td>" + (element.getFullYear() + "-" + (element.getMonth() + 1).toString().padStart(2, "0") + "-" + element.getDate()) + "</td>"));
@@ -130,12 +135,14 @@
             data: formData,
             success: function (response) {
                 if (response.msg == 'success') {
+                    $("#lichhoc").html("<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>")
                     console.log(response.classInfor)
                     $.each(response.classInfor, function (index, classInfor) {
                         $.each(classInfor.schedule, function (index, schedule) {
-                            if (dauTuan < schedule.date && schedule.date < cuoiTuan) {
-                                $("#lichhoc").html("<td></td><td></td><td></td><td></td><td></td><td></td><td></td>")
-                                $("#lich td:nth-child(3)").append(classInfor.className)
+                            console.log(schedule.date < end)
+                            if (start <= schedule.date && schedule.date <= end) {
+                                console.log(schedule.day)
+                                $("#lichhoc td:nth-child(" + schedule.day + ")").append(classInfor.className+"<br>")
                             }
                         });
                     });

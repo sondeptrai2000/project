@@ -30,13 +30,13 @@ const { inflate } = require('zlib');
 const saltRounds = 10;
 class adminController {
     adminHome(req, res) {
-        // AccountModel.updateMany({}, { $set: { classID: [], subject: [] } }, function(err, data) {
-        //     if (err) {
-        //         console.log("k ok")
-        //     } else {
-        //         console.log(" ok")
-        //     }
-        // })
+        AccountModel.updateMany({}, { $set: { classID: [], subject: [] } }, function(err, data) {
+            if (err) {
+                console.log("k ok")
+            } else {
+                console.log(" ok")
+            }
+        })
         res.render('admin/adminHome')
     }
 
@@ -295,8 +295,8 @@ class adminController {
                 stage: req.body.stage,
                 description: req.body.description,
                 teacherID: req.body.teacherID,
-                endDate: req.body.endDate,
-                startDate: req.body.startDate,
+                endDate: new Date(req.body.endDate),
+                startDate: new Date(req.body.startDate),
             }, function(err, data) {
                 if (err) {
                     res.json({ msg: 'error' });
@@ -304,32 +304,34 @@ class adminController {
                     AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } }, function(err, teacher) {
                         if (err) {
                             res.json({ msg: 'error' });
+                        } else {
+                            ClassModel.findOneAndUpdate({ _id: data._id }, {
+                                $push: {
+                                    studentID: {
+                                        $each: listStudent
+                                    },
+                                    StudentIDoutdoor: {
+                                        $each: listStudent
+                                    },
+                                    schedule: {
+                                        $each: req.body.schedual
+                                    }
+                                }
+                            }, function(err, teacher) {
+                                if (err) {
+                                    res.json({ msg: 'error' });
+                                } else {
+                                    AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
+                                        if (err) {
+                                            res.json({ msg: 'error' });
+                                        } else {
+                                            res.json({ msg: 'success' });
+                                        }
+                                    })
+                                }
+                            })
                         }
                     })
-                    ClassModel.findOneAndUpdate({ _id: data._id }, {
-                        $push: {
-                            studentID: {
-                                $each: listStudent
-                            },
-                            StudentIDoutdoor: {
-                                $each: listStudent
-                            },
-                            schedule: {
-                                $each: req.body.schedual
-                            }
-                        }
-                    }, function(err, teacher) {
-                        if (err) {
-                            res.json({ msg: 'error' });
-                        }
-                    })
-                    AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
-                        if (err) {
-                            res.json({ msg: 'error' });
-                        }
-                    })
-                    res.json({ msg: 'success' });
-
                 }
             });
         } catch (error) {
