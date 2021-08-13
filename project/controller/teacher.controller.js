@@ -1,6 +1,8 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const eventModel = require('../models/event');
+const assignRoomAndTimeModel = require('../models/assignRoomAndTime');
+
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
 const fs = require("fs")
@@ -116,7 +118,7 @@ class teacherController {
     attendedListStudent(req, res) {
         console.log(req.query.idattend)
         console.log(req.query.idClass)
-        ClassModel.find({ _id: req.query.idClass, "schedule._id": req.query.idattend }, { schedule: 1 }).populate({ path: "schedule.attend.studentID", select: "username avatar" }).lean().exec((err, data) => {
+        ClassModel.find({ _id: req.query.idClass }, { schedule: { $elemMatch: { _id: req.query.idattend } } }).populate({ path: "schedule.attend.studentID", select: "username avatar" }).lean().exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -126,8 +128,8 @@ class teacherController {
     }
 
     doTakeAttended(req, res) {
-        console.log(req.body.idClass)
-        console.log(req.body.schedule)
+        var now = new Date()
+        var theLastCourse = new Date(req.body.lastDate.split("T00:00:00.000Z")[0])
         ClassModel.updateOne({ _id: req.body.idClass, "schedule._id": req.body.schedule }, {
             $set: {
                 "schedule.$.attend": req.body.attend
@@ -136,7 +138,21 @@ class teacherController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.json({ msg: 'success', data: data });
+                if (now >= theLastCourse) {
+                    for (var i = 0; i < req.body.time.length; i++) {
+                        console.log(req.body.day[i])
+                        assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day[i], "room.room": req.body.room[i], "room.time": req.body.time[i] }, {
+                            $set: { "room.$.status": "None" }
+                        }, function(err, data) {
+                            if (err) {
+                                res.json({ msg: 'error' });
+                            }
+                        })
+                    }
+                    res.json({ msg: 'success' });
+                } else {
+                    res.json({ msg: 'success' });
+                }
             }
         })
     }

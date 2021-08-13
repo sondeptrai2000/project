@@ -320,6 +320,9 @@ function takeAttendOutDoor(id) {
         }
     });
 }
+var room = []
+var day = []
+var time = []
 
 function attendedList(id) {
     var idClass = id
@@ -331,8 +334,22 @@ function attendedList(id) {
         success: function(response) {
             if (response.msg == 'success') {
                 $("#attendedList").html($("#attendedList tr:first-child"))
+                $("#loladate4").val(response.data[0].schedule[response.data[0].schedule.length - 1].date)
+                console.log(response.data[0].schedule[response.data[0].schedule.length - 1].room)
+                console.log(response.data[0].schedule[response.data[0].schedule.length - 1].day)
+                console.log(response.data[0].schedule[response.data[0].schedule.length - 1].time)
                 $.each(response.data[0].schedule, function(index, data) {
-                    console.log(data._id + '","' + idClass + '","' + data.attend._id)
+                    if (!room.includes(data.room)) {
+                        room.push(data.room)
+                    }
+                    if (!day.includes(data.day)) {
+                        day.push(data.day)
+
+                    }
+                    if (!time.includes(data.time)) {
+                        time.push(data.time)
+
+                    }
                     $("#attendedList").append('<tr><td>' + data.date.split("T00:00:00.000Z")[0] + '</td><td>' + data.day + '</td><td><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></td></tr>    ')
                 });
                 $(".attendedListOut").fadeIn(500)
@@ -395,6 +412,10 @@ function submitTakeAttend() {
         attend: attend,
         idClass: $("#loladate3").val(),
         schedule: $("#loladate1").val(),
+        lastDate: $("#loladate4").val(),
+        room: room,
+        day: day,
+        time: time,
     }
     $.ajax({
         url: '/teacher/doTakeAttended',
