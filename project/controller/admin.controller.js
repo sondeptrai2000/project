@@ -4,7 +4,7 @@ const eventModel = require('../models/event');
 const studyRouteModel = require('../models/studyRoute');
 const ClassModel = require('../models/class');
 const consultingInformationModel = require('../models/consultingInformation');
-const extracurricularActivitiesModel = require('../models/extracurricularActivities');
+const assignRoomAndTimeModel = require('../models/assignRoomAndTime');
 
 const fs = require("fs")
 const readline = require("readline")
@@ -38,6 +38,44 @@ class adminController {
             }
         })
         res.render('admin/adminHome')
+    }
+
+    assignRoomAndTime(req, res) {
+        assignRoomAndTimeModel.find({}, function(err, data) {
+            if (err) {
+                res.json("lõi")
+            } else {
+                res.render('admin/assignRoomAndTime', { data })
+            }
+        })
+    }
+
+    addRoom(req, res) {
+        console.log(req.body.roomName)
+        assignRoomAndTimeModel.updateMany({}, {
+            $push: {
+                room: { $each: req.body.roomName }
+            }
+        }, function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success' });
+            }
+        })
+    }
+
+
+
+    getThu(req, res) {
+        var dayOfWeek = '0' + req.query.dayOfWeek
+        assignRoomAndTimeModel.find({ dayOfWeek }, function(err, data) {
+            if (err) {
+                res.json("lõi")
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
     }
 
     getAccount(req, res) {
@@ -287,7 +325,6 @@ class adminController {
         try {
             var studentID = req.body.studentID
             var listStudent = req.body.listStudent
-            console.log(req.body.schedual)
             ClassModel.create({
                 className: req.body.className,
                 subject: req.body.subject,
@@ -325,6 +362,15 @@ class adminController {
                                         if (err) {
                                             res.json({ msg: 'error' });
                                         } else {
+                                            for (var i = 0; i < req.body.time.length; i++) {
+                                                assignRoomAndTimeModel.updateOne({ dayOfWeek: '0' + req.body.buoihoc[i], "room.room": req.body.room[i], "room.time": req.body.time[i] }, {
+                                                    $set: { "room.$.status": "Ok" }
+                                                }, function(err, data) {
+                                                    if (err) {
+                                                        res.json({ msg: 'error' });
+                                                    }
+                                                })
+                                            }
                                             res.json({ msg: 'success' });
                                         }
                                     })

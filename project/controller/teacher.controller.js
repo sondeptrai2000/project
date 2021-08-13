@@ -1,6 +1,5 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
-const extracurricularActivitiesModel = require('../models/extracurricularActivities');
 const eventModel = require('../models/event');
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
@@ -82,8 +81,9 @@ class teacherController {
     getSchedule(req, res) {
         var token = req.cookies.token
         var decodeAccount = jwt.verify(token, 'minhson')
-        var sosanh = new Date(req.query.dauTuan)
-        ClassModel.find({ teacherID: decodeAccount, endDate: { $gte: sosanh } }).lean().exec((err, classInfor) => {
+            //lấy thời hiện tại để lấy khóa học đang hoạt động trong thời gian hiện tại. 
+        var sosanh = new Date()
+        ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean().exec((err, classInfor) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {

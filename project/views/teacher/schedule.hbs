@@ -64,12 +64,14 @@
     });
 
     function test() {
+        //lấy các ngày trong năm
         for (var arr = [], dt = new Date("2021-01-01"); dt <= new Date("2021-12-31"); dt.setDate(dt.getDate() + 1)) {
             var date = new Date(dt)
             var month = (date.getMonth() + 1).toString().padStart(2, "0");
             var lol = date.getFullYear() + "-" + month + "-" + date.getDate().toString().padStart(2, "0");
             arr.push({ "ngay": lol, "thu": (date.getDay() + 1) });
         }
+        //chia thành các tuần từ thứ 2 đến CN
         var tuan = []
         var check = false
         var check2 = false
@@ -88,20 +90,22 @@
                 check = true
             }
         }
+        //đưa các tuần vào thẻ select và đặt select cho tuần hiện tại.
         const date1 = new Date();
         var year = date1.getFullYear()
         var month = date1.getMonth() + 1
+        //lấy thời gian hiện tại để so sánh và lấy tuần
         var now = date1.getFullYear() + "-" + month.toString().padStart(2, "0") + "-" + date1.getDate();
         for (var u = 0; u < tuan.length; u++) {
             $("#chonTuan").append('<option value="' + tuan[u] + '">' + tuan[u] + '</option>');
-            var lkjhg = tuan[u]
-            dauTuan = lkjhg.split(" đến ")[0]
-            cuoiTuan = lkjhg.split(" đến ")[1]
-            if ((dauTuan < now) && (now < cuoiTuan)) {
+            dauTuan = tuan[u].split(" đến ")[0]
+            cuoiTuan = tuan[u].split(" đến ")[1]
+            if ((dauTuan <= now) && (now <= cuoiTuan)) {
                 $('#chonTuan option:selected').removeAttr('selected');
                 $("#chonTuan option[value='" + tuan[u] + "']").attr('selected', 'selected');
             }
         }
+        //lấy thông tin lịch trình học, làm việc
         tuanoi()
 
     };
@@ -114,6 +118,7 @@
         return arr;
     };
 
+    //lấy thông tin lịch trình học, làm việc
     function tuanoi() {
         var tuan = $("#chonTuan").val()
         var dauTuan = tuan.split(" đến ")[0]
@@ -122,15 +127,17 @@
             dauTuan: dauTuan,
             cuoiTuan: cuoiTuan
         }
-
+        //chỉnh fomat date giống Type Date trong mongoDB để so sánh 
+        // link src hàm moment ở head
         var start = moment(new Date(dauTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
         var end = moment(new Date(cuoiTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
         var a = getDaysArray(new Date(dauTuan), new Date(cuoiTuan));
         $("#ngay").html("<th>Ngày</th>")
+        //tùy biến ngày vào html
         a.forEach(element => {
             $("#ngay").append("<td>" + (element.getFullYear() + "-" + (element.getMonth() + 1).toString().padStart(2, "0") + "-" + element.getDate()) + "</td>")
         });
-
+        //lấy thông tin lịch học
         $.ajax({
             url: '/teacher/getSchedule',
             method: 'get',
@@ -143,7 +150,8 @@
                     $.each(response.classInfor, function (index, classInfor) {
                         $.each(classInfor.schedule, function (index, schedule) {
                             if (start <= schedule.date && schedule.date <= end) {
-                                $("#lichhoc td:nth-child(" + schedule.day + ")").append(classInfor.className + "<br>")
+                                //ghi thông tin lịch học, làm việc vào bảng
+                                $("#lichhoc td:nth-child(" + schedule.day + ")").append(classInfor.className +" Room:"+ schedule.room+ "<br>" + schedule.time + "<br>"  )
                             }
                         });
                     });

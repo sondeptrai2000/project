@@ -78,7 +78,6 @@
         <br>
         <button type="submit" class="btn5" onclick="abc()">Submit1</button>
     </div>
-
 </body>
 <script>
     //lấy các ngày trong khoảng thời gian học
@@ -92,9 +91,40 @@
     function tuan() {
         $("#datlich").html("")
         for (var i = 0; i < $("#Schedule").val(); i++) {
-            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule" min=2 max=8> giờ học: <input type="time" name="Schedule">Room <input type="number" name="Schedule" min=2 max=8><br> ')
+            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8> giờ học:<select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"><option value="7:30 đến 9:30">7:30 đến 9:30</option><option value="9:45 đến 11:45">9:45 đến 11:45</option><option value="13:30 đến 15:30">13:30 đến 15:30</option><option value="15:45 đến 17:45">15:45 đến 17:45</option><option value="18:15 đến 20:15">18:15 đến 20:15</option></select>Room:<select class="Room" id="Room' + i + '"></select><br>')
         }
     }
+
+    function getThu(i) {
+        var dayOfWeek = $("input[name='Schedule" + i + "']").val()
+        var time = $("#cahoc" + i + "").val()
+        $.ajax({
+            url: '/admin/getThu',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                dayOfWeek: dayOfWeek,
+                time: time
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    $("#Room" + i + "").html("")
+                    $.each(response.data, function(index, data) {
+                        $.each(data.room, function(index, room) {
+                            if (room.time == time && room.status == "None") {
+                                $("#Room" + i + "").append('<option value = "' + room.room + '" > ' + room.room + ' </option>')
+                            }
+                        });
+                    });
+                }
+                if (response.msg == 'error') {}
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
+
 
     async function abc() {
 
@@ -117,6 +147,16 @@
         $(".buoihocthu").each(function(data) {
             buoihoc.push($(this).val())
         })
+
+        var time = []
+        $(".cahoc").each(function() {
+            time.push($(this).val())
+        })
+
+        var room = []
+        $(".Room").each(function() {
+            room.push($(this).val())
+        })
         var schedual = []
 
         var range = getDaysArray(new Date($("#startDate").val()), new Date($("#endDate").val()));
@@ -127,6 +167,8 @@
                     var date = range[i].getFullYear() + "-" + (range[i].getMonth() + 1).toString().padStart(2, "0") + "-" + range[i].getDate().toString().padStart(2, "0")
                     var day = range[i].getDay().toString().padStart(2, "0")
                     schedual.push({
+                        "time": time[u],
+                        "room": room[u],
                         "date": date,
                         "day": day,
                         "attend": attend
@@ -135,6 +177,8 @@
                 }
             }
         }
+
+
 
         var formData = {
             className: $(".className").val(),
@@ -148,6 +192,9 @@
             studentID: studentID,
             listStudent: listStudent,
             schedual: schedual,
+            time: time,
+            room: room,
+            buoihoc: buoihoc
         }
         $.ajax({
             url: '/admin/createClass',

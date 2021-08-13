@@ -11,6 +11,10 @@ adminRouter.get('/getStage', adminController.getStage)
 adminRouter.get('/getStudent', adminController.getStudent)
 adminRouter.get('/getRoute', adminController.getRoute)
 
+//assignRoomAndTime
+adminRouter.get('/assignRoomAndTime', adminController.assignRoomAndTime)
+adminRouter.post('/addRoom', adminController.addRoom)
+adminRouter.get('/getThu', adminController.getThu)
 
 
 //tạo tài khoản
