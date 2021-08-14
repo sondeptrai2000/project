@@ -138,13 +138,25 @@ class teacherController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
+                if (req.body.scheduleStatus == 'update') {
+                    assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.scheduleDay, room: { $elemMatch: { room: req.body.scheduleRoom, time: req.body.scheduleTime } } }, {
+                        $set: { "room.$.status": "None" }
+                    }, function(err, data) {
+                        if (err) {
+                            console.log("err")
+                            res.json({ msg: 'error' });
+                        }
+                    })
+                }
+
                 if (now >= theLastCourse) {
                     for (var i = 0; i < req.body.time.length; i++) {
                         console.log(req.body.day[i])
-                        assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day[i], "room.room": req.body.room[i], "room.time": req.body.time[i] }, {
+                        assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, {
                             $set: { "room.$.status": "None" }
                         }, function(err, data) {
                             if (err) {
+                                console.log("err")
                                 res.json({ msg: 'error' });
                             }
                         })

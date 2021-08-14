@@ -39,6 +39,7 @@ const classSchema = new Schema({
         day: String,
         time: String,
         room: String,
+        status: String,
         attend: [{
             studentID: {
                 type: mongoose.Schema.Types.ObjectId,

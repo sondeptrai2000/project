@@ -16,6 +16,9 @@ adminRouter.get('/assignRoomAndTime', adminController.assignRoomAndTime)
 adminRouter.post('/addRoom', adminController.addRoom)
 adminRouter.get('/getThu', adminController.getThu)
 
+adminRouter.post('/doupdateSchedule', adminController.doupdateSchedule)
+
+
 
 //tạo tài khoản
 adminRouter.get('/createAccount', adminController.createAccount)

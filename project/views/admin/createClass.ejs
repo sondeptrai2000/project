@@ -51,6 +51,47 @@
         </div>
     </div>
 
+    <div class="attendedListOut" style="display: none;">
+        <table border="solid" id="attendedList">
+            <tr>
+                <th>Date</th>
+                <th>Day of week</th>
+                <th>Room</th>
+                <th>Time</th>
+                <th>Action</th>
+                <th><button onclick='$(".attendedListOut").fadeOut(500);'>close</button></th>
+
+            </tr>
+        </table>
+    </div>
+
+    <div class="updateScheduleFormOut" style="display: none;">
+        <table border="solid" class="updateScheduleForm">
+            <tr id="oldSchudule">
+
+            </tr>
+            <tr>
+                <input name="updateScheduleID" type="hidden">
+                <input name="updateScheduleClassID" type="hidden">
+                <th>Date: <input type="date" name="dateScheduleUpdate"></th>
+                <th>Ca làm việc:
+                    <select class="cahocUpdate" id="cahocUpdate" onchange="cahocUpdate()">
+                        <option value="7:30 đến 9:30">7:30 đến 9:30</option>
+                        <option value="9:45 đến 11:45">9:45 đến 11:45</option>
+                        <option value="13:30 đến 15:30">13:30 đến 15:30</option>
+                        <option value="15:45 đến 17:45">15:45 đến 17:45</option>
+                        <option value="18:15 đến 20:15">18:15 đến 20:15</option>
+                    </select>
+                </th>
+                <th>
+                    Available room: <select id="roomUpdate">   </select>
+                </th>
+                <th><button onclick='SubmitupdateScheduleForm()'>Submit</button></th>
+                <th><button onclick='$(".updateScheduleFormOut").fadeOut(500);'>close</button></th>
+            </tr>
+        </table>
+    </div>
+
     <div class="createClassOut" style="display: none;">
         <div id='createClass'>
             <div id="tieude">
@@ -191,7 +232,110 @@
 </body>
 <script>
     function upDateSchedule(id) {
-        console.log(id)
+        var idClass = id
+        $.ajax({
+            url: '/teacher/attendedList',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                id: id
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    $("#attendedList").html($("#attendedList tr:first-child"))
+                    $.each(response.data[0].schedule, function(index, data) {
+                        $("#attendedList").append('<tr id="infor' + data._id + '"><td>' + data.date.split("T00:00:00.000Z")[0] + '</td><td>' + data.day + '</td><td>' + data.room + '</td><td>' + data.time + '</td><td><button  onclick=updateScheduleForm("' + data._id + '","' + idClass + '")>Update</button><input id ="' + data._id + '"type="hidden" value="' + data + '"></td></tr>    ')
+                    });
+                    $(".attendedListOut").fadeIn(500)
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        });
+    }
+
+    function updateScheduleForm(scheduleID, classID) {
+        $("input[name='updateScheduleID']").val(scheduleID)
+        $("input[name='updateScheduleClassID']").val(classID)
+        $("#oldSchudule").html($("#infor" + scheduleID + " td:not(:last-child)").clone())
+        $(".updateScheduleFormOut").fadeIn(500)
+    }
+
+    function cahocUpdate() {
+        var date = new Date($("input[name='dateScheduleUpdate']").val())
+        var dayOfWeek = (date.getDay() + 1)
+        if (dayOfWeek == '1') {
+            dayOfWeek = "8"
+        }
+        $.ajax({
+            url: '/admin/getThu',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                dayOfWeek: dayOfWeek,
+                time: $('#cahocUpdate').val()
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    $("#roomUpdate").html("")
+                    console.log(response.data)
+                    $.each(response.data, function(index, data) {
+                        $.each(data.room, function(index, room) {
+                            if (room.time == $('#cahocUpdate').val() && room.status == "None") {
+                                $("#roomUpdate").append('<option value = "' + room.room + '" > ' + room.room + ' </option>')
+                            }
+                        });
+                    });
+                }
+                if (response.msg == 'error') {}
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
+
+
+    function SubmitupdateScheduleForm() {
+        var date = new Date($("input[name='dateScheduleUpdate']").val())
+        var dayOfWeek = '0' + (date.getDay() + 1)
+        if (dayOfWeek == '01') {
+            dayOfWeek = "08"
+        }
+        var scheduleID = $("input[name='updateScheduleID']").val()
+
+        var old = []
+        $("#infor" + scheduleID + " td:not(:last-child)").each(function() {
+            old.push($(this).text().trim())
+        })
+        var updateSchedule = {
+            time: $('#cahocUpdate').val(),
+            room: $('#roomUpdate').val(),
+            date: $("input[name='dateScheduleUpdate']").val(),
+            day: dayOfWeek,
+            classID: $("input[name='updateScheduleClassID']").val(),
+            scheduleID: scheduleID,
+            old: old
+        }
+
+        $.ajax({
+            url: '/admin/doupdateSchedule',
+            method: 'post',
+            dataType: 'json',
+            data: updateSchedule,
+            success: function(response) {
+                if (response.msg == 'success') {
+                    alert("success")
+                }
+                if (response.msg == 'error') {
+                    alert("error")
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        });
     }
 
     function upDateInformation(id) {
@@ -432,9 +576,9 @@
         //lấy các buổi học trong khoảng thời gian
         for (var i = 0; i < range.length; i++) {
             for (var u = 0; u < buoihoc.length; u++) {
-                if (range[i].getDay() == buoihoc[u]) {
+                if (range[i].getDay() == (buoihoc[u] - 1)) {
                     var date = range[i].getFullYear() + "-" + (range[i].getMonth() + 1).toString().padStart(2, "0") + "-" + range[i].getDate().toString().padStart(2, "0")
-                    var day = range[i].getDay().toString().padStart(2, "0")
+                    var day = (range[i].getDay() + 1).toString().padStart(2, "0")
                     schedual.push({
                         "time": time[u],
                         "room": room[u],

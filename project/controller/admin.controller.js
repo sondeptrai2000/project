@@ -87,6 +87,42 @@ class adminController {
         })
     }
 
+    doupdateSchedule(req, res) {
+        console.log(req.body.time)
+        console.log(req.body.room)
+        console.log(req.body.date)
+        console.log(req.body.day)
+        console.log(req.body.classID)
+        console.log(req.body.scheduleID)
+        ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, {
+            $set: {
+                "schedule.$.time": req.body.time,
+                "schedule.$.room": req.body.room,
+                "schedule.$.date": new Date(req.body.date),
+                "schedule.$.day": req.body.day,
+                "schedule.$.status": "update"
+            }
+        }, function(err, data) {
+            if (err) {
+                res.json("lõi")
+            } else {
+                assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day, room: { $elemMatch: { room: req.body.room, time: req.body.time } } }, {
+                    $set: { "room.$.status": "Ok" }
+                }, function(err, data) {
+                    if (err) {
+                        console.log("err")
+                        res.json({ msg: 'error' });
+                    } else {
+                        res.json({ msg: 'success' });
+                    }
+                })
+            }
+        })
+    }
+
+
+
+
     getAccount(req, res) {
         AccountModel.find({ role: req.query.role }).lean().countDocuments(function(err, numberOfAccount) {
             var skip = parseInt(req.query.sotrang) * 3
@@ -322,10 +358,8 @@ class adminController {
     createClass(req, res) {
         ClassModel.find({}).lean().exec(function(err, ClassModel) {
             studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
-                AccountModel.find({ role: 'student' }).lean().exec(function(err, student) {
-                    AccountModel.find({ role: 'teacher' }).lean().exec(function(err, teacher) {
-                        res.render('admin/createClass.ejs', { student, teacher, targetxxx, ClassModel })
-                    })
+                AccountModel.find({ role: 'teacher' }).lean().exec(function(err, teacher) {
+                    res.render('admin/createClass.ejs', { teacher, targetxxx, ClassModel })
                 })
             })
         })

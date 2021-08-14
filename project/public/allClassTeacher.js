@@ -267,6 +267,10 @@ function takeAttend(idattend, idClass) {
                             $("#loladate").val(data.date.split("T00:00:00.000Z")[0])
                             $("#loladate1").val(data._id)
                             $("#loladate3").val(idClass)
+                            $("#scheduleStatus").val(data.status)
+                            $("#scheduleTime").val(data.time)
+                            $("#scheduleRoom").val(data.room)
+                            $("#scheduleDay").val(data.day)
                             $("#lola").append('<tr><td><input class ="attendStudentID" type="hidden" value="' + attend.studentID._id + '">' + attend.studentID.username + '</td><td><select class ="attendStudentStatus" id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></td></tr>')
                             $('#' + attend.studentID._id + ' option:selected').removeAttr('selected');
                             $('#' + attend.studentID._id + ' option[value="' + attend.attended + '"]').attr('selected', 'selected');
@@ -303,6 +307,10 @@ function submitTakeAttend() {
         room: room,
         day: day,
         time: time,
+        scheduleStatus: $("#scheduleStatus").val(),
+        scheduleTime: $("#scheduleTime").val(),
+        scheduleRoom: $("#scheduleRoom").val(),
+        scheduleDay: $("#scheduleDay").val(),
     }
     $.ajax({
         url: '/teacher/doTakeAttended',
