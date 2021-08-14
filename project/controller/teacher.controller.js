@@ -186,6 +186,7 @@ class teacherController {
     }
 
     addStudentToClass(req, res) {
+
         AccountModel.find({
             role: 'student',
             routeName: req.query.routeName,

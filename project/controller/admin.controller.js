@@ -30,13 +30,22 @@ const { inflate } = require('zlib');
 const saltRounds = 10;
 class adminController {
     adminHome(req, res) {
-        AccountModel.updateMany({}, { $set: { classID: [], subject: [] } }, function(err, data) {
-            if (err) {
-                console.log("k ok")
-            } else {
-                console.log(" ok")
-            }
-        })
+        // AccountModel.updateMany({}, { $set: { classID: [], subject: [] } }, function(err, data) {
+        //     if (err) {
+        //         console.log("k ok")
+        //     } else {
+        //         console.log(" ok")
+        //     }
+        // })
+        // assignRoomAndTimeModel.updateMany({}, {
+        //     $set: { room: [] }
+        // }, function(err, data) {
+        //     if (err) {
+        //         console.log("k ok 2")
+        //     } else {
+        //         console.log(" ok 2 ")
+        //     }
+        // })
         res.render('admin/adminHome')
     }
 
@@ -311,14 +320,15 @@ class adminController {
     }
 
     createClass(req, res) {
-        studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
-            AccountModel.find({ role: 'student' }).lean().exec(function(err, student) {
-                AccountModel.find({ role: 'teacher' }).lean().exec(function(err, teacher) {
-                    res.render('admin/createClass.ejs', { student, teacher, targetxxx })
+        ClassModel.find({}).lean().exec(function(err, ClassModel) {
+            studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
+                AccountModel.find({ role: 'student' }).lean().exec(function(err, student) {
+                    AccountModel.find({ role: 'teacher' }).lean().exec(function(err, teacher) {
+                        res.render('admin/createClass.ejs', { student, teacher, targetxxx, ClassModel })
+                    })
                 })
             })
         })
-
     }
 
     docreateClass(req, res) {
@@ -363,10 +373,11 @@ class adminController {
                                             res.json({ msg: 'error' });
                                         } else {
                                             for (var i = 0; i < req.body.time.length; i++) {
-                                                assignRoomAndTimeModel.updateOne({ dayOfWeek: '0' + req.body.buoihoc[i], "room.room": req.body.room[i], "room.time": req.body.time[i] }, {
+                                                assignRoomAndTimeModel.updateOne({ dayOfWeek: '0' + req.body.buoihoc[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, {
                                                     $set: { "room.$.status": "Ok" }
                                                 }, function(err, data) {
                                                     if (err) {
+                                                        console.log("err")
                                                         res.json({ msg: 'error' });
                                                     }
                                                 })

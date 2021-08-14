@@ -1,6 +1,5 @@
 function sendData(id, subject) {
     var _id = id
-    $(".option").html("<button onclick=addStudent('" + id + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "','" + subject + "')>Xóa học sinh trong lớp</button>")
     $.ajax({
         url: '/teacher/allClassStudent',
         method: 'get',
@@ -64,118 +63,6 @@ function uploadProposal(id) {
             if (response.msg == 'success') {
                 $("." + id).fadeOut(2000);
                 alert("upload successed")
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-}
-
-
-function addStudent(classID, subject) {
-    var infor4 = []
-    $("#" + classID + " td").each(function() {
-        infor4.push($(this).text())
-    })
-    var checkClassID = classID
-    var checksubject = subject
-    $.ajax({
-        url: '/teacher/addStudentToClass',
-        method: 'get',
-        dataType: 'json',
-        data: {
-            routeName: infor4[1],
-            stage: infor4[2],
-        },
-        success: function(response) {
-            if (response.msg == 'success') {
-                $('.taskrow111').html('');
-                $.each(response.data, function(index, data) {
-                    if (data.classID.includes(checkClassID) == true) {} else if ((data.classID.includes(checkClassID) == false) && (data.subject.includes(checksubject) == false)) {
-                        $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.email + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
-                    }
-                });
-                $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "','" + subject + "')>Add to Class</button>");
-                $('.studentTableOut').show();
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-}
-
-function doAddToClass(classID, subject) {
-    var classID = classID
-
-    var studentlist = [];
-    $('.hobby').each(function() {
-        if ($(this).is(":checked")) {
-            studentlist.push({ 'ID': $(this).attr('value') });
-        }
-    });
-
-    var studentlistcl = [];
-    $('.hobby').each(function() {
-        if ($(this).is(":checked")) {
-            studentlistcl.push($(this).attr('value'));
-        }
-    });
-
-    $.ajax({
-        url: '/teacher/doaddStudentToClass',
-        method: 'post',
-        dataType: 'json',
-        data: {
-            studentlistcl: studentlistcl,
-            studentlist: studentlist,
-            classID: classID,
-            subject: subject
-        },
-        success: function(response) {
-            if (response.msg == 'success') {
-                alert('add success ');
-                $(".innerOut").hide();
-                $(".studentTableOut").hide();
-                sendData(classID);
-            }
-            if (response.msg == 'error') {
-                alert('add error ');
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-}
-
-
-function removeStudent(classID, subject) {
-    var classID = classID
-    var studentlistcl = [];
-    $('.removeFormClass').each(function() {
-        if ($(this).is(":checked")) {
-            studentlistcl.push($(this).attr('value'));
-        }
-    });
-    $.ajax({
-        url: '/teacher/doremoveStudentToClass',
-        method: 'post',
-        dataType: 'json',
-        data: {
-            studentlistcl: studentlistcl,
-            classID: classID,
-            subject: subject
-        },
-        success: function(response) {
-            if (response.msg == 'success') {
-                alert('remove success ');
-                $(".innerOut").hide();
-                sendData(classID);
-            }
-            if (response.msg == 'error') {
-                alert('remove error ');
             }
         },
         error: function(response) {

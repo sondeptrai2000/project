@@ -5,81 +5,350 @@
     <script src="/jquery/jquery.js"></script>
     <!-- checkdate -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.29.0/date_fns.min.js"></script>
+    <link rel="stylesheet" href="/css/admin/createClass.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+
 
 </head>
 
 <body>
-    <div id="tieude">
-        <p>bảng lộ trình tùy biến</p>
+
+    <div class="innerOut" style="display:none">
+        <div class="inner">
+            <div class="option"></div>
+            <table border='solid'>
+                <th>avatar</th>
+                <th>username</th>
+                <th>Aim</th>
+                <th>email</th>
+                <th>Select</th>
+                <th onclick='$(".innerOut").hide();'>X</th>
+                <tbody class='taskrow'></tbody>
+            </table>
+        </div>
     </div>
-    <table border="solid">
-        <tbody id="routeTuyBien"> </tbody>
-        <tr id='trss'></tr>
-    </table>
-    <div>
-        <p>Create class</p>
-        <label>Chọn lộ trình học</label>
-        <select id="routeTypeS" class="routeName" onchange="routeType()">
-                        <% targetxxx.forEach(function(targetxxx) { %>
-                <option value="<%= targetxxx.routeName %>"><%= targetxxx.routeName %></option>
+
+    <div class="studentTableOut" style="display: none;">
+        <div id="studentTableAdd">
+            <table border='solid'>
+                <thead>
+                    <tr>
+                        <th><input type="text" placeholder="Search.."></th>
+                        <th><button onclick='$(".studentTableOut").hide();'>&times;</button></th>
+                    </tr>
+                    <tr>
+                        <th>avatar</th>
+                        <th>username</th>
+                        <th>email</th>
+                        <th>routeName</th>
+                        <th>stage</th>
+                        <th>Chose</th>
+                        <th>More information</th>
+                    </tr>
+                </thead>
+                <tbody class='taskrow111'></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="createClassOut" style="display: none;">
+        <div id='createClass'>
+            <div id="tieude">
+                <p>bảng lộ trình tùy biến</p>
+            </div>
+            <table border="solid">
+                <tbody id="routeTuyBien"> </tbody>
+                <tr id='trss'></tr>
+            </table>
+            <div>
+                <p>Create class</p>
+                <label>Chọn lộ trình học</label>
+                <select id="routeTypeS" class="routeName" onchange="routeType()">
+                    <% targetxxx.forEach(function(targetxxx) { %>
+            <option value="<%= targetxxx.routeName %>"><%= targetxxx.routeName %></option>
+            <% }); %>
+          </select>
+                <br>
+                <label for="level">Level</label>
+                <select id="levelS" class="stage" onchange="level()"></select>
+                <br>
+                <label>Subject</label>
+                <select id="subject" class="subject" onchange="getStudent()"></select>
+                <br>
+                <label for="topic">Class Name</label>
+                <input type="text" class="className">
+                <br>
+                <label for="topic">Description</label>
+                <input type="text" class="description">
+                <br>
+                <label for="topic">Student</label>
+
+                <table id="studentTable" border='solid' style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>
+                                <inputs type="text" placeholder="Search..">
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>avatar</th>
+                            <th>username</th>
+                            <th>routeName</th>
+                            <th>stage</th>
+                            <th>Chose</th>
+                            <th>More information</th>
+                        </tr>
+                    </thead>
+                    <tbody class='taskrow'></tbody>
+                </table>
+                <label for="topic">Teacher</label>
+                <select class="teacherID">
+      <% teacher.forEach(function(teacher) { %>
+        <option value="<%= teacher._id %>" ><%= teacher.username %> </option>
+      <% }); %>
+    </select>
+                <br>
+
+                <label for="topic">startDate</label>
+                <input type="date" class="startDate" id="startDate">
+                <label for="topic">endDate</label>
+                <input type="date" class="endDate" id="endDate">
+                <br>
+                <label for="topic">Số buổi học 1 tuần</label>
+                <input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
+                <br>
+                <div id="datlich"></div>
+                <br>
+                <button onclick="$('.createClassOut').slideUp(500)"> Close</button>
+                <button type="submit" class="btn5" onclick="abc()">Submit1</button>
+            </div>
+        </div>
+    </div>
+
+
+    <header>
+        <ul style="float:left;font-family:cursive;">
+            <li style="width:200px"><i class="fas fa-graduation-cap" style="font-size:60px"></i>Sown English</li>
+        </ul>
+        <ul>
+            <li><a href="#">Home page</a></li>
+            <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutCourse').offset().top-100)},1000)">About
+                    Course</a></li>
+            <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutUs').offset().top-100)},1000)">About Us</a>
+            </li>
+            <li><a onclick="$('#loginForm').fadeIn(1000);">Log In</a></li>
+        </ul>
+    </header>
+    <div class="body">
+        <h2>All class level</h2>
+        <button onclick="$('.createClassOut').toggle(500)"> Tạo lớp</button>
+        <table border="solid">
+            <th>Class name</th>
+            <th>routeName</th>
+            <th>stage</th>
+            <th>subject</th>
+            <th>Description</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th>Student List</th>
+            <th>Action</th>
+            <th>Status</th>
+            <% ClassModel.forEach(function(ClassModel) { %>
+                <tr id="<%= ClassModel._id %>">
+                    <td>
+                        <%= ClassModel.className %>
+                    </td>
+                    <td>
+                        <%= ClassModel.routeName %>
+                    </td>
+                    <td>
+                        <%= ClassModel.stage %>
+                    </td>
+                    <td>
+                        <%= ClassModel.subject %>
+                    </td>
+                    <td>
+                        <%= ClassModel.description %>
+                    </td>
+                    <td>
+                        <%= ClassModel.startDate %>
+                    </td>
+                    <td>
+                        <%= ClassModel.endDate %>
+                    </td>
+
+                    <td><button id="btn1" onclick="sendData('<%= ClassModel._id %>','<%= ClassModel.subject %>')">List of student</button></td>
+                    <td>
+                        <button onclick="upDateSchedule('<%= ClassModel._id %>')">upDate schedule </button>
+                        <button onclick="upDateInformation('<%= ClassModel._id %>')">upDate information </button>
+                    </td>
+                    <td>
+                        <%= ClassModel.status %>
+                    </td>
+                </tr>
                 <% }); %>
-              </select>
-        <br>
-        <label for="level">Level</label>
-        <select id="levelS" class="stage" onchange="level()"></select>
-        <br>
-        <label>Subject</label>
-        <select id="subject" class="subject" onchange="getStudent()"></select>
-        <br>
-        <label for="topic">Class Name</label>
-        <input type="text" class="className">
-        <br>
-        <label for="topic">Description</label>
-        <input type="text" class="description">
-        <br>
-        <label for="topic">Student</label>
-
-        <table id="studentTable" border='solid' style="display: none;">
-            <thead>
-                <tr>
-                    <th><input id="myInputxxxx" type="text" placeholder="Search.."></th>
-                </tr>
-                <tr>
-                    <th>avatar</th>
-                    <th>username</th>
-                    <th>routeName</th>
-                    <th>stage</th>
-                    <th>Chose</th>
-                    <th>More information</th>
-                </tr>
-            </thead>
-            <tbody class='taskrow'></tbody>
         </table>
-        <label for="topic">Teacher</label>
-        <select class="teacherID">
-          <% teacher.forEach(function(teacher) { %>
-            <option value="<%= teacher._id %>" ><%= teacher.username %> </option>
-          <% }); %>
-        </select>
-        <br>
-
-        <label for="topic">startDate</label>
-        <input type="date" class="startDate" id="startDate">
-        <label for="topic">endDate</label>
-        <input type="date" class="endDate" id="endDate">
-        <br>
-        <label for="topic">Số buổi học 1 tuần</label>
-        <input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
-        <br>
-        <div id="datlich"></div>
-
-
-
-        <br>
-        <button type="submit" class="btn5" onclick="abc()">Submit1</button>
-    </div>
 </body>
 <script>
+    function upDateSchedule(id) {
+        console.log(id)
+    }
+
+    function upDateInformation(id) {
+        console.log(id)
+    }
+
+    function sendData(id, subject) {
+        var _id = id
+
+        $(".option").html("<button onclick=addStudent('" + id + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "','" + subject + "')>Xóa học sinh trong lớp</button>")
+        $.ajax({
+            url: '/teacher/allClassStudent',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                abc: _id
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    $(".taskrow").html("")
+                    $.each(response.data, function(index, data) {
+                        if (data.studentID.length == 0) {
+                            alert('không có học sinh trong lớp')
+                        } else {
+                            $.each(data.studentID, function(index, studentID) {
+                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td></tr>");
+                            });
+                        }
+                    });
+                    $(".innerOut").fadeIn(500);
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        });
+    }
+
+
+    function addStudent(classID, subject) {
+        var infor4 = []
+        $("#" + classID + " td").each(function() {
+            infor4.push($(this).text())
+        })
+        var checkClassID = classID
+        var checksubject = subject
+        console.log(infor4[1])
+        console.log(infor4[2])
+        $.ajax({
+            url: '/teacher/addStudentToClass',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                routeName: infor4[1].trim(),
+                stage: infor4[2].trim(),
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    console.log(response.data)
+                    $('.taskrow111').html('');
+                    $.each(response.data, function(index, data) {
+                        if (data.classID.includes(checkClassID) == true) {} else if ((data.classID.includes(checkClassID) == false) && (data.subject.includes(checksubject) == false)) {
+                            $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.email + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
+                        }
+                    });
+                    $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "','" + subject + "')>Add to Class</button>");
+                    $('.studentTableOut').show();
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
+
+
+    function doAddToClass(classID, subject) {
+        var classID = classID
+
+        var studentlist = [];
+        $('.hobby').each(function() {
+            if ($(this).is(":checked")) {
+                studentlist.push({
+                    'ID': $(this).attr('value')
+                });
+            }
+        });
+
+        var studentlistcl = [];
+        $('.hobby').each(function() {
+            if ($(this).is(":checked")) {
+                studentlistcl.push($(this).attr('value'));
+            }
+        });
+
+        $.ajax({
+            url: '/teacher/doaddStudentToClass',
+            method: 'post',
+            dataType: 'json',
+            data: {
+                studentlistcl: studentlistcl,
+                studentlist: studentlist,
+                classID: classID,
+                subject: subject
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    alert('add success ');
+                    $(".innerOut").hide();
+                    $(".studentTableOut").hide();
+                    sendData(classID);
+                }
+                if (response.msg == 'error') {
+                    alert('add error ');
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
+
+
+
+    function removeStudent(classID, subject) {
+        var classID = classID
+        var studentlistcl = [];
+        $('.removeFormClass').each(function() {
+            if ($(this).is(":checked")) {
+                studentlistcl.push($(this).attr('value'));
+            }
+        });
+        $.ajax({
+            url: '/teacher/doremoveStudentToClass',
+            method: 'post',
+            dataType: 'json',
+            data: {
+                studentlistcl: studentlistcl,
+                classID: classID,
+                subject: subject
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    alert('remove success ');
+                    $(".innerOut").hide();
+                    sendData(classID);
+                }
+                if (response.msg == 'error') {
+                    alert('remove error ');
+                }
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
+
     //lấy các ngày trong khoảng thời gian học
     var getDaysArray = function(start, end) {
         for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
@@ -177,9 +446,6 @@
                 }
             }
         }
-
-
-
         var formData = {
             className: $(".className").val(),
             subject: $(".subject").val(),
@@ -275,7 +541,7 @@
                 if (response.msg == 'success') {
                     $('#subject').html('');
                     $('.taskrow').html('');
-                    $('#studentTable').show();
+                    $('#studentTableOut').show();
                     $.each(response.data, function(index, data) {
                         $.each(data.routeSchedual, function(index, routeSchedual) {
                             if (routeSchedual.stage == levelS) {
