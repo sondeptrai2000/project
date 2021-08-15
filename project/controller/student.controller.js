@@ -68,8 +68,32 @@ class studentController {
     }
 
     viewschedule(req, res) {
-        res.json('Xem thời khóa biểu')
+        res.render('student/schedule')
     }
+
+
+    getSchedule(req, res) {
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
+        var studentID = decodeAccount._id
+            //lấy thời hiện tại để lấy khóa học đang hoạt động trong thời gian hiện tại. 
+        var sosanh = new Date()
+        AccountModel.findOne({ _id: decodeAccount }, { classID: 1 }).lean().exec(function(err, data) {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                ClassModel.find({ _id: { $in: data.classID }, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean().exec((err, classInfor) => {
+                    if (err) {
+                        res.json({ msg: 'error' });
+                    } else {
+                        res.json({ msg: 'success', classInfor, studentID });
+                    }
+                })
+            }
+        })
+
+    }
+
 
     allextracurricularActivities(req, res) {
         res.json('Trang xem tất cả các hoạt động ngoại khóa mà con đã tham gia + đánh giá')

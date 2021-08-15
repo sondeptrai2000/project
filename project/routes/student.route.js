@@ -2,6 +2,8 @@ var express = require('express');
 var studentRouter = express.Router();
 var studentController = require('../controller/student.controller')
 
+//lịch học
+studentRouter.get('/getSchedule', studentController.getSchedule)
 
 
 studentRouter.get('/', studentController.studentHome)
