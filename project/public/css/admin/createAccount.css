@@ -64,10 +64,8 @@ header a:hover {
     border-color: coral;
 }
 
-.innerOut,
-.createClassOut,
-.attendedListOut,
-.updateClassOut {
+.createAccountOut,
+.updateFormOut {
     width: 100%;
     height: 100%;
     padding: 5%;
@@ -82,10 +80,8 @@ header a:hover {
     overflow: scroll;
 }
 
-.inner,
-#createClass,
-#attendedList,
-#updateClass {
+#createAccount,
+#updateForm {
     background-color: aquamarine;
     height: 100%;
     width: 100%;

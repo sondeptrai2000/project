@@ -3,61 +3,93 @@
 
 <head>
         <script src="/jquery/jquery.js"></script>
+        <link rel="stylesheet" href="/css/admin/createRoute.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+
 </head>
 
 
 <body>
-        <h2>Create route</h2>
-        <label>routeName </label>
-        <input type="text" name="routeName" id="routeName">
-        <br>
-        <label>Description</label>
-        <input type="text" name="description" id="description">
-        <br>
-        <label>Total of stage</label>
-        <input type="number" name="totalStage" id="totalStage" onchange="totalStage('create')">
-        <br>
-        <div id="addStage"></div>
-        <br>
-        <button type="submit" onclick="signUp()">Submit</button>
+        <div class="createRouteOut" style="display: none;">
+                <div class="createRoute">
+                        <h2>Create route</h2>
+                        <label>routeName </label>
+                        <input type="text" name="routeName" id="routeName">
+                        <br>
+                        <label>Description</label>
+                        <input type="text" name="description" id="description">
+                        <br>
+                        <label>Total of stage</label>
+                        <input type="number" name="totalStage" id="totalStage" onchange="totalStage('create')">
+                        <br>
+                        <div id="addStage"></div>
+                        <br>
+                        <button type="submit" onclick="signUp()">Submit</button>
+                        <button onclick='$(".createRouteOut").fadeOut(500);'>close</button>
 
-        <table border="solid">
-                {{#each data}}
-                <tr>
-                        <th>Tên lộ trình</th>
-                        <th>Miêu tả</th>
-                        <th>action</th>
-                </tr>
-                <tr id="{{_id}}">
-                        <td>{{routeName}}</td>
-                        <td>{{description}}</td>
-                        <td><button onclick="updateRoute('{{_id}}')">Update</button>
-                                <button onclick="deleteRoute('{{_id}}')">Remove</button>
-                                <button onclick="viewSchedule('{{_id}}')">Lộ trình học</button>
-                        </td>
-                </tr>
-                {{/each}}
-        </table>
+                </div>
+        </div>
+        <div class="updateRouteOut" style="display: none;">
+                <div class="updateRoute">
+                        <table border="solid">
+                                <h2>update route</h2>
+                                <label>routeName </label>
+                                <input type="text" name="routeName" id="routeNameUpdate">
+                                <br>
+                                <label>Description</label>
+                                <input type="text" name="description" id="descriptionUpdate">
+                                <br>
+                                <label>Total of stage</label>
+                                <input type="number" name="totalStageUpdate" id="totalStageUpdate"
+                                        onchange="totalStage('update')">
+                                <br>
+                                <div id="addStageUpdate"></div>
+                                <br>
+                                <button type="submit" onclick="signUp()">Submit</button>
+                                <button onclick='$(".updateRouteOut").fadeOut(500);'>close</button>
 
-        <table border="solid">
-                <h2>update route</h2>
-                <label>routeName </label>
-                <input type="text" name="routeName" id="routeNameUpdate">
-                <br>
-                <label>Description</label>
-                <input type="text" name="description" id="descriptionUpdate">
-                <br>
-                <label>Total of stage</label>
-                <input type="number" name="totalStageUpdate" id="totalStageUpdate" onchange="totalStage('update')">
-                <br>
-                <div id="addStageUpdate"></div>
-                <br>
-                <button type="submit" onclick="signUp()">Submit</button>
-        </table>
+                        </table>
+                </div>
+        </div>
+        <header>
+                <ul style="float:left;font-family:cursive;">
+                        <li style="width:200px"><i class="fas fa-graduation-cap" style="font-size:60px"></i>Sown English
+                        </li>
+                </ul>
+                <ul>
+                        <li><a href="#">Home page</a></li>
+                        <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutCourse').offset().top-100)},1000)">About
+                                        Course</a></li>
+                        <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutUs').offset().top-100)},1000)">About
+                                        Us</a>
+                        </li>
+                        <li><a onclick="$('#loginForm').fadeIn(1000);">Log In</a></li>
+                </ul>
+        </header>
+        <div class="body">
+                <button onclick='$(".createRouteOut").fadeIn(500);'>Create Route</button>
+                <table border="solid">
+                        {{#each data}}
+                        <tr>
+                                <th>Tên lộ trình</th>
+                                <th>Miêu tả</th>
+                                <th>action</th>
+                        </tr>
+                        <tr id="{{_id}}">
+                                <td>{{routeName}}</td>
+                                <td>{{description}}</td>
+                                <td><button onclick="updateRoute('{{_id}}')">Update</button>
+                                        <button onclick="deleteRoute('{{_id}}')">Remove</button>
+                                        <button onclick="viewSchedule('{{_id}}')">Lộ trình học</button>
+                                </td>
+                        </tr>
+                        {{/each}}
+                </table>
 
+        </div>
 </body>
 <script>
-    
+
         function viewSchedule(id) {
                 var _id = id
                 $.ajax({

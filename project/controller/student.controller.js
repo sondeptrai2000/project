@@ -35,9 +35,9 @@ class studentController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                res.json(data);
+                // res.json(data);
 
-                // res.render('student/allClass', { data });
+                res.render('student/allClass', { data });
             }
         })
     }
@@ -77,12 +77,12 @@ class studentController {
         var decodeAccount = jwt.verify(token, 'minhson')
         var studentID = decodeAccount._id
             //lấy thời hiện tại để lấy khóa học đang hoạt động trong thời gian hiện tại. 
-        var sosanh = new Date()
+        var sosanh = new Date(req.query.dauTuan)
         AccountModel.findOne({ _id: decodeAccount }, { classID: 1 }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                ClassModel.find({ _id: { $in: data.classID }, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean().exec((err, classInfor) => {
+                ClassModel.find({ _id: { $in: data.classID }, startDate: { $lte: new Date(req.query.dauTuan) }, endDate: { $gte: sosanh } }).lean().exec((err, classInfor) => {
                     if (err) {
                         res.json({ msg: 'error' });
                     } else {

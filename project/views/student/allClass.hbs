@@ -1,79 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
   <script src="/jquery/jquery.js"></script>
+  <link rel="stylesheet" href="/css/student/allClass.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+
 </head>
-<table border="solid">
-  <th>ClassID</th>
-  <th>className</th>
-  <th>Route</th>
-  <th>Stage</th>
-  <th>description</th>
-  <th>Teacher Name</th>
-  <th>Danh sách các bạn học sinh</th>
-  <th>startDate</th>
-  <th>endDate</th>
-  <th>Class Status</th>
-  {{#each data}}
-  {{#each classID}}
-  <tr>
-    <td>
-      {{_id }}
-    </td>
-    <td>
-      {{className }}
-    </td>
-    <td>
-      {{routeName }}
-    </td>
-    <td>
-      {{stage }}
-    </td>
-    <td>
-      {{description }}
-    </td>
-    <td>
-      {{#each teacherID}}
-      <p onclick="viewTeacherProfile('{{_id}}')">{{username}}</p>
-      {{/each}}
-    </td>
-    <td><button id="btn1" onclick="sendData('{{_id}}')">List of student</button></td>
-    <td>
-      {{startDate }}
-    </td>
-    <td>
-      {{endDate }}
-    </td>
-    <td>
-      {{classStatus }}
-    </td>
-  </tr>
-  {{/each}}
-  {{/each}}
-</table>
 
+<body>
 
-<div class="inner" style="display:none">
-        <div class="option"></div>
-        <table border='solid'>
-            <th>avatar</th>
-            <th>username</th>
-            <th>email</th>
-            <th>Chat</th>
-            <th onclick='closeStudentList()'>X</th>
-            <tbody class='taskrow'></tbody>
-        </table>
-    </div>
-<div>
-  <table id="teacherIn4" border='solid' style="display:none">
-    <thead>
-      <tr>
+  <div class="studentListOut" style="display:none">
+    <div class="studentList">
+      <div class="option"></div>
+      <table border='solid'>
         <th>avatar</th>
         <th>username</th>
         <th>email</th>
-        <th><input id="myInput" type="text" placeholder="Search.."></th>
-        <th onclick="teacherIn4Close()">X</th>
+        <th>Chat</th>
+        <th onclick='$(".studentListOut").fadeOut(500);'>X</th>
+        <tbody class='studentListBody'></tbody>
+      </table>
+    </div>
+  </div>
+  <div>
+
+    <div class="teacherIn4Out" style="display:none">
+      <div class="teacherIn4">
+        <table id="teacherIn4" border='solid'>
+          <thead>
+            <tr>
+              <th>avatar</th>
+              <th>username</th>
+              <th>email</th>
+              <th><input id="myInput" type="text" placeholder="Search.."></th>
+              <th onclick='$(".teacherIn4Out").fadeOut(500);'>X</th>
+            </tr>
+          </thead>
+          <tbody class='teacherIn4Body'></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <header>
+    <ul style="float:left;font-family:cursive;">
+      <li style="width:200px"><i class="fas fa-graduation-cap" style="font-size:60px"></i>Sown English</li>
+    </ul>
+    <ul>
+      <li><a href="#">Home page</a></li>
+      <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutCourse').offset().top-100)},1000)">About
+          Course</a></li>
+      <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutUs').offset().top-100)},1000)">About
+          Us</a>
+      </li>
+      <li><a onclick="$('#loginForm').fadeIn(1000);">Log In</a></li>
+    </ul>
+  </header>
+
+  <div class="body">
+    <table border="solid">
+      <th>className</th>
+      <th>Route</th>
+      <th>Stage</th>
+      <th>description</th>
+      <th>Teacher Name</th>
+      <th>Danh sách các bạn học sinh</th>
+      <th>startDate</th>
+      <th>endDate</th>
+      <th>Class Status</th>
+      {{#each data}}
+      {{#each classID}}
+      <tr>
+        <td>{{className }}</td>
+        <td>{{routeName }}</td>
+        <td>{{stage }}</td>
+        <td>{{description }}</td>
+        <td>
+          <p onclick="viewTeacherProfile('{{teacherID._id}}')">{{teacherID.username}}</p>
+        </td>
+        <td><button id="btn1" onclick="sendData('{{_id}}')">List of student</button></td>
+        <td>{{startDate }}</td>
+        <td>{{endDate }}</td>
+        <td>{{classStatus }}</td>
       </tr>
-    </thead>
-    <tbody class='taskrow'></tbody>
-  </table>
-</div>
+      {{/each}}
+      {{/each}}
+    </table>
+  </div>
+</body>
+
 <script src="/allClassStudent.js"></script>
+
+</html>

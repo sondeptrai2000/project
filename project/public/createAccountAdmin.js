@@ -5,9 +5,6 @@ var myFileUpdate;
 
 
 
-$("#btnxx").click(function() {
-    $("#createAccount").slideToggle();
-});
 // load for all ajax
 // $(document).ajaxStart(function() {
 //     $("#loading").show();
@@ -17,8 +14,7 @@ $("#btnxx").click(function() {
 // });
 $(document).ready(function() {
     getAccount('teacher', 0)
-    $("#createAccount").slideUp();
-    //xử lý file khi tạo tài khoản
+        //xử lý file khi tạo tài khoản
     $('#myFile').on('change', function() {
         var filereader = new FileReader();
         filereader.onload = function(event) {
@@ -88,7 +84,7 @@ function signUp() {
             if (response.msg == 'success') {
                 reset();
                 getAccount(role, 0);
-                $("#createAccount").slideUp();
+                $(".createAccountOut").slideUp();
                 alert('Sign Up success');
             }
             if (response.msg == 'Account already exists') {
@@ -229,7 +225,7 @@ var changeType = false;
 function updateForm(id) {
     $('#levelSUpdate').html('');
     $("#AimUpdate").html('');
-    $("#updateForm").fadeIn(2000);
+    $(".updateFormOut").fadeIn(2000);
     var selector = "#" + id + " td"
     var infor4 = []
     $(selector).each(function() {
@@ -248,7 +244,6 @@ function updateForm(id) {
     $("#addressUpdate").val(infor4[7])
     $("#birthdayUpdate").val(infor4[8])
     role('update');
-    console.log(infor4)
     $.ajax({
         url: '/admin/editAccount',
         method: 'get',
@@ -280,9 +275,7 @@ function updateForm(id) {
     });
 }
 
-$("#closeUpdateForm").click(function() {
-    $('#updateForm').fadeOut(2000);
-});
+
 //cập nhạta thông tin tk
 function doUpdate() {
     if (!fileDataUpdate) {
@@ -300,6 +293,7 @@ function doUpdate() {
         aim: $("#AimUpdate").val(),
         phone: $("#phoneUpdate").val(),
         address: $("#addressUpdate").val(),
+        oldLink: $('#oldAvatar').attr('src')
     };
     $.ajax({
         url: '/admin/doeditAccount',

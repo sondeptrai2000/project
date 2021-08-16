@@ -3,8 +3,10 @@
 
 <head>
       <script src="/jquery/jquery.js"></script>
+      <link rel="stylesheet" href="/css/admin/createAccount.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+
       <style>
-      
             #loading {
                   position: fixed;
                   display: block;
@@ -28,110 +30,143 @@
 </head>
 
 <body>
-      <div id="createAccount">
-            <h2>ACCOUNT INFORMATION</h2>
-            <label for="facultyname">Avatar</label>
-            Select images: <input type='file' id="myFile" accept='image/*'><br>
-            <img id='output' style="height:3cm; width:3cm"><br>
-            <label for="facultyname">Name</label>
-            <input type="text" id="username"><br>
-            <label for="topic">Email</label>
-            <input type="email" id="email" class="emailinput"><br>
-            <label for="topic">Password</label>
-            <input type="password" id="password"><br>
-            <label for="topic">Role</label>
-            <select class="Role" id="role" onchange="role('create')">
-                  <option value="student">Student</option>
-                  <option value="guardian">Guardian</option>
-                  <option value="teacher">Teacher</option>
-            </select><br>
-            <div class="typeRole">
-                  <label>Chọn lộ trình học</label>
-                  <select id="routeTypeS" onchange="routeType('create')">
-                        {{#each targetxxx}}
-                        <option value="{{routeName}}">
-                              {{routeName}}
-                        </option>
-                        {{/each}}
+      <div class="createAccountOut" style="display: none;">
+            <div id="createAccount">
+                  <h2>ACCOUNT INFORMATION</h2>
+                  <label for="facultyname">Avatar</label>
+                  Select images: <input type='file' id="myFile" accept='image/*'><br>
+                  <img id='output' style="height:3cm; width:3cm"><br>
+                  <label for="facultyname">Name</label>
+                  <input type="text" id="username"><br>
+                  <label for="topic">Email</label>
+                  <input type="email" id="email" class="emailinput"><br>
+                  <label for="topic">Password</label>
+                  <input type="password" id="password"><br>
+                  <label for="topic">Role</label>
+                  <select class="Role" id="role" onchange="role('create')">
+                        <option value="student">Student</option>
+                        <option value="guardian">Guardian</option>
+                        <option value="teacher">Teacher</option>
                   </select><br>
-                  <label>Level</label>
-                  <select id="levelS"></select><br>
-                  <label>Aim</label>
-                  <select id="Aim"></select>
+                  <div class="typeRole">
+                        <label>Chọn lộ trình học</label>
+                        <select id="routeTypeS" onchange="routeType('create')">
+                              {{#each targetxxx}}
+                              <option value="{{routeName}}">
+                                    {{routeName}}
+                              </option>
+                              {{/each}}
+                        </select><br>
+                        <label>Level</label>
+                        <select id="levelS"></select><br>
+                        <label>Aim</label>
+                        <select id="Aim"></select>
+                  </div>
+                  <br>
+                  <label for="topic">Birthday</label>
+                  <input type="date" id="birthday">
+                  <br>
+                  <label for="topic">Phone</label>
+                  <input type="text" id="phone">
+                  <br>
+                  <label for="topic">Address</label>
+                  <input type="text" id="address">
+                  <br>
+                  <button id="btn1" onclick="signUp()">tiến hành tạo tài khoản</button>
+                  <button id="reset" onclick="reset()">Reset thông tin</button>
+                  <button id="btnxx" onclick='$(".createAccountOut").slideToggle();'>Close</button>
+
             </div>
-            <br>
-            <label for="topic">Birthday</label>
-            <input type="date" id="birthday">
-
-            <br>
-            <label for="topic">Phone</label>
-            <input type="text" id="phone">
-            <br>
-            <label for="topic">Address</label>
-            <input type="text" id="address">
-            <br>
-            <button id="btn1" onclick="signUp()">tiến hành tạo tài khoản</button>
-            <button id="reset" onclick="reset()">Reset thông tin</button>
-
       </div>
-      <button id="btnxx">Create new account</button>
-      <select id="accountFilter" onchange="getAccount(this.value,0)">
-            <option value="teacher">teacher</option>
-            <option value="guardian">guardian</option>
-            <option value="student">student</option>
-      </select>
-      <input id='myInput' type='text' placeholder='Search..'>
-
-      <table border='solid'>
-            <div id="loading" style="display:none">
-                  <img src="/images/loadingWalking.gif" alt="Loading..." />
+      <div class="updateFormOut" style="display: none;">
+            <div id="updateForm">
+                  <input type='hidden' id='PersonID'><br>
+                  <h2>ACCOUNT update INFORMATION</h2>
+                  <label>Old Avatar</label>
+                  <img id='oldAvatar' style='max-width:100px;max-height:100px'></img><br>
+                  <label>Update Avatar</label> Select images:
+                  <input type='file' id='myFileUpdate'><br>
+                  <img id='outputUpdate' style='height:3cm; width:3cm'><br>
+                  <label>Name</label><input type='text' id='usernameUpdate'><br>
+                  <label>Email</label><input type='email' id='emailUpdate' class='emailinput'><br>
+                  <label>Password</label><input type='password' id='passwordUpdate'><br>
+                  <label>Current Role: <input type='hidden' id='currentRole'></label>
+                  <label>Role</label>
+                  <select class='Role' id='roleUpdate' onchange="role('update')">
+                        <option value="student">Student</option>
+                        <option value="guardian">Guardian</option>
+                        <option value="teacher">Teacher</option>
+                  </select><br>
+                  <div class='typeRole'>
+                        <label>Chọn lộ trình học</label>
+                        <select id='routeTypeSUpdate' onchange="routeType('update')"></select>
+                        <label>Level</label>
+                        <select id='levelSUpdate'></select><br>
+                        <label>Aim</label>
+                        <select id='AimUpdate'></select>
+                  </div>
+                  <br>
+                  <div class='gender'>
+                        <label>Gender</label>
+                        <select id='genderUpdate'>
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                              <option value="other">Other</option>
+                        </select>
+                  </div>
+                  <br><label>Birthday</label><input type='date' id='birthdayUpdate'><br>
+                  <label>Phone</label><input type='text' id='phoneUpdate'><br>
+                  <label>Address</label><input type='text' id='addressUpdate'><br>
+                  <button onclick="doUpdate()">tiến hành cập nhật thông tin tài khoản</button>
+                  <button onclick="$('.updateFormOut').slideUp(500)">Close</button>
             </div>
-            <thead id="tableInforType"></thead>
-            <tbody class='taskrow'></tbody>
-      </table>
-      <div id="soTrang"></div>
-      <br>
-      <div id="updateForm" style="display: none;">
-            <button id="closeUpdateForm"> Close updateForm </button>
-            <label>PersonID</label><input type='text' id='PersonID'><br>
-            <h2>ACCOUNT update INFORMATION</h2>
-            <label>Old Avatar</label>
-            <img id='oldAvatar' style='max-width:100px;max-height:100px'></img><br>
-            <label>Update Avatar</label> Select images:
-            <input type='file' id='myFileUpdate'><br>
-            <img id='outputUpdate' style='height:3cm; width:3cm'><br>
-            <label>Name</label><input type='text' id='usernameUpdate'><br>
-            <label>Email</label><input type='email' id='emailUpdate' class='emailinput'><br>
-            <label>Password</label><input type='password' id='passwordUpdate'><br>
-            <label>Current Role: <input type='text' id='currentRole'></label>
-            <label>Role</label>
-            <select class='Role' id='roleUpdate' onchange="role('update')">
-                  <option value="student">Student</option>
-                  <option value="guardian">Guardian</option>
-                  <option value="teacher">Teacher</option>
-            </select><br>
-            <div class='typeRole'>
-                  <label>Chọn lộ trình học</label>
-                  <select id='routeTypeSUpdate' onchange="routeType('update')"></select>
-                  <label>Level</label>
-                  <select id='levelSUpdate'></select><br>
-                  <label>Aim</label>
-                  <select id='AimUpdate'></select>
-            </div>
-            <br>
-            <div class='gender'>
-                  <label>Gender</label>
-                  <select id='genderUpdate'>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                  </select>
-            </div>
-            <br><label>Birthday</label><input type='date' id='birthdayUpdate'><br>
-            <label>Phone</label><input type='text' id='phoneUpdate'><br>
-            <label>Address</label><input type='text' id='addressUpdate'><br>
-            <button id='btn2' onclick="doUpdate()">tiến hành cập nhật thông tin tài khoản</button>
       </div>
+      <div>
+            <div class="tr">
+                  <div class="td" onclick="location.href='/admin';"><i class="fas fa-house-user"></i> Trang chủ admin
+                  </div>
+                  <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i>
+                        Create
+                        account</div>
+                  <div class="td" onclick="consultingAll('0')"><i class="fas fa-list-alt"></i> Consulting All</div>
+                  <div class="td" onclick="allProposal()"><i class="fas fa-list-alt"></i> AllProposal</div>
+                  <div class="td" onclick="allEvent()"><i class="fas fa-list-alt"></i> AllEvent</div>
+                  <div class="td" onclick='$(".createEvent").toggle()'><i class="fas fa-calendar-plus"></i> Create Event
+                  </div>
+                  <div class="td" onclick="location.href='/admin/dashboard';"><i class="fas fa-chart-line"></i>
+                        Dashboard
+                  </div>
+                  <div class="td" onclick="location.href='/admin/assignRoomAndTime';"><i class="fas fa-house-user"></i>
+                        assignRoomAndTime</div>
+                  <div class="td" onclick="location.href='/admin/createClass';"><i class="fas fa-house-user"></i>
+                        createClass
+                  </div>
+
+                  <div class="td"><i class="fas fa-sign-out-alt"></i> Log Out</div>
+            </div>
+      </div>
+
+      <div class="body">
+            <button id="btnxx" onclick='$(".createAccountOut").slideToggle();'>Create new account</button>
+            <select id="accountFilter" onchange="getAccount(this.value,0)">
+                  <option value="teacher">teacher</option>
+                  <option value="guardian">guardian</option>
+                  <option value="student">student</option>
+            </select>
+            <input id='myInput' type='text' placeholder='Search..'>
+
+            <table border='solid'>
+                  <div id="loading" style="display:none">
+                        <img src="/images/loadingWalking.gif" alt="Loading..." />
+                  </div>
+                  <thead id="tableInforType"></thead>
+                  <tbody class='taskrow'></tbody>
+            </table>
+            <div id="soTrang"></div>
+            <br>
+      </div>
+
+
 </body>
 <script src=" /createAccountAdmin.js"></script>
 

@@ -28,6 +28,30 @@ var bcrypt = require('bcrypt');
 const { data } = require('jquery');
 const { inflate } = require('zlib');
 const saltRounds = 10;
+
+
+
+async function uploadFile(name, rootID, path) {
+    var id = []
+    id.push(rootID)
+    var responese = await driveService.files.create(param = {
+        resource: {
+            "name": name,
+            "parents": id
+        },
+        media: {
+            body: fs.createReadStream(path = path)
+        },
+    })
+    await driveService.permissions.create({
+        fileId: responese.data.id,
+        requestBody: {
+            role: 'reader',
+            type: 'anyone',
+        },
+    });
+    return responese.data.id
+}
 class adminController {
     adminHome(req, res) {
         // AccountModel.updateMany({}, { $set: { classID: [], subject: [] } }, function(err, data) {
@@ -74,7 +98,15 @@ class adminController {
         })
     }
 
-
+    getClass(req, res) {
+        ClassModel.find({ _id: req.query.id }, function(err, data) {
+            if (err) {
+                res.json("lõi")
+            } else {
+                res.json({ msg: 'success', data });
+            }
+        })
+    }
 
     getThu(req, res) {
         var dayOfWeek = '0' + req.query.dayOfWeek
@@ -243,59 +275,40 @@ class adminController {
 
 
     async doCreateAccount(req, res) {
-        var fileID
-        var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
-        var image = req.body.file;
-        var data = image.split(',')[1];
-        fs.writeFileSync(path, data, { encoding: 'base64' });
         try {
-            var responese = await driveService.files.create(param = {
-                resource: {
-                    "name": req.body.filename,
-                    "parents": ["11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1"]
-                },
-                media: {
-                    body: fs.createReadStream(path = path)
-                },
-            })
-            await driveService.permissions.create({
-                fileId: responese.data.id,
-                requestBody: {
-                    role: 'reader',
-                    type: 'anyone',
-                },
-            });
-        } catch (error) {
-            console.log(error.message);
-        }
-        try {
-            var { username, password, email, phone, address, birthday } = req.body
-            var role = req.body.role
-            var stage = req.body.stage
-            var routeName = req.body.routeName
-            var aim = req.body.aim
-            if (role === "guardian" || role === "teacher") {
-                stage = "none"
-                routeName = "none"
-                aim = "none"
-            }
-            fileID = "https://drive.google.com/uc?export=view&id=" + fileID
-            AccountModel.find({ username: username }).lean().exec(function(err, result) {
-                if (result.length !== 0) {
-                    res.json({ msg: 'Account already exists' });
-                } else {
-                    if (username && password) {
-                        const salt = bcrypt.genSaltSync(saltRounds);
-                        const hash = bcrypt.hashSync(password, salt);
-                        AccountModel.create({ avatar: fileID, username, password: hash, email, role, routeName, aim, stage, phone, address, birthday }, function(err, data) {
-                            if (err) {
-                                res.json({ msg: 'error' });
-                            } else {
-                                res.json({ msg: 'success', data: data });
-                            }
-                        });
-                    }
+            var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
+            var image = req.body.file;
+            var data = image.split(',')[1];
+            fs.writeFileSync(path, data, { encoding: 'base64' });
+            var response = uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path).then(function(response) {
+                var fileLink = "https://drive.google.com/uc?export=view&id=" + response
+                var { username, password, email, phone, address, birthday } = req.body
+                var role = req.body.role
+                var stage = req.body.stage
+                var routeName = req.body.routeName
+                var aim = req.body.aim
+                if (role === "guardian" || role === "teacher") {
+                    stage = "none"
+                    routeName = "none"
+                    aim = "none"
                 }
+                AccountModel.find({ username: username }).lean().exec(function(err, result) {
+                    if (result.length !== 0) {
+                        res.json({ msg: 'Account already exists' });
+                    } else {
+                        if (username && password) {
+                            const salt = bcrypt.genSaltSync(saltRounds);
+                            const hash = bcrypt.hashSync(password, salt);
+                            AccountModel.create({ avatar: fileLink, username, password: hash, email, role, routeName, aim, stage, phone, address, birthday }, function(err, data) {
+                                if (err) {
+                                    res.json({ msg: 'error' });
+                                } else {
+                                    res.json({ msg: 'success', data: data });
+                                }
+                            });
+                        }
+                    }
+                })
             })
         } catch (error) {
             if (error) {
@@ -344,15 +357,28 @@ class adminController {
             birthday: req.body.birthday
         }
         if (req.body.file != "none") {
-            update["avatar"] = req.body.file
+            var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
+            var image = req.body.file;
+            var data = image.split(',')[1];
+            fs.writeFileSync(path, data, { encoding: 'base64' });
+            var response = uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path).then(function(response) {
+                update["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
+                var oldImg = req.body.oldLink
+                oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
+                var responese = driveService.files.delete({ fileId: oldImg }, function(err, data) {
+                    if (err) {
+                        console.log("err");
+                    }
+                })
+                AccountModel.findOneAndUpdate({ _id: req.body._id }, update, function(err, data) {
+                    if (err) {
+                        res.json({ msg: 'error' });
+                    } else {
+                        res.json({ msg: 'success', data: data });
+                    }
+                })
+            })
         }
-        AccountModel.findOneAndUpdate({ _id: req.body._id }, update, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
-        })
     }
 
     createClass(req, res) {
