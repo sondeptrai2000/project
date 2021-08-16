@@ -302,13 +302,14 @@
                         <button onclick="upDateInformation('<%= ClassModel._id %>')">upDate information </button>
                     </td>
                     <td>
-                        <%= ClassModel.status %>
+                        <%= ClassModel.classStatus %>
                     </td>
                 </tr>
                 <% }); %>
         </table>
 </body>
 <script>
+    //hiển thị danh sách lịch giảng dạy để admin chọn vào thay đổi lịch làm việc 1 ngày nào đó trong list
     function upDateSchedule(id) {
         var idClass = id
         $.ajax({
@@ -332,7 +333,7 @@
             }
         });
     }
-
+    //hiển thị form update lịch cho giáo viên
     function updateScheduleForm(scheduleID, classID) {
         $("input[name='updateScheduleID']").val(scheduleID)
         $("input[name='updateScheduleClassID']").val(classID)
@@ -340,6 +341,7 @@
         $(".updateScheduleFormOut").fadeIn(500)
     }
 
+    //hiênr thị các phòng trống để giáo viên giảng dạy khi cập nhật, chuyển lịch giảng dạy
     function cahocUpdate() {
         var date = new Date($("input[name='dateScheduleUpdate']").val())
         var dayOfWeek = (date.getDay() + 1)
@@ -357,7 +359,6 @@
             success: function(response) {
                 if (response.msg == 'success') {
                     $("#roomUpdate").html("")
-                    console.log(response.data)
                     $.each(response.data, function(index, data) {
                         $.each(data.room, function(index, room) {
                             if (room.time == $('#cahocUpdate').val() && room.status == "None") {
@@ -374,7 +375,7 @@
         })
     }
 
-
+    //thực hiện cập nhật, chuyển đổ lịch giảng dạy cho giáo viên
     function SubmitupdateScheduleForm() {
         var date = new Date($("input[name='dateScheduleUpdate']").val())
         var dayOfWeek = '0' + (date.getDay() + 1)
@@ -438,6 +439,7 @@
         });
     }
 
+    //lấy danh sách các học sinh trong lớp
     function sendData(id, subject) {
         var _id = id
 
@@ -470,7 +472,7 @@
         });
     }
 
-
+    //hiển thị các học sinh có mức độ tương ứng với lớp đã chọn để xem xét thêm vào lớp
     function addStudent(classID, subject) {
         var infor4 = []
         $("#" + classID + " td").each(function() {
@@ -478,8 +480,6 @@
         })
         var checkClassID = classID
         var checksubject = subject
-        console.log(infor4[1])
-        console.log(infor4[2])
         $.ajax({
             url: '/teacher/addStudentToClass',
             method: 'get',
@@ -490,7 +490,6 @@
             },
             success: function(response) {
                 if (response.msg == 'success') {
-                    console.log(response.data)
                     $('.taskrow111').html('');
                     $.each(response.data, function(index, data) {
                         if (data.classID.includes(checkClassID) == true) {} else if ((data.classID.includes(checkClassID) == false) && (data.subject.includes(checksubject) == false)) {
@@ -508,6 +507,7 @@
     }
 
 
+    //thêm học sinh vaof 1 lớp
     function doAddToClass(classID, subject) {
         var classID = classID
 
@@ -555,7 +555,7 @@
     }
 
 
-
+    //xóa học sinh khỏi 1 lớp
     function removeStudent(classID, subject) {
         var classID = classID
         var studentlistcl = [];
@@ -596,14 +596,41 @@
         }
         return arr;
     };
-
+    //thêm form điền thông tin cho các tuần
     function tuan() {
         $("#datlich").html("")
         for (var i = 0; i < $("#Schedule").val(); i++) {
-            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8> giờ học:<select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"><option value="7:30 đến 9:30">7:30 đến 9:30</option><option value="9:45 đến 11:45">9:45 đến 11:45</option><option value="13:30 đến 15:30">13:30 đến 15:30</option><option value="15:45 đến 17:45">15:45 đến 17:45</option><option value="18:15 đến 20:15">18:15 đến 20:15</option></select>Room:<select class="Room" id="Room' + i + '"></select><br>')
+            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8 onchange=getTime("' + i + '")> giờ học:<select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"><option value="7:30 đến 9:30">7:30 đến 9:30</option><option value="9:45 đến 11:45">9:45 đến 11:45</option><option value="13:30 đến 15:30">13:30 đến 15:30</option><option value="15:45 đến 17:45">15:45 đến 17:45</option><option value="18:15 đến 20:15">18:15 đến 20:15</option></select>Room:<select class="Room" id="Room' + i + '"></select><br>')
         }
     }
-
+    //lấy các ca làm của giáo viên trong ngày đã chọn (tránh trường hợp 1 giáo viên dạy chung 1 ca làm và ở 2 phòng khác nhau )
+    function getTime(i) {
+        $('#cahoc' + i + ' option').show()
+        $.ajax({
+            url: '/admin/getTime',
+            method: 'get',
+            dataType: 'json',
+            data: {
+                dayOfWeek: $("input[name='Schedule" + i + "']").val(),
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    console.log(response.data)
+                    $.each(response.data, function(index, data) {
+                        $.each(data.schedule, function(index, schedule) {
+                            console.log(schedule.time)
+                            $('#cahoc' + i + ' option[value="' + schedule.time + '"]').hide()
+                        });
+                    });
+                }
+                if (response.msg == 'error') {}
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
+    //chọn các phòng trống để dạy
     function getThu(i) {
         var dayOfWeek = $("input[name='Schedule" + i + "']").val()
         var time = $("#cahoc" + i + "").val()
@@ -634,21 +661,23 @@
         })
     }
 
-
+    //tiến hành tạo lớp
     async function abc() {
 
         var studentID = []
         var listStudent = []
         var attend = []
         $("input[name='hobby']").each(function(data) {
-            studentID.push($(this).val())
-            listStudent.push({
-                'ID': $(this).val()
-            });
-            attend.push({
-                "studentID": $(this).val(),
-                "attended": ""
-            })
+            if ($(this).is(':checked')) {
+                studentID.push($(this).val())
+                listStudent.push({
+                    'ID': $(this).val()
+                });
+                attend.push({
+                    "studentID": $(this).val(),
+                    "attended": ""
+                })
+            }
         })
 
         //lấy các thứ trong tuần
@@ -722,6 +751,7 @@
 
     }
 
+    //lấy thông tin của lộ trình học
     function routeType() {
         var routeName = $('#routeTypeS').val();
         $.ajax({
@@ -765,7 +795,7 @@
             }
         })
     }
-
+    //lấy thông tin level, mốc của lộ trình đã chọn
     function level() {
         var routeName = $('#routeTypeS').val();
         var levelS = $('#levelS').val();
@@ -800,6 +830,7 @@
         })
     }
 
+    //lấy các học sinh đang học tình trạng học tập tại mức độ đã chọn để thêm vào lớp
     function getStudent() {
         var routeName = $('#routeTypeS').val();
         var levelS = $('#levelS').val();

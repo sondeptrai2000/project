@@ -38,6 +38,7 @@ adminRouter.get('/createClass', adminController.createClass)
 adminRouter.post('/createClass', adminController.docreateClass)
 
 adminRouter.get('/getClass', adminController.getClass)
+adminRouter.get('/getTime', adminController.getTime)
 
 
 adminRouter.get('/allClassLevel', adminController.allClassLevel)

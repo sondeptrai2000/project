@@ -70,6 +70,15 @@ class adminController {
         //         console.log(" ok 2 ")
         //     }
         // })
+        // ClassModel.findOne({ teacherID: "60e56f421a272228e44b46d0", classStatus: "Processing" }, { schedule: { $elemMatch: { day: "03" } } },
+        //         function(err, data) {
+        //             if (err) {
+        //                 console.log("k ok")
+        //             } else {
+        //                 console.log(data.schedule[0].time)
+        //                 res.json(data)
+        //             }
+        //         })
         res.render('admin/adminHome')
     }
 
@@ -117,6 +126,18 @@ class adminController {
                 res.json({ msg: 'success', data });
             }
         })
+    }
+
+    getTime(req, res) {
+        ClassModel.find({ teacherID: "60e56f421a272228e44b46d0", classStatus: "Processing" }, { schedule: { $elemMatch: { day: '0' + req.query.dayOfWeek } } },
+            function(err, data) {
+                if (err) {
+                    console.log("err")
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success', data });
+                }
+            })
     }
 
     doupdateSchedule(req, res) {

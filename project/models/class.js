@@ -83,7 +83,7 @@ const classSchema = new Schema({
     uploadDate: String,
     endDate: Date,
     startDate: Date,
-    classStatus: String,
+    classStatus: { type: String, default: "Processing" },
 }, {
     collection: 'class',
     timestamps: true

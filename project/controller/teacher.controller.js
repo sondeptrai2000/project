@@ -161,7 +161,13 @@ class teacherController {
                             }
                         })
                     }
-                    res.json({ msg: 'success' });
+                    ClassModel.updateOne({ _id: req.body.idClass }, { classStatus: 'Finished' }, function(err, data) {
+                        if (err) {
+                            res.json({ msg: 'error' });
+                        } else {
+                            res.json({ msg: 'success' });
+                        }
+                    })
                 } else {
                     res.json({ msg: 'success' });
                 }
@@ -240,7 +246,9 @@ class teacherController {
     }
 
     doremoveStudentToClass(req, res) {
-        var classID = req.body.classID
+        console.log(req.body.classID)
+        console.log(req.body.subject)
+        console.log(req.body.studentlistcl)
         AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID, subject: req.body.subject } }, function(err, data) {
             if (err) {
                 console.log("lỗi trong quá trình xóa lớp trong thông tin học sinh")
