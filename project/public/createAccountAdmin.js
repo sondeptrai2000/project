@@ -204,6 +204,7 @@ function role(action) {
                 dataType: 'json',
                 success: function(response) {
                     if (response.msg == 'success') {
+                        console.log(response.data)
                         $.each(response.data, function(index, data) {
                             var update = "<option value=" + data.routeName + ">" + data.routeName + "</option>"
                             $("#routeTypeSUpdate").append(update)

@@ -103,7 +103,7 @@ class adminController {
         //         })
         //         console.log(listEmail.slice(0, -2))
         //     })
-        // res.render('admin/adminHome')
+        res.render('admin/adminHome')
     }
 
     assignRoomAndTime(req, res) {
@@ -117,11 +117,8 @@ class adminController {
     }
 
     addRoom(req, res) {
-        console.log(req.body.roomName)
         assignRoomAndTimeModel.updateMany({}, {
-            $push: {
-                room: { $each: req.body.roomName }
-            }
+            $push: { room: { $each: req.body.roomName } }
         }, function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
@@ -156,7 +153,6 @@ class adminController {
         ClassModel.find({ teacherID: req.query.teacherID, classStatus: "Processing" }, { schedule: { $elemMatch: { day: '0' + req.query.dayOfWeek } } },
             function(err, data) {
                 if (err) {
-                    console.log("err")
                     res.json({ msg: 'error' });
                 } else {
                     res.json({ msg: 'success', data });
@@ -164,55 +160,46 @@ class adminController {
             })
     }
 
-    doupdateSchedule(req, res) {
+    async doupdateSchedule(req, res) {
         var oldSchuedule = req.body.old
-        ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, {
-            $set: {
-                "schedule.$.time": req.body.time,
-                "schedule.$.room": req.body.room,
-                "schedule.$.date": new Date(req.body.date),
-                "schedule.$.day": req.body.day,
-                "schedule.$.status": "update"
+        try {
+            await ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, {
+                $set: {
+                    "schedule.$.time": req.body.time,
+                    "schedule.$.room": req.body.room,
+                    "schedule.$.date": new Date(req.body.date),
+                    "schedule.$.day": req.body.day,
+                    "schedule.$.status": "update"
+                }
+            })
+            await assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day, room: { $elemMatch: { room: req.body.room, time: req.body.time } } }, {
+                $set: { "room.$.status": "Ok" }
+            })
+            var getListEmail = await ClassModel.find({ _id: req.body.classID }, { "studentID.ID": 1, className: 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean()
+            var listEmail = ""
+            getListEmail[0].studentID.forEach(element => {
+                listEmail = listEmail + element.ID.email + ', '
+            })
+            listEmail.slice(0, -2)
+            var content = 'Do 1 số vấn đề giáo viên, buổi học của lớp ' + getListEmail[0].className + ' vào ngày ' + oldSchuedule[0] + ' từ ' + oldSchuedule[3] + " chuyển sang ngày " + req.body.date + ' từ ' + req.body.time + '.';
+            var mainOptions = {
+                from: 'fptedunotification@gmail.com',
+                to: listEmail,
+                subject: 'Notification',
+                text: content
             }
-        }, function(err, data) {
-            if (err) {
-                res.json("error")
-            } else {
-                assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day, room: { $elemMatch: { room: req.body.room, time: req.body.time } } }, {
-                    $set: { "room.$.status": "Ok" }
-                }, function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        ClassModel.find({ _id: req.body.classID }, { "studentID.ID": 1, className: 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean().exec(function(err, data) {
-                            if (err) {
-                                res.json({ msg: 'error' });
-                            } else {
-                                var listEmail = ""
-                                data[0].studentID.forEach(element => {
-                                    listEmail = listEmail + element.ID.email + ', '
-                                })
-                                listEmail.slice(0, -2)
-                                var content = 'Do 1 số vấn đề giáo viên, buổi học của lớp ' + data[0].className + ' vào ngày ' + oldSchuedule[0] + ' từ ' + oldSchuedule[3] + " chuyển sang ngày " + req.body.date + ' từ ' + req.body.time + '.';
-                                var mainOptions = {
-                                    from: 'fptedunotification@gmail.com',
-                                    to: listEmail,
-                                    subject: 'Notification',
-                                    text: content
-                                }
-                                transporter.sendMail(mainOptions, function(err, info) {
-                                    if (err) {
-                                        res.json({ msg: 'error' });
-                                    } else {
-                                        res.json({ msg: 'success' });
-                                    }
-                                });
-                            }
-                        })
-                    }
-                })
+            transporter.sendMail(mainOptions, function(err, info) {
+                if (err) {
+                    res.json({ msg: 'error' });
+                } else {
+                    res.json({ msg: 'success' });
+                }
+            });
+        } catch (e) {    
+            if (e) {
+                res.json({ msg: 'error' })
             }
-        })
+        }
     }
 
 
@@ -232,37 +219,42 @@ class adminController {
         })
     }
 
-    createAccount(req, res) {
-        AccountModel.find({ role: "teacher" }).lean().countDocuments(function(err, numberOfAccount) {
-            studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
-                AccountModel.find({ role: "teacher" }).lean().then(data => {
-                    res.render('admin/createAccount', { data, targetxxx, numberOfAccount })
-                })
-            })
-        })
-    }
-    getRoute(req, res) {
-        studyRouteModel.find({}).lean().exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
+    async createAccount(req, res) {
+        try {
+            var numberOfAccount = await AccountModel.find({ role: "teacher" }).lean().countDocuments()
+            var targetxxx = await studyRouteModel.find({}).lean()
+            var data = await AccountModel.find({ role: "teacher" }).lean()
+            res.render('admin/createAccount', { data, targetxxx, numberOfAccount })
+        } catch (e) {
+            if (e) {
+                res.json({ msg: 'error' })
             }
-        })
+        }
     }
 
-    getStage(req, res) {
-        studyRouteModel.find({ routeName: req.query.abc }).lean().exec(function(err, targetxxx) {
-            AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }).lean().exec(function(err, student) {
-                studyRouteModel.find({ routeName: req.query.abc }).lean().exec(function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success', data, student, targetxxx });
-                    }
-                })
-            })
-        })
+    async getRoute(req, res) {
+        try {
+            console.log("vào")
+            var data = await studyRouteModel.find({}).lean()
+            res.json({ msg: 'success', data });
+        } catch (e) {
+            if (e) {
+                res.json({ msg: 'error' })
+            }
+        }
+    }
+
+    async getStage(req, res) {
+        try {
+            var targetxxx = await studyRouteModel.find({ routeName: req.query.abc }).lean()
+            var student = await AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }).lean()
+            var data = await studyRouteModel.find({ routeName: req.query.abc }).lean()
+            res.json({ msg: 'success', data, student, targetxxx });
+        } catch (e) {
+            if (e) {
+                res.json({ msg: 'error' })
+            }
+        }
     }
 
     getStudent(req, res) {
@@ -290,23 +282,24 @@ class adminController {
         })
     }
 
-    docreateRoute(req, res) {
-        var stageContent = req.body.stageContent
-        var stageMoney = req.body.stageMoney
-        var route = req.body.route
-        var testthu = route.toString();
-        testthu = testthu.split(",space,")
-        var totalStage = req.body.totalStage
+    async docreateRoute(req, res) {
+        try {
+            var stageContent = req.body.stageContent
+            var stageMoney = req.body.stageMoney
+            var route = req.body.route
+            var totalStage = req.body.totalStage
+            var testthu = route.toString();
+            testthu = testthu.split(",space,")
 
+            var routeCreated = await studyRouteModel.create({
+                routeName: req.body.routeName,
+                description: req.body.description,
+            })
 
-        studyRouteModel.create({
-            routeName: req.body.routeName,
-            description: req.body.description,
-        }, function(err, data) {
             for (var i = 0; i < totalStage; i++) {
                 testthu[i] = testthu[i].toString();
                 testthu[i] = testthu[i].split(",")
-                studyRouteModel.updateOne({ _id: data._id }, {
+                await studyRouteModel.updateOne({ _id: routeCreated._id }, {
                     $push: {
                         routeSchedual: {
                             stage: stageContent[i],
@@ -314,15 +307,14 @@ class adminController {
                             routeabcd: testthu[i],
                         }
                     }
-                }, function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'Account already exists' });
-                    }
-
                 })
             }
-        })
-        res.json({ msg: 'success' });
+            res.json({ msg: 'success' })
+        } catch (e) {
+            if (e) {
+                res.json({ msg: 'error' })
+            }
+        }
     }
 
 
@@ -477,15 +469,9 @@ class adminController {
                         } else {
                             ClassModel.findOneAndUpdate({ _id: data._id }, {
                                 $push: {
-                                    studentID: {
-                                        $each: listStudent
-                                    },
-                                    StudentIDoutdoor: {
-                                        $each: listStudent
-                                    },
-                                    schedule: {
-                                        $each: req.body.schedual
-                                    }
+                                    studentID: { $each: listStudent },
+                                    StudentIDoutdoor: { $each: listStudent },
+                                    schedule: { $each: req.body.schedual }
                                 }
                             }, function(err, teacher) {
                                 if (err) {
@@ -623,31 +609,21 @@ class adminController {
                 var folder = await driveService.files.create({
                     resource: fileMetadata,
                     fields: 'id'
-                }, function(err, file) {
-                    if (err) {
-                        console.log("ádfv")
-                        res.json({ msg: 'error' });
-                    } else {
-                        eventModel.create({
-                            eventName: req.body.eventName,
-                            eventContent: req.body.eventContent,
-                            eventAddress: req.body.eventAddress,
-                            eventAt: req.body.eventAt,
-                            eventProposal: eventAt,
-                            folderID: file.data.id,
-                        }, function(err, data) {
-                            if (err) {
-                                res.json({ msg: 'error' });
-                            } else {
-                                res.json({ msg: 'success' });
-                            }
-                        })
-                    }
-                });
+                })
+                await eventModel.create({
+                    eventName: req.body.eventName,
+                    eventContent: req.body.eventContent,
+                    eventAddress: req.body.eventAddress,
+                    eventAt: req.body.eventAt,
+                    eventProposal: eventAt,
+                    folderID: folder.data.id,
+                })
+                res.json({ msg: 'success' });
             } catch (err) {
-                res.json({ msg: 'error' });
+                if (err) {
+                    res.json({ msg: 'error' });
+                }
             }
-
         }
     }
 
@@ -665,23 +641,14 @@ class adminController {
         var folderID
         try {
             folderID = await eventModel.findOne({ _id: req.body.id }, { folderID: 1 }).lean()
+            var responese = await driveService.files.delete({ fileId: folderID.folderID, })
+            var data = await eventModel.deleteOne({ _id: req.body.id }).lean().sort({ eventAt: -1 })
+            res.json({ msg: 'success', data });
         } catch (err) {
-            res.json({ msg: 'error' });
-        }
-        try {
-            var responese = await driveService.files.delete({
-                fileId: folderID.folderID,
-            })
-        } catch (error) {
-            console.log(error.message);
-        }
-        eventModel.deleteOne({ _id: req.body.id }).lean().sort({ eventAt: -1 }).exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
             }
-        })
+        }
     }
 
     doUpdateEvent(req, res) {
@@ -719,19 +686,17 @@ class adminController {
         })
     }
 
-    dorateEventProposal(req, res) {
-        eventModel.findOneAndUpdate({ _id: req.body.idProposal, "proposals._id": req.body.IDlinkProposal }, {
-            $set: {
-                "proposals.$.status": req.body.status,
-                "proposals.$.comment": req.body.comment,
+    async dorateEventProposal(req, res) {
+        try {
+            var data = await eventModel.findOneAndUpdate({ _id: req.body.idProposal, "proposals._id": req.body.IDlinkProposal }, {
+                $set: { "proposals.$.status": req.body.status, "proposals.$.comment": req.body.comment }
+            })
+            res.json({ msg: 'success', data });
+        } catch (e) {
+            if (e) {
+                res.json({ msg: 'error' })
             }
-        }).exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
+        }
     }
 
     consultingAll(req, res) {
