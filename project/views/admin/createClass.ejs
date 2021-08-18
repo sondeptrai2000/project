@@ -600,18 +600,19 @@
     function tuan() {
         $("#datlich").html("")
         for (var i = 0; i < $("#Schedule").val(); i++) {
-            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8 onchange=getTime("' + i + '")> giờ học:<select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"><option value="7:30 đến 9:30">7:30 đến 9:30</option><option value="9:45 đến 11:45">9:45 đến 11:45</option><option value="13:30 đến 15:30">13:30 đến 15:30</option><option value="15:45 đến 17:45">15:45 đến 17:45</option><option value="18:15 đến 20:15">18:15 đến 20:15</option></select>Room:<select class="Room" id="Room' + i + '"></select><br>')
+            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8 onchange=getTime("' + i + '")> giờ học:<select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"></select>Room:<select class="Room" id="Room' + i + '"></select><br>')
         }
     }
     //lấy các ca làm của giáo viên trong ngày đã chọn (tránh trường hợp 1 giáo viên dạy chung 1 ca làm và ở 2 phòng khác nhau )
     function getTime(i) {
-        $('#cahoc' + i + ' option').show()
+        $('#cahoc' + i).html('<option value="7:30 đến 9:30">7:30 đến 9:30</option><option value="9:45 đến 11:45">9:45 đến 11:45</option><option value="13:30 đến 15:30">13:30 đến 15:30</option><option value="15:45 đến 17:45">15:45 đến 17:45</option><option value="18:15 đến 20:15">18:15 đến 20:15</option>')
         $.ajax({
             url: '/admin/getTime',
             method: 'get',
             dataType: 'json',
             data: {
                 dayOfWeek: $("input[name='Schedule" + i + "']").val(),
+                teacherID: $(".teacherID").val(),
             },
             success: function(response) {
                 if (response.msg == 'success') {
@@ -619,7 +620,7 @@
                     $.each(response.data, function(index, data) {
                         $.each(data.schedule, function(index, schedule) {
                             console.log(schedule.time)
-                            $('#cahoc' + i + ' option[value="' + schedule.time + '"]').hide()
+                            $('#cahoc' + i + ' option[value="' + schedule.time + '"]').remove()
                         });
                     });
                 }

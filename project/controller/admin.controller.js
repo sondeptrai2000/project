@@ -10,8 +10,15 @@ const fs = require("fs")
 const readline = require("readline")
 const { google } = require("googleapis")
 var path = require('path');
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcrypt');
+const { data } = require('jquery');
+const { inflate } = require('zlib');
+const saltRounds = 10;
+const nodemailer = require('nodemailer');
 
-//setup kết nối tới ggdrive
+
+//set up kết nối tới ggdrive
 const KEYFILEPATH = path.join(__dirname, 'service_account.json')
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
@@ -23,12 +30,21 @@ const auth = new google.auth.GoogleAuth(
 );
 const driveService = google.drive(options = { version: 'v3', auth });
 
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcrypt');
-const { data } = require('jquery');
-const { inflate } = require('zlib');
-const saltRounds = 10;
 
+
+// set up mail sever
+var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'fptedunotification@gmail.com',
+        pass: 'son@1234'
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
 
 
 async function uploadFile(name, rootID, path) {
@@ -79,7 +95,15 @@ class adminController {
         //                 res.json(data)
         //             }
         //         })
-        res.render('admin/adminHome')
+        // ClassModel.find({ _id: "611b5f3af902832da4f97ed0" }, { "studentID.ID": 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean().exec(function(err, data) {
+        //         res.json(data[0].studentID)
+        //         var listEmail = ""
+        //         data[0].studentID.forEach(element => {
+        //             listEmail = listEmail + element.ID.email + ', '
+        //         })
+        //         console.log(listEmail.slice(0, -2))
+        //     })
+        // res.render('admin/adminHome')
     }
 
     assignRoomAndTime(req, res) {
@@ -129,7 +153,7 @@ class adminController {
     }
 
     getTime(req, res) {
-        ClassModel.find({ teacherID: "60e56f421a272228e44b46d0", classStatus: "Processing" }, { schedule: { $elemMatch: { day: '0' + req.query.dayOfWeek } } },
+        ClassModel.find({ teacherID: req.query.teacherID, classStatus: "Processing" }, { schedule: { $elemMatch: { day: '0' + req.query.dayOfWeek } } },
             function(err, data) {
                 if (err) {
                     console.log("err")
@@ -141,12 +165,7 @@ class adminController {
     }
 
     doupdateSchedule(req, res) {
-        console.log(req.body.time)
-        console.log(req.body.room)
-        console.log(req.body.date)
-        console.log(req.body.day)
-        console.log(req.body.classID)
-        console.log(req.body.scheduleID)
+        var oldSchuedule = req.body.old
         ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, {
             $set: {
                 "schedule.$.time": req.body.time,
@@ -157,16 +176,39 @@ class adminController {
             }
         }, function(err, data) {
             if (err) {
-                res.json("lõi")
+                res.json("error")
             } else {
                 assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day, room: { $elemMatch: { room: req.body.room, time: req.body.time } } }, {
                     $set: { "room.$.status": "Ok" }
                 }, function(err, data) {
                     if (err) {
-                        console.log("err")
                         res.json({ msg: 'error' });
                     } else {
-                        res.json({ msg: 'success' });
+                        ClassModel.find({ _id: req.body.classID }, { "studentID.ID": 1, className: 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean().exec(function(err, data) {
+                            if (err) {
+                                res.json({ msg: 'error' });
+                            } else {
+                                var listEmail = ""
+                                data[0].studentID.forEach(element => {
+                                    listEmail = listEmail + element.ID.email + ', '
+                                })
+                                listEmail.slice(0, -2)
+                                var content = 'Do 1 số vấn đề giáo viên, buổi học của lớp ' + data[0].className + ' vào ngày ' + oldSchuedule[0] + ' từ ' + oldSchuedule[3] + " chuyển sang ngày " + req.body.date + ' từ ' + req.body.time + '.';
+                                var mainOptions = {
+                                    from: 'fptedunotification@gmail.com',
+                                    to: listEmail,
+                                    subject: 'Notification',
+                                    text: content
+                                }
+                                transporter.sendMail(mainOptions, function(err, info) {
+                                    if (err) {
+                                        res.json({ msg: 'error' });
+                                    } else {
+                                        res.json({ msg: 'success' });
+                                    }
+                                });
+                            }
+                        })
                     }
                 })
             }
