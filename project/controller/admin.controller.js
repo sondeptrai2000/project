@@ -128,14 +128,20 @@ class adminController {
         })
     }
 
-    getClass(req, res) {
-        ClassModel.find({ _id: req.query.id }, function(err, data) {
-            if (err) {
-                res.json("lõi")
-            } else {
-                res.json({ msg: 'success', data });
-            }
+    async deleteClass(req, res) {
+        var classInfor = await ClassModel.find({ _id: req.query.id })
+        if (!classInfor) res.json({ msg: 'error' });
+        var listStudentID = []
+        classInfor[0].studentID.forEach((e) => {
+            listStudentID.push(e.ID)
         })
+        var deleteClass = await ClassModel.remove({ _id: req.query.id })
+        if (!deleteClass) res.json({ msg: 'error' });
+
+        var updateAccount = await AccountModel.updateMany({ _id: { $in: listStudentID } }, { $pull: { classID: req.query.id, subject: classInfor[0].subject } })
+        if (!updateAccount) res.json({ msg: 'error' });
+        res.json({ msg: 'success', data });
+
     }
 
     getThu(req, res) {
@@ -234,7 +240,6 @@ class adminController {
 
     async getRoute(req, res) {
         try {
-            console.log("vào")
             var data = await studyRouteModel.find({}).lean()
             res.json({ msg: 'success', data });
         } catch (e) {
@@ -290,7 +295,6 @@ class adminController {
             var totalStage = req.body.totalStage
             var testthu = route.toString();
             testthu = testthu.split(",space,")
-
             var routeCreated = await studyRouteModel.create({
                 routeName: req.body.routeName,
                 description: req.body.description,
@@ -331,11 +335,15 @@ class adminController {
 
     async doCreateAccount(req, res) {
         try {
-            var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
-            var image = req.body.file;
-            var data = image.split(',')[1];
-            fs.writeFileSync(path, data, { encoding: 'base64' });
-            var response = uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path).then(function(response) {
+            var check = await AccountModel.find({ username: username }).lean()
+            if (check) {
+                res.json({ msg: 'Account already exists' });
+            } else {
+                var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
+                var image = req.body.file;
+                var data = image.split(',')[1];
+                fs.writeFileSync(path, data, { encoding: 'base64' });
+                var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
                 var fileLink = "https://drive.google.com/uc?export=view&id=" + response
                 var { username, password, email, phone, address, birthday } = req.body
                 var role = req.body.role
@@ -347,30 +355,21 @@ class adminController {
                     routeName = "none"
                     aim = "none"
                 }
-                AccountModel.find({ username: username }).lean().exec(function(err, result) {
-                    if (result.length !== 0) {
-                        res.json({ msg: 'Account already exists' });
-                    } else {
-                        if (username && password) {
-                            const salt = bcrypt.genSaltSync(saltRounds);
-                            const hash = bcrypt.hashSync(password, salt);
-                            AccountModel.create({ avatar: fileLink, username, password: hash, email, role, routeName, aim, stage, phone, address, birthday }, function(err, data) {
-                                if (err) {
-                                    res.json({ msg: 'error' });
-                                } else {
-                                    res.json({ msg: 'success', data: data });
-                                }
-                            });
+                if (username && password) {
+                    const salt = bcrypt.genSaltSync(saltRounds);
+                    const hash = bcrypt.hashSync(password, salt);
+                    AccountModel.create({ avatar: fileLink, username, password: hash, email, role, routeName, aim, stage, phone, address, birthday }, function(err, data) {
+                        if (err) {
+                            res.json({ msg: 'error' });
+                        } else {
+                            res.json({ msg: 'success', data: data });
                         }
-                    }
-                })
-            })
+                    });
+                }
+            }
         } catch (error) {
             if (error) {
-                res.status(400).json({
-                    msg: "Sign Up fail",
-                    error: true
-                })
+                res.json({ msg: 'error' });
             }
         }
     }
@@ -386,53 +385,54 @@ class adminController {
     }
 
     //làm cuối
-    doeditAccount(req, res) {
-        var role = req.body.role
-        var stage = req.body.stage
-        var routeName = req.body.routeName
-        var aim = req.body.aim
-        if (role === "guardian" || role === "teacher") {
-            stage = "none"
-            routeName = "none"
-            aim = "none"
-        }
-        var password = req.body.password
-        const salt = bcrypt.genSaltSync(saltRounds);
-        const hash = bcrypt.hashSync(password, salt);
-        var update = {
-            username: req.body.username,
-            password: hash,
-            email: req.body.email,
-            role: req.body.role,
-            routeName: routeName,
-            aim: aim,
-            stage: stage,
-            phone: req.body.phone,
-            address: req.body.address,
-            birthday: req.body.birthday
-        }
-        if (req.body.file != "none") {
-            var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
-            var image = req.body.file;
-            var data = image.split(',')[1];
-            fs.writeFileSync(path, data, { encoding: 'base64' });
-            var response = uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path).then(function(response) {
+    async doeditAccount(req, res) {
+        try {
+            var role = req.body.role
+            var stage = req.body.stage
+            var routeName = req.body.routeName
+            var aim = req.body.aim
+            if (role == "guardian" || role == "teacher") {
+                stage = "none"
+                routeName = "none"
+                aim = "none"
+            }
+            var password = req.body.password
+            const salt = bcrypt.genSaltSync(saltRounds);
+            const hash = bcrypt.hashSync(password, salt);
+            var update = {
+                username: req.body.username,
+                password: hash,
+                email: req.body.email,
+                role: req.body.role,
+                routeName: routeName,
+                aim: aim,
+                stage: stage,
+                phone: req.body.phone,
+                address: req.body.address,
+                birthday: req.body.birthday
+            }
+            if (req.body.file != "none") {
+                var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
+                var image = req.body.file;
+                var data = image.split(',')[1];
+                fs.writeFileSync(path, data, { encoding: 'base64' });
+                var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
+                if (!response) res.json({ msg: 'error' });
                 update["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
                 var oldImg = req.body.oldLink
                 oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
-                var responese = driveService.files.delete({ fileId: oldImg }, function(err, data) {
-                    if (err) {
-                        console.log("err");
-                    }
-                })
-                AccountModel.findOneAndUpdate({ _id: req.body._id }, update, function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success', data: data });
-                    }
-                })
-            })
+                await driveService.files.delete({ fileId: oldImg })
+            } else {
+                update["avatar"] = req.body.oldLink
+            }
+            var data = await AccountModel.findOneAndUpdate({ _id: req.body._id }, update)
+            if (!data) res.json({ msg: 'error' })
+
+            res.json({ msg: 'success', data: data });
+        } catch (e) {
+            if (e) {
+                res.json({ msg: 'error' });
+            }
         }
     }
 
@@ -446,11 +446,11 @@ class adminController {
         })
     }
 
-    docreateClass(req, res) {
+    async docreateClass(req, res) {
         try {
             var studentID = req.body.studentID
             var listStudent = req.body.listStudent
-            ClassModel.create({
+            var data = await ClassModel.create({
                 className: req.body.className,
                 subject: req.body.subject,
                 routeName: req.body.routeName,
@@ -459,47 +459,26 @@ class adminController {
                 teacherID: req.body.teacherID,
                 endDate: new Date(req.body.endDate),
                 startDate: new Date(req.body.startDate),
-            }, function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } }, function(err, teacher) {
-                        if (err) {
-                            res.json({ msg: 'error' });
-                        } else {
-                            ClassModel.findOneAndUpdate({ _id: data._id }, {
-                                $push: {
-                                    studentID: { $each: listStudent },
-                                    StudentIDoutdoor: { $each: listStudent },
-                                    schedule: { $each: req.body.schedual }
-                                }
-                            }, function(err, teacher) {
-                                if (err) {
-                                    res.json({ msg: 'error' });
-                                } else {
-                                    AccountModel.findOneAndUpdate({ _id: req.body.facultyID }, { $push: { classID: data._id } }, function(err, teacher) {
-                                        if (err) {
-                                            res.json({ msg: 'error' });
-                                        } else {
-                                            for (var i = 0; i < req.body.time.length; i++) {
-                                                assignRoomAndTimeModel.updateOne({ dayOfWeek: '0' + req.body.buoihoc[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, {
-                                                    $set: { "room.$.status": "Ok" }
-                                                }, function(err, data) {
-                                                    if (err) {
-                                                        console.log("err")
-                                                        res.json({ msg: 'error' });
-                                                    }
-                                                })
-                                            }
-                                            res.json({ msg: 'success' });
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    })
+            })
+            if (!data) res.json({ msg: 'error' });
+            var lol1 = await AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } })
+            if (!lol1) res.json({ msg: 'error' });
+
+            var lol2 = await ClassModel.findOneAndUpdate({ _id: data._id }, {
+                $push: {
+                    studentID: { $each: listStudent },
+                    StudentIDoutdoor: { $each: listStudent },
+                    schedule: { $each: req.body.schedual }
                 }
-            });
+            })
+            if (!lol2) res.json({ msg: 'error' });
+
+            for (var i = 0; i < req.body.time.length; i++) {
+                await assignRoomAndTimeModel.updateOne({ dayOfWeek: '0' + req.body.buoihoc[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, {
+                    $set: { "room.$.status": "Ok" }
+                })
+            }
+            res.json({ msg: 'success' });
         } catch (error) {
             if (err) {
                 res.json({ msg: 'error' });

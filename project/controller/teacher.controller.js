@@ -83,8 +83,8 @@ class teacherController {
     getSchedule(req, res) {
         var token = req.cookies.token
         var decodeAccount = jwt.verify(token, 'minhson')
-            //lấy thời hiện tại để lấy khóa học đang hoạt động trong thời gian hiện tại. 
-        var sosanh = new Date()
+            //lấy thời điểm đầu tuần để lấy khóa học đang hoạt động trong khoảng thời gian đó. 
+        var sosanh = new Date(req.query.dauTuan)
         ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean().exec((err, classInfor) => {
             if (err) {
                 res.json({ msg: 'error' });

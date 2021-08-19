@@ -299,7 +299,7 @@
                     <td><button id="btn1" onclick="sendData('<%= ClassModel._id %>','<%= ClassModel.subject %>')">List of student</button></td>
                     <td>
                         <button onclick="upDateSchedule('<%= ClassModel._id %>')">upDate schedule </button>
-                        <button onclick="upDateInformation('<%= ClassModel._id %>')">upDate information </button>
+                        <button onclick="deleteClass('<%= ClassModel._id %>')">delete</button>
                     </td>
                     <td>
                         <%= ClassModel.classStatus %>
@@ -416,9 +416,9 @@
         });
     }
 
-    function upDateInformation(id) {
+    function deleteClass(id) {
         $.ajax({
-            url: '/admin/getClass',
+            url: '/admin/deleteClass',
             method: 'get',
             dataType: 'json',
             data: {
@@ -426,11 +426,8 @@
             },
             success: function(response) {
                 if (response.msg == 'success') {
-                    $.each(response.data, function(index, data) {
 
-
-                    });
-                    $(".updateClassOut").fadeIn(500)
+                    alert('success ');
                 }
             },
             error: function(response) {

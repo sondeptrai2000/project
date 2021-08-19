@@ -37,7 +37,7 @@ adminRouter.delete('/deleteRoute', adminController.deleteRoute)
 adminRouter.get('/createClass', adminController.createClass)
 adminRouter.post('/createClass', adminController.docreateClass)
 
-adminRouter.get('/getClass', adminController.getClass)
+adminRouter.get('/deleteClass', adminController.deleteClass)
 adminRouter.get('/getTime', adminController.getTime)
 
 

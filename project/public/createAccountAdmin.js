@@ -282,6 +282,7 @@ function doUpdate() {
     if (!fileDataUpdate) {
         fileDataUpdate = "none"
     }
+    console.log(fileDataUpdate)
     var formData = {
         _id: $("#PersonID").val(),
         file: fileDataUpdate,
