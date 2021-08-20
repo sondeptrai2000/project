@@ -51,35 +51,6 @@ const classSchema = new Schema({
         }]
     }],
     fileLink: String,
-    StudentIDoutdoor: [{
-        ID: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'account'
-        },
-        FeedBackStudent: {
-            type: String,
-        },
-        ConsideredImplementation: {
-            type: String,
-        },
-        attend: {
-            type: String,
-            default: "None"
-        },
-        attendComment: {
-            type: String,
-            default: "None"
-        }
-    }],
-    extracurricularActivitiesContent: {
-        type: String,
-    },
-    status: {
-        type: String,
-    },
-    comment: {
-        type: String,
-    },
     uploadDate: String,
     endDate: Date,
     startDate: Date,

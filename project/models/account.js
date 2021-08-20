@@ -14,6 +14,7 @@ const AccountSchema = new Schema({
     password: String,
     email: String,
     aim: String,
+    startStage: String,
     achive: String,
     routeName: String,
     stage: String,
@@ -31,8 +32,9 @@ const AccountSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'class'
     }],
-    subject: [{
-        type: String,
+    progess: [{
+        stage: String,
+        stageClass: [{ name: String, status: String }]
     }],
     sex: String,
     phone: String,

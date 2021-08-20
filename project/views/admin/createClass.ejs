@@ -269,37 +269,37 @@
             <th>Student List</th>
             <th>Action</th>
             <th>Status</th>
-            <% ClassModel.forEach(function(ClassModel) { %>
-                <tr id="<%= ClassModel._id %>">
+            <% classInfor.forEach(function(classInfor) { %>
+                <tr id="<%= classInfor._id %>">
                     <td>
-                        <%= ClassModel.className %>
+                        <%= classInfor.className %>
                     </td>
                     <td>
-                        <%= ClassModel.routeName %>
+                        <%= classInfor.routeName %>
                     </td>
                     <td>
-                        <%= ClassModel.stage %>
+                        <%= classInfor.stage %>
                     </td>
                     <td>
-                        <%= ClassModel.subject %>
+                        <%= classInfor.subject %>
                     </td>
                     <td>
-                        <%= ClassModel.description %>
+                        <%= classInfor.description %>
                     </td>
                     <td>
-                        <%= ClassModel.startDate %>
+                        <%= classInfor.startDate %>
                     </td>
                     <td>
-                        <%= ClassModel.endDate %>
+                        <%= classInfor.endDate %>
                     </td>
 
-                    <td><button id="btn1" onclick="sendData('<%= ClassModel._id %>','<%= ClassModel.subject %>')">List of student</button></td>
+                    <td><button id="btn1" onclick="sendData('<%= classInfor._id %>','<%= classInfor.subject %>')">List of student</button></td>
                     <td>
-                        <button onclick="upDateSchedule('<%= ClassModel._id %>')">upDate schedule </button>
-                        <button onclick="deleteClass('<%= ClassModel._id %>')">delete</button>
+                        <button onclick="upDateSchedule('<%= classInfor._id %>')">upDate schedule </button>
+                        <button onclick="deleteClass('<%= classInfor._id %>')">delete</button>
                     </td>
                     <td>
-                        <%= ClassModel.classStatus %>
+                        <%= classInfor.classStatus %>
                     </td>
                 </tr>
                 <% }); %>
@@ -378,6 +378,8 @@
         var dayOfWeek = '0' + (date.getDay() + 1)
         if (dayOfWeek == '01') dayOfWeek = "08"
         var old = []
+        var scheduleID = $("input[name='updateScheduleID']").val()
+
         $("#infor" + scheduleID + " td:not(:last-child)").each(function() {
             old.push($(this).text().trim())
         })
@@ -841,15 +843,22 @@
             },
             success: function(response) {
                 if (response.msg == 'success') {
+                    var check = false
                     if (response.student.length == 0) {
                         $('.taskrow').html('');
+                        alert("không có học sinh học tập tại giai đoạn này")
                     } else {
                         $('.taskrow').html('');
                         $('#studentTable').show();
                         $.each(response.student, function(index, student) {
-                            if (!student.subject.includes($("#subject").val())) {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
-                            }
+                            $.each(student.progess, function(index, progess) {
+                                if (progess.stage == levelS) {
+                                    $.each(progess.stageClass, function(index, stageClass) {
+                                        if (stageClass.name == $("#subject").val()) check = true
+                                    });
+                                }
+                            });
+                            if (check == false) $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
                         });
                     }
                 }
@@ -860,5 +869,15 @@
         })
     }
 </script>
+<!-- $.each(response.student, function(index, student) {
+    $.each(student.progess, function(index, progess) {
+        if (progess.stage == levelS) {
+            $.each(progess.stageClass, function(index, stageClass) {
+                if (stageClass.name == $("#subject").val()) check = true
+                if (check == false) $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
+            });
+        }
+    });
+}); -->
 
 </html>

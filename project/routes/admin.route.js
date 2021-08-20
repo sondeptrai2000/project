@@ -16,7 +16,6 @@ adminRouter.get('/getRoute', adminController.getRoute)
 adminRouter.get('/assignRoomAndTime', adminController.assignRoomAndTime)
 adminRouter.post('/addRoom', adminController.addRoom)
 adminRouter.get('/getThu', adminController.getThu)
-
 adminRouter.post('/doupdateSchedule', adminController.doupdateSchedule)
 
 
@@ -45,23 +44,12 @@ adminRouter.get('/getTime', adminController.getTime)
 adminRouter.get('/allClassLevel', adminController.allClassLevel)
 adminRouter.get('/allClassStudent', adminController.allClassStudent)
 
-adminRouter.get('/editClass', adminController.editClass)
-adminRouter.get('/addStudentToClass', adminController.addStudentToClass)
-adminRouter.get('/addTeacherToClass', adminController.addTeacherToClass)
 
 
 //liên quan đến dashboard
 adminRouter.get('/dashboard', adminController.dashboard)
 
 
-// tạo sự kiện (noel,etc)
-adminRouter.post('/createEvent', adminController.createEvent)
-adminRouter.get('/allEvent', adminController.allEvent)
-adminRouter.delete('/deleteEvent', adminController.deleteEvent)
-adminRouter.post('/doUpdateEvent', adminController.doUpdateEvent)
-
-adminRouter.get('/allEventProposal', adminController.allEventProposal)
-adminRouter.post('/dorateEventProposal', adminController.dorateEventProposal)
 
 //Thông tin tư vấn
 adminRouter.get('/consultingAll', adminController.consultingAll)

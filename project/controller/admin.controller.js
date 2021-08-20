@@ -1,6 +1,5 @@
 const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
-const eventModel = require('../models/event');
 const studyRouteModel = require('../models/studyRoute');
 const ClassModel = require('../models/class');
 const consultingInformationModel = require('../models/consultingInformation');
@@ -69,7 +68,7 @@ async function uploadFile(name, rootID, path) {
     return responese.data.id
 }
 class adminController {
-    adminHome(req, res) {
+    async adminHome(req, res) {
         // AccountModel.updateMany({}, { $set: { classID: [], subject: [] } }, function(err, data) {
         //     if (err) {
         //         console.log("k ok")
@@ -103,74 +102,76 @@ class adminController {
         //         })
         //         console.log(listEmail.slice(0, -2))
         //     })
+
         res.render('admin/adminHome')
     }
 
-    assignRoomAndTime(req, res) {
-        assignRoomAndTimeModel.find({}, function(err, data) {
-            if (err) {
-                res.json("lõi")
-            } else {
-                res.render('admin/assignRoomAndTime', { data })
-            }
-        })
+    async assignRoomAndTime(req, res) {
+        try {
+            var data = await assignRoomAndTimeModel.find({})
+            res.render('admin/assignRoomAndTime', { data })
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
-    addRoom(req, res) {
-        assignRoomAndTimeModel.updateMany({}, {
-            $push: { room: { $each: req.body.roomName } }
-        }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
-            }
-        })
+    async addRoom(req, res) {
+        try {
+            await assignRoomAndTimeModel.updateMany({}, {
+                $push: {
+                    room: { $each: req.body.roomName }
+                }
+            })
+            res.json({ msg: 'success' });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
     async deleteClass(req, res) {
-        var classInfor = await ClassModel.find({ _id: req.query.id })
-        if (!classInfor) res.json({ msg: 'error' });
-        var listStudentID = []
-        classInfor[0].studentID.forEach((e) => {
-            listStudentID.push(e.ID)
-        })
-        var deleteClass = await ClassModel.remove({ _id: req.query.id })
-        if (!deleteClass) res.json({ msg: 'error' });
-
-        var updateAccount = await AccountModel.updateMany({ _id: { $in: listStudentID } }, { $pull: { classID: req.query.id, subject: classInfor[0].subject } })
-        if (!updateAccount) res.json({ msg: 'error' });
-        res.json({ msg: 'success', data });
-
-    }
-
-    getThu(req, res) {
-        var dayOfWeek = '0' + req.query.dayOfWeek
-        assignRoomAndTimeModel.find({ dayOfWeek }, function(err, data) {
-            if (err) {
-                res.json("lõi")
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
-    }
-
-    getTime(req, res) {
-        ClassModel.find({ teacherID: req.query.teacherID, classStatus: "Processing" }, { schedule: { $elemMatch: { day: '0' + req.query.dayOfWeek } } },
-            function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data });
-                }
+        try {
+            var classInfor = await ClassModel.find({ _id: req.query.id })
+            var listStudentID = []
+            classInfor[0].studentID.forEach((e) => {
+                listStudentID.push(e.ID)
             })
+            await ClassModel.remove({ _id: req.query.id })
+            await AccountModel.updateMany({ _id: { $in: listStudentID } }, { $pull: { classID: req.query.id, subject: classInfor[0].subject } })
+            res.json({ msg: 'success', data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    async getThu(req, res) {
+        try {
+            var dayOfWeek = '0' + req.query.dayOfWeek
+            var data = await assignRoomAndTimeModel.find({ dayOfWeek })
+            res.json({ msg: 'success', data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    async getTime(req, res) {
+        try {
+            var data = await ClassModel.find({ teacherID: req.query.teacherID, classStatus: "Processing" }, { schedule: { $elemMatch: { day: '0' + req.query.dayOfWeek } } })
+            res.json({ msg: 'success', data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
     async doupdateSchedule(req, res) {
-        var oldSchuedule = req.body.old
-        var update = req.body.update
-        update["schedule.$.date"] = new Date(req.body.date)
         try {
+            var oldSchuedule = req.body.old
+            var update = req.body.update
+            update["schedule.$.date"] = new Date(req.body.date)
             await ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, { $set: update })
             await assignRoomAndTimeModel.updateOne({ dayOfWeek: update['schedule.$.day'], room: { $elemMatch: { room: update['schedule.$.room'], time: update['schedule.$.time'] } } }, { $set: { "room.$.status": "Ok" } })
             var getListEmail = await ClassModel.find({ _id: req.body.classID }, { "studentID.ID": 1, className: 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean()
@@ -186,51 +187,45 @@ class adminController {
                 subject: 'Notification',
                 text: content
             }
-            transporter.sendMail(mainOptions, function(err, info) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success' });
-                }
-            });
+            await transporter.sendMail(mainOptions)
+            res.json({ msg: 'success' });
         } catch (e) {    
-            if (e) {
-                res.json({ msg: 'error' })
-            }
+            console.log(e)
+            res.json({ msg: 'error' });
         }
     }
 
-    getAccount(req, res) {
-        AccountModel.find({ role: req.query.role }).lean().countDocuments(function(err, numberOfAccount) {
+    async getAccount(req, res) {
+        try {
+            var numberOfAccount = await AccountModel.find({ role: req.query.role }).lean().countDocuments()
             var skip = parseInt(req.query.sotrang) * 3
             var soTrang = numberOfAccount / 3 + 1
-            AccountModel.find({ role: req.query.role }).populate("relationship", { username: 1, email: 1, phone: 1 }).skip(skip).limit(3).lean().exec((err, data) => {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data, numberOfAccount, soTrang });
-                }
-            })
-        })
+            var data = await AccountModel.find({ role: req.query.role }).populate("relationship", { username: 1, email: 1, phone: 1 }).skip(skip).limit(3).lean()
+            res.json({ msg: 'success', data, numberOfAccount, soTrang });
+        } catch (e) {    
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+
     }
 
 
-    search(req, res) {
-        var condition = req.query.condition
-        AccountModel.findOne(condition).populate("relationship").populate({
-            path: 'classID',
-            match: { classStatus: "Processing" },
-            populate: {
-                path: 'teacherID',
-                select: { username: 1, phone: 1, email: 1 }
-            }
-        }).lean().exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
+    async search(req, res) {
+        try {
+            var condition = req.query.condition
+            var data = await AccountModel.findOne(condition).populate("relationship").populate({
+                path: 'classID',
+                match: { classStatus: "Processing" },
+                populate: {
+                    path: 'teacherID',
+                    select: { username: 1, phone: 1, email: 1 }
+                }
+            }).lean()
+            res.json({ msg: 'success', data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
     async createAccount(req, res) {
@@ -240,9 +235,8 @@ class adminController {
             var data = await AccountModel.find({ role: "teacher" }).lean()
             res.render('admin/createAccount', { data, targetxxx, numberOfAccount })
         } catch (e) {
-            if (e) {
-                res.json({ msg: 'error' })
-            }
+            console.log(e)
+            res.json({ msg: 'error' });
         }
     }
 
@@ -251,9 +245,8 @@ class adminController {
             var data = await studyRouteModel.find({}).lean()
             res.json({ msg: 'success', data });
         } catch (e) {
-            if (e) {
-                res.json({ msg: 'error' })
-            }
+            console.log(e)
+            res.json({ msg: 'error' });
         }
     }
 
@@ -264,35 +257,39 @@ class adminController {
             var data = await studyRouteModel.find({ routeName: req.query.abc }).lean()
             res.json({ msg: 'success', data, student, targetxxx });
         } catch (e) {
-            if (e) {
-                res.json({ msg: 'error' })
-            }
+            console.log(e)
+            res.json({ msg: 'error' });
         }
     }
 
-    getStudent(req, res) {
-        AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }).lean().exec(function(err, student) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', student });
-            }
-        })
-    }
-    createRoute(req, res) {
-        studyRouteModel.find({}, { _id: 1, routeName: 1, description: 1 }).lean().exec(function(err, data) {
-            res.render('admin/createRoute', { data: data })
-        })
+    async getStudent(req, res) {
+        try {
+            var student = await AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }).lean()
+            res.json({ msg: 'success', student });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
-    lol(req, res) {
-        studyRouteModel.find({ _id: req.query._id }).lean().exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
+    async createRoute(req, res) {
+        try {
+            var data = await studyRouteModel.find({}, { _id: 1, routeName: 1, description: 1 }).lean()
+            res.render('admin/createRoute', { data: data })
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    async lol(req, res) {
+        try {
+            var data = await studyRouteModel.find({ _id: req.query._id }).lean()
+            res.json({ msg: 'success', data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
     async docreateRoute(req, res) {
@@ -307,7 +304,6 @@ class adminController {
                 routeName: req.body.routeName,
                 description: req.body.description,
             })
-
             for (var i = 0; i < totalStage; i++) {
                 testthu[i] = testthu[i].toString();
                 testthu[i] = testthu[i].split(",")
@@ -323,21 +319,20 @@ class adminController {
             }
             res.json({ msg: 'success' })
         } catch (e) {
-            if (e) {
-                res.json({ msg: 'error' })
-            }
+            console.log(e)
+            res.json({ msg: 'error' });
         }
     }
 
 
-    deleteRoute(req, res) {
-        studyRouteModel.deleteOne({ _id: req.body.id }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
-            }
-        })
+    async deleteRoute(req, res) {
+        try {
+            await studyRouteModel.deleteOne({ _id: req.body.id })
+            res.json({ msg: 'success' });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
 
@@ -364,44 +359,37 @@ class adminController {
                 var password = req.body.password
                 const salt = bcrypt.genSaltSync(saltRounds);
                 const hash = bcrypt.hashSync(password, salt);
-
+                student["avatar"] = fileLink
+                student["password"] = hash
                 if (role === "teacher") {
-                    student["avatar"] = fileLink
-                    student["password"] = hash
                     await AccountModel.create(student)
                     res.json({ msg: 'success' });
                 }
                 if (role === "student") {
-                    student["avatar"] = fileLink
-                    student["password"] = hash
                     var studentAcc = await AccountModel.create(student)
                     phuhuynh["relationship"] = studentAcc._id
                     var guardianAcc = await AccountModel.create(phuhuynh)
                     var relationship = guardianAcc._id
-                    var studentAcc = await AccountModel.findOneAndUpdate({ _id: studentAcc._id }, { relationship: relationship })
+                    var studentAcc = await AccountModel.findOneAndUpdate({ _id: studentAcc._id }, { relationship: relationship, $push: { progess: { stage: student.stage, stageClass: [{ name: "", status: "Pass" }] } } })
                     res.json({ msg: 'success' });
                 }
             }
         } catch (e) {
-            if (e) {
-                console.log(e)
-                res.json({ msg: 'error' });
-
-            }
+            console.log(e)
+            res.json({ msg: 'error' });
         }
     }
 
-    editAccount(req, res) {
-        studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', targetxxx });
-            }
-        })
+    async editAccount(req, res) {
+        try {
+            var targetxxx = await studyRouteModel.find({}).lean()
+            res.json({ msg: 'success', targetxxx });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
-    //làm cuối
     async doeditAccount(req, res) {
         try {
             var password = req.body.password
@@ -438,20 +426,21 @@ class adminController {
             }
             res.json({ msg: 'success', data: data });
         } catch (e) {
-            if (e) {
-                res.json({ msg: 'error' });
-            }
+            console.log(e)
+            res.json({ msg: 'error' });
         }
     }
 
-    createClass(req, res) {
-        ClassModel.find({}).lean().exec(function(err, ClassModel) {
-            studyRouteModel.find({}).lean().exec(function(err, targetxxx) {
-                AccountModel.find({ role: 'teacher' }).lean().exec(function(err, teacher) {
-                    res.render('admin/createClass.ejs', { teacher, targetxxx, ClassModel })
-                })
-            })
-        })
+    async createClass(req, res) {
+        try {
+            var classInfor = await ClassModel.find({}).lean()
+            var targetxxx = await studyRouteModel.find({}).lean()
+            var teacher = await AccountModel.find({ role: 'teacher' }).lean()
+            res.render('admin/createClass.ejs', { teacher, targetxxx, classInfor })
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
     async docreateClass(req, res) {
@@ -468,7 +457,8 @@ class adminController {
                 endDate: new Date(req.body.endDate),
                 startDate: new Date(req.body.startDate),
             })
-            await AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } })
+            await AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id } })
+            await AccountModel.updateMany({ _id: { $in: studentID }, "progess.stage": req.body.stage }, { $push: { "progess.$.stageClass": { name: req.body.subject, status: "studying" } } })
             await ClassModel.findOneAndUpdate({ _id: data._id }, {
                 $push: {
                     studentID: { $each: listStudent },
@@ -483,196 +473,49 @@ class adminController {
             }
             res.json({ msg: 'success' });
         } catch (error) {
-            if (err) {
-                console.log(err)
-                res.json({ msg: 'error' });
-            }
+            console.log(err)
+            res.json({ msg: 'error' });
         }
     }
 
-    allClassLevel(req, res) {
-        ClassModel.find({}).populate('studentID').populate('teacherID').lean().exec((err, classInfor) => {
+    async allClassLevel(req, res) {
+        try {
+            var classInfor = await ClassModel.find({}).populate('studentID').populate('teacherID').lean()
             res.render('admin/allClassLevel.hbs', { classInfor })
-                // res.json(classInfor)
-        })
+
+        } catch (error) {
+            console.log(err)
+            res.json({ msg: 'error' });
+        }
     }
 
-    allClassStudent(req, res) {
-        var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('studentID').populate('teacherID').lean().exec((err, selectedClassInfor) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: selectedClassInfor });
-            }
-        })
+    async allClassStudent(req, res) {
+        try {
+            var _id = req.query.abc
+            var selectedClassInfor = await ClassModel.find({ _id: _id }).populate('studentID').populate('teacherID').lean()
+            res.json({ msg: 'success', data: selectedClassInfor });
+
+        } catch (error) {
+            console.log(err)
+            res.json({ msg: 'error' });
+        }
     }
-
-    editClass(req, res) {
-        var skip = parseInt(req.query.sotrang)
-        AccountModel.find({ role: req.query.role }).lean().countDocuments(function(err, numberOfAccount) {
-            AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).skip(skip).limit(1).lean().exec((err, data) => {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success', data, numberOfAccount });
-                }
-            })
-        })
-    }
-
-    addStudentToClass(req, res) {}
-
-    addTeacherToClass(req, res) {
-        res.render('admin/addTeacherToClass')
-            // res.json('Trang chỉ định giáo viên vào lớp ')
-    }
-
-
-
-
 
 
     dashboard(req, res) {
-        // tạo foolder mới
-        //link hướng dẫn: https://developers.google.com/drive/api/v3/folder#node.js
-        var fileMetadata = {
-            'name': 'Invoices',
-            'mimeType': 'application/vnd.google-apps.folder'
-        };
-        var folder = driveService.files.create({
-            resource: fileMetadata,
-            fields: 'id'
-        }, function(err, file) {
-            if (err) {
-                // Handle error
-                console.error(err);
-            } else {
-                console.log('Folder Id: ', file.data.id);
-            }
-        });
         res.render('admin/dashboard')
-            // res.json('Trang xem thông tin dashboard')
     }
 
-    async createEvent(req, res) {
-        var eventAt = new Date(req.body.eventAt);
-        eventAt.setDate(eventAt.getDate() - 4);
-        var date = eventAt.getDate().toString().padStart(2, "0");;
-        var month = (eventAt.getMonth() + 1).toString().padStart(2, "0");
-        eventAt = eventAt.getFullYear() + "-" + month + "-" + date
-        if (eventAt < req.body.eventProposal) {
-            res.json({ msg: 'hạn nộp đề xuất phải sớm hơn sự kiện 4 ngày' });
-        } else {
-            try {
-                var fileMetadata = {
-                    'name': req.body.eventName,
-                    'mimeType': 'application/vnd.google-apps.folder',
-                    'parents': ['1qQ47mPS-x1lG7SzdCw_XrHzime9wpmkg'] //chọn file muốn lưu vào ở drive. Id của folder ở trên link url
-                };
-                var folder = await driveService.files.create({
-                    resource: fileMetadata,
-                    fields: 'id'
-                })
-                await eventModel.create({
-                    eventName: req.body.eventName,
-                    eventContent: req.body.eventContent,
-                    eventAddress: req.body.eventAddress,
-                    eventAt: req.body.eventAt,
-                    eventProposal: eventAt,
-                    folderID: folder.data.id,
-                })
-                res.json({ msg: 'success' });
-            } catch (err) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                }
-            }
-        }
-    }
 
-    allEvent(req, res) {
-        eventModel.find({}).lean().sort({ eventAt: -1 }).exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
-    }
-
-    async deleteEvent(req, res) {
-        var folderID
+    async consultingAll(req, res) {
         try {
-            folderID = await eventModel.findOne({ _id: req.body.id }, { folderID: 1 }).lean()
-            var responese = await driveService.files.delete({ fileId: folderID.folderID, })
-            var data = await eventModel.deleteOne({ _id: req.body.id }).lean().sort({ eventAt: -1 })
-            res.json({ msg: 'success', data });
-        } catch (err) {
-            if (err) {
-                res.json({ msg: 'error' });
-            }
+            var month = req.query.month
+            var data = await consultingInformationModel.find({ signTime: { $gt: req.query.start, $lt: req.query.end } }).lean()
+            res.json({ msg: 'success', data, month });
+        } catch (error) {
+            console.log(err)
+            res.json({ msg: 'error' });
         }
     }
-
-    doUpdateEvent(req, res) {
-        var eventAt = new Date(req.body.eventAt);
-        eventAt.setDate(eventAt.getDate() - 4);
-        var date = eventAt.getDate().toString().padStart(2, "0");;
-        var month = (eventAt.getMonth() + 1).toString().padStart(2, "0");
-        eventAt = eventAt.getFullYear() + "-" + month + "-" + date
-        if (eventAt < req.body.eventProposal) {
-            res.json({ msg: 'hạn nộp đề xuất phải sớm hơn sự kiện 4 ngày' });
-        } else {
-            eventModel.findOneAndUpdate({ _id: req.body.id }, {
-                eventName: req.body.eventName,
-                eventContent: req.body.eventContent,
-                eventAddress: req.body.eventAddress,
-                eventAt: req.body.eventAt,
-                eventProposal: eventAt,
-            }, function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    res.json({ msg: 'success' });
-                }
-            })
-        }
-    }
-
-    allEventProposal(req, res) {
-        eventModel.find({ _id: req.query.id }, { proposals: 1 }).populate({ path: 'proposals.teacherID', select: 'username avatar' }).lean().exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
-    }
-
-    async dorateEventProposal(req, res) {
-        try {
-            var data = await eventModel.findOneAndUpdate({ _id: req.body.idProposal, "proposals._id": req.body.IDlinkProposal }, {
-                $set: { "proposals.$.status": req.body.status, "proposals.$.comment": req.body.comment }
-            })
-            res.json({ msg: 'success', data });
-        } catch (e) {
-            if (e) {
-                res.json({ msg: 'error' })
-            }
-        }
-    }
-
-    consultingAll(req, res) {
-        var month = req.query.month
-        consultingInformationModel.find({ signTime: { $gt: req.query.start, $lt: req.query.end } }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data, month });
-            }
-        })
-    }
-
 }
 module.exports = new adminController

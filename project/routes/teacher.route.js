@@ -26,16 +26,6 @@ teacherRouter.get('/getSchedule', teacherController.getSchedule)
 
 
 
-//lieen quan den su kien
-teacherRouter.get('/allEvent', teacherController.allEvent)
-teacherRouter.post('/uploadProposalEvent', teacherController.uploadProposalEvent)
-teacherRouter.post('/updateProposalEvent', teacherController.updateProposalEvent)
-teacherRouter.delete('/deleteProposalEvent', teacherController.deleteProposalEvent)
-
-//chat
-teacherRouter.get('/allChat', teacherController.allChat)
-teacherRouter.get('/connectToChat', teacherController.connectToChat)
-teacherRouter.get('/chatConversation', teacherController.chatConversation)
 
 
 //takeAttend

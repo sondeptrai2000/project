@@ -299,67 +299,6 @@ function doUpdate() {
     })
 }
 
-//thực hiện đăng ký và lưu tài khỏan vào đb
-function signUp() {
-    var role = $("#role").val()
-    var formData1 = {
-        sex: $("#gender").val(),
-        username: $("#username").val(),
-        email: $("#email").val(),
-        role: role,
-        phone: $("#phone").val(),
-        address: $("#address").val(),
-        birthday: $("#birthday").val(),
-    };
-    if (role === "teacher") {
-        formData1["stage"] = "none"
-        formData1["routeName"] = "none"
-        formData1["aim"] = "none"
-    } else {
-        formData1["stage"] = $("#levelS").val()
-        formData1["routeName"] = $("#routeTypeS").val()
-        formData1["aim"] = $("#Aim").val()
-    }
-
-    var formData2 = {
-        role: "guardian",
-        username: $("input[name='guardianName']").val(),
-        phone: $("input[name='guardianPhone']").val(),
-        email: $("input[name='guardianEmail']").val(),
-    };
-    $.ajax({
-        url: '/admin/doCreateAccount',
-        method: 'post',
-        dataType: 'json',
-        data: {
-            password: $("#password").val(),
-            filename: myFile.name,
-            file: fileData,
-            student: formData1,
-            phuhuynh: formData2,
-        },
-        success: function(response) {
-            if (response.msg == 'success') {
-                reset();
-                getAccount(role, 0);
-                $(".createAccountOut").slideUp();
-                alert('Sign Up success');
-            }
-            if (response.msg == 'Account already exists') {
-                alert('Account already exists');
-            }
-            if (response.msg == 'Phone already exists') {
-                alert('Phone already exists');
-            }
-            if (response.msg == 'error') {
-                alert('error');
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-}
 
 //tìm kiếm thông tin qua email hoặc số điện thoại
 function search(email) {

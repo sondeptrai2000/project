@@ -1,6 +1,5 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
-const eventModel = require('../models/event');
 const assignRoomAndTimeModel = require('../models/assignRoomAndTime');
 
 const { JsonWebTokenError } = require('jsonwebtoken');
@@ -193,7 +192,7 @@ class teacherController {
     async doaddStudentToClass(req, res) {
         try {
             await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID, subject: req.body.subject } })
-            await ClassModel.findOneAndUpdate({ _id: classID }, {
+            await ClassModel.findOneAndUpdate({ _id: req.body.classID }, {
                 $push: {
                     studentID: {
                         $each: req.body.studentlist
@@ -244,135 +243,6 @@ class teacherController {
             }
         })
     }
-
-    allEvent(req, res) {
-        var token = req.cookies.token
-        var decodeAccount = jwt.verify(token, 'minhson')
-        eventModel.find({}).lean().sort({ eventAt: -1 }).exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data, decodeAccount });
-            }
-        })
-    }
-
-
-    async uploadProposalEvent(req, res) {
-        var path = __dirname.replace("controller", "public/events") + '/' + req.body.filename;
-        var image = req.body.file;
-        var data = image.split(',')[1];
-        fs.writeFileSync(path, data, { encoding: 'base64' });
-        var folderID
-        try {
-            folderID = await eventModel.findOne({ _id: req.body._id }, { folderID: 1 }).lean()
-        } catch (err) {
-            res.json({ msg: 'error' });
-        }
-        try {
-            var response = uploadFile(req.body.filename, folderID.folderID, path).then(function(response) {
-                var fileLink = "https://docs.google.com/file/d/" + response + "/preview"
-                var token = req.cookies.token
-                var decodeAccount = jwt.verify(token, 'minhson')
-                eventModel.findOneAndUpdate({ _id: req.body._id }, {
-                    $push: {
-                        proposals: {
-                            teacherID: decodeAccount,
-                            fileLink: fileLink,
-                        }
-                    }
-                }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success', data });
-                    }
-                })
-            })
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
-
-    async updateProposalEvent(req, res) {
-        var path = __dirname.replace("controller", "public/events") + '/' + req.body.filename;
-        var image = req.body.file;
-        var data = image.split(',')[1];
-        fs.writeFileSync(path, data, { encoding: 'base64' });
-        var folderID
-        try {
-            folderID = await eventModel.findOne({ _id: req.body._id }, { folderID: 1 }).lean()
-        } catch (err) {
-            res.json({ msg: 'error' });
-        }
-        try {
-            uploadFile(req.body.filename, folderID.folderID, path).then(function(ID) {
-                var fileLink = "https://docs.google.com/file/d/" + ID + "/preview"
-                console.log("fileLink", fileLink)
-                var token = req.cookies.token
-                var decodeAccount = jwt.verify(token, 'minhson')
-                eventModel.findOneAndUpdate({ _id: req.body._id, "proposals.teacherID": decodeAccount }, {
-                    $set: {
-                        proposals: {
-                            teacherID: decodeAccount,
-                            fileLink: fileLink,
-                        }
-                    }
-                }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success', data });
-                    }
-                })
-            })
-        } catch (error) {
-            res.json({ msg: 'error' });
-        }
-    }
-
-
-    async deleteProposalEvent(req, res) {
-        var fileLink = req.body.fileLink
-        fileLink = fileLink.replace("https://docs.google.com/file/d/", "")
-        fileLink = fileLink.replace("/preview", "")
-        try {
-            var responese = await driveService.files.delete({
-                fileId: fileLink,
-            })
-            console.log(responese.data, responese.status);
-        } catch (error) {
-            console.log(error.message);
-        }
-        var token = req.cookies.token
-        var decodeAccount = jwt.verify(token, 'minhson')
-        eventModel.findOneAndUpdate({ _id: req.body.id }, {
-            $pull: {
-                proposals: {
-                    teacherID: decodeAccount,
-                }
-            }
-        }).lean().sort({ uploadDate: -1 }).exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
-            }
-        })
-    }
-
-    allChat(req, res) {
-        res.json('Tất cả những cuộc trò chuyện')
-    }
-
-    connectToChat(req, res) {
-        res.json('chọn người để trò chuyện')
-    }
-
-    chatConversation(req, res) {
-        res.json('Thực hiện cuộc trò chuyện')
-    }
-
 
 }
 module.exports = new teacherController
