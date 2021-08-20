@@ -5,6 +5,7 @@ var adminController = require('../controller/admin.controller')
 
 adminRouter.get('/', adminController.adminHome)
 adminRouter.get('/getAccount', adminController.getAccount)
+adminRouter.get('/search', adminController.search)
 
 
 adminRouter.get('/getStage', adminController.getStage)

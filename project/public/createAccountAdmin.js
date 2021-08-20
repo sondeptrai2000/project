@@ -62,24 +62,42 @@ function reset() {
 //thực hiện đăng ký và lưu tài khỏan vào đb
 function signUp() {
     var role = $("#role").val()
-    var formData = {
-        filename: myFile.name,
-        file: fileData,
+    var formData1 = {
+        sex: $("#gender").val(),
         username: $("#username").val(),
-        password: $("#password").val(),
         email: $("#email").val(),
-        role: $("#role").val(),
-        aim: $("#Aim").val(),
-        routeName: $("#routeTypeS").val(),
-        stage: $("#levelS").val(),
+        role: role,
         phone: $("#phone").val(),
         address: $("#address").val(),
+        birthday: $("#birthday").val(),
+    };
+    if (role === "teacher") {
+        formData1["stage"] = "none"
+        formData1["routeName"] = "none"
+        formData1["aim"] = "none"
+    } else {
+        formData1["stage"] = $("#levelS").val()
+        formData1["routeName"] = $("#routeTypeS").val()
+        formData1["aim"] = $("#Aim").val()
+    }
+
+    var formData2 = {
+        role: "guardian",
+        username: $("input[name='guardianName']").val(),
+        phone: $("input[name='guardianPhone']").val(),
+        email: $("input[name='guardianEmail']").val(),
     };
     $.ajax({
         url: '/admin/doCreateAccount',
         method: 'post',
         dataType: 'json',
-        data: formData,
+        data: {
+            password: $("#password").val(),
+            filename: myFile.name,
+            file: fileData,
+            student: formData1,
+            phuhuynh: formData2,
+        },
         success: function(response) {
             if (response.msg == 'success') {
                 reset();
@@ -89,6 +107,12 @@ function signUp() {
             }
             if (response.msg == 'Account already exists') {
                 alert('Account already exists');
+            }
+            if (response.msg == 'Phone already exists') {
+                alert('Phone already exists');
+            }
+            if (response.msg == 'error') {
+                alert('error');
             }
         },
         error: function(response) {
@@ -103,7 +127,7 @@ function getAccount(index, page) {
     $("#loading").show();
     $(".taskrow").html("");
     $(".tableInforType").html("");
-    if (index === 'teacher' || index === 'guardian') {
+    if (index === 'teacher') {
         var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>sex</th><th>email</th><th>role</th><th>phone</th><th>address</th><th>birthday</th><th>More information</th></tr>"
     } else {
         var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>sex</th><th>email</th><th>role</th><th>phone</th><th>address</th><th>birthday</th><th>Guardian</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
@@ -117,14 +141,10 @@ function getAccount(index, page) {
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
-                    if (role == 'teacher' || role == 'guardian') {
+                    if (role == 'teacher') {
                         $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
                     } else {
-                        if (data.guardian) {
-                            $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><img style ='max-width:100px;max-height:100px' src='" + data.guardian.avatar + "'><br>" + data.guardian.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
-                        } else {
-                            $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td>None</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
-                        }
+                        $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td>" + data.relationship.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
                     }
                 });
                 $("#soTrang").html("")
@@ -195,7 +215,7 @@ function role(action) {
     } else if (action === 'update') {
         var accountRole = $('#roleUpdate').val();
         var currentRole = $("#currentRole").val()
-        if ((currentRole == "techer" || currentRole == "guardian") != accountRole) {
+        if ((currentRole == "techer") != accountRole) {
             $('.typeRole').slideDown()
             $("#routeTypeSUpdate").html("")
             $.ajax({
@@ -214,7 +234,7 @@ function role(action) {
             })
         }
     }
-    if (accountRole === "guardian" || accountRole === "teacher") {
+    if (accountRole === "teacher") {
         $('.typeRole').slideUp()
     } else {
         $('.typeRole').slideDown()
@@ -308,6 +328,32 @@ function doUpdate() {
                 $('#updateForm').fadeOut(2000);
                 getAccount($("#roleUpdate").val(), 0);
                 $("#routeTypeSUpdate option[value='" + response.data.routeName + "']").attr('selected', 'selected');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+
+function search() {
+    var condition = {}
+    var search = $("#search").val().toString()
+    if (isNaN(search.trim()) == true) condition["email"] = $("#search").val()
+    if (isNaN(search.trim()) == false) condition["phone"] = $("#search").val()
+    $.ajax({
+        url: '/admin/search',
+        method: 'get',
+        dataType: 'json',
+        data: { condition: condition },
+        success: function(response) {
+            if (response.msg == 'success') {
+                console.log(response.data)
+                alert(' success');
+            }
+            if (response.msg == 'err') {
+                alert(' err');
             }
         },
         error: function(response) {

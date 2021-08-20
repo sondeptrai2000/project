@@ -208,20 +208,29 @@ class adminController {
         }
     }
 
-
-
-
     getAccount(req, res) {
         AccountModel.find({ role: req.query.role }).lean().countDocuments(function(err, numberOfAccount) {
             var skip = parseInt(req.query.sotrang) * 3
             var soTrang = numberOfAccount / 3 + 1
-            AccountModel.find({ role: req.query.role }).populate("guardian", { username: 1, avatar: 1 }).skip(skip).limit(3).lean().exec((err, data) => {
+            AccountModel.find({ role: req.query.role }).populate("relationship", { username: 1, email: 1, phone: 1 }).skip(skip).limit(3).lean().exec((err, data) => {
                 if (err) {
                     res.json({ msg: 'error' });
                 } else {
                     res.json({ msg: 'success', data, numberOfAccount, soTrang });
                 }
             })
+        })
+    }
+
+
+    search(req, res) {
+        var condition = req.query.condition
+        AccountModel.findOne(condition).populate("relationship").lean().exec((err, data) => {
+            if (err) {
+                res.json({ msg: 'error' });
+            } else {
+                res.json({ msg: 'success', data });
+            }
         })
     }
 
@@ -335,9 +344,14 @@ class adminController {
 
     async doCreateAccount(req, res) {
         try {
-            var check = await AccountModel.find({ username: username }).lean()
-            if (check) {
-                res.json({ msg: 'Account already exists' });
+            var check = await AccountModel.find({ email: req.body.student.email }).lean()
+            var check1 = await AccountModel.find({ email: req.body.phuhuynh.email }).lean()
+            var checkphone = await AccountModel.find({ phone: req.body.student.phone }).lean()
+            var checkphone1 = await AccountModel.find({ phone: req.body.phuhuynh.phone }).lean()
+            if (check.length != 0 || check1.length != 0) {
+                res.json({ msg: 'Account already exists' })
+            } else if (checkphone.length != 0 || checkphone1.length != 0) {
+                res.json({ msg: 'Phone already exists' })
             } else {
                 var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
                 var image = req.body.file;
@@ -345,31 +359,35 @@ class adminController {
                 fs.writeFileSync(path, data, { encoding: 'base64' });
                 var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
                 var fileLink = "https://drive.google.com/uc?export=view&id=" + response
-                var { username, password, email, phone, address, birthday } = req.body
-                var role = req.body.role
-                var stage = req.body.stage
-                var routeName = req.body.routeName
-                var aim = req.body.aim
-                if (role === "guardian" || role === "teacher") {
-                    stage = "none"
-                    routeName = "none"
-                    aim = "none"
+                var student = req.body.student
+                var phuhuynh = req.body.phuhuynh
+                var role = student.role
+                var password = req.body.password
+                const salt = bcrypt.genSaltSync(saltRounds);
+                const hash = bcrypt.hashSync(password, salt);
+
+                if (role === "teacher") {
+                    student["avatar"] = fileLink
+                    student["password"] = hash
+                    await AccountModel.create(student)
+                    res.json({ msg: 'success' });
                 }
-                if (username && password) {
-                    const salt = bcrypt.genSaltSync(saltRounds);
-                    const hash = bcrypt.hashSync(password, salt);
-                    AccountModel.create({ avatar: fileLink, username, password: hash, email, role, routeName, aim, stage, phone, address, birthday }, function(err, data) {
-                        if (err) {
-                            res.json({ msg: 'error' });
-                        } else {
-                            res.json({ msg: 'success', data: data });
-                        }
-                    });
+                if (role === "student") {
+                    student["avatar"] = fileLink
+                    student["password"] = hash
+                    var studentAcc = await AccountModel.create(student)
+                    phuhuynh["relationship"] = studentAcc._id
+                    var guardianAcc = await AccountModel.create(phuhuynh)
+                    var relationship = guardianAcc._id
+                    var studentAcc = await AccountModel.findOneAndUpdate({ _id: studentAcc._id }, { relationship: relationship })
+                    res.json({ msg: 'success' });
                 }
             }
-        } catch (error) {
-            if (error) {
+        } catch (e) {
+            if (e) {
+                console.log(e)
                 res.json({ msg: 'error' });
+
             }
         }
     }

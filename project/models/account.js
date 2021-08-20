@@ -20,7 +20,7 @@ const AccountSchema = new Schema({
     chat: [{
         type: String,
     }],
-    guardian: {
+    relationship: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'account'
     },
