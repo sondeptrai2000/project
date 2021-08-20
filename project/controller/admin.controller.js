@@ -168,26 +168,18 @@ class adminController {
 
     async doupdateSchedule(req, res) {
         var oldSchuedule = req.body.old
+        var update = req.body.update
+        update["schedule.$.date"] = new Date(req.body.date)
         try {
-            await ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, {
-                $set: {
-                    "schedule.$.time": req.body.time,
-                    "schedule.$.room": req.body.room,
-                    "schedule.$.date": new Date(req.body.date),
-                    "schedule.$.day": req.body.day,
-                    "schedule.$.status": "update"
-                }
-            })
-            await assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day, room: { $elemMatch: { room: req.body.room, time: req.body.time } } }, {
-                $set: { "room.$.status": "Ok" }
-            })
+            await ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, { $set: update })
+            await assignRoomAndTimeModel.updateOne({ dayOfWeek: update['schedule.$.day'], room: { $elemMatch: { room: update['schedule.$.room'], time: update['schedule.$.time'] } } }, { $set: { "room.$.status": "Ok" } })
             var getListEmail = await ClassModel.find({ _id: req.body.classID }, { "studentID.ID": 1, className: 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean()
             var listEmail = ""
             getListEmail[0].studentID.forEach(element => {
                 listEmail = listEmail + element.ID.email + ', '
             })
             listEmail.slice(0, -2)
-            var content = 'Do 1 số vấn đề giáo viên, buổi học của lớp ' + getListEmail[0].className + ' vào ngày ' + oldSchuedule[0] + ' từ ' + oldSchuedule[3] + " chuyển sang ngày " + req.body.date + ' từ ' + req.body.time + '.';
+            var content = 'Do 1 số vấn đề giáo viên, buổi học của lớp ' + getListEmail[0].className + ' vào ngày ' + oldSchuedule[0] + ' từ ' + oldSchuedule[3] + " chuyển sang ngày " + update['schedule.$.date'] + ' từ ' + update['schedule.$.time'] + '.';
             var mainOptions = {
                 from: 'fptedunotification@gmail.com',
                 to: listEmail,
@@ -476,19 +468,14 @@ class adminController {
                 endDate: new Date(req.body.endDate),
                 startDate: new Date(req.body.startDate),
             })
-            if (!data) res.json({ msg: 'error' });
-            var lol1 = await AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } })
-            if (!lol1) res.json({ msg: 'error' });
-
-            var lol2 = await ClassModel.findOneAndUpdate({ _id: data._id }, {
+            await AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id, subject: req.body.subject } })
+            await ClassModel.findOneAndUpdate({ _id: data._id }, {
                 $push: {
                     studentID: { $each: listStudent },
                     StudentIDoutdoor: { $each: listStudent },
                     schedule: { $each: req.body.schedual }
                 }
             })
-            if (!lol2) res.json({ msg: 'error' });
-
             for (var i = 0; i < req.body.time.length; i++) {
                 await assignRoomAndTimeModel.updateOne({ dayOfWeek: '0' + req.body.buoihoc[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, {
                     $set: { "room.$.status": "Ok" }
@@ -497,6 +484,7 @@ class adminController {
             res.json({ msg: 'success' });
         } catch (error) {
             if (err) {
+                console.log(err)
                 res.json({ msg: 'error' });
             }
         }

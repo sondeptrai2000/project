@@ -142,14 +142,15 @@
                     </thead>
                     <tbody class='taskrow'></tbody>
                 </table>
+                <br>
                 <label for="topic">Teacher</label>
-                <select class="teacherID">
+                <select id="teacherID">
       <% teacher.forEach(function(teacher) { %>
-        <option value="<%= teacher._id %>" ><%= teacher.username %> </option>
-      <% }); %>
+        <option value="<%= teacher._id %>" ><%= teacher.email %></option>
+        <% }); %>
+
     </select>
                 <br>
-
                 <label for="topic">startDate</label>
                 <input type="date" class="startDate" id="startDate">
                 <label for="topic">endDate</label>
@@ -379,29 +380,28 @@
     function SubmitupdateScheduleForm() {
         var date = new Date($("input[name='dateScheduleUpdate']").val())
         var dayOfWeek = '0' + (date.getDay() + 1)
-        if (dayOfWeek == '01') {
-            dayOfWeek = "08"
-        }
-        var scheduleID = $("input[name='updateScheduleID']").val()
-
+        if (dayOfWeek == '01') dayOfWeek = "08"
         var old = []
         $("#infor" + scheduleID + " td:not(:last-child)").each(function() {
             old.push($(this).text().trim())
         })
-        var updateSchedule = {
-            time: $('#cahocUpdate').val(),
-            room: $('#roomUpdate').val(),
-            date: $("input[name='dateScheduleUpdate']").val(),
-            day: dayOfWeek,
-            classID: $("input[name='updateScheduleClassID']").val(),
-            scheduleID: scheduleID,
-            old: old
+        var update = {
+            "schedule.$.time": $('#cahocUpdate').val(),
+            "schedule.$.room": $('#roomUpdate').val(),
+            "schedule.$.day": dayOfWeek,
+            "schedule.$.status": "update"
         }
         $.ajax({
             url: '/admin/doupdateSchedule',
             method: 'post',
             dataType: 'json',
-            data: updateSchedule,
+            data: {
+                update,
+                classID: $("input[name='updateScheduleClassID']").val(),
+                date: $("input[name='dateScheduleUpdate']").val(),
+                scheduleID: $("input[name='updateScheduleID']").val(),
+                old: old
+            },
             success: function(response) {
                 if (response.msg == 'success') {
                     alert("success")
@@ -425,10 +425,8 @@
                 id: id
             },
             success: function(response) {
-                if (response.msg == 'success') {
-
-                    alert('success ');
-                }
+                if (response.msg == 'success') alert('success ');
+                if (response.msg == 'error') alert('error ');
             },
             error: function(response) {
                 alert('server error');
@@ -462,6 +460,7 @@
                     });
                     $(".innerOut").fadeIn(500);
                 }
+                if (response.msg == 'error') alert("error")
             },
             error: function(response) {
                 alert('server error');
@@ -477,13 +476,17 @@
         })
         var checkClassID = classID
         var checksubject = subject
+        var condition = {
+            role: 'student',
+            routeName: infor4[1].trim(),
+            stage: infor4[2].trim(),
+        }
         $.ajax({
             url: '/teacher/addStudentToClass',
             method: 'get',
             dataType: 'json',
             data: {
-                routeName: infor4[1].trim(),
-                stage: infor4[2].trim(),
+                condition
             },
             success: function(response) {
                 if (response.msg == 'success') {
