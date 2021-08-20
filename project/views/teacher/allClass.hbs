@@ -165,11 +165,7 @@
             <th>Description</th>
             <th>Start date</th>
             <th>End date</th>
-            <th>fileLink</th>
-            <th>status </th>
-            <th>comment</th>
             <th>Student List</th>
-            <th>Out Door Activity</th>
             <th>Take attended</th>
             {{#each classInfor}}
             <tr id="{{_id}}">
@@ -180,29 +176,8 @@
                 <td>{{description}}</td>
                 <td>{{startDate}}</td>
                 <td>{{endDate}}</td>
-                <td>
-                    {{#if fileLink}}<a href="{{fileLink}}" target="_blank" rel="noopener noreferrer">File</a> {{/if}}
-                </td>
-                <td>{{status}}</td>
-                <td>{{comment}}</td>
                 <td><button id="btn1" onclick="sendData('{{_id}}','{{subject}}')">List of student</button></td>
                 <td>
-                    {{#if fileLink}}
-                    <div class="{{_id}}" style="display:none;"><input type="file" class="uploadProposal">
-                        <input type="text" class="contentProposal">
-                        <button onclick="uploadProposal('{{_id}}')">Submit file</button>
-                    </div>
-                    <button onclick="openSubmitProposal('{{_id}}')">Update proposal</button>
-                    {{else}}
-                    <div class="{{_id}}" style="display:none;"><input type="file" class="uploadProposal">
-                        <input type="text" class="contentProposal">
-                        <button onclick="uploadProposal('{{_id}}')">Submit file</button>
-                    </div>
-                    <button onclick="openSubmitProposal('{{_id}}')">Upload proposal</button>
-                    {{/if}}
-                </td>
-                <td>
-                    <button onclick="attendedOutDoor('{{_id}}')">attendedOutDoor </button>
                     <button onclick="attendedList('{{_id}}')">attended </button>
                 </td>
             </tr>

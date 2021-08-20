@@ -30,46 +30,6 @@ function sendData(id, subject) {
     });
 }
 
-function openSubmitProposal(id) {
-    $("." + id).toggle(200);
-}
-var fileData;
-var myFile;
-$('.uploadProposal').on('change', function() {
-    var filereader = new FileReader();
-    filereader.onload = function(event) {
-        fileData = event.target.result;
-        var dataURL = filereader.result;
-    };
-    myFile = $('.uploadProposal').prop('files')[0];
-    console.log('uploadProposal', myFile)
-    filereader.readAsDataURL(myFile)
-});
-
-
-
-function uploadProposal(id) {
-    $.ajax({
-        url: '/teacher/uploadNewProposal',
-        method: 'post',
-        dataType: 'json',
-        data: {
-            classID: id,
-            content: $(".contentProposal").val(),
-            file: fileData,
-            filename: myFile.name,
-        },
-        success: function(response) {
-            if (response.msg == 'success') {
-                $("." + id).fadeOut(2000);
-                alert("upload successed")
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-}
 
 function studentAssessmentForm(classID, studentid, username, email) {
     $("#classID").html(classID);
@@ -145,68 +105,7 @@ function updateFeekBack() {
 
 }
 
-var studentlistOutDoor = []
 
-function attendedOutDoor(id) {
-    $.ajax({
-        url: '/teacher/attendedOutDoor',
-        method: 'get',
-        dataType: 'json',
-        data: { id: id },
-        success: function(response) {
-            if (response.msg == 'success') {
-                $(".attendedOutDoorBody").html("")
-                $.each(response.data, function(index, data) {
-                    $.each(data.StudentIDoutdoor, function(index, StudentIDoutdoor) {
-                        studentlistOutDoor.push(StudentIDoutdoor.ID._id)
-                        $(".attendedOutDoorBody").append("<tr><th><img src='" + StudentIDoutdoor.ID.avatar + "' style='height:100px;width:100px'></br>" + StudentIDoutdoor.ID.username + "</th><th><input type='text' value='" + StudentIDoutdoor.attendComment + "' class='outDoorComment" + data._id + "'></th><th><select class='outDoorAttend" + data._id + "' id ='" + StudentIDoutdoor.ID._id + "'><option value='attended'>attended </option><option value='absent'>absent</option><option value='None'>none</option></select></th></tr>")
-                        $('#' + StudentIDoutdoor.ID._id + ' option:selected').removeAttr('selected');
-                        $('#' + StudentIDoutdoor.ID._id + ' option[value="' + StudentIDoutdoor.attend + '"]').attr('selected', 'selected');
-                    });
-                    $(".attendedOutDoorBody").append("<button onclick=takeAttendOutDoor('" + data._id + "')>Submit</button>")
-                    $(".attendedOutDoorOut").fadeIn(500)
-                });
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
-
-
-function takeAttendOutDoor(id) {
-    var outDoorAttend = []
-    var outDoorComment = []
-    $(".outDoorAttend" + id).each(function() {
-        outDoorAttend.push($(this).val())
-    })
-    $(".outDoorComment" + id).each(function() {
-        outDoorComment.push($(this).val())
-    })
-    var atended = []
-    for (let a = 0; a < studentlistOutDoor.length; a++) {
-        atended.push({ "ID": studentlistOutDoor[a], "attend": outDoorAttend[a], "attendComment": outDoorComment[a] })
-    }
-    var formData = {
-        id: id,
-        atended: atended,
-    }
-    $.ajax({
-        url: '/teacher/takeAttendOutDoor',
-        method: 'post',
-        dataType: 'json',
-        data: formData,
-        success: function(response) {
-            if (response.msg == 'success') {
-                alert('ok');
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
 var room = []
 var day = []
 var time = []
@@ -222,21 +121,10 @@ function attendedList(id) {
             if (response.msg == 'success') {
                 $("#attendedList").html($("#attendedList tr:first-child"))
                 $("#loladate4").val(response.data[0].schedule[response.data[0].schedule.length - 1].date)
-                console.log(response.data[0].schedule[response.data[0].schedule.length - 1].room)
-                console.log(response.data[0].schedule[response.data[0].schedule.length - 1].day)
-                console.log(response.data[0].schedule[response.data[0].schedule.length - 1].time)
                 $.each(response.data[0].schedule, function(index, data) {
-                    if (!room.includes(data.room)) {
-                        room.push(data.room)
-                    }
-                    if (!day.includes(data.day)) {
-                        day.push(data.day)
-
-                    }
-                    if (!time.includes(data.time)) {
-                        time.push(data.time)
-
-                    }
+                    if (!room.includes(data.room)) room.push(data.room)
+                    if (!day.includes(data.day)) day.push(data.day)
+                    if (!time.includes(data.time)) time.push(data.time)
                     $("#attendedList").append('<tr><td>' + data.date.split("T00:00:00.000Z")[0] + '</td><td>' + data.day + '</td><td><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></td></tr>    ')
                 });
                 $(".attendedListOut").fadeIn(500)

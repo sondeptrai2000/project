@@ -49,9 +49,6 @@ adminRouter.get('/editClass', adminController.editClass)
 adminRouter.get('/addStudentToClass', adminController.addStudentToClass)
 adminRouter.get('/addTeacherToClass', adminController.addTeacherToClass)
 
-//liên quan đến hoạt động ngoại khóa
-adminRouter.get('/allProposal', adminController.allProposal)
-adminRouter.post('/rateProppsal', adminController.rateProppsal)
 
 //liên quan đến dashboard
 adminRouter.get('/dashboard', adminController.dashboard)

@@ -94,15 +94,6 @@ class teacherController {
         })
     }
 
-    attendedOutDoor(req, res) {
-        ClassModel.find({ _id: req.query.id }, { StudentIDoutdoor: 1 }).populate({ path: "StudentIDoutdoor.ID", select: "username avatar" }).lean().exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
-        })
-    }
 
 
     attendedList(req, res) {
@@ -171,21 +162,6 @@ class teacherController {
                 } else {
                     res.json({ msg: 'success' });
                 }
-            }
-        })
-    }
-
-
-    takeAttendOutDoor(req, res) {
-        ClassModel.findOneAndUpdate({ _id: req.body.id }, {
-            $set: {
-                StudentIDoutdoor: req.body.atended
-            }
-        }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
             }
         })
     }
@@ -265,51 +241,6 @@ class teacherController {
                 res.json({ msg: 'error' });
             } else {
                 res.json({ msg: 'success', data });
-            }
-        })
-    }
-
-    async uploadNewProposal(req, res) {
-        var path = __dirname.replace("controller", "public/outDoorActivity") + '/' + req.body.filename;
-        var image = req.body.file;
-        var data = image.split(',')[1];
-        fs.writeFileSync(path, data, { encoding: 'base64' });
-        try {
-            uploadFile(req.body.filename, "1evgjhxMA8DujwwkvMpaXIAqA_GigLJes", path).then(function(response) {
-
-                var fileLink = "https://docs.google.com/file/d/" + response + "/preview"
-                ClassModel.findOneAndUpdate({ _id: req.body.classID }, { fileLink: fileLink, uploadDate: dateNow(), extracurricularActivitiesContent: req.body.content }, function(err, data) {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success' });
-                    }
-                })
-            })
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
-
-    async deleteProposal(req, res) {
-        try {
-            ClassModel.findOne({ _id: req.body.id }, function(err, data) {
-                if (err) {
-                    res.json({ msg: 'error' });
-                } else {
-                    var idfile = data.fileLink.replace("https://docs.google.com/file/d/", "")
-                    idfile = idfile.replace("/preview", "")
-                    var responese = driveService.files.delete({ fileId: idfile })
-                }
-            })
-        } catch (error) {
-            console.log(error.message);
-        }
-        ClassModel.findOneAndUpdate({ _id: req.body.id }, { fileLink: "", uploadDate: "" }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
             }
         })
     }

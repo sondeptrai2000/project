@@ -19,9 +19,6 @@ teacherRouter.post('/doaddStudentToClass', teacherController.doaddStudentToClass
 teacherRouter.post('/doremoveStudentToClass', teacherController.doremoveStudentToClass)
 teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 
-//liên quan đến hoạt động ngoại khóa
-teacherRouter.post('/uploadNewProposal', teacherController.uploadNewProposal)
-teacherRouter.delete('/deleteProposal', teacherController.deleteProposal)
 
 //lịch học
 teacherRouter.get('/schedule', teacherController.schedule)
@@ -42,8 +39,6 @@ teacherRouter.get('/chatConversation', teacherController.chatConversation)
 
 
 //takeAttend
-teacherRouter.get('/attendedOutDoor', teacherController.attendedOutDoor)
-teacherRouter.post('/takeAttendOutDoor', teacherController.takeAttendOutDoor)
 teacherRouter.get('/attendedList', teacherController.attendedList)
 teacherRouter.get('/attendedListStudent', teacherController.attendedListStudent)
 teacherRouter.post('/doTakeAttended', teacherController.doTakeAttended)

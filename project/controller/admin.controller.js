@@ -528,26 +528,7 @@ class adminController {
             // res.json('Trang chỉ định giáo viên vào lớp ')
     }
 
-    allProposal(req, res) {
-        ClassModel.find().populate({ path: 'teacherID', select: 'username avatar' }).sort({ uploadDate: -1 }).lean().exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
-    }
 
-    rateProppsal(req, res) {
-        var { _id, status, comment } = req.body
-        ClassModel.findOneAndUpdate({ _id: _id }, { status, comment }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success' });
-            }
-        })
-    }
 
 
 
