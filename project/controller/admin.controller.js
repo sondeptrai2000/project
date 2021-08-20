@@ -225,7 +225,14 @@ class adminController {
 
     search(req, res) {
         var condition = req.query.condition
-        AccountModel.findOne(condition).populate("relationship").lean().exec((err, data) => {
+        AccountModel.findOne(condition).populate("relationship").populate({
+            path: 'classID',
+            match: { classStatus: "Processing" },
+            populate: {
+                path: 'teacherID',
+                select: { username: 1, phone: 1, email: 1 }
+            }
+        }).lean().exec((err, data) => {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -405,29 +412,17 @@ class adminController {
     //làm cuối
     async doeditAccount(req, res) {
         try {
-            var role = req.body.role
-            var stage = req.body.stage
-            var routeName = req.body.routeName
-            var aim = req.body.aim
-            if (role == "guardian" || role == "teacher") {
-                stage = "none"
-                routeName = "none"
-                aim = "none"
-            }
             var password = req.body.password
-            const salt = bcrypt.genSaltSync(saltRounds);
-            const hash = bcrypt.hashSync(password, salt);
-            var update = {
-                username: req.body.username,
-                password: hash,
-                email: req.body.email,
-                role: req.body.role,
-                routeName: routeName,
-                aim: aim,
-                stage: stage,
-                phone: req.body.phone,
-                address: req.body.address,
-                birthday: req.body.birthday
+            var password1 = req.body.password + "phuhuynh"
+            var formData1 = req.body.formData1
+            var formData2 = req.body.formData2
+            if (password.length != 0) {
+                const salt = bcrypt.genSaltSync(saltRounds);
+                const hash = bcrypt.hashSync(password, salt);
+                const salt1 = bcrypt.genSaltSync(saltRounds);
+                const hash1 = bcrypt.hashSync(password1, salt);
+                formData1["password"] = hash
+                formData2["password"] = hash1
             }
             if (req.body.file != "none") {
                 var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
@@ -441,11 +436,14 @@ class adminController {
                 oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
                 await driveService.files.delete({ fileId: oldImg })
             } else {
-                update["avatar"] = req.body.oldLink
+                formData1["avatar"] = req.body.oldLink
             }
-            var data = await AccountModel.findOneAndUpdate({ _id: req.body._id }, update)
-            if (!data) res.json({ msg: 'error' })
-
+            if (formData1.role == "teacher") {
+                await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
+            } else {
+                await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
+                await AccountModel.findOneAndUpdate({ relationship: req.body.id }, formData2)
+            }
             res.json({ msg: 'success', data: data });
         } catch (e) {
             if (e) {

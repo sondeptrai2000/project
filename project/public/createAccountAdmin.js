@@ -59,67 +59,6 @@ function reset() {
     document.getElementById('address').value = ''
     document.getElementById('output').src = ''
 }
-//thực hiện đăng ký và lưu tài khỏan vào đb
-function signUp() {
-    var role = $("#role").val()
-    var formData1 = {
-        sex: $("#gender").val(),
-        username: $("#username").val(),
-        email: $("#email").val(),
-        role: role,
-        phone: $("#phone").val(),
-        address: $("#address").val(),
-        birthday: $("#birthday").val(),
-    };
-    if (role === "teacher") {
-        formData1["stage"] = "none"
-        formData1["routeName"] = "none"
-        formData1["aim"] = "none"
-    } else {
-        formData1["stage"] = $("#levelS").val()
-        formData1["routeName"] = $("#routeTypeS").val()
-        formData1["aim"] = $("#Aim").val()
-    }
-
-    var formData2 = {
-        role: "guardian",
-        username: $("input[name='guardianName']").val(),
-        phone: $("input[name='guardianPhone']").val(),
-        email: $("input[name='guardianEmail']").val(),
-    };
-    $.ajax({
-        url: '/admin/doCreateAccount',
-        method: 'post',
-        dataType: 'json',
-        data: {
-            password: $("#password").val(),
-            filename: myFile.name,
-            file: fileData,
-            student: formData1,
-            phuhuynh: formData2,
-        },
-        success: function(response) {
-            if (response.msg == 'success') {
-                reset();
-                getAccount(role, 0);
-                $(".createAccountOut").slideUp();
-                alert('Sign Up success');
-            }
-            if (response.msg == 'Account already exists') {
-                alert('Account already exists');
-            }
-            if (response.msg == 'Phone already exists') {
-                alert('Phone already exists');
-            }
-            if (response.msg == 'error') {
-                alert('error');
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-}
 //lấy danh sách theo role (index)
 function getAccount(index, page) {
     var role = index
@@ -130,7 +69,7 @@ function getAccount(index, page) {
     if (index === 'teacher') {
         var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>sex</th><th>email</th><th>role</th><th>phone</th><th>address</th><th>birthday</th><th>More information</th></tr>"
     } else {
-        var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>sex</th><th>email</th><th>role</th><th>phone</th><th>address</th><th>birthday</th><th>Guardian</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
+        var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>sex</th><th>email</th><th>role</th><th>phone</th><th>address</th><th>birthday</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
     }
     $("#tableInforType").html(tableInfor);
     $.ajax({
@@ -144,7 +83,7 @@ function getAccount(index, page) {
                     if (role == 'teacher') {
                         $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
                     } else {
-                        $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td>" + data.relationship.username + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
+                        $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td style='display:none;'>" + data.relationship.username + "</td><td style='display:none;'>" + data.relationship.email + "</td><td style='display:none;'>" + data.relationship.phone + "</td><td><button onclick=search('" + data.email + "')>View more</button><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
                     }
                 });
                 $("#soTrang").html("")
@@ -252,6 +191,7 @@ function updateForm(id) {
     $(selector).each(function() {
         infor4.push($(this).text())
     })
+    console.log(infor4)
     $("#PersonID").val(id)
     $("#oldAvatar").attr("src", $("#" + id + " img").attr('src'));
     $("#usernameUpdate").val(infor4[1])
@@ -261,9 +201,12 @@ function updateForm(id) {
     $("#currentRole").val(infor4[4])
     $('#roleUpdate option:selected').removeAttr('selected');
     $("#roleUpdate option[value='" + infor4[4] + "']").attr('selected', 'selected');
-    $("#phoneUpdate").val(infor4[6])
-    $("#addressUpdate").val(infor4[7])
-    $("#birthdayUpdate").val(infor4[8])
+    $("#phoneUpdate").val(infor4[5])
+    $("#addressUpdate").val(infor4[6])
+    $("#birthdayUpdate").val(infor4[7])
+    $("input[name='guardianNameUpdate']").val(infor4[11])
+    $("input[name='guardianPhoneUpdate']").val(infor4[13])
+    $("input[name='guardianEmailUpdate']").val(infor4[12])
     role('update');
     $.ajax({
         url: '/admin/editAccount',
@@ -273,18 +216,19 @@ function updateForm(id) {
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.targetxxx, function(index, targetxxx) {
-                    if (targetxxx.routeName == infor4[9]) {
+                    if (targetxxx.routeName == infor4[8]) {
                         var routeOption = "<option value='" + targetxxx.routeName + "'>" + targetxxx.routeName + "</option>"
                         $("#routeTypeSUpdate").append(routeOption);
-                        $("#routeTypeSUpdate option[value='" + infor4[9] + "']").attr('selected', 'selected');
+                        $("#routeTypeSUpdate option[value='" + infor4[8] + "']").attr('selected', 'selected');
                         $.each(targetxxx.routeSchedual, function(index, routeSchedual) {
                             var Schudelstage = "<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>"
                             $("#levelSUpdate").append(Schudelstage);
                             $('#levelSUpdate option:selected').removeAttr('selected');
-                            $("#levelSUpdate option[value='" + infor4[10] + "']").attr('selected', 'selected');
+                            $("#levelSUpdate option[value='" + infor4[9] + "']").attr('selected', 'selected');
+
                             $("#AimUpdate").append(Schudelstage);
                             $('#AimUpdate option:selected').removeAttr('selected');
-                            $("#AimUpdate option[value='" + infor4[11] + "']").attr('selected', 'selected');
+                            $("#AimUpdate option[value='" + infor4[10] + "']").attr('selected', 'selected');
                         });
                     }
                 });
@@ -302,32 +246,51 @@ function doUpdate() {
     if (!fileDataUpdate) {
         fileDataUpdate = "none"
     }
-    console.log(fileDataUpdate)
-    var formData = {
-        _id: $("#PersonID").val(),
-        file: fileDataUpdate,
+    var role = $("#roleUpdate").val()
+    var formData1 = {
+        sex: $("#gender").val(),
         username: $("#usernameUpdate").val(),
-        password: $("#passwordUpdate").val(),
         email: $("#emailUpdate").val(),
-        role: $("#roleUpdate").val(),
-        routeName: $("#routeTypeSUpdate").val(),
-        stage: $("#levelSUpdate").val(),
-        aim: $("#AimUpdate").val(),
+        role: role,
         phone: $("#phoneUpdate").val(),
         address: $("#addressUpdate").val(),
-        oldLink: $('#oldAvatar').attr('src')
+        birthday: $("#birthdayUpdate").val(),
     };
+    if (role === "teacher") {
+        formData1["stage"] = "none"
+        formData1["routeName"] = "none"
+        formData1["aim"] = "none"
+    } else {
+        formData1["stage"] = $("#levelSUpdate").val()
+        formData1["routeName"] = $("#routeTypeSUpdate").val()
+        formData1["aim"] = $("#AimUpdate").val()
+    }
+
+    var formData2 = {
+        role: "guardian",
+        username: $("input[name='guardianNameUpdate']").val(),
+        phone: $("input[name='guardianPhoneUpdate']").val(),
+        email: $("input[name='guardianEmailUpdate']").val(),
+    };
+
     $.ajax({
         url: '/admin/doeditAccount',
         method: 'post',
         dataType: 'json',
-        data: formData,
+        data: {
+            id: $("#PersonID").val(),
+            oldLink: $('#oldAvatar').attr('src'),
+            password: $("#passwordUpdate").val(),
+            formData1: formData1,
+            formData2: formData2,
+            file: fileDataUpdate,
+        },
         success: function(response) {
             if (response.msg == 'success') {
                 alert('update success');
                 $('#updateForm').fadeOut(2000);
                 getAccount($("#roleUpdate").val(), 0);
-                $("#routeTypeSUpdate option[value='" + response.data.routeName + "']").attr('selected', 'selected');
+                // $("#routeTypeSUpdate option[value='" + response.data.routeName + "']").attr('selected', 'selected');
             }
         },
         error: function(response) {
@@ -336,12 +299,78 @@ function doUpdate() {
     })
 }
 
+//thực hiện đăng ký và lưu tài khỏan vào đb
+function signUp() {
+    var role = $("#role").val()
+    var formData1 = {
+        sex: $("#gender").val(),
+        username: $("#username").val(),
+        email: $("#email").val(),
+        role: role,
+        phone: $("#phone").val(),
+        address: $("#address").val(),
+        birthday: $("#birthday").val(),
+    };
+    if (role === "teacher") {
+        formData1["stage"] = "none"
+        formData1["routeName"] = "none"
+        formData1["aim"] = "none"
+    } else {
+        formData1["stage"] = $("#levelS").val()
+        formData1["routeName"] = $("#routeTypeS").val()
+        formData1["aim"] = $("#Aim").val()
+    }
 
-function search() {
+    var formData2 = {
+        role: "guardian",
+        username: $("input[name='guardianName']").val(),
+        phone: $("input[name='guardianPhone']").val(),
+        email: $("input[name='guardianEmail']").val(),
+    };
+    $.ajax({
+        url: '/admin/doCreateAccount',
+        method: 'post',
+        dataType: 'json',
+        data: {
+            password: $("#password").val(),
+            filename: myFile.name,
+            file: fileData,
+            student: formData1,
+            phuhuynh: formData2,
+        },
+        success: function(response) {
+            if (response.msg == 'success') {
+                reset();
+                getAccount(role, 0);
+                $(".createAccountOut").slideUp();
+                alert('Sign Up success');
+            }
+            if (response.msg == 'Account already exists') {
+                alert('Account already exists');
+            }
+            if (response.msg == 'Phone already exists') {
+                alert('Phone already exists');
+            }
+            if (response.msg == 'error') {
+                alert('error');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
+//tìm kiếm thông tin qua email hoặc số điện thoại
+function search(email) {
     var condition = {}
-    var search = $("#search").val().toString()
-    if (isNaN(search.trim()) == true) condition["email"] = $("#search").val()
-    if (isNaN(search.trim()) == false) condition["phone"] = $("#search").val()
+    if (email != "") {
+        condition["email"] = email
+    } else {
+        var search = $("#search").val().toString()
+        if (isNaN(search.trim()) == true) condition["email"] = $("#search").val()
+        if (isNaN(search.trim()) == false) condition["phone"] = $("#search").val()
+    }
     $.ajax({
         url: '/admin/search',
         method: 'get',
@@ -349,8 +378,32 @@ function search() {
         data: { condition: condition },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.data)
-                alert(' success');
+                $(".seacherInfor").html("")
+
+                if (response.data.role == "teacher") {
+                    $(".seacherInfor").append("<img src='" + data.avatar + "'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
+                } else {
+                    if (response.data.role == "student") {
+                        var data = response.data
+                        var relationship = data.relationship
+                    } else {
+                        var relationship = response.data
+                        var data = relationship.relationship
+                    }
+                    var currentClass = response.data.classID
+                    $(".seacherInfor").append("<h1>Thông tin học sinh</h1>")
+                    $(".seacherInfor").append("<img src='" + data.avatar + "'style='height:100px;width:100px;'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
+                    $(".seacherInfor").append("<h1>Tình trạng học tập</h1>")
+                    $(".seacherInfor").append("<br> Route: " + data.routeName + "<br> Current level: " + data.stage + "<br> Aim : " + data.aim)
+                    $(".seacherInfor").append("<h2>Đang hoạt động trong lớp học</h2>")
+                    currentClass.forEach((e) => {
+                        $(".seacherInfor").append("<br> ClassID: " + e._id + "<br> Class Name: " + e.stage + "<br> Subject : " + e.subject + "<br> Teacher : " + e.teacherID.username + "<br> Teacher phone : " + e.teacherID.phone + "<br> Teacher email : " + e.teacherID.email)
+                    })
+                    $(".seacherInfor").append("<h1>Thông tin phụ huynh</h1>")
+                    $(".seacherInfor").append("<br> Name: " + relationship.username + "<br> Phone: " + relationship.phone + "<br> Email : " + relationship.email)
+                }
+                $(".seacherInfor").append("<br><button onclick=$('.seacherInforOut').slideUp(500)>Close</button>")
+                $(".seacherInforOut").fadeIn(500)
             }
             if (response.msg == 'err') {
                 alert(' err');
