@@ -103,7 +103,6 @@ class adminController {
         //         console.log(listEmail.slice(0, -2))
         //     })
         // var aa = await AccountModel.findOneAndUpdate({ _id: "611fedbccbeab90764e5b547", progess: { $elemMatch: { stage: "zxc", "stageClass.name": "route1" } } }, { $set: { "stageClass.status": "Pass" } })
-        await AccountModel.updateMany({ _id: "611fedbccbeab90764e5b547" }, { $push: { progess: { stage: "ssdfgh", stageClass: [] } } })
 
 
         res.render('admin/adminHome')

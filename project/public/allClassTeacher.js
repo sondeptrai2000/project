@@ -69,6 +69,9 @@ function takeFeedBack() {
                 sendData($("#classID").text());
                 alert("take feedback success")
             }
+            if (response.msg == 'abc') {
+                alert("học sinh đã chuyển sang giai đoạn cao hơn")
+            }
         },
         error: function(response) {
             alert('server error');

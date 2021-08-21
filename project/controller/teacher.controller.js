@@ -242,19 +242,24 @@ class teacherController {
                 //cập nhật thông tin về tiến độ của học sinh trong bảng thông tin cá nhân
             var status = "Pass"
             await AccountModel.updateOne({ _id: req.body.studentId }, {
-                "$set": { "progess.$[progess].stageClass.$[stageClass].status": status }
-            }, { "arrayFilters": [{ "progess.stage": classInfor.stage }, { "stageClass.name": classInfor.subject }] })
-
-            //lấy tiến độ học tập của học sinh từ bảng thông tin cá nhân
+                    "$set": { "progess.$[progess].stageClass.$[stageClass].status": status }
+                }, { "arrayFilters": [{ "progess.stage": classInfor.stage }, { "stageClass.name": classInfor.subject }] })
+                //lấy tiến độ học tập của học sinh từ bảng thông tin cá nhân
             var studentProgress
             var progess = await AccountModel.findOne({ _id: req.body.studentId }, { progess: 1 })
+                //lấy số lượng pass các khóa học để so sánh với số lượng class trong giai đoạn. == thì đã hoàn thành hết các lớp trong giai đoạn đó và sẽ tiến hành chuyển tiépe giai đoạn 
+            var Passed = 0
             progess.progess.forEach((e, index) => {
-                if (e.stage == classInfor.stage) {
-                    studentProgress = e.stageClass
-                }
-            })
-
-            //lấy lộ trình mà học sinh đang theo học để xem xét chuyển giai đoạn
+                    if (e.stage == classInfor.stage) {
+                        studentProgress = e.stageClass
+                        e.stageClass.forEach((check, index) => {
+                            if (check.status == "Pass") {
+                                Passed++
+                            }
+                        })
+                    }
+                })
+                //lấy lộ trình mà học sinh đang theo học để xem xét chuyển giai đoạn
             var route = await studyRouteModel.findOne({ routeName: classInfor.routeName }, { routeSchedual: 1 })
             var indexOfNextClass
             var routeClass
@@ -265,31 +270,20 @@ class teacherController {
                     }
                 })
                 //giai đoạn tiếp theo
-            var nextRoute = route.routeSchedual[indexOfNextClass].stage
-
-            console.log("nextRoute", nextRoute)
-            console.log("studentProgress", studentProgress)
-            console.log("routeClass", routeClass)
+            var nextStage = route.routeSchedual[indexOfNextClass].stage
                 //check xem học sinh đã hoàn thành các lớp của giai đoạn hiện tại chưa
-            var levelUP = true
-            studentProgress.forEach((studentProgress, index) => {
-                routeClass.forEach((routeClass, index) => {
-                    if (studentProgress.name == routeClass && studentProgress.status != 'Pass') {
-                        levelUP = false
-                    }
-                })
-            })
-            console.log("levelUP", levelUP)
-            if (levelUP == true)
-
-
+            if (Passed == routeClass.length) {
+                await AccountModel.findOneAndUpdate({ _id: req.body.studentId }, { $push: { progess: { stage: nextStage, stageClass: [] } } })
+                await AccountModel.findOneAndUpdate({ _id: req.body.studentId }, { stage: nextStage })
+                console.log("lên level")
                 res.json({ msg: 'success' });
+            }
+            if (Passed != routeClass.length) res.json({ msg: 'success' });
+
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
         }
-
     }
-
 }
 module.exports = new teacherController
