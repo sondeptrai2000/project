@@ -1,6 +1,7 @@
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const assignRoomAndTimeModel = require('../models/assignRoomAndTime');
+const studyRouteModel = require('../models/studyRoute');
 
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
@@ -231,16 +232,58 @@ class teacherController {
 
     async studentAssessment(req, res) {
         try {
+            //cập nhật điểm, đánh giá của giáo viên về học sinh 
             var classInfor = await ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {
-                $set: {
-                    "studentID.$.grade": req.body.grade,
-                    "studentID.$.feedBackContent": req.body.comment
+                    $set: {
+                        "studentID.$.grade": req.body.grade,
+                        "studentID.$.feedBackContent": req.body.comment
+                    }
+                })
+                //cập nhật thông tin về tiến độ của học sinh trong bảng thông tin cá nhân
+            var status = "Pass"
+            await AccountModel.updateOne({ _id: req.body.studentId }, {
+                "$set": { "progess.$[progess].stageClass.$[stageClass].status": status }
+            }, { "arrayFilters": [{ "progess.stage": classInfor.stage }, { "stageClass.name": classInfor.subject }] })
+
+            //lấy tiến độ học tập của học sinh từ bảng thông tin cá nhân
+            var studentProgress
+            var progess = await AccountModel.findOne({ _id: req.body.studentId }, { progess: 1 })
+            progess.progess.forEach((e, index) => {
+                if (e.stage == classInfor.stage) {
+                    studentProgress = e.stageClass
                 }
             })
-            console.log(classInfor.stage)
-            console.log(classInfor.subject)
-            await AccountModel.findOneAndUpdate({ _id: req.body.studentId, progess: { $elemMatch: { stage: classInfor.stage, "stageClass.$.name": classInfor.subject } } }, { $set: { "stageClass.$.status": "Pass" } })
-            res.json({ msg: 'success' });
+
+            //lấy lộ trình mà học sinh đang theo học để xem xét chuyển giai đoạn
+            var route = await studyRouteModel.findOne({ routeName: classInfor.routeName }, { routeSchedual: 1 })
+            var indexOfNextClass
+            var routeClass
+            route.routeSchedual.forEach((e, index) => {
+                    if (e.stage == classInfor.stage) {
+                        routeClass = e.routeabcd
+                        indexOfNextClass = index + 1
+                    }
+                })
+                //giai đoạn tiếp theo
+            var nextRoute = route.routeSchedual[indexOfNextClass].stage
+
+            console.log("nextRoute", nextRoute)
+            console.log("studentProgress", studentProgress)
+            console.log("routeClass", routeClass)
+                //check xem học sinh đã hoàn thành các lớp của giai đoạn hiện tại chưa
+            var levelUP = true
+            studentProgress.forEach((studentProgress, index) => {
+                routeClass.forEach((routeClass, index) => {
+                    if (studentProgress.name == routeClass && studentProgress.status != 'Pass') {
+                        levelUP = false
+                    }
+                })
+            })
+            console.log("levelUP", levelUP)
+            if (levelUP == true)
+
+
+                res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });

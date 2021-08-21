@@ -103,23 +103,10 @@ class adminController {
         //         console.log(listEmail.slice(0, -2))
         //     })
         // var aa = await AccountModel.findOneAndUpdate({ _id: "611fedbccbeab90764e5b547", progess: { $elemMatch: { stage: "zxc", "stageClass.name": "route1" } } }, { $set: { "stageClass.status": "Pass" } })
-        var aa = await AccountModel.updateOne({ _id: "611fedbccbeab90764e5b547" }, {
-            "$set": {
-                "progess.$[progess].stageClass.$[stageClass].status": "studying"
-            }
-        }, {
-            "arrayFilters": [{
-                    "progess.stage": "zxc"
-                },
-                {
-                    "stageClass.name": "route1"
-                }
-            ]
-        })
+        await AccountModel.updateMany({ _id: "611fedbccbeab90764e5b547" }, { $push: { progess: { stage: "ssdfgh", stageClass: [] } } })
 
-        console.log(aa)
-        res.json(aa)
-            // res.render('admin/adminHome')
+
+        res.render('admin/adminHome')
     }
 
     async assignRoomAndTime(req, res) {
