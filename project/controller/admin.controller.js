@@ -102,8 +102,24 @@ class adminController {
         //         })
         //         console.log(listEmail.slice(0, -2))
         //     })
+        // var aa = await AccountModel.findOneAndUpdate({ _id: "611fedbccbeab90764e5b547", progess: { $elemMatch: { stage: "zxc", "stageClass.name": "route1" } } }, { $set: { "stageClass.status": "Pass" } })
+        var aa = await AccountModel.updateOne({ _id: "611fedbccbeab90764e5b547" }, {
+            "$set": {
+                "progess.$[progess].stageClass.$[stageClass].status": "studying"
+            }
+        }, {
+            "arrayFilters": [{
+                    "progess.stage": "zxc"
+                },
+                {
+                    "stageClass.name": "route1"
+                }
+            ]
+        })
 
-        res.render('admin/adminHome')
+        console.log(aa)
+        res.json(aa)
+            // res.render('admin/adminHome')
     }
 
     async assignRoomAndTime(req, res) {
@@ -132,13 +148,16 @@ class adminController {
 
     async deleteClass(req, res) {
         try {
-            var classInfor = await ClassModel.find({ _id: req.query.id })
+            var classInfor = await ClassModel.findOne({ _id: req.query.id })
             var listStudentID = []
-            classInfor[0].studentID.forEach((e) => {
-                listStudentID.push(e.ID)
-            })
+            if (classInfor.studentID.length != 0) {
+                classInfor.studentID.forEach((e) => {
+                    listStudentID.push(e.ID)
+                })
+                await AccountModel.updateMany({ _id: { $in: listStudentID } }, { $pull: { classID: req.query.id } })
+            }
+
             await ClassModel.remove({ _id: req.query.id })
-            await AccountModel.updateMany({ _id: { $in: listStudentID } }, { $pull: { classID: req.query.id, subject: classInfor[0].subject } })
             res.json({ msg: 'success', data });
         } catch (e) {
             console.log(e)

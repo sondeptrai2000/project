@@ -843,7 +843,6 @@
             },
             success: function(response) {
                 if (response.msg == 'success') {
-                    var check = false
                     if (response.student.length == 0) {
                         $('.taskrow').html('');
                         alert("không có học sinh học tập tại giai đoạn này")
@@ -851,6 +850,7 @@
                         $('.taskrow').html('');
                         $('#studentTable').show();
                         $.each(response.student, function(index, student) {
+                            var check = false
                             $.each(student.progess, function(index, progess) {
                                 if (progess.stage == levelS) {
                                     $.each(progess.stageClass, function(index, stageClass) {

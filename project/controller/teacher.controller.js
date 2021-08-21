@@ -229,19 +229,23 @@ class teacherController {
         }
     }
 
-    studentAssessment(req, res) {
-        ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {
-            $set: {
-                "studentID.$.grade": req.body.grade,
-                "studentID.$.feedBackContent": req.body.comment
-            }
-        }, function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
+    async studentAssessment(req, res) {
+        try {
+            var classInfor = await ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {
+                $set: {
+                    "studentID.$.grade": req.body.grade,
+                    "studentID.$.feedBackContent": req.body.comment
+                }
+            })
+            console.log(classInfor.stage)
+            console.log(classInfor.subject)
+            await AccountModel.findOneAndUpdate({ _id: req.body.studentId, progess: { $elemMatch: { stage: classInfor.stage, "stageClass.$.name": classInfor.subject } } }, { $set: { "stageClass.$.status": "Pass" } })
+            res.json({ msg: 'success' });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+
     }
 
 }

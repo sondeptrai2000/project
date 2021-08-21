@@ -66,8 +66,6 @@ function takeFeedBack() {
         success: function(response) {
             if (response.msg == 'success') {
                 $(".innerOut").hide();
-                var infor = response.data
-                var infor = response.data
                 sendData($("#classID").text());
                 alert("take feedback success")
             }
