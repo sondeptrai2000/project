@@ -22,7 +22,7 @@
                         <button onclick="addRoute('create')">Add route</button>
 
                         <br>
-                        <div id="addStage"></div>
+                        <div id="addStage" style="text-align: left;"></div>
                         <br>
                         <button type="submit" onclick="doCreateRoute()">Submit</button>
                         <button onclick='$(".createRouteOut").fadeOut(500);'>close</button>
@@ -92,17 +92,17 @@
 
         function addRoute(type) {
                 if (type == "create") {
-                        var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStage') > Đẩy lên đầu </button><br>Stage: <input type='text' name='stageTest'> Giá tiền: <input type='text' name='stageMoney'><button onclick=addClass($(this).parent(),'create')>Add Class</button><br></div>"
+                        var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStage') > Đẩy lên đầu </button><button onclick=addClass($(this).parent(),'create')>Add Class</button><br>Stage: <input type='text' name='stageTest'> Giá tiền: <input type='text' name='stageMoney'><br></div>"
                         $('#addStage').append(add)
                 } else {
-                        var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStageUpdate') > Đẩy lên đầu </button><br>Stage: <input type='text' name='stageTestUpdate'> Giá tiền: <input type='text' name='stageMoneyUpdate'><button onclick=addClass($(this).parent(),'update')>Add Class</button><br></div>"
+                        var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStageUpdate') > Đẩy lên đầu </button><button onclick=addClass($(this).parent(),'update')>Add Class</button><br>Stage: <input type='text' name='stageTestUpdate'> Giá tiền: <input type='text' name='stageMoneyUpdate'><br></div>"
                         $('#addStageUpdate').append(add)
                 }
         }
 
         function addClass(test, type) {
                 if (type == "create") {
-                        var add = "<label>route<input type='text' name='classIn']><button onclick=$(this).parent().remove();>Xóa</button><br></label>"
+                        var add = "<li>route<input type='text' name='classIn']><button onclick=$(this).parent().remove();>Xóa</button><br></li>"
                         test.append(add)
                 } else {
                         var add = "<label>route<input type='text' name='classInUpdate']><button onclick=$(this).parent().remove();>Xóa</button><br></label>"
