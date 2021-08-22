@@ -299,29 +299,11 @@ class adminController {
 
     async docreateRoute(req, res) {
         try {
-            var stageContent = req.body.stageContent
-            var stageMoney = req.body.stageMoney
-            var route = req.body.route
-            var totalStage = req.body.totalStage
-            var testthu = route.toString();
-            testthu = testthu.split(",space,")
-            var routeCreated = await studyRouteModel.create({
+            await studyRouteModel.create({
                 routeName: req.body.routeName,
                 description: req.body.description,
+                routeSchedual: req.body.schedule,
             })
-            for (var i = 0; i < totalStage; i++) {
-                testthu[i] = testthu[i].toString();
-                testthu[i] = testthu[i].split(",")
-                await studyRouteModel.updateOne({ _id: routeCreated._id }, {
-                    $push: {
-                        routeSchedual: {
-                            stage: stageContent[i],
-                            price: stageMoney[i],
-                            routeabcd: testthu[i],
-                        }
-                    }
-                })
-            }
             res.json({ msg: 'success' })
         } catch (e) {
             console.log(e)

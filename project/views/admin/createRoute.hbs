@@ -19,12 +19,12 @@
                         <label>Description</label>
                         <input type="text" name="description" id="description">
                         <br>
-                        <label>Total of stage</label>
-                        <input type="number" name="totalStage" id="totalStage" onchange="totalStage('create')">
+                        <button onclick="addRoute('create')">Add route</button>
+
                         <br>
                         <div id="addStage"></div>
                         <br>
-                        <button type="submit" onclick="signUp()">Submit</button>
+                        <button type="submit" onclick="doCreateRoute()">Submit</button>
                         <button onclick='$(".createRouteOut").fadeOut(500);'>close</button>
 
                 </div>
@@ -33,19 +33,19 @@
                 <div class="updateRoute">
                         <table border="solid">
                                 <h2>update route</h2>
+                                <input type="text"  id="routeIDUpdate">
+                                <br>
                                 <label>routeName </label>
                                 <input type="text" name="routeName" id="routeNameUpdate">
                                 <br>
                                 <label>Description</label>
                                 <input type="text" name="description" id="descriptionUpdate">
                                 <br>
-                                <label>Total of stage</label>
-                                <input type="number" name="totalStageUpdate" id="totalStageUpdate"
-                                        onchange="totalStage('update')">
+                                <button onclick="addRoute('update')">Add route</button>
                                 <br>
                                 <div id="addStageUpdate"></div>
                                 <br>
-                                <button type="submit" onclick="signUp()">Submit</button>
+                                <button type="submit" onclick="doUpdateRoute()">Submit</button>
                                 <button onclick='$(".updateRouteOut").fadeOut(500);'>close</button>
 
                         </table>
@@ -90,6 +90,26 @@
 </body>
 <script>
 
+        function addRoute(type) {
+                if (type == "create") {
+                        var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStage') > Đẩy lên đầu </button><br>Stage: <input type='text' name='stageTest'> Giá tiền: <input type='text' name='stageMoney'><button onclick=addClass($(this).parent(),'create')>Add Class</button><br></div>"
+                        $('#addStage').append(add)
+                } else {
+                        var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStageUpdate') > Đẩy lên đầu </button><br>Stage: <input type='text' name='stageTestUpdate'> Giá tiền: <input type='text' name='stageMoneyUpdate'><button onclick=addClass($(this).parent(),'update')>Add Class</button><br></div>"
+                        $('#addStageUpdate').append(add)
+                }
+        }
+
+        function addClass(test, type) {
+                if (type == "create") {
+                        var add = "<label>route<input type='text' name='classIn']><button onclick=$(this).parent().remove();>Xóa</button><br></label>"
+                        test.append(add)
+                } else {
+                        var add = "<label>route<input type='text' name='classInUpdate']><button onclick=$(this).parent().remove();>Xóa</button><br></label>"
+                        test.append(add)
+                }
+        }
+
         function viewSchedule(id) {
                 var _id = id
                 $.ajax({
@@ -110,64 +130,63 @@
                 });
         }
 
-        function totalStage(create) {
-                var stage = 1;
-                if (create == 'create') {
-                        $('#addStage').html("");
-                        var totalStage = parseInt($('#totalStage').val());
-                        for (stage = 1; stage < totalStage + 1; stage++) {
-                                var add = "<label>stage" + stage + "</label><input type='text' value='" + stage + "' name='stage'><input type='text' value='" + stage + "' name='stageMoney'><br><label onclick='addRoute(" + stage + ")'>add route</label><div id='" + stage + "'></div>"
-                                $('#addStage').append(add)
-                        }
-                } else if (create == 'update') {
-                        $('#addStageUpdate').html("");
-                        var totalStage = parseInt($('#totalStageUpdate').val());
-                        for (stage = 1; stage < totalStage + 1; stage++) {
-                                var add = "<label>stage" + stage + "</label><input type='text' value='" + stage + "' name='stageUpdate'><input type='text' value='" + stage + "' name='stageMoneyUpdate'><br><label onclick='addRouteUpdate(" + stage + ")'>add route</label><div id='" + stage + "Update'></div>"
-                                $('#addStageUpdate').append(add)
-                        }
-                }
 
-        }
-        function addRoute(stage) {
-                var x = '#' + stage
-                var add = "<div class='class'><label>route</label><input type='text' value='route" + stage + "' name='route" + stage + "'><button onclick=$(this).parents('.class').remove();>Xóa</button></div>"
-                $(x).append(add)
-        }
 
-        function addRouteUpdate(stage) {
-                var x = '#' + stage + 'Update'
-                var add = "<div class='class'><label>route</label><input type='text' value='route" + stage + "' name='routeUpdate" + stage + "'><button onclick=$(this).parents('.class').remove();>Xóa</button></div>"
-                $(x).append(add)
-        }
-
-        function signUp() {
-                var stageContent = [];
-                var totalStage = parseInt($('#totalStage').val());
-                $("input[name='stage']").each(function () {
-                        stageContent.push($(this).val())
-                });
+        function doCreateRoute() {
+                var schedule = []
                 var stageMoney = [];
-                $("input[name='stageMoney']").each(function () {
+                $("input[name='stageMoney']").each(function (index, e) {
                         stageMoney.push($(this).val())
                 });
-                route = [];
-                for (stage = 1; stage < totalStage + 1; stage++) {
-                        if (1 < stage) route.push("space")
-                        var y = "input[name='route" + stage + "']"
-                        $(y).each(function () {
-                                route.push($(this).val())
-                        });
-                }
+                $("input[name='stageTest']").each(function (index, e) {
+                        var routeabcd = []
+                        $(this).parent().find('input[name="classIn"]').each(function (index, e) {
+                                routeabcd.push($(e).val())
+                        })
+                        schedule.push({ stage: $(this).val(), price: stageMoney[index], routeabcd: routeabcd })
+                })
                 var formData = {
-                        stageContent: stageContent,
-                        stageMoney: stageMoney,
-                        route: route,
-                        totalStage: totalStage,
+                        schedule: schedule,
                         routeName: $("#routeName").val(),
                         description: $("#description").val(),
                 };
-                console.log("vào")
+                $.ajax({
+                        url: '/admin/docreateRoute',
+                        method: 'post',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                                if (response.msg == 'success') {
+                                        alert('Sign Up success');
+                                }
+                                if (response.msg == 'Account already exists') {
+                                        alert('Account already exists');
+                                }
+                        },
+                        error: function (response) {
+                                alert('server error');
+                        }
+                })
+        }
+
+        function doUpdateRoute() {
+                var schedule = []
+                var stageMoney = [];
+                $("input[name='stageMoneyUpdate']").each(function (index, e) {
+                        stageMoney.push($(this).val())
+                });
+                $("input[name='stageTestUpdate']").each(function (index, e) {
+                        var routeabcd = []
+                        $(this).parent().find('input[name="classInUpdate"]').each(function (index, e) {
+                                routeabcd.push($(e).val())
+                        })
+                        schedule.push({ stage: $(this).val(), price: stageMoney[index], routeabcd: routeabcd })
+                })
+                var formData = {
+                        schedule: schedule,
+                        routeName: $("#routeNameUpdate").val(),
+                        description: $("#descriptionUpdate").val(),
+                };
                 $.ajax({
                         url: '/admin/docreateRoute',
                         method: 'post',
@@ -188,7 +207,24 @@
         }
 
         function updateRoute(id) {
-
+                $("#routeIDUpdate").val(id)
+                $(".updateRouteOut").fadeIn(500)
+                 var _id = id
+                $.ajax({
+                        url: '/admin/lol',
+                        method: 'get',
+                        dataType: 'json',
+                        data: { _id: _id },
+                        success: function (response) {
+                                if (response.msg == 'success') {
+                                        console.log(response.data)
+                                   
+                                }
+                        },
+                        error: function (response) {
+                                alert('server error');
+                        }
+                });
         }
 
         function deleteRoute(id) {
