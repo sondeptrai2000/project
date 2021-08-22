@@ -2,6 +2,7 @@ const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 const assignRoomAndTimeModel = require('../models/assignRoomAndTime');
 const studyRouteModel = require('../models/studyRoute');
+const nodemailer = require('nodemailer');
 
 const { JsonWebTokenError } = require('jsonwebtoken');
 var jwt = require('jsonwebtoken');
@@ -10,46 +11,20 @@ const readline = require("readline")
 const { google } = require("googleapis")
 var path = require('path');
 
-//setup kết nối tới ggdrive
-const KEYFILEPATH = path.join(__dirname, 'service_account.json')
-const SCOPES = ['https://www.googleapis.com/auth/drive'];
-
-const auth = new google.auth.GoogleAuth(
-    opts = {
-        keyFile: KEYFILEPATH,
-        scopes: SCOPES
+// set up mail sever
+var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'fptedunotification@gmail.com',
+        pass: 'son@1234'
+    },
+    tls: {
+        rejectUnauthorized: false
     }
-);
-const driveService = google.drive(options = { version: 'v3', auth });
+});
 
-function dateNow() {
-    var date = new Date()
-    var month = date.getMonth() + 1
-    var lol = date.getFullYear() + "-" + month + "-" + date.getDate()
-    return lol
-}
-
-async function uploadFile(name, rootID, path) {
-    var id = []
-    id.push(rootID)
-    var responese = await driveService.files.create(param = {
-        resource: {
-            "name": name,
-            "parents": id
-        },
-        media: {
-            body: fs.createReadStream(path = path)
-        },
-    })
-    await driveService.permissions.create({
-        fileId: responese.data.id,
-        requestBody: {
-            role: 'reader',
-            type: 'anyone',
-        },
-    });
-    return responese.data.id
-}
 
 class teacherController {
     teacherHome(req, res) {
@@ -232,54 +207,75 @@ class teacherController {
 
     async studentAssessment(req, res) {
         try {
-            //cập nhật điểm, đánh giá của giáo viên về học sinh 
+            //cập nhật điểm, đánh giá của giáo viên về học sinh trong lớp
             var classInfor = await ClassModel.findOneAndUpdate({ _id: req.body.classID, 'studentID.ID': req.body.studentId }, {
-                    $set: {
-                        "studentID.$.grade": req.body.grade,
-                        "studentID.$.feedBackContent": req.body.comment
-                    }
-                })
+                $set: {
+                    "studentID.$.grade": req.body.grade,
+                    "studentID.$.feedBackContent": req.body.comment
+                }
+            })
+            if (req.body.grade != "Restudy") {
                 //cập nhật thông tin về tiến độ của học sinh trong bảng thông tin cá nhân
-            var status = "Pass"
-            await AccountModel.updateOne({ _id: req.body.studentId }, {
+                var status = "Pass"
+                await AccountModel.updateOne({ _id: req.body.studentId }, {
+                        "$set": { "progess.$[progess].stageClass.$[stageClass].status": status }
+                    }, { "arrayFilters": [{ "progess.stage": classInfor.stage }, { "stageClass.classID": req.body.classID }] })
+                    //lấy tiến độ học tập của học sinh từ bảng thông tin cá nhân
+                var studentProgress
+                var progess = await AccountModel.findOne({ _id: req.body.studentId }, { progess: 1, aim: 1, email: 1, username: 1 })
+                    //lấy số lượng pass các khóa học để so sánh với số lượng class trong giai đoạn. == thì đã hoàn thành hết các lớp trong giai đoạn đó và sẽ tiến hành chuyển tiépe giai đoạn 
+                var Passed = 0
+                progess.progess.forEach((e, index) => {
+                        if (e.stage == classInfor.stage) {
+                            studentProgress = e.stageClass
+                            e.stageClass.forEach((check, index) => {
+                                if (check.status == "Pass") {
+                                    Passed++
+                                }
+                            })
+                        }
+                    })
+                    //lấy lộ trình mà học sinh đang theo học để xem xét chuyển giai đoạn
+                var route = await studyRouteModel.findOne({ routeName: classInfor.routeName }, { routeSchedual: 1 })
+                var indexOfNextClass
+                var routeClass
+                route.routeSchedual.forEach((e, index) => {
+                        if (e.stage == classInfor.stage) {
+                            routeClass = e.routeabcd
+                            indexOfNextClass = index + 1
+                        }
+                    })
+                    //check xem học sinh đã hoàn thành các lớp của giai đoạn hiện tại chưa
+                if (Passed == routeClass.length + 1) {
+                    //kiểm tra xem lộ trình học của học sinh đã kết thúc chưa. Check theo aim mà học sinh đã đăng ký.
+                    if (classInfor.stage == progess.aim) {
+                        var content = progess.username + " đã hoàn thành khóa học đăng ký: Lộ trình: " + classInfor.routeName + ".  Giai đoạn: " + progess.aim + ". Vui lòng đến trung tâm để xác thực và trao chứng chỉ."
+                        var mainOptions = {
+                            from: 'fptedunotification@gmail.com',
+                            to: progess.email,
+                            subject: 'Notification',
+                            text: content
+                        }
+                        await transporter.sendMail(mainOptions)
+                        res.json({ msg: 'success' });
+                    } else {
+                        // chuyển giai đoạn tiếp theo
+                        var nextStage = route.routeSchedual[indexOfNextClass].stage
+                        await AccountModel.findOneAndUpdate({ _id: req.body.studentId }, { $push: { progess: { stage: nextStage, stageClass: [] } } })
+                        await AccountModel.findOneAndUpdate({ _id: req.body.studentId }, { stage: nextStage })
+                        res.json({ msg: 'success' });
+                    }
+                } else {
+                    res.json({ msg: 'success' });
+                }
+            } else {
+                //cập nhật thông tin về tiến độ của học sinh trong bảng thông tin cá nhân nếu học sinh fail 
+                var status = "Fail"
+                await AccountModel.updateOne({ _id: req.body.studentId }, {
                     "$set": { "progess.$[progess].stageClass.$[stageClass].status": status }
-                }, { "arrayFilters": [{ "progess.stage": classInfor.stage }, { "stageClass.name": classInfor.subject }] })
-                //lấy tiến độ học tập của học sinh từ bảng thông tin cá nhân
-            var studentProgress
-            var progess = await AccountModel.findOne({ _id: req.body.studentId }, { progess: 1 })
-                //lấy số lượng pass các khóa học để so sánh với số lượng class trong giai đoạn. == thì đã hoàn thành hết các lớp trong giai đoạn đó và sẽ tiến hành chuyển tiépe giai đoạn 
-            var Passed = 0
-            progess.progess.forEach((e, index) => {
-                    if (e.stage == classInfor.stage) {
-                        studentProgress = e.stageClass
-                        e.stageClass.forEach((check, index) => {
-                            if (check.status == "Pass") {
-                                Passed++
-                            }
-                        })
-                    }
-                })
-                //lấy lộ trình mà học sinh đang theo học để xem xét chuyển giai đoạn
-            var route = await studyRouteModel.findOne({ routeName: classInfor.routeName }, { routeSchedual: 1 })
-            var indexOfNextClass
-            var routeClass
-            route.routeSchedual.forEach((e, index) => {
-                    if (e.stage == classInfor.stage) {
-                        routeClass = e.routeabcd
-                        indexOfNextClass = index + 1
-                    }
-                })
-                //giai đoạn tiếp theo
-            var nextStage = route.routeSchedual[indexOfNextClass].stage
-                //check xem học sinh đã hoàn thành các lớp của giai đoạn hiện tại chưa
-            if (Passed == routeClass.length) {
-                await AccountModel.findOneAndUpdate({ _id: req.body.studentId }, { $push: { progess: { stage: nextStage, stageClass: [] } } })
-                await AccountModel.findOneAndUpdate({ _id: req.body.studentId }, { stage: nextStage })
-                console.log("lên level")
+                }, { "arrayFilters": [{ "progess.stage": classInfor.stage }, { "stageClass.classID": req.body.classID }] })
                 res.json({ msg: 'success' });
             }
-            if (Passed != routeClass.length) res.json({ msg: 'success' });
-
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });

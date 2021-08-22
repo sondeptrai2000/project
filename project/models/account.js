@@ -34,7 +34,7 @@ const AccountSchema = new Schema({
     }],
     progess: [{
         stage: String,
-        stageClass: [{ name: String, status: String }]
+        stageClass: [{ classID: String, name: String, status: String }]
     }],
     sex: String,
     phone: String,
