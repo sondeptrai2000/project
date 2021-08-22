@@ -334,9 +334,17 @@ function search(email) {
                     $(".seacherInfor").append("<img src='" + data.avatar + "'style='height:100px;width:100px;'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
                     $(".seacherInfor").append("<h1>Tình trạng học tập</h1>")
                     $(".seacherInfor").append("<br> Route: " + data.routeName + "<br> Current level: " + data.stage + "<br> Aim : " + data.aim)
+                    $(".seacherInfor").append("<h2>Tiến độ học tập</h2>")
+                    var progress = data.progess
+                    progress.forEach((e) => {
+                        $(".seacherInfor").append("<h1>Stage: " + e.stage + "</h1><br>")
+                        e.stageClass.forEach((e) => {
+                            if (e.classID != "") $(".seacherInfor").append(" Name: " + e.name + " Status: " + e.status + " <button onclick=copyID('" + e.classID + "')> Lấy ClassID</button><br>")
+                        })
+                    })
                     $(".seacherInfor").append("<h2>Đang hoạt động trong lớp học</h2>")
                     currentClass.forEach((e) => {
-                        $(".seacherInfor").append("<br> ClassID: " + e._id + "<br> Class Name: " + e.stage + "<br> Subject : " + e.subject + "<br> Teacher : " + e.teacherID.username + "<br> Teacher phone : " + e.teacherID.phone + "<br> Teacher email : " + e.teacherID.email)
+                        $(".seacherInfor").append("<br>Class Name: " + e.stage + "<br> Subject : " + e.subject + "<br> Teacher : " + e.teacherID.username + "<br> Teacher phone : " + e.teacherID.phone + "<br> Teacher email : " + e.teacherID.email + "<button onclick=copyID('" + e._id + "')> Lấy ClassID</button>")
                     })
                     $(".seacherInfor").append("<h1>Thông tin phụ huynh</h1>")
                     $(".seacherInfor").append("<br> Name: " + relationship.username + "<br> Phone: " + relationship.phone + "<br> Email : " + relationship.email)
@@ -352,4 +360,10 @@ function search(email) {
             alert('server error');
         }
     })
+}
+
+async function copyID(id) {
+    console.log(id)
+    await navigator.clipboard.writeText(id);
+
 }
