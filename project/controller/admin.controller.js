@@ -105,6 +105,11 @@ class adminController {
         // var aa = await AccountModel.findOneAndUpdate({ _id: "611fedbccbeab90764e5b547", progess: { $elemMatch: { stage: "zxc", "stageClass.name": "route1" } } }, { $set: { "stageClass.status": "Pass" } })
 
 
+        // await AccountModel.updateOne({ _id: req.body.studentId, "progess.stage": "zxc" }, {
+        //     $pull: { "progess.$.stageClass": { classID: "6122497e6ee4542d90a3df0b" } }
+        // })
+
+
         res.render('admin/adminHome')
     }
 
@@ -120,11 +125,7 @@ class adminController {
 
     async addRoom(req, res) {
         try {
-            await assignRoomAndTimeModel.updateMany({}, {
-                $push: {
-                    room: { $each: req.body.roomName }
-                }
-            })
+            await assignRoomAndTimeModel.updateMany({}, { $push: { room: { $each: req.body.roomName } } })
             res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)
@@ -299,11 +300,7 @@ class adminController {
 
     async docreateRoute(req, res) {
         try {
-            await studyRouteModel.create({
-                routeName: req.body.routeName,
-                description: req.body.description,
-                routeSchedual: req.body.schedule,
-            })
+            await studyRouteModel.create({ routeName: req.body.routeName, description: req.body.description, routeSchedual: req.body.schedule, })
             res.json({ msg: 'success' })
         } catch (e) {
             console.log(e)
@@ -311,6 +308,27 @@ class adminController {
         }
     }
 
+
+    async searchRoute(req, res) {
+        // try {
+        //     console.log(req.query.name)
+        //     await studyRouteModel.find({ $text: { $search: "coffee" } } { routeName: { $regex: "/^doanh/" } })
+        //     res.json({ msg: 'success' })
+        // } catch (e) {
+        //     console.log(e)
+        //     res.json({ msg: 'error' });
+        // }
+    }
+
+    async doUpdateRoute(req, res) {
+        try {
+            await studyRouteModel.findOneAndUpdate({ _id: req.body.id }, { routeName: req.body.routeName, description: req.body.description, routeSchedual: req.body.schedule, })
+            res.json({ msg: 'success' })
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
 
     async deleteRoute(req, res) {
         try {
@@ -454,9 +472,8 @@ class adminController {
                 }
             })
             for (var i = 0; i < req.body.time.length; i++) {
-                await assignRoomAndTimeModel.updateOne({ dayOfWeek: '0' + req.body.buoihoc[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, {
-                    $set: { "room.$.status": "Ok" }
-                })
+                var dayOfWeek = '0' + req.body.buoihoc[i]
+                await assignRoomAndTimeModel.updateOne({ dayOfWeek: dayOfWeek, room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, { $set: { "room.$.status": "Ok" } })
             }
             res.json({ msg: 'success' });
         } catch (error) {
@@ -469,7 +486,6 @@ class adminController {
         try {
             var classInfor = await ClassModel.find({}).populate('studentID').populate('teacherID').lean()
             res.render('admin/allClassLevel.hbs', { classInfor })
-
         } catch (error) {
             console.log(err)
             res.json({ msg: 'error' });
@@ -481,7 +497,6 @@ class adminController {
             var _id = req.query.abc
             var selectedClassInfor = await ClassModel.find({ _id: _id }).populate('studentID').populate('teacherID').lean()
             res.json({ msg: 'success', data: selectedClassInfor });
-
         } catch (error) {
             console.log(err)
             res.json({ msg: 'error' });

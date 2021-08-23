@@ -31,7 +31,9 @@ adminRouter.post('/doeditAccount', adminController.doeditAccount)
 adminRouter.get('/createRoute', adminController.createRoute)
 adminRouter.get('/lol', adminController.lol)
 adminRouter.post('/docreateRoute', adminController.docreateRoute)
+adminRouter.post('/doUpdateRoute', adminController.doUpdateRoute)
 adminRouter.delete('/deleteRoute', adminController.deleteRoute)
+adminRouter.get('/searchRoute', adminController.searchRoute)
 
 //liên quan đến lớp học
 adminRouter.get('/createClass', adminController.createClass)

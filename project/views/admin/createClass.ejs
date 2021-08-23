@@ -472,8 +472,6 @@
         $("#" + classID + " td").each(function() {
             infor4.push($(this).text())
         })
-        var checkClassID = classID
-        var checksubject = subject
         var condition = {
             role: 'student',
             routeName: infor4[1].trim(),
@@ -488,12 +486,20 @@
             },
             success: function(response) {
                 if (response.msg == 'success') {
+                    console.log(response.data)
                     $('.taskrow111').html('');
-                    $.each(response.data, function(index, data) {
-                        if (data.classID.includes(checkClassID) == true) {} else if ((data.classID.includes(checkClassID) == false) && (data.subject.includes(checksubject) == false)) {
-                            $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.email + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td><input type='checkbox' class='hobby' value='" + data._id + "' /></td><td>" + "<button class='del' value='" + data._id + "'>View</button>" + "</td></tr>");
-                        }
+                    $.each(response.data, function(index, student) {
+                        var check = false
+                        $.each(student.progess, function(index, progess) {
+                            if (progess.stage == student.stage) {
+                                $.each(progess.stageClass, function(index, stageClass) {
+                                    if (stageClass.classID == classID || stageClass.subject == subject) check = true
+                                });
+                            }
+                        });
+                        if (check == false) $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby1' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
                     });
+
                     $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "','" + subject + "')>Add to Class</button>");
                     $('.studentTableOut').show();
                 }
@@ -508,23 +514,16 @@
     //thêm học sinh vaof 1 lớp
     function doAddToClass(classID, subject) {
         var classID = classID
-
+        var studentlistcl = [];
         var studentlist = [];
-        $('.hobby').each(function() {
+        $('input[name="hobby1"]').each(function() {
             if ($(this).is(":checked")) {
                 studentlist.push({
                     'ID': $(this).attr('value')
                 });
-            }
-        });
-
-        var studentlistcl = [];
-        $('.hobby').each(function() {
-            if ($(this).is(":checked")) {
                 studentlistcl.push($(this).attr('value'));
             }
         });
-
         $.ajax({
             url: '/teacher/doaddStudentToClass',
             method: 'post',
@@ -869,15 +868,5 @@
         })
     }
 </script>
-<!-- $.each(response.student, function(index, student) {
-    $.each(student.progess, function(index, progess) {
-        if (progess.stage == levelS) {
-            $.each(progess.stageClass, function(index, stageClass) {
-                if (stageClass.name == $("#subject").val()) check = true
-                if (check == false) $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
-            });
-        }
-    });
-}); -->
 
 </html>

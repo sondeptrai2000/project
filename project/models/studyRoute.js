@@ -18,6 +18,5 @@ const studyRoute = new Schema({
 }, {
     collection: 'studyRoute'
 });
-
 var studyRouteModel = mongoose.model('studyRoute', studyRoute);
 module.exports = studyRouteModel

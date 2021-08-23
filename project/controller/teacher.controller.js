@@ -156,7 +156,7 @@ class teacherController {
 
     addStudentToClass(req, res) {
         var condition = req.query.condition
-        AccountModel.find(condition, { avatar: 1, username: 1, subject: 1, routeName: 1, stage: 1, email: 1, classID: 1 }).lean().exec(function(err, data) {
+        AccountModel.find(condition, { avatar: 1, username: 1, subject: 1, routeName: 1, stage: 1, email: 1, classID: 1, progess: 1 }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
@@ -167,17 +167,14 @@ class teacherController {
 
     async doaddStudentToClass(req, res) {
         try {
-            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID, subject: req.body.subject } })
-            await ClassModel.findOneAndUpdate({ _id: req.body.classID }, {
-                $push: {
-                    studentID: {
-                        $each: req.body.studentlist
-                    },
-                    StudentIDoutdoor: {
-                        $each: req.body.studentlist
-                    }
-                }
-            })
+            //lấy dữ liệu của lớp
+            var data = await ClassModel.findOne({ _id: req.body.classID }).lean()
+                //thêm classID vào bảng thông tin của các học sinh
+            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID } })
+                //thêm classID vào bảng thông tin lộ trình của các học sinh ( progess)
+            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl }, "progess.stage": data.stage }, { $push: { "progess.$.stageClass": { classID: data._id, name: data.subject, status: "studying" } } })
+                //Thêm học sinh vào danh sách học sinh trong bảng thông tin lớp
+            await ClassModel.findOneAndUpdate({ _id: req.body.classID }, { $push: { studentID: { $each: req.body.studentlist }, } })
             res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)
@@ -187,17 +184,15 @@ class teacherController {
 
     async doremoveStudentToClass(req, res) {
         try {
-            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID, subject: req.body.subject } })
-            await ClassModel.updateMany({ _id: req.body.classID }, {
-                $pull: {
-                    studentID: {
-                        ID: { $in: req.body.studentlistcl }
-                    },
-                    StudentIDoutdoor: {
-                        ID: { $in: req.body.studentlistcl }
-                    }
-                }
-            })
+            //xóa classID vào bảng thông tin của các học sinh
+            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID } })
+                //xóa classID vào bảng thông tin lộ trình của các học sinh ( progess)
+
+            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl }, "progess.stageClass.classID": req.body.classID }, {
+                    $pull: { "progess.$.stageClass": { classID: req.body.classID } }
+                })
+                //xóa học sinh vào danh sách học sinh trong bảng thông tin lớp
+            await ClassModel.findOneAndUpdate({ _id: req.body.classID }, { $pull: { studentID: { ID: { $in: req.body.studentlistcl } } } })
             res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)

@@ -2,11 +2,15 @@
     box-sizing: border-box
 }
 
-#addStage div {
+#addStage div,
+#viewStage div,
+#addStageUpdate div {
     margin-bottom: 10px;
 }
 
-#addStage div li {
+#addStage div li,
+#addStageUpdate div li,
+#viewStage div li {
     margin-top: 5px;
     margin-bottom: 5px;
 }
@@ -74,7 +78,8 @@ header a:hover {
 }
 
 .updateRouteOut,
-.createRouteOut {
+.createRouteOut,
+.viewRouteOut {
     width: 100%;
     height: 100%;
     padding: 5%;
@@ -90,7 +95,8 @@ header a:hover {
 }
 
 .createRoute,
-.updateRoute {
+.updateRoute,
+.viewRoute {
     background-color: aquamarine;
     height: 100%;
     width: 100%;
