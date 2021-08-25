@@ -2,7 +2,48 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 var jwt = require('jsonwebtoken');
+const fs = require("fs")
 
+var path = require('path');
+
+var bcrypt = require('bcrypt');
+const saltRounds = 10;
+const { google } = require("googleapis")
+
+//set up kết nối tới ggdrive
+const KEYFILEPATH = path.join(__dirname, 'service_account.json')
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
+
+const auth = new google.auth.GoogleAuth(
+    opts = {
+        keyFile: KEYFILEPATH,
+        scopes: SCOPES
+    }
+);
+const driveService = google.drive(options = { version: 'v3', auth });
+
+
+async function uploadFile(name, rootID, path) {
+    var id = []
+    id.push(rootID)
+    var responese = await driveService.files.create(param = {
+        resource: {
+            "name": name,
+            "parents": id
+        },
+        media: {
+            body: fs.createReadStream(path = path)
+        },
+    })
+    await driveService.permissions.create({
+        fileId: responese.data.id,
+        requestBody: {
+            role: 'reader',
+            type: 'anyone',
+        },
+    });
+    return responese.data.id
+}
 class studentController {
     studentHome(req, res) {
         res.json('Trang chủ student')
@@ -63,10 +104,42 @@ class studentController {
         })
     }
 
-    learningProgress(req, res) {
-        res.json('Trang thông tin tiến độ học tập của con')
+    async doeditAccount(req, res) {
+        try {
+            var check = await AccountModel.find({ email: req.body.formData1.email }).lean()
+            var checkphone = await AccountModel.find({ phone: req.body.formData1.phone }).lean()
+            if (check.length != 1) {
+                res.json({ msg: 'Account already exists' })
+            } else if (checkphone.length != 1) {
+                res.json({ msg: 'Phone already exists' })
+            } else {
+                var password = req.body.password
+                var formData1 = req.body.formData1
+                if (password.length != 0) {
+                    const salt = bcrypt.genSaltSync(saltRounds);
+                    const hash = bcrypt.hashSync(password, salt);
+                    formData1["password"] = hash
+                }
+                if (req.body.file != "none") {
+                    var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
+                    var image = req.body.file;
+                    var data = image.split(',')[1];
+                    fs.writeFileSync(path, data, { encoding: 'base64' });
+                    var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
+                    if (!response) res.json({ msg: 'error' });
+                    formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
+                    var oldImg = req.body.oldLink
+                    oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
+                    await driveService.files.delete({ fileId: oldImg })
+                }
+                await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
+                res.json({ msg: 'success', data: data });
+            }
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
-
     viewschedule(req, res) {
         res.render('student/schedule')
     }

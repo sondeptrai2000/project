@@ -3,6 +3,8 @@
 
 <head>
     <script src="/jquery/jquery.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+
 </head>
 
 <body>
@@ -14,8 +16,8 @@
 <div class="content" style="text-align: center; display:none">
     <h1>Student profile</h1>
     <table border="solid">
-        <tr>
-            <th onclick="closeProfile()">Close</th>
+        <tr> <input id='idProfile' type="hidden"></input>
+            <th onclick='$(".content").hide();'>Close</th>
         </tr>
         <tr>
             <th>Avatar</th>
@@ -27,9 +29,13 @@
 
         </tr>
         <tr>
+            <th>Gender</th>
+            <td id='genderProfile'></td>
+
+        </tr>
+        <tr>
             <th>Email</th>
             <td id='emailProfile'></td>
-
         </tr>
         <tr>
             <th>Route </th>
@@ -38,10 +44,6 @@
         <tr>
             <th>Stage</th>
             <td id='stageProfile'></td>
-        </tr>
-        <tr>
-            <th>classID</th>
-            <td id='classIDProfile'></td>
         </tr>
         <tr>
             <th>Phone</th>
@@ -56,12 +58,51 @@
             <td id='addressProfile'></td>
         </tr>
         <tr>
-            <th><button>cập nhật thông tin cá nhân</button></th>
+            <th><button onclick="updateProfile()">Update</button></th>
         </tr>
     </table>
+
+
+    <div class="content1" style="text-align: center; display:none">
+        <div>Teacher profile
+            <button onclick="$('.content1').fadeOut(1000);" style="float: ;"><i
+                    class="fas fa-window-close"></i></button>
+        </div>
+        <div>
+            Old avatar: <img id='avatarOldProfile' style='max-width:100px;max-height:100px'></img><br>
+            <label>Update Avatar</label><br>
+            Select images:<input type='file' id='myFile'><br>
+            <img id='output' style='height:3cm; width:3cm'><br>
+            Full Name: <input id='usernameUpdate'></input><br>
+            New password: <input id='newPassWord'></input><br>
+            Gender: <input id='genderUpdate'></input><br>
+            Email: <input id='emailUpdate'></input><br>
+            Phone: <input id='phoneUpdate'></input><br>
+            BirthDay: <input id='birthdayUpdate'></input><br>
+            Address: <input id='addressUpdate'></input><br>
+            <p><button onclick="doUpdateProfile()">Update</button></p>
+        </div>
+    </div>
 </div>
 </body>
 <script>
+    var fileData;
+    var myFile;
+
+    $(document).ready(function () {
+        $('#myFile').on('change', function () {
+            var filereader = new FileReader();
+            filereader.onload = function (event) {
+                fileData = event.target.result;
+                var dataURL = filereader.result;
+                $("#output").attr("src", dataURL);
+            };
+            myFile = $('#myFile').prop('files')[0];
+            console.log('myfile', myFile)
+            filereader.readAsDataURL(myFile)
+        });
+    });
+
     function studentProfile() {
         $.ajax({
             url: '/teacher/teacherProfile',
@@ -71,15 +112,16 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     $(".content").show();
-                    $("#avatarProfile").html("<img style='max-width:150px;max-height:200px' src='"+response.data.avatar+"'>");
+                    $("#idProfile").val(response.data._id);
+                    $("#avatarProfile").html("<img style='max-width:150px;max-height:200px' src='" + response.data.avatar + "'>");
                     $("#usernameProfile").html(response.data.username);
                     $("#emailProfile").html(response.data.email);
                     $("#routeProfile").html(response.data.routeName);
                     $("#stageProfile").html(response.data.stage);
-                    $("#classIDProfile").html(response.data.classID);
                     $("#phoneProfile").html(response.data.phone);
                     $("#birthdayProfile").html(response.data.birthday);
                     $("#addressProfile").html(response.data.address);
+                    $("#genderProfile").html(response.data.sex);
                 }
             },
             error: function (response) {
@@ -87,9 +129,65 @@
             }
         })
     }
-    function closeProfile() {
-        $(".content").hide();
+
+    function updateProfile() {
+        $("#avatarProfile img").attr('src');
+        $("#avatarOldProfile").attr("src", $('#avatarProfile img').attr('src'));
+        $("#usernameUpdate").val($("#usernameProfile").text());
+        $("#genderUpdate").val($("#genderProfile").text());
+        $("#emailUpdate").val($("#emailProfile").text());
+        $("#phoneUpdate").val($("#phoneProfile").text());
+        $("#birthdayUpdate").val($("#birthdayProfile").text());
+        $("#addressUpdate").val($("#addressProfile").text());
+        $(".content1").toggle(2000);
     }
+
+
+    function doUpdateProfile() {
+        if (!fileData) {
+            fileData = "none"
+        }
+        var password = $("#newPassWord").val()
+        var formData1 = {
+            sex: $("#genderUpdate").val(),
+            username: $("#usernameUpdate").val(),
+            email: $("#emailUpdate").val(),
+            phone: $("#phoneUpdate").val(),
+            address: $("#addressUpdate").val(),
+            birthday: $("#birthdayUpdate").val(),
+            avatar: $('#avatarOldProfile').attr('src'),
+        };        
+        $.ajax({
+            url: '/student/doeditAccount',
+            method: 'post',
+            dataType: 'json',
+            data: {
+                id: $("#idProfile").val(),
+                password: password,
+                formData1: formData1,
+                file: fileData,
+                oldLink: $('#avatarOldProfile').attr('src'),
+            },
+            success: function (response) {
+                if (response.msg == 'success') {
+                    studentProfile();
+                }
+                if (response.msg == 'Account already exists') {
+                    alert("Account already exists")
+                }
+                 if (response.msg == 'Phone already exists') {
+                    alert("Phone already exists")
+                }
+                 if (response.msg == 'error') {
+                    alert("error")
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+
 </script>
 
 </html>

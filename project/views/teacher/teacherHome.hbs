@@ -53,34 +53,30 @@
             font-size: 30px;
         }
 
-        .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            max-width: 300px;
-            margin: auto;
-            text-align: center;
-            font-family: arial;
-        }
-
-        .title {
-            color: grey;
-            font-size: 18px;
+        .content {
+            width: 50%;
         }
 
         .content img {
-            height:150px;
+            height: 100px;
             border-radius: 100%;
         }
 
-        .content button {
+        .content :nth-child(1) div {
             border: none;
-            outline: 0;
-            display: inline-block;
             padding: 8px;
-            color: white;
-            background-color: #000;
-            text-align: center;
-            cursor: pointer;
+            background-color: rgb(67, 55, 55);
+            text-align: right;
             width: 100%;
+            font-size: 18px;
+        }
+
+
+        .content :nth-child(1) button {
+
+            padding: 8px;
+            text-align: right;
+            cursor: pointer;
             font-size: 18px;
         }
 
@@ -111,39 +107,44 @@
     </div>
 </body>
 <div class="content" style="text-align: center; display:none">
-    <h1>Teacher profile</h1>
-    <table border="solid">
-        <div class="card">
-            <button onclick="$('.content').fadeOut(1000);"><i class="fas fa-window-close"></i></button><img
-                id='avatarProfile' src="" >
-            <h1 id='usernameProfile'></h1>
-            <p class="title" id='emailProfile'></p>
-            <p id='phoneProfile'></p>
-            <p id='birthdayProfile'></p>
-            <p id='addressProfile'></p>
-            <p><button onclick="location.href='/coordinator/update{{_id}}';">Update</button></p>
-        </div>
-    </table>
-</div>
-
-<div id="loading" style="display:none">
-    <img src="/images/loadingWalking.gif" alt="Loading..." />
-</div>
-
-
-
-<div id="viewProposal"></div>
-<div class="allEvent" style="display: none;">
-    <div id="table1">
+    <div>Teacher profile
+        <button onclick="$('.content').fadeOut(1000);" style="float: ;"><i class="fas fa-window-close"></i></button>
+    </div>
+    <div>
+        <img id='avatarProfile' src="">
+        <p id='idProfile' style="display:none"></p>
+        <p id='usernameProfile'></p>
+        <p id='genderProfile'></p>
+        <p id='emailProfile'></p>
+        <p id='phoneProfile'></p>
+        <p id='birthdayProfile'></p>
+        <p id='addressProfile'></p>
+        <p><button onclick="updateProfile()">Update</button></p>
     </div>
 </div>
 
 
-<div class="uploadEventProposal" style="display:none;">
-    <p id="uploadEventProposalID"></p>
-    <input type="file" id='myUploadProposal'>
-    <button onclick="doUploadEventProposal()">Submit</button>
-    <button onclick="doUpdateEventProposal()">Submit</button>
+<div class="content1" style="text-align: center; display:none">
+    <div>Teacher profile
+        <button onclick="$('.content1').fadeOut(1000);" style="float: ;"><i class="fas fa-window-close"></i></button>
+    </div>
+    <div>
+        Old avatar: <img id='avatarOldProfile' style='max-width:100px;max-height:100px'></img><br>
+
+
+        <label>Update Avatar</label><br>
+        Select images:<input type='file' id='myFile'><br>
+        <img id='output' style='height:3cm; width:3cm'><br>
+        <input id='idProfileUpdate' style="display:none"></input>
+        Full Name: <input id='usernameUpdate'></input><br>
+        New password: <input id='newPassWord'></input><br>
+        Gender: <input id='genderUpdate'></input><br>
+        Email: <input id='emailUpdate'></input><br>
+        Phone: <input id='phoneUpdate'></input><br>
+        BirthDay: <input id='birthdayUpdate'></input><br>
+        Address: <input id='addressUpdate'></input><br>
+        <p><button onclick="doUpdateProfile()">Update</button></p>
+    </div>
 </div>
 <script src=" /teacherHome.js"></script>
 

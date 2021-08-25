@@ -11,9 +11,10 @@ const { google } = require("googleapis")
 var path = require('path');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 const { data } = require('jquery');
 const { inflate } = require('zlib');
-const saltRounds = 10;
 const nodemailer = require('nodemailer');
 
 
@@ -393,7 +394,7 @@ class adminController {
                 fs.writeFileSync(path, data, { encoding: 'base64' });
                 var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
                 if (!response) res.json({ msg: 'error' });
-                update["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
+                formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
                 var oldImg = req.body.oldLink
                 oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
                 await driveService.files.delete({ fileId: oldImg })

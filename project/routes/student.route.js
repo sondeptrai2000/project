@@ -11,10 +11,11 @@ studentRouter.get('/', studentController.studentHome)
 //liên quan đến  tài khoản
 studentRouter.get('/studentProfile', studentController.studentProfile)
 studentRouter.get('/getTeacherProfile', studentController.getTeacherProfile)
+studentRouter.post('/doeditAccount', studentController.doeditAccount)
+
 
 //liên quan đến lớp học
 studentRouter.get('/allClass', studentController.allClass)
-studentRouter.get('/learningProgress', studentController.learningProgress)
 studentRouter.get('/viewschedule', studentController.viewschedule)
 
 

@@ -6,8 +6,9 @@ var teacherController = require('../controller/teacher.controller')
 
 teacherRouter.get('/', teacherController.teacherHome)
 
-//tạo tài khoản
+//Account
 teacherRouter.get('/teacherProfile', teacherController.teacherProfile)
+teacherRouter.post('/doeditAccount', teacherController.doeditAccount)
 
 //liên quan đến lớp học
 teacherRouter.get('/allClass', teacherController.allClass)
