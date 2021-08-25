@@ -85,29 +85,6 @@ class adminController {
         //         console.log(" ok 2 ")
         //     }
         // })
-        // ClassModel.findOne({ teacherID: "60e56f421a272228e44b46d0", classStatus: "Processing" }, { schedule: { $elemMatch: { day: "03" } } },
-        //         function(err, data) {
-        //             if (err) {
-        //                 console.log("k ok")
-        //             } else {
-        //                 console.log(data.schedule[0].time)
-        //                 res.json(data)
-        //             }
-        //         })
-        // ClassModel.find({ _id: "611b5f3af902832da4f97ed0" }, { "studentID.ID": 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean().exec(function(err, data) {
-        //         res.json(data[0].studentID)
-        //         var listEmail = ""
-        //         data[0].studentID.forEach(element => {
-        //             listEmail = listEmail + element.ID.email + ', '
-        //         })
-        //         console.log(listEmail.slice(0, -2))
-        //     })
-        // var aa = await AccountModel.findOneAndUpdate({ _id: "611fedbccbeab90764e5b547", progess: { $elemMatch: { stage: "zxc", "stageClass.name": "route1" } } }, { $set: { "stageClass.status": "Pass" } })
-
-
-        // await AccountModel.updateOne({ _id: req.body.studentId, "progess.stage": "zxc" }, {
-        //     $pull: { "progess.$.stageClass": { classID: "6122497e6ee4542d90a3df0b" } }
-        // })
 
 
         res.render('admin/adminHome')

@@ -39,17 +39,37 @@
       <input type="password" id="password" placeholder="Password">
       <div>
         <button onclick="logIn()">Log In</button>
-        <button onclick="$('#loginForm').fadeOut(1000);"><i class="fas fa-times fa-lg"></i></button>
+        <button onclick="$('#forGotPassOut').fadeIn(1000);">Quên mật khẩu?</button>
       </div>
     </div>
   </div>
+
+
+  <div id='forGotPassOut' border="solid" style="display: none;">
+    <div id='forGotPassContent'>
+      <p>Điền thông tin tại đây</p>
+      <hr style="  box-shadow: 0 10px 10px -10px #8c8c8c inset;">
+      <input type="text" id='emailForgot' placeholder="Your email">
+      <input type='text' id='codeForgot' placeholder="Enter code">
+      <button onclick="getCode()">Get code through email</button>
+      <input type='text' id='newPassForgot' placeholder="New password">
+      <input type='text' id='confirmPassForgot' placeholder="Confirm password">
+      <div>
+        <button onclick="newPass()">Submit</button>
+        <button onclick="$('#forGotPassOut').fadeOut(1000);">Close</button>
+
+      </div>
+    </div>
+  </div>
+
   <header>
     <ul style="float:left;font-family:cursive;">
       <li style="width:200px"><i class="fas fa-graduation-cap" style="font-size:60px"></i>Sown English</li>
     </ul>
     <ul>
-      <li><a href="#">Home page</a></li>      
-      <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutCourse').offset().top-100)},1000)">About Course</a></li>
+      <li><a href="#">Home page</a></li>
+      <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutCourse').offset().top-100)},1000)">About Course</a>
+      </li>
       <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutUs').offset().top-100)},1000)">About Us</a></li>
       <li><a onclick="$('#loginForm').fadeIn(1000);">Log In</a></li>
     </ul>
@@ -64,16 +84,17 @@
   <div id='aboutUs'>
     <div>
       <img style="max-width: 250px;max-height: 250px;position:inherit;"
-        src="http://amadosoftwaresolutions.com/wp-content/uploads/2018/01/about-us1.png"> Văn bản là một loại hình phương tiện để ghi nhận, lưu giữ và truyền đạt các thông tin từ chủ thể này
-        sang chủ thể khác bằng ký hiệu gọi là chữ viết. Nó gồm tập hợp các câu có tính trọn vẹn về nội dung, hoàn chỉnh
-        về
-        hình thức, có tính liên kết chặt chẽ và hướng tới một mục tiêu giao tiếp nhất định.Văn bản là một loại hình
-        phương
-        tiện để ghi nhận, lưu giữ và truyền đạt các thông tin từ chủ thể này
-        sang chủ thể khác bằng ký hiệu gọi là chữ viết. Nó gồm tập hợp các câu có tính trọn vẹn về nội dung, hoàn chỉnh
-        về
-      
-        <p>Bạn có thể xem chi tiết tại video bên cạnh =></p>
+        src="http://amadosoftwaresolutions.com/wp-content/uploads/2018/01/about-us1.png"> Văn bản là một loại hình
+      phương tiện để ghi nhận, lưu giữ và truyền đạt các thông tin từ chủ thể này
+      sang chủ thể khác bằng ký hiệu gọi là chữ viết. Nó gồm tập hợp các câu có tính trọn vẹn về nội dung, hoàn chỉnh
+      về
+      hình thức, có tính liên kết chặt chẽ và hướng tới một mục tiêu giao tiếp nhất định.Văn bản là một loại hình
+      phương
+      tiện để ghi nhận, lưu giữ và truyền đạt các thông tin từ chủ thể này
+      sang chủ thể khác bằng ký hiệu gọi là chữ viết. Nó gồm tập hợp các câu có tính trọn vẹn về nội dung, hoàn chỉnh
+      về
+
+      <p>Bạn có thể xem chi tiết tại video bên cạnh =></p>
     </div>
     <div>
       <iframe src="https://www.youtube.com/embed/KMxfz_OHckc" title="YouTube video player" frameborder="0"
@@ -111,6 +132,56 @@
     }
   });
 
+
+  function getCode() {
+    console.log($("#emailForgot").val())
+    $.ajax({
+      url: '/account/getCode',
+      method: 'get',
+      data: { email: $("#emailForgot").val() },
+      success: function (response) {
+        if (response.msg == 'success') {
+          alert("code Sent")
+        }
+
+        if (response.msg == 'email not found') {
+          invalidCode
+          alert('email not found');
+        }
+      },
+      error: function (response) {
+        alert('server error');
+      }
+    })
+  }
+
+  function newPass() {
+    if ($("#newPassForgot").val() != $("#confirmPassForgot").val()) {
+      alert('new password and confirm password is not matched!');
+    } else {
+      var formData = {
+        email: $("#emailForgot").val(),
+        newPass: $("#newPassForgot").val(),
+        codeForgot: $("#codeForgot").val(),
+      }
+      $.ajax({
+        url: '/account/confirmPass',
+        method: 'post',
+        //      data:formData,
+        success: function (response) {
+          if (response.msg == 'success') {
+            alert("success")
+          }
+          if (response.msg == 'invalidCode') {
+            alert('Invalid Code! Try again.');
+          }
+        },
+        error: function (response) {
+          alert('server error');
+        }
+      })
+    }
+  }
 
   function logIn() {
     var formData = {
@@ -164,39 +235,6 @@
         alert('server error');
       }
     })
-  }
-
-  //khai báo biến slideIndex đại diện cho slide hiện tại
-  var slideIndex;
-  // KHai bào hàm hiển thị slide
-  function showSlides() {
-    var i;
-    var slides = document.getElementsByClassName("mySlides");
-    var dots = document.getElementsByClassName("dot");
-    for (i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";
-    }
-    for (i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
-    }
-
-    slides[slideIndex].style.display = "block";
-    dots[slideIndex].className += " active";
-    //chuyển đến slide tiếp theo
-    slideIndex++;
-    //nếu đang ở slide cuối cùng thì chuyển về slide đầu
-    if (slideIndex > slides.length - 1) {
-      slideIndex = 0
-    }
-    //tự động chuyển đổi slide sau 5s
-    setTimeout(showSlides, 5000);
-  }
-  //mặc định hiển thị slide đầu tiên 
-  showSlides(slideIndex = 0);
-
-
-  function currentSlide(n) {
-    showSlides(slideIndex = n);
   }
 </script>
 

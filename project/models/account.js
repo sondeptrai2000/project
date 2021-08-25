@@ -40,6 +40,7 @@ const AccountSchema = new Schema({
     phone: String,
     address: String,
     birthday: String,
+    codeRefresh: String,
 }, {
     collection: 'account'
 });
