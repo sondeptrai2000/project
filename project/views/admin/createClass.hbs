@@ -84,7 +84,7 @@
                     </select>
                 </th>
                 <th>
-                    Available room: <select id="roomUpdate">   </select>
+                    Available room: <select id="roomUpdate"> </select>
                 </th>
                 <th><button onclick='SubmitupdateScheduleForm()'>Submit</button></th>
                 <th><button onclick='$(".updateScheduleFormOut").fadeOut(500);'>close</button></th>
@@ -105,10 +105,14 @@
                 <p>Create class</p>
                 <label>Chọn lộ trình học</label>
                 <select id="routeTypeS" class="routeName" onchange="routeType()">
-                    <% targetxxx.forEach(function(targetxxx) { %>
-            <option value="<%= targetxxx.routeName %>"><%= targetxxx.routeName %></option>
-            <% }); %>
-          </select>
+                    {{#each targetxxx}}
+
+                    <option value="{{routeName}}">
+                        {{routeName}}
+                    </option>
+                    {{/each}}
+
+                </select>
                 <br>
                 <label for="level">Level</label>
                 <select id="levelS" class="stage" onchange="level()"></select>
@@ -144,12 +148,24 @@
                 </table>
                 <br>
                 <label for="topic">Teacher</label>
-                <select id="teacherID">
+                <!-- <select id="teacherID">
       <% teacher.forEach(function(teacher) { %>
         <option value="<%= teacher._id %>" ><%= teacher.email %></option>
         <% }); %>
+    </select><br> -->
+                <select id="teacherID"></select><br>
+                <div id="span1">
+                    <img src="{{avatar}}" style="height: 50px;width: 50px;" onclick="$('#span2').toggle(500)">
+                    <p>{{email}}</p>
+                </div>
+                <div id="span2" style="display: none;height: 200px;overflow: scroll;">
+                    {{#each teacher}}
+                    <img src="{{avatar}}" style="height: 50px;width: 50px;"
+                        onclick="selectedTeacher('{{email}}','{{avatar}}')">
+                    <p>{{email}}</p>
+                    {{/each}}
+                </div>
 
-    </select>
                 <br>
                 <label for="topic">startDate</label>
                 <input type="date" class="startDate" id="startDate">
@@ -167,88 +183,18 @@
         </div>
     </div>
 
-    <div class="updateClassOut" style="display: none;">
-        <div id='updateClass'>
-            <div id="tieude">
-                <p>bảng lộ trình tùy biến</p>
-            </div>
-            <table border="solid">
-                <tbody id="routeTuyBien"> </tbody>
-                <tr id='trss'></tr>
-            </table>
-            <div>
-                <p>Create class</p>
-                <label>Chọn lộ trình học</label>
-                <select id="routeTypeS" class="routeName" onchange="routeType()">
-                    <% targetxxx.forEach(function(targetxxx) { %>
-            <option value="<%= targetxxx.routeName %>"><%= targetxxx.routeName %></option>
-            <% }); %>
-          </select>
-                <br>
-                <label for="level">Level</label>
-                <select id="levelS" class="stage" onchange="level()"></select>
-                <br>
-                <label>Subject</label>
-                <select id="subject" class="subject" onchange="getStudent()"></select>
-                <br>
-                <label for="topic">Class Name</label>
-                <input type="text" class="className">
-                <br>
-                <label for="topic">Description</label>
-                <input type="text" class="description">
-                <br>
-                <label for="topic">Student</label>
-
-                <table id="studentTable" border='solid' style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>
-                                <inputs type="text" placeholder="Search..">
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>avatar</th>
-                            <th>username</th>
-                            <th>routeName</th>
-                            <th>stage</th>
-                            <th>Chose</th>
-                            <th>More information</th>
-                        </tr>
-                    </thead>
-                    <tbody class='taskrow'></tbody>
-                </table>
-                <label for="topic">Teacher</label>
-                <select class="teacherID">
-      <% teacher.forEach(function(teacher) { %>
-        <option value="<%= teacher._id %>" ><%= teacher.username %> </option>
-      <% }); %>
-    </select>
-                <br>
-
-                <label for="topic">startDate</label>
-                <input type="date" class="startDate" id="startDate">
-                <label for="topic">endDate</label>
-                <input type="date" class="endDate" id="endDate">
-                <br>
-                <label for="topic">Số buổi học 1 tuần</label>
-                <input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
-                <br>
-                <div id="datlich"></div>
-                <br>
-                <button onclick="$('.updateClassOut').slideUp(500)"> Close</button>
-                <button type="submit" class="btn5" onclick="abc()">Submit1</button>
-            </div>
-        </div>
-    </div>
+   
     <div>
         <div class="tr">
             <div class="td" onclick="location.href='/admin';"><i class="fas fa-house-user"></i> Trang chủ admin</div>
-            <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i> Create account
+            <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i> Create
+                account
             </div>
             <div class="td" onclick="consultingAll('0')"><i class="fas fa-list-alt"></i> Consulting All</div>
             <div class="td" onclick="location.href='/admin/dashboard';"><i class="fas fa-chart-line"></i> Dashboard
             </div>
-            <div class="td" onclick="location.href='/admin/assignRoomAndTime';"><i class="fas fa-house-user"></i> assignRoomAndTime
+            <div class="td" onclick="location.href='/admin/assignRoomAndTime';"><i class="fas fa-house-user"></i>
+                assignRoomAndTime
             </div>
             <div class="td" onclick="location.href='/admin/createClass';"><i class="fas fa-house-user"></i> createClass
             </div>
@@ -269,43 +215,30 @@
             <th>Student List</th>
             <th>Action</th>
             <th>Status</th>
-            <% classInfor.forEach(function(classInfor) { %>
-                <tr id="<%= classInfor._id %>">
-                    <td>
-                        <%= classInfor.className %>
-                    </td>
-                    <td>
-                        <%= classInfor.routeName %>
-                    </td>
-                    <td>
-                        <%= classInfor.stage %>
-                    </td>
-                    <td>
-                        <%= classInfor.subject %>
-                    </td>
-                    <td>
-                        <%= classInfor.description %>
-                    </td>
-                    <td>
-                        <%= classInfor.startDate %>
-                    </td>
-                    <td>
-                        <%= classInfor.endDate %>
-                    </td>
-
-                    <td><button id="btn1" onclick="sendData('<%= classInfor._id %>','<%= classInfor.subject %>')">List of student</button></td>
-                    <td>
-                        <button onclick="upDateSchedule('<%= classInfor._id %>')">upDate schedule </button>
-                        <button onclick="deleteClass('<%= classInfor._id %>')">delete</button>
-                    </td>
-                    <td>
-                        <%= classInfor.classStatus %>
-                    </td>
-                </tr>
-                <% }); %>
+            {{#each classInfor}}
+            <tr id=" {{_id}}">
+                <td>{{className}}</td>
+                <td>{{routeName}}</td>
+                <td>{{stage}}</td>
+                <td>{{subject}}</td>
+                <td>{{description}}</td>
+                <td>{{startDate}}</td>
+                <td>{{endDate}}</td>
+                <td><button id="btn1" onclick="sendData('{{_id}}','{{subject}}')">List of student</button></td>
+                <td>
+                    <button onclick="upDateSchedule('{{_id}}')">upDate schedule </button>
+                    <button onclick="deleteClass('{{_id}}')">delete</button>
+                </td>
+                <td>{{classStatus}}</td>
+            </tr>
+            {{/each}}
         </table>
 </body>
 <script>
+    function selectedTeacher(email, avatar) {
+        $("#span1").html('<img src="' + avatar + '" style="height: 50px;width: 50px;" onclick=$("#span2").toggle(500)><br>' + email + '<br>')
+        $("#span2").toggle(500)
+    }
     //hiển thị danh sách lịch giảng dạy để admin chọn vào thay đổi lịch làm việc 1 ngày nào đó trong list
     function upDateSchedule(id) {
         var idClass = id
@@ -316,16 +249,16 @@
             data: {
                 id: id
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     $("#attendedList").html($("#attendedList tr:first-child"))
-                    $.each(response.data[0].schedule, function(index, data) {
+                    $.each(response.data[0].schedule, function (index, data) {
                         $("#attendedList").append('<tr id="infor' + data._id + '"><td>' + data.date.split("T00:00:00.000Z")[0] + '</td><td>' + data.day + '</td><td>' + data.room + '</td><td>' + data.time + '</td><td><button  onclick=updateScheduleForm("' + data._id + '","' + idClass + '")>Update</button><input id ="' + data._id + '"type="hidden" value="' + data + '"></td></tr>    ')
                     });
                     $(".attendedListOut").fadeIn(500)
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         });
@@ -353,20 +286,20 @@
                 dayOfWeek: dayOfWeek,
                 time: $('#cahocUpdate').val()
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     $("#roomUpdate").html("")
-                    $.each(response.data, function(index, data) {
-                        $.each(data.room, function(index, room) {
+                    $.each(response.data, function (index, data) {
+                        $.each(data.room, function (index, room) {
                             if (room.time == $('#cahocUpdate').val() && room.status == "None") {
                                 $("#roomUpdate").append('<option value = "' + room.room + '" > ' + room.room + ' </option>')
                             }
                         });
                     });
                 }
-                if (response.msg == 'error') {}
+                if (response.msg == 'error') { }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
@@ -380,7 +313,7 @@
         var old = []
         var scheduleID = $("input[name='updateScheduleID']").val()
 
-        $("#infor" + scheduleID + " td:not(:last-child)").each(function() {
+        $("#infor" + scheduleID + " td:not(:last-child)").each(function () {
             old.push($(this).text().trim())
         })
         var update = {
@@ -400,7 +333,7 @@
                 scheduleID: $("input[name='updateScheduleID']").val(),
                 old: old
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     alert("success")
                 }
@@ -408,7 +341,7 @@
                     alert("error")
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         });
@@ -422,11 +355,11 @@
             data: {
                 id: id
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') alert('success ');
                 if (response.msg == 'error') alert('error ');
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         });
@@ -444,14 +377,14 @@
             data: {
                 abc: _id
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     $(".taskrow").html("")
-                    $.each(response.data, function(index, data) {
+                    $.each(response.data, function (index, data) {
                         if (data.studentID.length == 0) {
                             alert('không có học sinh trong lớp')
                         } else {
-                            $.each(data.studentID, function(index, studentID) {
+                            $.each(data.studentID, function (index, studentID) {
                                 $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td></tr>");
                             });
                         }
@@ -460,7 +393,7 @@
                 }
                 if (response.msg == 'error') alert("error")
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         });
@@ -469,7 +402,7 @@
     //hiển thị các học sinh có mức độ tương ứng với lớp đã chọn để xem xét thêm vào lớp
     function addStudent(classID, subject) {
         var infor4 = []
-        $("#" + classID + " td").each(function() {
+        $("#" + classID + " td").each(function () {
             infor4.push($(this).text())
         })
         var condition = {
@@ -484,15 +417,15 @@
             data: {
                 condition
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     console.log(response.data)
                     $('.taskrow111').html('');
-                    $.each(response.data, function(index, student) {
+                    $.each(response.data, function (index, student) {
                         var check = false
-                        $.each(student.progess, function(index, progess) {
+                        $.each(student.progess, function (index, progess) {
                             if (progess.stage == student.stage) {
-                                $.each(progess.stageClass, function(index, stageClass) {
+                                $.each(progess.stageClass, function (index, stageClass) {
                                     if (stageClass.classID == classID || stageClass.subject == subject) check = true
                                 });
                             }
@@ -504,7 +437,7 @@
                     $('.studentTableOut').show();
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
@@ -516,7 +449,7 @@
         var classID = classID
         var studentlistcl = [];
         var studentlist = [];
-        $('input[name="hobby1"]').each(function() {
+        $('input[name="hobby1"]').each(function () {
             if ($(this).is(":checked")) {
                 studentlist.push({
                     'ID': $(this).attr('value')
@@ -534,7 +467,7 @@
                 classID: classID,
                 subject: subject
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     alert('add success ');
                     $(".innerOut").hide();
@@ -545,7 +478,7 @@
                     alert('add error ');
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
@@ -556,7 +489,7 @@
     function removeStudent(classID, subject) {
         var classID = classID
         var studentlistcl = [];
-        $('.removeFormClass').each(function() {
+        $('.removeFormClass').each(function () {
             if ($(this).is(":checked")) {
                 studentlistcl.push($(this).attr('value'));
             }
@@ -570,7 +503,7 @@
                 classID: classID,
                 subject: subject
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     alert('remove success ');
                     $(".innerOut").hide();
@@ -580,14 +513,14 @@
                     alert('remove error ');
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
     }
 
     //lấy các ngày trong khoảng thời gian học
-    var getDaysArray = function(start, end) {
+    var getDaysArray = function (start, end) {
         for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
             arr.push(new Date(dt));
         }
@@ -611,19 +544,19 @@
                 dayOfWeek: $("input[name='Schedule" + i + "']").val(),
                 teacherID: $(".teacherID").val(),
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     console.log(response.data)
-                    $.each(response.data, function(index, data) {
-                        $.each(data.schedule, function(index, schedule) {
+                    $.each(response.data, function (index, data) {
+                        $.each(data.schedule, function (index, schedule) {
                             console.log(schedule.time)
                             $('#cahoc' + i + ' option[value="' + schedule.time + '"]').remove()
                         });
                     });
                 }
-                if (response.msg == 'error') {}
+                if (response.msg == 'error') { }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
@@ -640,20 +573,20 @@
                 dayOfWeek: dayOfWeek,
                 time: time
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     $("#Room" + i + "").html("")
-                    $.each(response.data, function(index, data) {
-                        $.each(data.room, function(index, room) {
+                    $.each(response.data, function (index, data) {
+                        $.each(data.room, function (index, room) {
                             if (room.time == time && room.status == "None") {
                                 $("#Room" + i + "").append('<option value = "' + room.room + '" > ' + room.room + ' </option>')
                             }
                         });
                     });
                 }
-                if (response.msg == 'error') {}
+                if (response.msg == 'error') { }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
@@ -665,7 +598,7 @@
         var studentID = []
         var listStudent = []
         var attend = []
-        $("input[name='hobby']").each(function(data) {
+        $("input[name='hobby']").each(function (data) {
             if ($(this).is(':checked')) {
                 studentID.push($(this).val())
                 listStudent.push({
@@ -680,17 +613,17 @@
 
         //lấy các thứ trong tuần
         var buoihoc = []
-        $(".buoihocthu").each(function(data) {
+        $(".buoihocthu").each(function (data) {
             buoihoc.push($(this).val())
         })
 
         var time = []
-        $(".cahoc").each(function() {
+        $(".cahoc").each(function () {
             time.push($(this).val())
         })
 
         var room = []
-        $(".Room").each(function() {
+        $(".Room").each(function () {
             room.push($(this).val())
         })
         var schedual = []
@@ -734,7 +667,7 @@
             method: 'post',
             dataType: 'json',
             data: formData,
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     alert("OK")
                 }
@@ -742,7 +675,7 @@
                     alert("error")
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
@@ -759,27 +692,27 @@
             data: {
                 abc: routeName
             },
-            success: function(response) {
+            success: function (response) {
                 $('#tieude').html('');
                 $('#routeTuyBien').html('');
                 $('#trss').html('');
 
                 if (response.msg == 'success') {
                     $('#levelS').html('');
-                    $.each(response.data, function(index, data) {
-                        $.each(data.routeSchedual, function(index, routeSchedual) {
+                    $.each(response.data, function (index, data) {
+                        $.each(data.routeSchedual, function (index, routeSchedual) {
                             var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
                             $("#levelS").append(update);
                         });
                     });
-                    $.each(response.targetxxx, function(index, targetxxx) {
+                    $.each(response.targetxxx, function (index, targetxxx) {
                         $("#tieude").append("<p>Lộ trình:" + targetxxx.routeName + "</p><p>Miêu tả:" + targetxxx.description + "</p>");
-                        $.each(targetxxx.routeSchedual, function(index, routeSchedual) {
+                        $.each(targetxxx.routeSchedual, function (index, routeSchedual) {
                             $("#routeTuyBien").append("<th>Stage: " + routeSchedual.stage + "</th>");
                         });
-                        $.each(targetxxx.routeSchedual, function(index, routeSchedual) {
+                        $.each(targetxxx.routeSchedual, function (index, routeSchedual) {
                             $("#trss").append("<td id='lol" + index + "'></td>");
-                            $.each(routeSchedual.routeabcd, function(indexx, routeabcd) {
+                            $.each(routeSchedual.routeabcd, function (indexx, routeabcd) {
                                 var y = '#lol' + index
                                 $(y).append("<li>" + routeabcd + "</li>");
                             });
@@ -788,7 +721,7 @@
 
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
@@ -805,15 +738,15 @@
                 abc: routeName,
                 levelS: levelS,
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     $('#subject').html('');
                     $('.taskrow').html('');
                     $('#studentTableOut').show();
-                    $.each(response.data, function(index, data) {
-                        $.each(data.routeSchedual, function(index, routeSchedual) {
+                    $.each(response.data, function (index, data) {
+                        $.each(data.routeSchedual, function (index, routeSchedual) {
                             if (routeSchedual.stage == levelS) {
-                                $.each(routeSchedual.routeabcd, function(index, routeabcd) {
+                                $.each(routeSchedual.routeabcd, function (index, routeabcd) {
                                     var update = "<option value=" + routeabcd + ">" + routeabcd + "</option>"
                                     $("#subject").append(update);
                                 });
@@ -822,7 +755,7 @@
                     });
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })
@@ -840,7 +773,7 @@
                 abc: routeName,
                 levelS: levelS,
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.msg == 'success') {
                     if (response.student.length == 0) {
                         $('.taskrow').html('');
@@ -848,11 +781,11 @@
                     } else {
                         $('.taskrow').html('');
                         $('#studentTable').show();
-                        $.each(response.student, function(index, student) {
+                        $.each(response.student, function (index, student) {
                             var check = false
-                            $.each(student.progess, function(index, progess) {
+                            $.each(student.progess, function (index, progess) {
                                 if (progess.stage == levelS) {
-                                    $.each(progess.stageClass, function(index, stageClass) {
+                                    $.each(progess.stageClass, function (index, stageClass) {
                                         if (stageClass.name == $("#subject").val()) check = true
                                     });
                                 }
@@ -862,7 +795,7 @@
                     }
                 }
             },
-            error: function(response) {
+            error: function (response) {
                 alert('server error');
             }
         })

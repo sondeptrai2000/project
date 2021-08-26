@@ -1,0 +1,82 @@
+<div class="updateClassOut" style="display: none;">
+    <div id='updateClass'>
+        <div id="tieude">
+            <p>bảng lộ trình tùy biến</p>
+        </div>
+        <table border="solid">
+            <tbody id="routeTuyBien"> </tbody>
+            <tr id='trss'></tr>
+        </table>
+        <div>
+            <p>Create class</p>
+            <label>Chọn lộ trình học</label>
+            <select id="routeTypeS" class="routeName" onchange="routeType()">
+                <% targetxxx.forEach(function(targetxxx) { %>
+                    <option value="<%= targetxxx.routeName %>">
+                        <%= targetxxx.routeName %>
+                    </option>
+                    <% }); %>
+            </select>
+            <br>
+            <label for="level">Level</label>
+            <select id="levelS" class="stage" onchange="level()"></select>
+            <br>
+            <label>Subject</label>
+            <select id="subject" class="subject" onchange="getStudent()"></select>
+            <br>
+            <label for="topic">Class Name</label>
+            <input type="text" class="className">
+            <br>
+            <label for="topic">Description</label>
+            <input type="text" class="description">
+            <br>
+            <label for="topic">Student</label>
+
+            <table id="studentTable" border='solid' style="display: none;">
+                <thead>
+                    <tr>
+                        <th>
+                            <inputs type="text" placeholder="Search..">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>avatar</th>
+                        <th>username</th>
+                        <th>routeName</th>
+                        <th>stage</th>
+                        <th>Chose</th>
+                        <th>More information</th>
+                    </tr>
+                </thead>
+                <tbody class='taskrow'></tbody>
+            </table>
+            <label for="topic">Teacher</label>
+            <select class="teacherID">
+
+            </select>
+            <br>
+            <div id="span1">
+                <img src="{{avatar}}" style="height: 50px;width: 50px;" onclick="$('#span2').toggle(500)">
+                <p>{{email}}</p>
+            </div>
+            <div id="span2" style="display: none;height: 200px;overflow: scroll;">
+                {{#each teacher}}
+                <img src="{{avatar}}" style="height: 50px;width: 50px;" onclick="selectedTeacher('{{email}}','{{avatar}}')">
+                <p>{{email}}</p>
+                {{/each}}
+            </div>
+            <label for="topic">startDate</label>
+            <input type="date" class="startDate" id="startDate">
+            <label for="topic">endDate</label>
+            <input type="date" class="endDate" id="endDate">
+            <br>
+            <label for="topic">Số buổi học 1 tuần</label>
+            <input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
+            <br>
+            <div id="datlich"></div>
+            <br>
+            <button onclick="$('.updateClassOut').slideUp(500)"> Close</button>
+            <button type="submit" class="btn5" onclick="abc()">Submit1</button>
+        </div>
+    </div>
+</div>

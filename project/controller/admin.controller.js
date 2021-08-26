@@ -419,7 +419,9 @@ class adminController {
             var classInfor = await ClassModel.find({}).lean()
             var targetxxx = await studyRouteModel.find({}).lean()
             var teacher = await AccountModel.find({ role: 'teacher' }).lean()
-            res.render('admin/createClass.ejs', { teacher, targetxxx, classInfor })
+            var email = teacher[0].email
+            var avatar = teacher[0].avatar
+            res.render('admin/createClass', { teacher, targetxxx, classInfor, email, avatar })
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
