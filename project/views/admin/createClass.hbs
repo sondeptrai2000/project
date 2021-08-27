@@ -153,16 +153,16 @@
         <option value="<%= teacher._id %>" ><%= teacher.email %></option>
         <% }); %>
     </select><br> -->
-                <select id="teacherID"></select><br>
-                <div id="span1">
+                <div id="teacherID">
                     <img src="{{avatar}}" style="height: 50px;width: 50px;" onclick="$('#span2').toggle(500)">
                     <p>{{email}}</p>
                 </div>
                 <div id="span2" style="display: none;height: 200px;overflow: scroll;">
                     {{#each teacher}}
                     <img src="{{avatar}}" style="height: 50px;width: 50px;"
-                        onclick="selectedTeacher('{{email}}','{{avatar}}')">
+                        onclick="selectedTeacher('{{email}}','{{avatar}}','{{_id}}')">
                     <p>{{email}}</p>
+                    <input type='hidden' value="{{_id}}">
                     {{/each}}
                 </div>
 
@@ -183,7 +183,7 @@
         </div>
     </div>
 
-   
+
     <div>
         <div class="tr">
             <div class="td" onclick="location.href='/admin';"><i class="fas fa-house-user"></i> Trang chủ admin</div>
@@ -235,9 +235,11 @@
         </table>
 </body>
 <script>
-    function selectedTeacher(email, avatar) {
-        $("#span1").html('<img src="' + avatar + '" style="height: 50px;width: 50px;" onclick=$("#span2").toggle(500)><br>' + email + '<br>')
+    function selectedTeacher(email, avatar, id) {
+        $("#teacherID").html('<img src="' + avatar + '" style="height: 50px;width: 50px;" onclick=$("#span2").toggle(500)><p>' + email + '<p><input type="hidden" value="' + id + '">')
         $("#span2").toggle(500)
+        console.log($("#teacherID input").val())
+
     }
     //hiển thị danh sách lịch giảng dạy để admin chọn vào thay đổi lịch làm việc 1 ngày nào đó trong list
     function upDateSchedule(id) {
@@ -542,7 +544,7 @@
             dataType: 'json',
             data: {
                 dayOfWeek: $("input[name='Schedule" + i + "']").val(),
-                teacherID: $(".teacherID").val(),
+                teacherID: $("#teacherID input").val(),
             },
             success: function (response) {
                 if (response.msg == 'success') {
@@ -652,7 +654,7 @@
             routeName: $(".routeName").val(),
             stage: $(".stage").val(),
             description: $(".description").val(),
-            teacherID: $(".teacherID").val(),
+            teacherID: $("#teacherID input").val(),
             endDate: $(".endDate").val(),
             startDate: $(".startDate").val(),
             studentID: studentID,
@@ -662,6 +664,7 @@
             room: room,
             buoihoc: buoihoc
         }
+        console.log(formData)
         $.ajax({
             url: '/admin/createClass',
             method: 'post',

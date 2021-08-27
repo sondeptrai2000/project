@@ -76,8 +76,6 @@ class studentController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
-                // res.json(data);
-
                 res.render('student/allClass', { data });
             }
         })
@@ -145,26 +143,20 @@ class studentController {
     }
 
 
-    getSchedule(req, res) {
-        var token = req.cookies.token
-        var decodeAccount = jwt.verify(token, 'minhson')
-        var studentID = decodeAccount._id
-            //lấy thời hiện tại để lấy khóa học đang hoạt động trong thời gian hiện tại. 
-        var sosanh = new Date(req.query.dauTuan)
-        AccountModel.findOne({ _id: decodeAccount }, { classID: 1 }).lean().exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                ClassModel.find({ _id: { $in: data.classID }, startDate: { $lte: new Date(req.query.dauTuan) }, endDate: { $gte: sosanh } }).lean().exec((err, classInfor) => {
-                    if (err) {
-                        res.json({ msg: 'error' });
-                    } else {
-                        res.json({ msg: 'success', classInfor, studentID });
-                    }
-                })
-            }
-        })
-
+    async getSchedule(req, res) {
+        try {
+            var token = req.cookies.token
+            var decodeAccount = jwt.verify(token, 'minhson')
+            var studentID = decodeAccount._id
+                //lấy thời hiện tại để lấy khóa học đang hoạt động trong thời gian hiện tại. 
+            var sosanh = new Date(req.query.dauTuan)
+            var data = await AccountModel.findOne({ _id: decodeAccount }, { classID: 1 }).lean()
+            var classInfor = await ClassModel.find({ _id: { $in: data.classID }, startDate: { $lte: new Date(req.query.dauTuan) }, endDate: { $gte: sosanh } }).lean()
+            res.json({ msg: 'success', classInfor, studentID });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
 

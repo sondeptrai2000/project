@@ -122,7 +122,7 @@ class adminController {
                 await AccountModel.updateMany({ _id: { $in: listStudentID } }, { $pull: { classID: req.query.id } })
             }
 
-            await ClassModel.remove({ _id: req.query.id })
+            await ClassModel.deleteOne({ _id: req.query.id })
             res.json({ msg: 'success', data });
         } catch (e) {
             console.log(e)
@@ -430,6 +430,7 @@ class adminController {
 
     async docreateClass(req, res) {
         try {
+            console.log(req.body.teacherID)
             var studentID = req.body.studentID
             var listStudent = req.body.listStudent
             var data = await ClassModel.create({
@@ -442,15 +443,17 @@ class adminController {
                 endDate: new Date(req.body.endDate),
                 startDate: new Date(req.body.startDate),
             })
-            await AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id } })
-            await AccountModel.updateMany({ _id: { $in: studentID }, "progess.stage": req.body.stage }, { $push: { "progess.$.stageClass": { classID: data._id, name: req.body.subject, status: "studying" } } })
-            await ClassModel.findOneAndUpdate({ _id: data._id }, {
-                $push: {
-                    studentID: { $each: listStudent },
-                    StudentIDoutdoor: { $each: listStudent },
-                    schedule: { $each: req.body.schedual }
-                }
-            })
+            if (studentID && listStudent) {
+                await AccountModel.updateMany({ _id: { $in: studentID } }, { $push: { classID: data._id } })
+                await AccountModel.updateMany({ _id: { $in: studentID }, "progess.stage": req.body.stage }, { $push: { "progess.$.stageClass": { classID: data._id, name: req.body.subject, status: "studying" } } })
+                await ClassModel.findOneAndUpdate({ _id: data._id }, {
+                    $push: {
+                        studentID: { $each: listStudent },
+                        StudentIDoutdoor: { $each: listStudent },
+                        schedule: { $each: req.body.schedual }
+                    }
+                })
+            }
             for (var i = 0; i < req.body.time.length; i++) {
                 var dayOfWeek = '0' + req.body.buoihoc[i]
                 await assignRoomAndTimeModel.updateOne({ dayOfWeek: dayOfWeek, room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, { $set: { "room.$.status": "Ok" } })
