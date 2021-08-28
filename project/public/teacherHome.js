@@ -11,7 +11,7 @@ $(document).ready(function() {
         filereader.onload = function(event) {
             fileData = event.target.result;
             var dataURL = filereader.result;
-            $("#output").attr("src", dataURL);
+            $("#avatarOldProfile").attr("src", dataURL);
         };
         myFile = $('#myFile').prop('files')[0];
         console.log('myfile', myFile)
@@ -30,6 +30,7 @@ function teacherProfile() {
             if (response.msg == 'success') {
                 $("#avatarProfile").attr("src", response.data.avatar);
                 $("#idProfile").html(response.data._id);
+                $("#welcome").html("Welcome " + response.data.username);
                 $("#usernameProfile").html("Full Name: " + response.data.username);
                 $("#genderProfile").html("Gender: " + response.data.sex);
                 $("#emailProfile").html("Email: " + response.data.email);
@@ -53,7 +54,7 @@ function updateProfile() {
     $("#phoneUpdate").val($("#phoneProfile").text().split("Phone: ")[1]);
     $("#birthdayUpdate").val($("#birthdayProfile").text().split("BirthDay: ")[1]);
     $("#addressUpdate").val($("#addressProfile").text().split("Address: ")[1]);
-    $(".content1").toggle(2000);
+    $(".updateProfileOut").toggle(2000);
 }
 
 
@@ -71,7 +72,6 @@ function doUpdateProfile() {
         birthday: $("#birthdayUpdate").val(),
         avatar: $('#avatarOldProfile').attr('src'),
     };
-
     $.ajax({
         url: '/teacher/doeditAccount',
         method: 'post',
@@ -86,6 +86,7 @@ function doUpdateProfile() {
         success: function(response) {
             if (response.msg == 'success') {
                 teacherProfile();
+                $('.updateProfileOut').slideUp(1500);
             }
             if (response.msg == 'Account already exists') {
                 alert("Account already exists")

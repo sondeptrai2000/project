@@ -155,6 +155,8 @@
             <li><a onclick="$('#loginForm').fadeIn(1000);">Log In</a></li>
         </ul>
     </header>
+
+    <input type="hidden" id="getClassID" value="{{params}}">
     <div class="body">
         <h2>All class level</h2>
         <table border="solid">
@@ -189,5 +191,12 @@
 
 </body>
 <script src=" /allClassTeacher.js"></script>
+<script>
+    $(document).ready(function () {
+        var getClassID = $("#getClassID").val()
+        console.log(getClassID)
+        $("#"+getClassID).css("background-color",'red')
+    });
+</script>
 
 </html>

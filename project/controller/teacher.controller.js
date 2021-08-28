@@ -78,10 +78,15 @@ class teacherController {
     }
 
     allClass(req, res) {
+        var params = req.params.id
         var token = req.cookies.token
         var decodeAccount = jwt.verify(token, 'minhson')
         ClassModel.find({ teacherID: decodeAccount }, { StudentIDoutdoor: 0 }).lean().exec((err, classInfor) => {
-            res.render('teacher/allClass', { classInfor })
+            if (params != "0") {
+                res.render('teacher/allClass', { classInfor, params })
+            } else {
+                res.render('teacher/allClass', { classInfor })
+            }
         })
     }
 

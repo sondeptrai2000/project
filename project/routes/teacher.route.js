@@ -11,7 +11,7 @@ teacherRouter.get('/teacherProfile', teacherController.teacherProfile)
 teacherRouter.post('/doeditAccount', teacherController.doeditAccount)
 
 //liên quan đến lớp học
-teacherRouter.get('/allClass', teacherController.allClass)
+teacherRouter.get('/allClass/:id', teacherController.allClass)
 teacherRouter.get('/allClassStudent', teacherController.allClassStudent)
 
 

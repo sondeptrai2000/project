@@ -6,48 +6,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
     <link rel="stylesheet" href="/css/teacher/teacherHome.css">
+    <title>Home Teacher</title>
 </head>
 
 <body>
 
-    <div class="content1" style="text-align: center; display:none">
-        <div>Teacher profile
-            <button onclick="$('.content1').fadeOut(1000);" style="float: ;"><i
-                    class="fas fa-window-close"></i></button>
-        </div>
-        <div>
-            Old avatar: <img id='avatarOldProfile' style='max-width:100px;max-height:100px'></img><br>
-            <label>Update Avatar</label><br>
-            Select images:<input type='file' id='myFile'><br>
-            <img id='output' style='height:3cm; width:3cm'><br>
-            <input id='idProfileUpdate' style="display:none"></input>
-            Full Name: <input id='usernameUpdate'></input><br>
-            New password: <input id='newPassWord'></input><br>
-            Gender: <input id='genderUpdate'></input><br>
-            Email: <input id='emailUpdate'></input><br>
-            Phone: <input id='phoneUpdate'></input><br>
-            BirthDay: <input id='birthdayUpdate'></input><br>
-            Address: <input id='addressUpdate'></input><br>
-            <p><button onclick="doUpdateProfile()">Update</button></p>
+    <div class="updateProfileOut" style="display:none">
+        <div class="updateProfile">
+            <input type='hidden' id='idProfileUpdate'>
+            <h1>Update profile</h1>
+            <div>
+                <img id='avatarOldProfile' style='max-width:auto;max-height:auto'></img>
+                <input type='file' id='myFile'>
+                Name:<input id='usernameUpdate'></input>
+                Password:<input id='newPassWord' placeholder="Input New password if you wanna change"></input>
+                Gender:<input id='genderUpdate'></input>
+                Email:<input id='emailUpdate'></input>
+                Phone:<input id='phoneUpdate'></input>
+                BirthDay:<input id='birthdayUpdate' type="date"></input>
+                Address:<input id='addressUpdate'></input>
+                <button onclick="doUpdateProfile()">Update</button>
+            </div>
         </div>
     </div>
 
     <header>
         <ul style="float:left;font-family:cursive;">
-            <li style="width:200px"><i class="fas fa-graduation-cap" style="font-size:60px"></i>Sown English</li>
+            <li style="width:200px">Sown English</li>
         </ul>
         <ul>
-            <li onclick="location.href='/account/homeTeacher';"> Trang chủ teacher</li>
-            <li onclick="location.href='/teacher/allClass'">Class</li>
-            <li onclick="location.href='/messenger/chatForm';">Messenger</li>
-            <li>Welcome teacherName </li>
-            <li><i class="fas fa-sign-out-alt"></i></li>
+            <li onclick="location.href='/account/homeTeacher';">
+                <div style="background-color:lightpink;display:none;height:10px"></div>
+                Trang chủ teacher
+            </li>
+            <li onclick="location.href='/teacher/allClass/0'">
+                <div style="background-color:lightpink;display:none;height:10px"></div>
+                Class
+            </li>
+            <li onclick="location.href='/messenger/chatForm';">
+                <div style="background-color:lightpink;display:none;height:10px"></div>
+                Messenger
+            </li>
+            <li id='welcome' style="width: auto;"></li>
+            <li style="width: 60px;text-align:left">
+                <div style="background-color:lightpink;display:none;height:10px"></div>
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </li>
         </ul>
     </header>
     <div class="content">
         <div id="teacherProfile">
             <h1>Teacher profile</h1>
-            <img id='avatarProfile' src="" style="height: 100px;width:100px;">
+            <img id='avatarProfile' src="" style="max-width:auto;max-height:auto'">
             <p id='idProfile' style="display:none"></p>
             <p id='usernameProfile'></p>
             <p id='genderProfile'></p>
@@ -57,9 +67,9 @@
             <p id='addressProfile'></p>
             <button onclick="updateProfile()">Update</button>
         </div>
-        <div id="Schedual">
-            <h1>Teacher Schedual</h1>
-            <select id='chonTuan' onchange="tuanoi()" style="width:300px;"></select>
+        <div id="Schedual" style="text-align:left;">
+            <h1>Weekly Schedual</h1>
+            <select id='chonTuan' onchange="tuanoi()" style="padding:0;width:200px;height:30px"></select>
             <div class="tr" id='ngay'></div>
             <div class="tr">
                 <div class="td">Day of week</div>
@@ -71,7 +81,22 @@
                 <div class="td">Thứ 7</div>
                 <div class="td">Chủ nhật</div>
             </div>
-            <div class="tr" id='lichhoc'></div>
+            <div class="tr" id="time1">
+                <div class="td">7:30 đến 9:30</div>
+            </div>
+            <div class="tr" id="time2">
+                <div class="td">9:45 đến 11:45</div>
+            </div>
+            <div class="tr" id="time3">
+                <div class="td">13:30 đến 15:30</div>
+            </div>
+            <div class="tr" id="time4">
+                <div class="td">15:45 đến 17:45</div>
+            </div>
+            <div class="tr" id="time5">
+                <div class="td">18:15 đến 20:15</div>
+            </div>
+
         </div>
     </div>
 </body>
@@ -81,6 +106,18 @@
 <script>
     $(document).ready(function () {
         test()
+        $('header li').hover(function () {
+            $(this).find("div").slideDown()
+        }, function () {
+            $(this).find("div").hide(500)
+        });
+
+        $(window).on('click', function (e) {
+            if ($(e.target).is('.updateProfileOut')) {
+                $('.updateProfileOut').slideUp(1500);
+            }
+        });
+
     });
 
     function test() {
@@ -164,13 +201,17 @@
             data: formData,
             success: function (response) {
                 if (response.msg == 'success') {
-                    $("#lichhoc").html('<div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
-                    console.log(response.classInfor)
+                    $("#time1").html('<div class="td">7:30 đến 9:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $("#time2").html('<div class="td">9:45 đến 11:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $("#time3").html('<div class="td">13:30 đến 15:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $("#time4").html('<div class="td">15:45 đến 17:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $("#time5").html('<div class="td">18:15 đến 20:15</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
                     $.each(response.classInfor, function (index, classInfor) {
                         $.each(classInfor.schedule, function (index, schedule) {
                             if (start <= schedule.date && schedule.date <= end) {
                                 //ghi thông tin lịch học, làm việc vào bảng
-                                $("#lichhoc div:nth-child(" + schedule.day + ")").append(classInfor.className + " Room:" + schedule.room + "<br>" + schedule.time + "<br>")
+                                var caLam = typeTime(schedule.time)
+                                $("#" + caLam + " div:nth-child(" + schedule.day + ")").append("<a href='/teacher/allClass/" + classInfor._id + "'>Class: " + classInfor.className + "</a> Room: " + schedule.room)
                             }
                         });
                     });
@@ -183,6 +224,17 @@
                 alert('server error');
             }
         })
+    }
+
+    function typeTime(time) {
+        var caLam
+        console.log(time)
+        if (time == "7:30 đến 9:30") caLam = "time1"
+        if (time == "9:45 đến 11:45") caLam = "time2"
+        if (time == "13:30 đến 15:30") caLam = "time3"
+        if (time == "15:45 đến 17:45") caLam = "time4"
+        if (time == "18:15 đến 20:15") caLam = "time5"
+        return caLam
     }
 </script>
 
