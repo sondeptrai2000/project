@@ -2,6 +2,10 @@ var fileData;
 var myFile;
 
 $(document).ready(function() {
+
+    teacherProfile()
+
+
     $('#myFile').on('change', function() {
         var filereader = new FileReader();
         filereader.onload = function(event) {
@@ -24,7 +28,6 @@ function teacherProfile() {
         data: {},
         success: function(response) {
             if (response.msg == 'success') {
-                $(".content").toggle(2000);
                 $("#avatarProfile").attr("src", response.data.avatar);
                 $("#idProfile").html(response.data._id);
                 $("#usernameProfile").html("Full Name: " + response.data.username);

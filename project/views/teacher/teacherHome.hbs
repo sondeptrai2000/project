@@ -3,149 +3,187 @@
 
 <head>
     <script src="/jquery/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
-
-    <style>
-        #loading {
-            position: fixed;
-            display: block;
-            top: 0;
-            bottom: 0;
-            z-index: 1000000;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-        }
-
-        #loading img {
-            margin: auto;
-            display: block;
-            top: calc(50% - 100px);
-            left: calc(50% - 10px);
-            position: absolute;
-            z-index: 999999;
-        }
-
-        #table {
-            display: table;
-            padding: 5px;
-        }
-
-        .tr {
-            display: table-row;
-            padding: 5px;
-        }
-
-        .tr1 {
-            display: table-row;
-            padding: 5px;
-        }
-
-        .td {
-            display: table-cell;
-            padding: 5px;
-            width: 300px;
-            border: #000000 solid 1px;
-            margin: 5px;
-        }
-
-        i {
-            font-size: 30px;
-        }
-
-        .content {
-            width: 50%;
-        }
-
-        .content img {
-            height: 100px;
-            border-radius: 100%;
-        }
-
-        .content :nth-child(1) div {
-            border: none;
-            padding: 8px;
-            background-color: rgb(67, 55, 55);
-            text-align: right;
-            width: 100%;
-            font-size: 18px;
-        }
-
-
-        .content :nth-child(1) button {
-
-            padding: 8px;
-            text-align: right;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        a {
-            text-decoration: none;
-            font-size: 22px;
-            color: black;
-        }
-
-        button:hover,
-        a:hover {
-            opacity: 0.7;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/teacher/teacherHome.css">
 </head>
 
 <body>
-    <div class="tr">
-        <div class="td" onclick="location.href='/account/homeTeacher';"><i class="fas fa-house-user"></i> Trang chủ
-            teacher</div>
-        <div class="td" onclick='teacherProfile()'><i class="fas fa-address-card"></i> teacherProfile </div>
-        <div class="td" onclick="location.href='/teacher/allClass'"><i class="fas fa-list-alt"></i> Class </div>
-        <div class="td" onclick="location.href='/teacher/schedule'"><i class="fas fa-list-alt"></i> Schedule </div>
-        <div class="td" onclick="allEvent()"><i class="fas fa-list-alt"></i> allEvent</div>
-        <div class="td" onclick="location.href='/messenger/chatForm';"><i class="fas fa-comment-dots"></i>Teacher
-            Messenge</div>
-        <div class="td"><i class="fas fa-sign-out-alt"></i> Log Out</div>
+
+    <div class="content1" style="text-align: center; display:none">
+        <div>Teacher profile
+            <button onclick="$('.content1').fadeOut(1000);" style="float: ;"><i
+                    class="fas fa-window-close"></i></button>
+        </div>
+        <div>
+            Old avatar: <img id='avatarOldProfile' style='max-width:100px;max-height:100px'></img><br>
+            <label>Update Avatar</label><br>
+            Select images:<input type='file' id='myFile'><br>
+            <img id='output' style='height:3cm; width:3cm'><br>
+            <input id='idProfileUpdate' style="display:none"></input>
+            Full Name: <input id='usernameUpdate'></input><br>
+            New password: <input id='newPassWord'></input><br>
+            Gender: <input id='genderUpdate'></input><br>
+            Email: <input id='emailUpdate'></input><br>
+            Phone: <input id='phoneUpdate'></input><br>
+            BirthDay: <input id='birthdayUpdate'></input><br>
+            Address: <input id='addressUpdate'></input><br>
+            <p><button onclick="doUpdateProfile()">Update</button></p>
+        </div>
+    </div>
+
+    <header>
+        <ul style="float:left;font-family:cursive;">
+            <li style="width:200px"><i class="fas fa-graduation-cap" style="font-size:60px"></i>Sown English</li>
+        </ul>
+        <ul>
+            <li onclick="location.href='/account/homeTeacher';"> Trang chủ teacher</li>
+            <li onclick="location.href='/teacher/allClass'">Class</li>
+            <li onclick="location.href='/messenger/chatForm';">Messenger</li>
+            <li>Welcome teacherName </li>
+            <li><i class="fas fa-sign-out-alt"></i></li>
+        </ul>
+    </header>
+    <div class="content">
+        <div id="teacherProfile">
+            <h1>Teacher profile</h1>
+            <img id='avatarProfile' src="" style="height: 100px;width:100px;">
+            <p id='idProfile' style="display:none"></p>
+            <p id='usernameProfile'></p>
+            <p id='genderProfile'></p>
+            <p id='emailProfile'></p>
+            <p id='phoneProfile'></p>
+            <p id='birthdayProfile'></p>
+            <p id='addressProfile'></p>
+            <button onclick="updateProfile()">Update</button>
+        </div>
+        <div id="Schedual">
+            <h1>Teacher Schedual</h1>
+            <select id='chonTuan' onchange="tuanoi()" style="width:300px;"></select>
+            <div class="tr" id='ngay'></div>
+            <div class="tr">
+                <div class="td">Day of week</div>
+                <div class="td">Thứ 2</div>
+                <div class="td">Thứ 3</div>
+                <div class="td">Thứ 4</div>
+                <div class="td">Thứ 5</div>
+                <div class="td">Thứ 6</div>
+                <div class="td">Thứ 7</div>
+                <div class="td">Chủ nhật</div>
+            </div>
+            <div class="tr" id='lichhoc'></div>
+        </div>
     </div>
 </body>
-<div class="content" style="text-align: center; display:none">
-    <div>Teacher profile
-        <button onclick="$('.content').fadeOut(1000);" style="float: ;"><i class="fas fa-window-close"></i></button>
-    </div>
-    <div>
-        <img id='avatarProfile' src="">
-        <p id='idProfile' style="display:none"></p>
-        <p id='usernameProfile'></p>
-        <p id='genderProfile'></p>
-        <p id='emailProfile'></p>
-        <p id='phoneProfile'></p>
-        <p id='birthdayProfile'></p>
-        <p id='addressProfile'></p>
-        <p><button onclick="updateProfile()">Update</button></p>
-    </div>
-</div>
 
 
-<div class="content1" style="text-align: center; display:none">
-    <div>Teacher profile
-        <button onclick="$('.content1').fadeOut(1000);" style="float: ;"><i class="fas fa-window-close"></i></button>
-    </div>
-    <div>
-        Old avatar: <img id='avatarOldProfile' style='max-width:100px;max-height:100px'></img><br>
-
-
-        <label>Update Avatar</label><br>
-        Select images:<input type='file' id='myFile'><br>
-        <img id='output' style='height:3cm; width:3cm'><br>
-        <input id='idProfileUpdate' style="display:none"></input>
-        Full Name: <input id='usernameUpdate'></input><br>
-        New password: <input id='newPassWord'></input><br>
-        Gender: <input id='genderUpdate'></input><br>
-        Email: <input id='emailUpdate'></input><br>
-        Phone: <input id='phoneUpdate'></input><br>
-        BirthDay: <input id='birthdayUpdate'></input><br>
-        Address: <input id='addressUpdate'></input><br>
-        <p><button onclick="doUpdateProfile()">Update</button></p>
-    </div>
-</div>
 <script src=" /teacherHome.js"></script>
+<script>
+    $(document).ready(function () {
+        test()
+    });
+
+    function test() {
+        //lấy các ngày trong năm
+        for (var arr = [], dt = new Date("2021-01-01"); dt <= new Date("2021-12-31"); dt.setDate(dt.getDate() + 1)) {
+            var date = new Date(dt)
+            var month = (date.getMonth() + 1).toString().padStart(2, "0");
+            var lol = date.getFullYear() + "-" + month + "-" + date.getDate().toString().padStart(2, "0");
+            arr.push({ "ngay": lol, "thu": (date.getDay() + 1) });
+        }
+        //chia thành các tuần từ thứ 2 đến CN
+        var tuan = []
+        var check = false
+        var check2 = false
+        for (var i = 0; i < arr.length; i++) {
+            var d = new Date(arr[i].ngay);
+            var n = d.getDay();
+            if (arr[i].thu != 2 && i < 7 && check2 == false) {
+                tuan.push(arr[i].ngay + ' đến ' + arr[7 - n].ngay)
+                check2 = true
+            }
+            if (arr[i].thu == 2 && (i + 7) < arr.length) {
+                tuan.push(arr[i].ngay + ' đến ' + arr[i + 6].ngay)
+            }
+            if (arr[i].thu != 2 && (i + 7) > arr.length && check == false) {
+                tuan.push(arr[i + 1].ngay + ' đến ' + arr[arr.length - 1].ngay)
+                check = true
+            }
+        }
+        //đưa các tuần vào thẻ select và đặt select cho tuần hiện tại.
+        const date1 = new Date();
+        var year = date1.getFullYear()
+        var month = date1.getMonth() + 1
+        //lấy thời gian hiện tại để so sánh và lấy tuần
+        var now = date1.getFullYear() + "-" + month.toString().padStart(2, "0") + "-" + date1.getDate();
+        for (var u = 0; u < tuan.length; u++) {
+            $("#chonTuan").append('<option value="' + tuan[u] + '">' + tuan[u] + '</option>');
+            dauTuan = tuan[u].split(" đến ")[0]
+            cuoiTuan = tuan[u].split(" đến ")[1]
+            if ((dauTuan <= now) && (now <= cuoiTuan)) {
+                $('#chonTuan option:selected').removeAttr('selected');
+                $("#chonTuan option[value='" + tuan[u] + "']").attr('selected', 'selected');
+            }
+        }
+        //lấy thông tin lịch trình học, làm việc
+        tuanoi()
+    };
+
+    //lấy các ngày trong khoảng thời gian học
+    var getDaysArray = function (start, end) {
+        for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+            arr.push(new Date(dt));
+        }
+        return arr;
+    };
+
+    //lấy thông tin lịch trình học, làm việc
+    function tuanoi() {
+        var tuan = $("#chonTuan").val()
+        var dauTuan = tuan.split(" đến ")[0]
+        var cuoiTuan = tuan.split(" đến ")[1]
+        var formData = {
+            dauTuan: dauTuan,
+            cuoiTuan: cuoiTuan
+        }
+        //chỉnh fomat date giống Type Date trong mongoDB để so sánh 
+        // link src hàm moment ở head
+        var start = moment(new Date(dauTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
+        var end = moment(new Date(cuoiTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
+        var a = getDaysArray(new Date(dauTuan), new Date(cuoiTuan));
+        $("#ngay").html("<div class='td'>Ngày</div>")
+        //tùy biến ngày vào html
+        a.forEach(element => {
+            $("#ngay").append("<div class='td'>" + (element.getFullYear() + "-" + (element.getMonth() + 1).toString().padStart(2, "0") + "-" + element.getDate()) + "</div>")
+        });
+        //lấy thông tin lịch học
+        $.ajax({
+            url: '/teacher/getSchedule',
+            method: 'get',
+            dataType: 'json',
+            data: formData,
+            success: function (response) {
+                if (response.msg == 'success') {
+                    $("#lichhoc").html('<div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    console.log(response.classInfor)
+                    $.each(response.classInfor, function (index, classInfor) {
+                        $.each(classInfor.schedule, function (index, schedule) {
+                            if (start <= schedule.date && schedule.date <= end) {
+                                //ghi thông tin lịch học, làm việc vào bảng
+                                $("#lichhoc div:nth-child(" + schedule.day + ")").append(classInfor.className + " Room:" + schedule.room + "<br>" + schedule.time + "<br>")
+                            }
+                        });
+                    });
+                }
+                if (response.msg == 'error') {
+                    alert("error")
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+</script>
 
 </html>

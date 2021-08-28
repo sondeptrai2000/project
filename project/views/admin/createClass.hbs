@@ -216,7 +216,7 @@
             <th>Action</th>
             <th>Status</th>
             {{#each classInfor}}
-            <tr id=" {{_id}}">
+            <tr id="{{_id}}">
                 <td>{{className}}</td>
                 <td>{{routeName}}</td>
                 <td>{{stage}}</td>
@@ -407,6 +407,7 @@
         $("#" + classID + " td").each(function () {
             infor4.push($(this).text())
         })
+        console.log(infor4)
         var condition = {
             role: 'student',
             routeName: infor4[1].trim(),
