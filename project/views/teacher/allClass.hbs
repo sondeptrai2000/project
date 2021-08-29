@@ -157,9 +157,18 @@
     </header>
 
     <input type="hidden" id="getClassID" value="{{params}}">
+    Filter Class by Status: <select id="typeClass" onchange="typeClass()">
+        <option value="processing">Processing</option>
+        <option value="end">End</option>
+    </select>
+    <div class="formSearchEndClass" style="display: none;">
+        <input type='month' id="monthClass"><button onclick="searchEndClass()">Search</button>
+    </div>
+
+
     <div class="body">
         <h2>All class level</h2>
-        <table border="solid">
+        <table border="solid" id="tableClass">
             <th>Class name</th>
             <th>routeName</th>
             <th>stage</th>
@@ -169,21 +178,6 @@
             <th>End date</th>
             <th>Student List</th>
             <th>Take attended</th>
-            {{#each classInfor}}
-            <tr id="{{_id}}">
-                <td>{{className}}</td>
-                <td>{{routeName}}</td>
-                <td>{{stage}}</td>
-                <td>{{subject}}</td>
-                <td>{{description}}</td>
-                <td>{{startDate}}</td>
-                <td>{{endDate}}</td>
-                <td><button id="btn1" onclick="sendData('{{_id}}','{{subject}}')">List of student</button></td>
-                <td>
-                    <button onclick="attendedList('{{_id}}')">attended </button>
-                </td>
-            </tr>
-            {{/each}}
         </table>
     </div>
 
@@ -193,10 +187,71 @@
 <script src=" /allClassTeacher.js"></script>
 <script>
     $(document).ready(function () {
-        var getClassID = $("#getClassID").val()
-        console.log(getClassID)
-        $("#"+getClassID).css("background-color",'red')
+        getProcesscingClass()
+        console.log("2021-08-12T00:00:00.000Z" > "2021-08-01T00:00:00.000Z")
     });
+
+    function getProcesscingClass() {
+        $.ajax({
+            url: '/teacher/getClass',
+            method: 'get',
+            dataType: 'json',
+            data: { check: "0" },
+            success: function (response) {
+                if (response.msg == 'success') {
+                    console.log(response.classInfor)
+                    $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Start date</th><th>End date</th><th>Student List</th><th>Take attended</th>")
+                    response.classInfor.forEach((e) => {
+                        $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td><td><button onclick=attendedList('" + e._id + "')>attended </button></td></tr>")
+                    })
+                    var getClassID = $("#getClassID").val()
+                    if (getClassID) $("#" + getClassID).css("background-color", 'red')
+                }
+                if (response.msg == 'abc') {
+                    alert("học sinh đã chuyển sang giai đoạn cao hơn")
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        });
+    }
+
+
+    function typeClass() {
+        var type = $("#typeClass").val()
+        if (type == "processing") {
+            $(".formSearchEndClass").hide(500)
+            getProcesscingClass()
+        }
+        if (type == "end") $(".formSearchEndClass").slideDown(1000)
+    }
+
+
+    function searchEndClass() {
+        var time = $("#monthClass").val() + "-01"
+        $.ajax({
+            url: '/teacher/getClass',
+            method: 'get',
+            dataType: 'json',
+            data: { check: "1", time: time },
+            success: function (response) {
+                if (response.msg == 'success') {
+                    console.log(response.classInfor)
+                    $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Start date</th><th>End date</th><th>Student List</th><th>Take attended</th>")
+                    response.classInfor.forEach((e) => {
+                        $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td><td><button onclick=attendedList('" + e._id + "')>attended </button></td></tr>")
+                    })
+                }
+                if (response.msg == 'abc') {
+                    alert("học sinh đã chuyển sang giai đoạn cao hơn")
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        });
+    }
 </script>
 
 </html>

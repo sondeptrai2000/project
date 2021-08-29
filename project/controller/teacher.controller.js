@@ -79,15 +79,25 @@ class teacherController {
 
     allClass(req, res) {
         var params = req.params.id
+        if (params != "0") res.render('teacher/allClass', { params })
+        if (params == "0") res.render('teacher/allClass')
+
+    }
+
+    getClass(req, res) {
         var token = req.cookies.token
         var decodeAccount = jwt.verify(token, 'minhson')
-        ClassModel.find({ teacherID: decodeAccount }, { StudentIDoutdoor: 0 }).lean().exec((err, classInfor) => {
-            if (params != "0") {
-                res.render('teacher/allClass', { classInfor, params })
-            } else {
-                res.render('teacher/allClass', { classInfor })
-            }
-        })
+        if (req.query.time) {
+            var time = new Date(req.query.time)
+            console.log(time)
+            ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: time }, endDate: { $gte: time } }, { StudentIDoutdoor: 0 }).lean().exec((err, classInfor) => {
+                res.json({ msg: 'success', classInfor });
+            })
+        } else {
+            ClassModel.find({ teacherID: decodeAccount }, { StudentIDoutdoor: 0 }).lean().exec((err, classInfor) => {
+                res.json({ msg: 'success', classInfor });
+            })
+        }
     }
 
     schedule(req, res) {
