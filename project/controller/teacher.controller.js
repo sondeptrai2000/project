@@ -351,6 +351,7 @@ class teacherController {
                     if (!response) res.json({ msg: 'error' });
                     formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
                     var oldImg = req.body.oldLink
+                    console.log(oldImg)
                     oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
                     await driveService.files.delete({ fileId: oldImg })
                 }

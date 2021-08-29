@@ -29,16 +29,7 @@
     <div class="teacherIn4Out" style="display:none">
       <div class="teacherIn4">
         <table id="teacherIn4" border='solid'>
-          <thead>
-            <tr>
-              <th>avatar</th>
-              <th>username</th>
-              <th>email</th>
-              <th><input id="myInput" type="text" placeholder="Search.."></th>
-              <th onclick='$(".teacherIn4Out").fadeOut(500);'>X</th>
-            </tr>
-          </thead>
-          <tbody class='teacherIn4Body'></tbody>
+
         </table>
       </div>
     </div>
@@ -59,66 +50,9 @@
   </header>
 
   <div class="body">
-    <table border="solid" id="tableClass">
-      {{#each data}}
-      {{#each classID}}
-      <tr>
-        <td>{{className }}</td>
-        <td>{{routeName }}</td>
-        <td>{{stage }}</td>
-        <td>{{description }}</td>
-        <td>
-          <p onclick="viewTeacherProfile('{{teacherID._id}}')">{{teacherID.username}}</p>
-        </td>
-        <td><button id="btn1" onclick="sendData('{{_id}}')">List of student</button></td>
-        <td>{{startDate }}</td>
-        <td>{{endDate }}</td>
-        <td>{{classStatus }}</td>
-      </tr>
-      {{/each}}
-      {{/each}}
-    </table>
+    <table border="solid" id="tableClass"></table>
   </div>
 </body>
 
-<script src="/allClassStudent.js"></script>
-<script>
-  $(document).ready(function () {
-    getClass()
-  });
-
-  function getClass() {
-    $.ajax({
-      url: '/student/getClass',
-      method: 'get',
-      dataType: 'json',
-      data: { check: "0" },
-      success: function (response) {
-        if (response.msg == 'success') {
-          console.log(response.classInfor)
-          $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Teacher Name</th><th>Start date</th><th>End date</th><th>Student List</th>")
-          response.classInfor.forEach((e) => {
-            e.classID.forEach((e) => {
-              $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td onclick=viewTeacherProfile('" + e.teacherID._id + "')>" + e.teacherID.username + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td></tr>")
-            })
-          })
-          var getClassID = $("#getClassID").val()
-          if (getClassID) {
-            $("#" + getClassID).css("background-color", 'red')
-            setTimeout(function () {
-              $("#" + getClassID).css("background-color", 'white')
-            }, 5000)
-          }
-        }
-        if (response.msg == 'abc') {
-          alert("học sinh đã chuyển sang giai đoạn cao hơn")
-        }
-      },
-      error: function (response) {
-        alert('server error');
-      }
-    });
-  }
-</script>
-
+<script src="/js/student/allClassStudent.js"></script>
 </html>

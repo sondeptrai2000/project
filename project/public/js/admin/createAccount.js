@@ -3,15 +3,6 @@ var myFile;
 var fileDataUpdate;
 var myFileUpdate;
 
-
-
-// load for all ajax
-// $(document).ajaxStart(function() {
-//     $("#loading").show();
-// });
-// $(document).ajaxStop(function() {
-//     $("#loading").hide();
-// });
 $(document).ready(function() {
     getAccount('teacher', 0)
         //xử lý file khi tạo tài khoản
@@ -32,7 +23,7 @@ $(document).ready(function() {
         filereaderUpdate.onload = function(event) {
             fileDataUpdate = event.target.result;
             var dataURLUpdate = filereaderUpdate.result;
-            $("#outputUpdate").attr("src", dataURLUpdate);
+            $("#currentAvatar").attr("src", dataURLUpdate);
         };
         myFileUpdate = $('#myFileUpdate').prop('files')[0];
         console.log('myfileUpdate', myFileUpdate)
@@ -149,9 +140,8 @@ function routeType(action) {
 }
 
 function role(action) {
-    if (action === 'create') {
-        var accountRole = $('#role').val();
-    } else if (action === 'update') {
+    if (action === 'create') var accountRole = $('#role').val();
+    if (action === 'update') {
         var accountRole = $('#roleUpdate').val();
         var currentRole = $("#currentRole").val()
         if ((currentRole == "techer") != accountRole) {
@@ -173,15 +163,12 @@ function role(action) {
             })
         }
     }
-    if (accountRole === "teacher") {
-        $('.typeRole').slideUp()
-    } else {
-        $('.typeRole').slideDown()
-    }
-}
-//ghi ra thông tin cũ trong form update
-var changeType = false;
+    if (accountRole === "teacher") $('.typeRole').slideUp()
+    if (accountRole !== "teacher") $('.typeRole').slideDown()
 
+}
+
+//chuyền thông tin cũ vào form cập nhật thông tin
 function updateForm(id) {
     $('#levelSUpdate').html('');
     $("#AimUpdate").html('');
@@ -191,9 +178,9 @@ function updateForm(id) {
     $(selector).each(function() {
         infor4.push($(this).text())
     })
-    console.log(infor4)
     $("#PersonID").val(id)
-    $("#oldAvatar").attr("src", $("#" + id + " img").attr('src'));
+    $("#currentAvatar").attr("src", $("#" + id + " img").attr('src'));
+    $("#oldAvatar").val($("#" + id + " img").attr('src'));
     $("#usernameUpdate").val(infor4[1])
     $('#genderUpdate option:selected').removeAttr('selected');
     $("#genderUpdate option[value='" + infor4[2] + "']").attr('selected', 'selected');
@@ -240,7 +227,57 @@ function updateForm(id) {
     });
 }
 
-
+//thực hiện đăng ký và lưu tài khỏan vào đb
+function signUp() {
+    var role = $("#role").val()
+    var formData1 = {
+        sex: $("#gender").val(),
+        username: $("#username").val(),
+        email: $("#email").val(),
+        role: role,
+        phone: $("#phone").val(),
+        address: $("#address").val(),
+        birthday: $("#birthday").val(),
+    };
+    if (role != "teacher") {
+        formData1["stage"] = $("#levelS").val()
+        formData1["routeName"] = $("#routeTypeS").val()
+        formData1["aim"] = $("#Aim").val()
+        formData1["startStage"] = $("#levelS").val()
+    }
+    var formData2 = {
+        role: "guardian",
+        username: $("input[name='guardianName']").val(),
+        phone: $("input[name='guardianPhone']").val(),
+        email: $("input[name='guardianEmail']").val(),
+    };
+    $.ajax({
+        url: '/admin/doCreateAccount',
+        method: 'post',
+        dataType: 'json',
+        data: {
+            password: $("#password").val(),
+            filename: myFile.name,
+            file: fileData,
+            student: formData1,
+            phuhuynh: formData2,
+        },
+        success: function(response) {
+            if (response.msg == 'success') {
+                reset();
+                getAccount(role, 0);
+                $(".createAccountOut").slideUp();
+                alert('Sign Up success');
+            }
+            if (response.msg == 'Account already exists') alert('Account already exists');
+            if (response.msg == 'Phone already exists') alert('Phone already exists');
+            if (response.msg == 'error') alert('error');
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
 //cập nhạta thông tin tk
 function doUpdate() {
     if (!fileDataUpdate) {
@@ -279,7 +316,7 @@ function doUpdate() {
         dataType: 'json',
         data: {
             id: $("#PersonID").val(),
-            oldLink: $('#oldAvatar').attr('src'),
+            oldLink: $('#oldAvatar').val(),
             password: $("#passwordUpdate").val(),
             formData1: formData1,
             formData2: formData2,
@@ -288,7 +325,7 @@ function doUpdate() {
         success: function(response) {
             if (response.msg == 'success') {
                 alert('update success');
-                $('#updateForm').fadeOut(2000);
+                $('.updateFormOut').fadeOut(2000);
                 getAccount($("#roleUpdate").val(), 0);
                 // $("#routeTypeSUpdate option[value='" + response.data.routeName + "']").attr('selected', 'selected');
             }
@@ -338,14 +375,10 @@ function search(email) {
                     var progress = data.progess
                     progress.forEach((e) => {
                         $(".seacherInfor").append("<h1>Stage: " + e.stage + "</h1><br>")
-                        e.stageClass.forEach((e) => {
-                            if (e.classID != "") $(".seacherInfor").append(" Name: " + e.name + " Status: " + e.status + " <button onclick=copyID('" + e.classID + "')> Lấy ClassID</button><br>")
-                        })
+                        e.stageClass.forEach((e) => { if (e.classID != "") $(".seacherInfor").append(" Name: " + e.name + " Status: " + e.status + " <button onclick=copyID('" + e.classID + "')> Lấy ClassID</button><br>") })
                     })
                     $(".seacherInfor").append("<h2>Đang hoạt động trong lớp học</h2>")
-                    currentClass.forEach((e) => {
-                        $(".seacherInfor").append("<br>Class Name: " + e.stage + "<br> Subject : " + e.subject + "<br> Teacher : " + e.teacherID.username + "<br> Teacher phone : " + e.teacherID.phone + "<br> Teacher email : " + e.teacherID.email + "<button onclick=copyID('" + e._id + "')> Lấy ClassID</button>")
-                    })
+                    currentClass.forEach((e) => { $(".seacherInfor").append("<br>Class Name: " + e.stage + "<br> Subject : " + e.subject + "<br> Teacher : " + e.teacherID.username + "<br> Teacher phone : " + e.teacherID.phone + "<br> Teacher email : " + e.teacherID.email + "<button onclick=copyID('" + e._id + "')> Lấy ClassID</button>") })
                     $(".seacherInfor").append("<h1>Thông tin phụ huynh</h1>")
                     $(".seacherInfor").append("<br> Name: " + relationship.username + "<br> Phone: " + relationship.phone + "<br> Email : " + relationship.email)
                 }
@@ -363,7 +396,6 @@ function search(email) {
 }
 
 async function copyID(id) {
-    console.log(id)
     await navigator.clipboard.writeText(id);
 
 }

@@ -1,3 +1,8 @@
+$(document).ready(function() {
+    getProcesscingClass()
+});
+
+//lấy danh sách học sinh trong lớp
 function sendData(id, subject) {
     var _id = id
     $.ajax({
@@ -30,7 +35,7 @@ function sendData(id, subject) {
     });
 }
 
-
+//đưa thông tin cũ vào form đnash giá
 function studentAssessmentForm(classID, studentid, username, email) {
     $("#classID").html(classID);
     $("#studentID").html(studentid);
@@ -38,7 +43,7 @@ function studentAssessmentForm(classID, studentid, username, email) {
     $("#email").html(email);
     $(".studentAssessmentOut").fadeIn(2000);
 }
-
+//đưa thông tin cũ vào form cập nhật đnash giá
 function updateStudentAssessmentForm(classID, studentID, name, grade) {
     $("#updateclassID").html(classID);
     $("#updatestudentID").html(studentID);
@@ -49,7 +54,7 @@ function updateStudentAssessmentForm(classID, studentID, name, grade) {
     $("#updatecomment").val($(content).text())
     $(".studentAssessmentUpdateOut").fadeIn(2000);
 }
-
+//tiến hành đánh giá
 function takeFeedBack() {
     var formData = {
         classID: $("#classID").text(),
@@ -57,7 +62,6 @@ function takeFeedBack() {
         grade: $("#grade").val(),
         comment: $("#comment").val(),
     };
-    console.log(formData)
     $.ajax({
         url: '/teacher/studentAssessment',
         method: 'post',
@@ -69,16 +73,13 @@ function takeFeedBack() {
                 sendData($("#classID").text());
                 alert("take feedback success")
             }
-            if (response.msg == 'abc') {
-                alert("học sinh đã chuyển sang giai đoạn cao hơn")
-            }
         },
         error: function(response) {
             alert('server error');
         }
     });
 }
-
+//tiến hành cập nhật thôn tin đánh giá
 function updateFeekBack() {
     var formData = {
         classID: $("#updateclassID").text(),
@@ -94,7 +95,6 @@ function updateFeekBack() {
         success: function(response) {
             if (response.msg == 'success') {
                 $(".innerOut").hide();
-                var infor = response.data
                 sendData($("#updateclassID").text());
                 alert("update feedback success")
             }
@@ -110,7 +110,7 @@ function updateFeekBack() {
 var room = []
 var day = []
 var time = []
-
+    //đưa ra list các ngày để trọn điểm danh
 function attendedList(id) {
     var idClass = id
     $.ajax({
@@ -120,6 +120,9 @@ function attendedList(id) {
         data: { id: id },
         success: function(response) {
             if (response.msg == 'success') {
+                room = []
+                day = []
+                time = []
                 $("#attendedList").html($("#attendedList tr:first-child"))
                 $("#loladate4").val(response.data[0].schedule[response.data[0].schedule.length - 1].date)
                 $.each(response.data[0].schedule, function(index, data) {
@@ -136,7 +139,7 @@ function attendedList(id) {
         }
     });
 }
-
+//đưa ra list học sinh để điểm danh
 function takeAttend(idattend, idClass) {
     var formData = {
         idattend: idattend,
@@ -174,7 +177,7 @@ function takeAttend(idattend, idClass) {
         }
     });
 }
-
+//tiến hành cập nhật danh sachs điểm danh
 function submitTakeAttend() {
     var studentID = []
     $(".attendStudentID").each(function() {
@@ -209,6 +212,61 @@ function submitTakeAttend() {
         success: function(response) {
             if (response.msg == 'success') {
                 alert('success');
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+//lấy danh sách các lớp đang dạy
+function getProcesscingClass() {
+    $.ajax({
+        url: '/teacher/getClass',
+        method: 'get',
+        dataType: 'json',
+        data: { check: "0" },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Start date</th><th>End date</th><th>Student List</th><th>Take attended</th>")
+                response.classInfor.forEach((e) => {
+                    $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td><td><button onclick=attendedList('" + e._id + "')>attended </button></td></tr>")
+                })
+                var getClassID = $("#getClassID").val()
+                if (getClassID) $("#" + getClassID).css("background-color", 'red')
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+//lọc phân loại tìm kiếm (lớp đang dạy hay đã dạy và khoảng thời gian)
+function typeClass() {
+    var type = $("#typeClass").val()
+    if (type == "processing") {
+        $(".formSearchEndClass").hide(500)
+        getProcesscingClass()
+    }
+    if (type == "end") $(".formSearchEndClass").slideDown(1000)
+}
+
+//tiến hành tìm kiếm và trả về kết quả
+function searchEndClass() {
+    var time = $("#monthClass").val() + "-01"
+    $.ajax({
+        url: '/teacher/getClass',
+        method: 'get',
+        dataType: 'json',
+        data: { check: "1", time: time },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Start date</th><th>End date</th><th>Student List</th><th>Take attended</th>")
+                response.classInfor.forEach((e) => {
+                    $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td><td><button onclick=attendedList('" + e._id + "')>attended </button></td></tr>")
+                })
             }
         },
         error: function(response) {

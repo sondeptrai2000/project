@@ -169,81 +169,13 @@
     <div class="body">
         <h2>All class level</h2>
         <table border="solid" id="tableClass">
-           
+
         </table>
     </div>
 
 
 
 </body>
-<script src=" /allClassTeacher.js"></script>
-<script>
-    $(document).ready(function () {
-        getProcesscingClass()
-        console.log("2021-08-12T00:00:00.000Z" > "2021-08-01T00:00:00.000Z")
-    });
-
-    function getProcesscingClass() {
-        $.ajax({
-            url: '/teacher/getClass',
-            method: 'get',
-            dataType: 'json',
-            data: { check: "0" },
-            success: function (response) {
-                if (response.msg == 'success') {
-                    console.log(response.classInfor)
-                    $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Start date</th><th>End date</th><th>Student List</th><th>Take attended</th>")
-                    response.classInfor.forEach((e) => {
-                        $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td><td><button onclick=attendedList('" + e._id + "')>attended </button></td></tr>")
-                    })
-                    var getClassID = $("#getClassID").val()
-                    if (getClassID) $("#" + getClassID).css("background-color", 'red')
-                }
-                if (response.msg == 'abc') {
-                    alert("học sinh đã chuyển sang giai đoạn cao hơn")
-                }
-            },
-            error: function (response) {
-                alert('server error');
-            }
-        });
-    }
-
-
-    function typeClass() {
-        var type = $("#typeClass").val()
-        if (type == "processing") {
-            $(".formSearchEndClass").hide(500)
-            getProcesscingClass()
-        }
-        if (type == "end") $(".formSearchEndClass").slideDown(1000)
-    }
-
-
-    function searchEndClass() {
-        var time = $("#monthClass").val() + "-01"
-        $.ajax({
-            url: '/teacher/getClass',
-            method: 'get',
-            dataType: 'json',
-            data: { check: "1", time: time },
-            success: function (response) {
-                if (response.msg == 'success') {
-                    console.log(response.classInfor)
-                    $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Start date</th><th>End date</th><th>Student List</th><th>Take attended</th>")
-                    response.classInfor.forEach((e) => {
-                        $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td><td><button onclick=attendedList('" + e._id + "')>attended </button></td></tr>")
-                    })
-                }
-                if (response.msg == 'abc') {
-                    alert("học sinh đã chuyển sang giai đoạn cao hơn")
-                }
-            },
-            error: function (response) {
-                alert('server error');
-            }
-        });
-    }
-</script>
+<script src=" /js/teacher/allClass.js"></script>
 
 </html>

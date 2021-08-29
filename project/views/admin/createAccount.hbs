@@ -90,11 +90,9 @@
             <div id="updateForm">
                   <input type='hidden' id='PersonID'><br>
                   <h2>ACCOUNT update INFORMATION</h2>
-                  <label>Old Avatar</label>
-                  <img id='oldAvatar' style='max-width:100px;max-height:100px'></img><br>
-                  <label>Update Avatar</label> Select images:
+                  <img id='currentAvatar' style='max-width:100px;max-height:100px'></img><br>
+                  <input type="hidden" id="oldAvatar">
                   <input type='file' id='myFileUpdate'><br>
-                  <img id='outputUpdate' style='height:3cm; width:3cm'><br>
                   <label>Name</label><input type='text' id='usernameUpdate'><br>
                   <label>Email</label><input type='email' id='emailUpdate' class='emailinput'><br>
                   <label>Password</label><input type='password' id='passwordUpdate'><br>
@@ -127,35 +125,24 @@
                   <br><label>Birthday</label><input type='date' id='birthdayUpdate'><br>
                   <label>Phone</label><input type='text' id='phoneUpdate'><br>
                   <label>Address</label><input type='text' id='addressUpdate'><br>
-
                   <button onclick="doUpdate()">tiến hành cập nhật thông tin tài khoản</button>
                   <button onclick="$('.updateFormOut').slideUp(500)">Close</button>
             </div>
       </div>
 
       <div class="seacherInforOut" style="display: none;">
-            <div class="seacherInfor">
-
-
-            </div>
+            <div class="seacherInfor"> </div>
       </div>
+
       <div>
             <div class="tr">
-                  <div class="td" onclick="location.href='/admin';"><i class="fas fa-house-user"></i> Trang chủ admin
-                  </div>
-                  <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i>
-                        Create
-                        account</div>
-                  <div class="td" onclick="consultingAll('0')"><i class="fas fa-list-alt"></i> Consulting All</div>
-                  <div class="td" onclick="location.href='/admin/dashboard';"><i class="fas fa-chart-line"></i>
-                        Dashboard
-                  </div>
-                  <div class="td" onclick="location.href='/admin/assignRoomAndTime';"><i class="fas fa-house-user"></i>
-                        assignRoomAndTime</div>
-                  <div class="td" onclick="location.href='/admin/createClass';"><i class="fas fa-house-user"></i>
-                        createClass
-                  </div>
-                  <div class="td"><i class="fas fa-sign-out-alt"></i> Log Out</div>
+                  <div class="td" onclick="location.href='/admin';">Trang chủ admin</div>
+                  <div class="td" onclick="location.href='/admin/createAccount';">Create account</div>
+                  <div class="td" onclick="consultingAll('0')">Consulting All</div>
+                  <div class="td" onclick="location.href='/admin/dashboard';">Dashboard</div>
+                  <div class="td" onclick="location.href='/admin/assignRoomAndTime';">assignRoomAndTime</div>
+                  <div class="td" onclick="location.href='/admin/createClass';">createClass</div>
+                  <div class="td">Log Out</div>
             </div>
       </div>
 
@@ -175,71 +162,8 @@
             <div id="soTrang"></div>
             <br>
       </div>
-
-
 </body>
 
-<script src=" /createAccountAdmin.js"></script>
-<script>
-
-      //thực hiện đăng ký và lưu tài khỏan vào đb
-      function signUp() {
-            var role = $("#role").val()
-            var formData1 = {
-                  sex: $("#gender").val(),
-                  username: $("#username").val(),
-                  email: $("#email").val(),
-                  role: role,
-                  phone: $("#phone").val(),
-                  address: $("#address").val(),
-                  birthday: $("#birthday").val(),
-            };
-            if (role != "teacher") {
-                  formData1["stage"] = $("#levelS").val()
-                  formData1["routeName"] = $("#routeTypeS").val()
-                  formData1["aim"] = $("#Aim").val()
-                  formData1["startStage"] = $("#levelS").val()
-            }
-            var formData2 = {
-                  role: "guardian",
-                  username: $("input[name='guardianName']").val(),
-                  phone: $("input[name='guardianPhone']").val(),
-                  email: $("input[name='guardianEmail']").val(),
-            };
-            console.log(formData1)
-            $.ajax({
-                  url: '/admin/doCreateAccount',
-                  method: 'post',
-                  dataType: 'json',
-                  data: {
-                        password: $("#password").val(),
-                        filename: myFile.name,
-                        file: fileData,
-                        student: formData1,
-                        phuhuynh: formData2,
-                  },
-                  success: function (response) {
-                        if (response.msg == 'success') {
-                              reset();
-                              getAccount(role, 0);
-                              $(".createAccountOut").slideUp();
-                              alert('Sign Up success');
-                        }
-                        if (response.msg == 'Account already exists') {
-                              alert('Account already exists');
-                        }
-                        if (response.msg == 'Phone already exists') {
-                              alert('Phone already exists');
-                        }
-                        if (response.msg == 'error') {
-                              alert('error');
-                        }
-                  },
-                  error: function (response) {
-                        alert('server error');
-                  }
-            })
-      }
-</script>
+<script src=" /js/admin/createAccount.js"></script>
 
 </html>
