@@ -1,5 +1,8 @@
 $(document).ready(function() {
     getProcesscingClass()
+    var getClassID = $("#getClassID").val()
+    console.log(getClassID)
+    $("#" + getClassID).css("background-color", 'red')
 });
 
 //lấy danh sách học sinh trong lớp
@@ -229,9 +232,10 @@ function getProcesscingClass() {
         data: { check: "0" },
         success: function(response) {
             if (response.msg == 'success') {
-                $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Start date</th><th>End date</th><th>Student List</th><th>Take attended</th>")
+                $("#tableClass").html('<div class="tr"><div class="td">Filter Class by Status:<select id="typeClass" onchange="typeClass()"><option value="processing">Processing</option><option value="end">End</option></select></div><div class="td" id="formSearchEndClass"style="display: none;"><input type="month" id="monthClass"><button onclick="searchEndClass()">Search</button></div></div></div>')
+                $("#tableClass").append("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Take attended</div></div>")
                 response.classInfor.forEach((e) => {
-                    $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td><td><button onclick=attendedList('" + e._id + "')>attended </button></td></tr>")
+                    $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate + "</div><div class='td'>" + e.endDate + "</div><div class='td'><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
                 })
                 var getClassID = $("#getClassID").val()
                 if (getClassID) $("#" + getClassID).css("background-color", 'red')
@@ -247,10 +251,10 @@ function getProcesscingClass() {
 function typeClass() {
     var type = $("#typeClass").val()
     if (type == "processing") {
-        $(".formSearchEndClass").hide(500)
+        $("#formSearchEndClass").hide(500)
         getProcesscingClass()
     }
-    if (type == "end") $(".formSearchEndClass").slideDown(1000)
+    if (type == "end") $("#formSearchEndClass").slideDown(1200)
 }
 
 //tiến hành tìm kiếm và trả về kết quả

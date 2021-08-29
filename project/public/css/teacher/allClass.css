@@ -1,26 +1,30 @@
 * {
-    box-sizing: border-box
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    padding: 2%;
+    margin: 0;
 }
 
 body {
-    box-sizing: border-box;
+    width: 100%;
+    background-image: url("/images/background.jpg");
+    background-repeat: repeat-x;
     padding: 0;
     margin: 0;
+    margin-top: 1%;
     z-index: 1;
-    height: auto;
-    width: 100%;
 }
 
-header,
-footer {
+header {
     box-sizing: border-box;
     height: 60px;
     width: 100%;
     color: black;
-    clear: left;
     text-align: center;
     padding: 0;
     margin: 0;
+    border: solid;
 }
 
 header ul {
@@ -39,29 +43,31 @@ header li {
     height: 100%;
     float: left;
     width: 190.5px;
-}
-
-header a {
-    display: block;
-    text-decoration: none;
-    color: black;
-    width: 100%;
-    height: 100%;
+    cursor: pointer;
     text-align: center;
-    padding-top: 9%;
-    color: black;
+    line-height: 60px;
 }
 
-header a:hover {
-    background: #333;
-    color: #F1F1F1;
+.content {
+    box-sizing: border-box;
+    margin: 0;
+    margin-top: 10px;
+    height: 520px;
+    padding: 0;
 }
 
-.body {
-    height: 550px;
-    width: 100%;
-    border-style: solid;
-    border-color: coral;
+.tr {
+    display: table-row;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.td {
+    display: table-cell;
+    padding: 5px;
+    width: 300px;
+    border: #000000 solid 1px;
+    margin: 5px;
 }
 
 .innerOut,

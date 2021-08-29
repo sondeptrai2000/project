@@ -76,11 +76,6 @@ header li {
     border-bottom-right-radius: 20px;
 }
 
-#table {
-    display: table;
-    padding: 5px;
-}
-
 .tr {
     display: table-row;
     padding: 5px;

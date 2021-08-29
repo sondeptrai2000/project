@@ -79,7 +79,7 @@ let homeAdmin = (req, res) => {
             if (data.role === 'admin') {
                 res.render('admin/adminHome', { account: data })
             } else {
-                res.render('index/login')
+                res.redirect('/')
             }
         })
 }
@@ -91,9 +91,9 @@ let homeTeacher = (req, res) => {
     AccountModel.findOne({ _id: decodeAccount })
         .then(data => {
             if (data.role === 'teacher') {
-                res.render('teacher/teacherHome', { account: data })
+                res.render('teacher/teacherHome')
             } else {
-                res.render('index/login')
+                res.redirect('/')
             }
         })
 }
@@ -105,56 +105,40 @@ let homeGuardian = (req, res) => {
     AccountModel.findOne({ _id: decodeAccount })
         .then(data => {
             if (data.role === 'guardian') {
-                res.render('guardian/guardianHome', { account: data })
+                res.render('guardian/guardianHome')
             } else {
-                res.render('index/login')
+                res.redirect('/')
             }
         })
 }
 
-//ok
+
 let homeStudent = (req, res) => {
     let token = req.cookies.token
     let decodeAccount = jwt.verify(token, 'minhson')
     AccountModel.findOne({ _id: decodeAccount })
         .then(data => {
             if (data.role === 'student') {
-                res.render('student/studentHome', { account: data })
+                res.render('student/studentHome')
             } else {
-                res.render('index/login')
+                res.redirect('/')
             }
         })
 }
 
 let loginController = function(req, res) {
     bcrypt.compare(req.body.password, req.user.password, function(err, result) {
-        if (err) {
-            res.json({ message: "error" })
-        }
+        if (err) res.json({ message: "error" })
         if (result) {
             let token = jwt.sign({ _id: req.user._id }, 'minhson', { expiresIn: '1d' })
             res.cookie("token", token, { maxAge: 24 * 60 * 60 * 10000 });
             let user = req.user
-            if (user.role === "admin") {
-                res.json({ msg: 'success', data: "./homeAdmin" });
-                // res.redirect("./homeAdmin")
-            }
-            if (user.role === "student") {
-                res.json({ msg: 'success', data: "./homeStudent" });
-                // res.redirect("./homeStudent")
-            }
-            if (user.role === "guardian") {
-                res.json({ msg: 'success', data: "./homeGuardian" });
-                // res.redirect("./homeGuardian")
-            }
-            if (user.role === "teacher") {
-                res.json({ msg: 'success', data: "./homeTeacher" });
-                // res.redirect("./homeTeacher")
-            }
+            if (user.role === "admin") res.json({ msg: 'success', data: "./homeAdmin" });
+            if (user.role === "student") res.json({ msg: 'success', data: "./homeStudent" });
+            if (user.role === "guardian") res.json({ msg: 'success', data: "./homeGuardian" });
+            if (user.role === "teacher") res.json({ msg: 'success', data: "./homeTeacher" });
         } else {
-            console.log("234")
             res.json({ msg: 'invalid_Info', message: "Username or password is invalid" });
-            // res.render('index/login', { message: message })
         }
     })
 }

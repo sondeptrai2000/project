@@ -22,31 +22,19 @@ let checkLogin = async(req, res, next) => {
     }
 }
 
-let getUserById = function getUserById(id) {
-    return AccountModel.findOne({ _id: id })
-}
+
 let checkAuth = async(req, res, next) => {
     try {
-        var token = req.cookies.token || req.body.token
-        let decodeAccount = jwt.verify(token, 'minh')
-        let user = await getUserById(decodeAccount._id)
+        var token = req.cookies.token
+        let decodeAccount = jwt.verify(token, 'minhson')
+        let user = await AccountModel.findOne({ _id: decodeAccount._id })
         if (user) {
-            req.userLocal = user;
             next();
         } else {
-            return res.status(400).json({
-                message: "tk k ton tai",
-                status: 400,
-                error: true,
-            })
+            res.redirect('/')
         }
     } catch (error) {
-        res.status(500).json({
-                message: "hay dang nhap",
-                status: 500,
-                error: true
-            },
-            res.redirect('/'))
+        res.redirect('/')
     }
 }
 
@@ -54,40 +42,28 @@ let checkAdmin = (req, res, next) => {
     if (req.userLocal.role === "admin") {
         next()
     } else {
-        return res.status(400).json({
-            message: "no permission",
-            status: 400,
-            error: true,
-        })
+        res.redirect('/')
     }
 }
 let checkCoordinator = (req, res, next) => {
     if (req.userLocal.role === "coordinator") {
         next()
     } else {
-        return res.status(400).json({
-            message: "no permission",
-            status: 400,
-            error: true,
-        })
+        res.redirect('/')
     }
 }
 let checkStudent = (req, res, next) => {
     if (req.userLocal.role === "student") {
         next()
     } else {
-        return res.status(400).json({
-            message: "no permission",
-            status: 400,
-            error: true,
-        })
+        res.redirect('/')
     }
 }
 module.exports = {
     checkLogin,
     checkAdmin,
     checkAuth,
-    getUserById,
     checkCoordinator,
-    checkStudent
+    checkStudent,
+    checkAuth
 }
