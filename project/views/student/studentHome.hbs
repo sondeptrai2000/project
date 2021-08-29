@@ -4,92 +4,125 @@
 <head>
     <script src="/jquery/jquery.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+    <link rel="stylesheet" href="/css/teacher/teacherHome.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 
 </head>
 
 <body>
-    <p><a href='/account/homeStudent'>Trang chủ Student</a></p>
-    <p><a href='/student/allClass'>Môn học</a></p>
-    <p><a href='/student/viewschedule'>Lịch học</a></p>
-    <p><a onclick='studentProfile()'>Student Profile</a></p>
-</body>
-<div class="content" style="text-align: center; display:none">
-    <h1>Student profile</h1>
-    <table border="solid">
-        <tr> <input id='idProfile' type="hidden"></input>
-            <th onclick='$(".content").hide();'>Close</th>
-        </tr>
-        <tr>
-            <th>Avatar</th>
-            <td id='avatarProfile'></td>
-        </tr>
-        <tr>
-            <th>Username</th>
-            <td id='usernameProfile'></td>
-
-        </tr>
-        <tr>
-            <th>Gender</th>
-            <td id='genderProfile'></td>
-
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td id='emailProfile'></td>
-        </tr>
-        <tr>
-            <th>Route </th>
-            <td id='routeProfile'></td>
-        </tr>
-        <tr>
-            <th>Stage</th>
-            <td id='stageProfile'></td>
-        </tr>
-        <tr>
-            <th>Phone</th>
-            <td id='phoneProfile'></td>
-        </tr>
-        <tr>
-            <th>Birthday</th>
-            <td id='birthdayProfile'></td>
-        </tr>
-        <tr>
-            <th>Address</th>
-            <td id='addressProfile'></td>
-        </tr>
-        <tr>
-            <th><button onclick="updateProfile()">Update</button></th>
-        </tr>
-    </table>
-
-
-    <div class="content1" style="text-align: center; display:none">
-        <div>Teacher profile
-            <button onclick="$('.content1').fadeOut(1000);" style="float: ;"><i
-                    class="fas fa-window-close"></i></button>
-        </div>
-        <div>
-            Old avatar: <img id='avatarOldProfile' style='max-width:100px;max-height:100px'></img><br>
-            <label>Update Avatar</label><br>
-            Select images:<input type='file' id='myFile'><br>
-            <img id='output' style='height:3cm; width:3cm'><br>
-            Full Name: <input id='usernameUpdate'></input><br>
-            New password: <input id='newPassWord'></input><br>
-            Gender: <input id='genderUpdate'></input><br>
-            Email: <input id='emailUpdate'></input><br>
-            Phone: <input id='phoneUpdate'></input><br>
-            BirthDay: <input id='birthdayUpdate'></input><br>
-            Address: <input id='addressUpdate'></input><br>
-            <p><button onclick="doUpdateProfile()">Update</button></p>
+    <div class="updateProfileOut" style="text-align: center; display:none">
+        <div class="updateProfile">
+            <h1>Update profile</h1>
+            <div>
+                <img id='avatarOldProfile' style='max-width:auto;max-height:auto'></img>
+                <input type='file' id='myFile'>
+                Full Name: <input id='usernameUpdate'></input>
+                Password:<input id='newPassWord' placeholder="Input New password if you wanna change"></input>
+                Gender: <input id='genderUpdate'></input>
+                Email: <input id='emailUpdate'></input>
+                Phone: <input id='phoneUpdate'></input>
+                BirthDay: <input id='birthdayUpdate'></input>
+                Address: <input id='addressUpdate'></input>
+                <button onclick="doUpdateProfile()">Update</button>
+            </div>
         </div>
     </div>
-</div>
+    <header>
+        <ul style="float:left;font-family:cursive;">
+            <li style="width:200px">Sown English</li>
+        </ul>
+        <ul>
+            <li onclick="location.href='/account/homeStudent';">
+                <div style="background-color:lightpink;display:none;height:10px"></div>
+                Trang chủ Student
+            </li>
+            <li onclick="location.href='/student/allClass/0'">
+                <div style="background-color:lightpink;display:none;height:10px"></div>
+                Class
+            </li>
+            <li onclick="location.href='/messenger/chatForm';">
+                <div style="background-color:lightpink;display:none;height:10px"></div>
+                Messenger
+            </li>
+            <li id='welcome' style="width: auto;"></li>
+            <li style="width: 60px;text-align:left">
+                <div style="background-color:lightpink;display:none;height:10px"></div>
+                <i class="fas fa-sign-out-alt fa-lg"></i>
+            </li>
+        </ul>
+    </header>
+    <div class="content">
+        <div id="teacherProfile">
+            <h1>Teacher profile</h1>
+            <img id='avatarProfile' src="" style="width:auto;height:10px'">
+            <p id='idProfile' style="display:none"></p>
+            <p id='usernameProfile'></p>
+            <p id='genderProfile'></p>
+            <p id='emailProfile'></p>
+            <p id='routeProfile'></p>
+            <p id='stageProfile'></p>
+            <p id='emailProfile'></p>
+            <p id='phoneProfile'></p>
+            <p id='birthdayProfile'></p>
+            <p id='addressProfile'></p>
+            <button onclick="updateProfile()">Update</button>
+        </div>
+        <div id="Schedual" style="text-align:left;">
+            <h1>Weekly Schedual</h1>
+            <select id='chonTuan' onchange="tuanoi()" style="padding:0;width:200px;height:30px"></select>
+            <div class="tr" id='ngay'></div>
+            <div class="tr">
+                <div class="td">Day of week</div>
+                <div class="td">Thứ 2</div>
+                <div class="td">Thứ 3</div>
+                <div class="td">Thứ 4</div>
+                <div class="td">Thứ 5</div>
+                <div class="td">Thứ 6</div>
+                <div class="td">Thứ 7</div>
+                <div class="td">Chủ nhật</div>
+            </div>
+            <div class="tr" id="time1">
+                <div class="td">7:30 đến 9:30</div>
+            </div>
+            <div class="tr" id="time2">
+                <div class="td">9:45 đến 11:45</div>
+            </div>
+            <div class="tr" id="time3">
+                <div class="td">13:30 đến 15:30</div>
+            </div>
+            <div class="tr" id="time4">
+                <div class="td">15:45 đến 17:45</div>
+            </div>
+            <div class="tr" id="time5">
+                <div class="td">18:15 đến 20:15</div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
 </body>
 <script>
     var fileData;
     var myFile;
 
     $(document).ready(function () {
+        studentProfile()
+        test()
+        $('header li').hover(function () {
+            $(this).find("div").slideDown()
+        }, function () {
+            $(this).find("div").hide(500)
+        });
+
+        $(window).on('click', function (e) {
+            if ($(e.target).is('.updateProfileOut')) {
+                $('.updateProfileOut').slideUp(1500);
+            }
+        });
+
         $('#myFile').on('change', function () {
             var filereader = new FileReader();
             filereader.onload = function (event) {
@@ -103,6 +136,123 @@
         });
     });
 
+    function test() {
+        //lấy các ngày trong năm
+        for (var arr = [], dt = new Date("2021-01-01"); dt <= new Date("2021-12-31"); dt.setDate(dt.getDate() + 1)) {
+            var date = new Date(dt)
+            var month = (date.getMonth() + 1).toString().padStart(2, "0");
+            var lol = date.getFullYear() + "-" + month + "-" + date.getDate().toString().padStart(2, "0");
+            arr.push({ "ngay": lol, "thu": (date.getDay() + 1) });
+        }
+        //chia thành các tuần từ thứ 2 đến CN
+        var tuan = []
+        var check = false
+        var check2 = false
+        for (var i = 0; i < arr.length; i++) {
+            var d = new Date(arr[i].ngay);
+            var n = d.getDay();
+            if (arr[i].thu != 2 && i < 7 && check2 == false) {
+                tuan.push(arr[i].ngay + ' đến ' + arr[7 - n].ngay)
+                check2 = true
+            }
+            if (arr[i].thu == 2 && (i + 7) < arr.length) {
+                tuan.push(arr[i].ngay + ' đến ' + arr[i + 6].ngay)
+            }
+            if (arr[i].thu != 2 && (i + 7) > arr.length && check == false) {
+                tuan.push(arr[i + 1].ngay + ' đến ' + arr[arr.length - 1].ngay)
+                check = true
+            }
+        }
+        //đưa các tuần vào thẻ select và đặt select cho tuần hiện tại.
+        const date1 = new Date();
+        var year = date1.getFullYear()
+        var month = date1.getMonth() + 1
+        //lấy thời gian hiện tại để so sánh và lấy tuần
+        var now = date1.getFullYear() + "-" + month.toString().padStart(2, "0") + "-" + date1.getDate();
+        for (var u = 0; u < tuan.length; u++) {
+            $("#chonTuan").append('<option value="' + tuan[u] + '">' + tuan[u] + '</option>');
+            dauTuan = tuan[u].split(" đến ")[0]
+            cuoiTuan = tuan[u].split(" đến ")[1]
+            if ((dauTuan <= now) && (now <= cuoiTuan)) {
+                $('#chonTuan option:selected').removeAttr('selected');
+                $("#chonTuan option[value='" + tuan[u] + "']").attr('selected', 'selected');
+            }
+        }
+        //lấy thông tin lịch trình học, làm việc
+        tuanoi()
+    };
+
+    //lấy các ngày trong khoảng thời gian học
+    var getDaysArray = function (start, end) {
+        for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+            arr.push(new Date(dt));
+        }
+        return arr;
+    };
+
+    //lấy thông tin lịch trình học, làm việc
+    function tuanoi() {
+        var tuan = $("#chonTuan").val()
+        var dauTuan = tuan.split(" đến ")[0]
+        var cuoiTuan = tuan.split(" đến ")[1]
+        var formData = {
+            dauTuan: dauTuan,
+            cuoiTuan: cuoiTuan
+        }
+        //chỉnh fomat date giống Type Date trong mongoDB để so sánh 
+        // link src hàm moment ở head
+        var start = moment(new Date(dauTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
+        var end = moment(new Date(cuoiTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
+        var a = getDaysArray(new Date(dauTuan), new Date(cuoiTuan));
+        $("#ngay").html("<div class='td'>Ngày</div>")
+        //tùy biến ngày vào html
+        a.forEach(element => {
+            $("#ngay").append("<div class='td'>" + (element.getFullYear() + "-" + (element.getMonth() + 1).toString().padStart(2, "0") + "-" + element.getDate()) + "</div>")
+        });
+        //lấy thông tin lịch học
+        $.ajax({
+            url: '/student/getSchedule',
+            method: 'get',
+            dataType: 'json',
+            data: formData,
+            success: function (response) {
+                if (response.msg == 'success') {
+                    $("#time1").html('<div class="td">7:30 đến 9:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $("#time2").html('<div class="td">9:45 đến 11:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $("#time3").html('<div class="td">13:30 đến 15:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $("#time4").html('<div class="td">15:45 đến 17:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $("#time5").html('<div class="td">18:15 đến 20:15</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                    $.each(response.classInfor, function (index, classInfor) {
+                        $.each(classInfor.schedule, function (index, schedule) {
+                            if (start <= schedule.date && schedule.date <= end) {
+                                //ghi thông tin lịch học, làm việc vào bảng
+                                var caLam = typeTime(schedule.time)
+                                $("#" + caLam + " div:nth-child(" + schedule.day + ")").append("<a href='/student/allClass/" + classInfor._id + "'>Class: " + classInfor.className + "</a> Room: " + schedule.room)
+                            }
+                        });
+                    });
+                }
+                if (response.msg == 'error') {
+                    alert("error")
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        })
+    }
+
+    function typeTime(time) {
+        var caLam
+        console.log(time)
+        if (time == "7:30 đến 9:30") caLam = "time1"
+        if (time == "9:45 đến 11:45") caLam = "time2"
+        if (time == "13:30 đến 15:30") caLam = "time3"
+        if (time == "15:45 đến 17:45") caLam = "time4"
+        if (time == "18:15 đến 20:15") caLam = "time5"
+        return caLam
+    }
+
     function studentProfile() {
         $.ajax({
             url: '/teacher/teacherProfile',
@@ -112,16 +262,17 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     $(".content").show();
-                    $("#idProfile").val(response.data._id);
-                    $("#avatarProfile").html("<img style='max-width:150px;max-height:200px' src='" + response.data.avatar + "'>");
-                    $("#usernameProfile").html(response.data.username);
-                    $("#emailProfile").html(response.data.email);
-                    $("#routeProfile").html(response.data.routeName);
-                    $("#stageProfile").html(response.data.stage);
-                    $("#phoneProfile").html(response.data.phone);
-                    $("#birthdayProfile").html(response.data.birthday);
-                    $("#addressProfile").html(response.data.address);
-                    $("#genderProfile").html(response.data.sex);
+                    $("#idProfile").text(response.data._id);
+                    $("#routeProfile").html("Route: " + response.data.routeName);
+                    $("#stageProfile").html("Stage: " + response.data.stage);
+                    $("#avatarProfile").attr("src", response.data.avatar);
+                    $("#welcome").html("Welcome " + response.data.username);
+                    $("#usernameProfile").html("Full Name: " + response.data.username);
+                    $("#genderProfile").html("Gender: " + response.data.sex);
+                    $("#emailProfile").html("Email: " + response.data.email);
+                    $("#phoneProfile").html("Phone: " + response.data.phone);
+                    $("#birthdayProfile").html("BirthDay: " + response.data.birthday);
+                    $("#addressProfile").html("Address: " + response.data.address);
                 }
             },
             error: function (response) {
@@ -131,15 +282,14 @@
     }
 
     function updateProfile() {
-        $("#avatarProfile img").attr('src');
-        $("#avatarOldProfile").attr("src", $('#avatarProfile img').attr('src'));
+        $("#avatarOldProfile").attr("src", $('#avatarProfile').attr('src'));
         $("#usernameUpdate").val($("#usernameProfile").text());
         $("#genderUpdate").val($("#genderProfile").text());
         $("#emailUpdate").val($("#emailProfile").text());
         $("#phoneUpdate").val($("#phoneProfile").text());
         $("#birthdayUpdate").val($("#birthdayProfile").text());
         $("#addressUpdate").val($("#addressProfile").text());
-        $(".content1").toggle(2000);
+        $(".updateProfileOut").toggle(2000);
     }
 
 
@@ -156,13 +306,13 @@
             address: $("#addressUpdate").val(),
             birthday: $("#birthdayUpdate").val(),
             avatar: $('#avatarOldProfile').attr('src'),
-        };        
+        };
         $.ajax({
             url: '/student/doeditAccount',
             method: 'post',
             dataType: 'json',
             data: {
-                id: $("#idProfile").val(),
+                id: $("#idProfile").text(),
                 password: password,
                 formData1: formData1,
                 file: fileData,
@@ -175,10 +325,10 @@
                 if (response.msg == 'Account already exists') {
                     alert("Account already exists")
                 }
-                 if (response.msg == 'Phone already exists') {
+                if (response.msg == 'Phone already exists') {
                     alert("Phone already exists")
                 }
-                 if (response.msg == 'error') {
+                if (response.msg == 'error') {
                     alert("error")
                 }
             },

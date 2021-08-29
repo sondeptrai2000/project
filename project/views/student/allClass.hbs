@@ -9,6 +9,7 @@
 </head>
 
 <body>
+  <input type="hidden" id="getClassID" value="{{params}}">
 
   <div class="studentListOut" style="display:none">
     <div class="studentList">
@@ -58,16 +59,7 @@
   </header>
 
   <div class="body">
-    <table border="solid">
-      <th>className</th>
-      <th>Route</th>
-      <th>Stage</th>
-      <th>description</th>
-      <th>Teacher Name</th>
-      <th>Danh sách các bạn học sinh</th>
-      <th>startDate</th>
-      <th>endDate</th>
-      <th>Class Status</th>
+    <table border="solid" id="tableClass">
       {{#each data}}
       {{#each classID}}
       <tr>
@@ -90,5 +82,43 @@
 </body>
 
 <script src="/allClassStudent.js"></script>
+<script>
+  $(document).ready(function () {
+    getClass()
+  });
+
+  function getClass() {
+    $.ajax({
+      url: '/student/getClass',
+      method: 'get',
+      dataType: 'json',
+      data: { check: "0" },
+      success: function (response) {
+        if (response.msg == 'success') {
+          console.log(response.classInfor)
+          $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Teacher Name</th><th>Start date</th><th>End date</th><th>Student List</th>")
+          response.classInfor.forEach((e) => {
+            e.classID.forEach((e) => {
+              $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td onclick=viewTeacherProfile('" + e.teacherID._id + "')>" + e.teacherID.username + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td></tr>")
+            })
+          })
+          var getClassID = $("#getClassID").val()
+          if (getClassID) {
+            $("#" + getClassID).css("background-color", 'red')
+            setTimeout(function () {
+              $("#" + getClassID).css("background-color", 'white')
+            }, 5000)
+          }
+        }
+        if (response.msg == 'abc') {
+          alert("học sinh đã chuyển sang giai đoạn cao hơn")
+        }
+      },
+      error: function (response) {
+        alert('server error');
+      }
+    });
+  }
+</script>
 
 </html>

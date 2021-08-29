@@ -15,7 +15,8 @@ studentRouter.post('/doeditAccount', studentController.doeditAccount)
 
 
 //liên quan đến lớp học
-studentRouter.get('/allClass', studentController.allClass)
+studentRouter.get('/allClass/:id', studentController.allClass)
+studentRouter.get('/getClass', studentController.getClass)
 studentRouter.get('/viewschedule', studentController.viewschedule)
 
 

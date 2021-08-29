@@ -139,3 +139,14 @@ body {
 .updateProfile input {
     font-size: 20px;
 }
+
+#teacherProfile {
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}
+
+#teacherProfile::-webkit-scrollbar {
+    width: 0 !important;
+    display: none;
+}
