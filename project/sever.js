@@ -7,6 +7,7 @@ var path = require('path');
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
 const chatModel = require('./models/messenger');
+var hbs = require('hbs');
 
 app.set('views', './views');
 app.set('view engine', 'hbs');
@@ -25,7 +26,7 @@ app.use(express.static(pathh));
 // app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
-
+hbs.registerPartials(__dirname + '/views/header');
 //set the path of the jquery file to be used from the node_module jquery package  
 app.use('/jquery', express.static(path.join(__dirname + '/node_modules/jquery/dist/')));
 

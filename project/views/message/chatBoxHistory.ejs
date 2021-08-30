@@ -7,10 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <script src="/jquery/jquery.js"></script>
     <link rel="stylesheet" href="/css/chatBox.css">
-    <title>Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+    <title>Chat box</title>
 </head>
 
 <body>
+    <header>
+        <%- include('../header/'+role +'Header.hbs'); %>
+    </header>
     <div class="chatForm">
         <div class="chatHistory">
             <div class="chatOption">
@@ -111,7 +115,16 @@
     $(document).ready(function() {
         document.cookie = "promo_shown=1; SameSite=None;Secure"
 
+        $("#welcome").html("Welcome " + name.value)
         $(".chatBox").scrollTop($('#messContent').height())
+            //hiệu ứng menu
+        $('header li').hover(function() {
+            $(this).find("div").slideDown()
+        }, function() {
+            $(this).find("div").hide(500)
+        });
+
+
         connectAllConversation();
     });
 

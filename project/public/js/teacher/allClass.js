@@ -6,6 +6,8 @@ $(document).ready(function() {
     }, function() {
         $(this).find("div").hide(500)
     });
+    let username = Cookies.get('username'); // => 'value'
+    $("#welcome").html("Welcome " + username)
 
     getProcesscingClass()
 

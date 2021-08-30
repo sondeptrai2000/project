@@ -17,7 +17,7 @@
             <h1>Update profile</h1>
             <div>
                 <img id='currentAvatar' style='max-width:auto;max-height:auto'></img>
-                <input type='hidden'id='avatarOldProfile'></input>
+                <input type='hidden' id='avatarOldProfile'></input>
                 <input type='file' id='myFile'>
                 Name:<input id='usernameUpdate'></input>
                 Password:<input id='newPassWord' placeholder="Input New password if you wanna change"></input>
@@ -30,31 +30,7 @@
             </div>
         </div>
     </div>
-
-    <header>
-        <ul style="float:left;font-family:cursive;">
-            <li style="width:200px">Sown English</li>
-        </ul>
-        <ul>
-            <li onclick="location.href='/account/homeTeacher';">
-                <div style="background-color:lightpink;display:none;height:10px"></div>
-                Trang chủ teacher
-            </li>
-            <li onclick="location.href='/teacher/allClass/0'">
-                <div style="background-color:lightpink;display:none;height:10px"></div>
-                Class
-            </li>
-            <li onclick="location.href='/messenger/chatForm';">
-                <div style="background-color:lightpink;display:none;height:10px"></div>
-                Messenger
-            </li>
-            <li id='welcome' style="width: auto;"></li>
-            <li style="width: 60px;text-align:left">
-                <div style="background-color:lightpink;display:none;height:10px"></div>
-                <i class="fas fa-sign-out-alt fa-lg"></i>
-            </li>
-        </ul>
-    </header>
+    <header> {{> teacherHeader }}</header>
     <div class="content">
         <div id="teacherProfile">
             <h1>Teacher profile</h1>
@@ -121,7 +97,7 @@
 
     });
 
-   
+
 </script>
 
 </html>

@@ -15,6 +15,38 @@ body {
     z-index: 1;
 }
 
+header {
+    box-sizing: border-box;
+    height: 60px;
+    width: 100%;
+    color: black;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    border: solid;
+}
+
+header ul {
+    margin: 0;
+    overflow: hidden;
+    list-style-type: none;
+    height: 100%;
+    width: auto;
+    padding: 0;
+    font-size: 20px;
+    float: right;
+}
+
+header li {
+    padding: 0;
+    height: 100%;
+    float: left;
+    width: 190.5px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 60px;
+}
+
 .chatForm {
     box-sizing: border-box;
     width: 100%;

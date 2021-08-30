@@ -68,13 +68,14 @@ class messtController {
             try {
                 let token = req.cookies.token
                 let decodeAccount = jwt.verify(token, 'minhson')
-                var sender = await AccountModel.findOne({ _id: decodeAccount }, { username: 1, chat: 1 }).lean()
+                var sender = await AccountModel.findOne({ _id: decodeAccount }, { username: 1, chat: 1, role: 1 }).lean()
+                var role = sender.role
                 var data1 = await chatModel.find({ _id: { $in: sender.chat } }, {
                     // lấy tin nhắn cuối cùng trong mảng message
                     message: { $slice: -1 },
                 }).sort({ updateTime: -1 }).lean()
                 if (data1.length == "0") {
-                    res.render("message/chatTrong.ejs")
+                    res.render("message/chatTrong.ejs", { role })
                 } else {
                     if (sender.username != data1[0].person1) {
                         var formData = {
@@ -94,7 +95,7 @@ class messtController {
                     }
                     var listID = sender.chat
                     var data = await chatModel.findOne({ _id: data1[0]._id }, { message: 1 }).lean()
-                    res.render("message/chatBoxHistory.ejs", { data1, data, formData, listID })
+                    res.render("message/chatBoxHistory.ejs", { data1, data, formData, listID, role })
                 }
             } catch (e) {    
                 if (e) {
