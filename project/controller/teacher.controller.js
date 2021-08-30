@@ -72,6 +72,7 @@ class teacherController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
+                res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
                 res.json({ msg: 'success', data: data });
             }
         })
@@ -79,8 +80,9 @@ class teacherController {
 
     allClass(req, res) {
         var params = req.params.id
-        if (params != "0") res.render('teacher/allClass', { params })
-        if (params == "0") res.render('teacher/allClass')
+        var teacherName = req.cookies.username
+        if (params != "0") res.render('teacher/allClass', { params, teacherName })
+        if (params == "0") res.render('teacher/allClass', { teacherName })
 
     }
 

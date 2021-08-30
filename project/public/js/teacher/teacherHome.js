@@ -14,9 +14,7 @@ $(document).ready(function() {
     });
     //close modal box
     $(window).on('click', function(e) {
-        if ($(e.target).is('.updateProfileOut')) {
-            $('.updateProfileOut').slideUp(1500);
-        }
+        if ($(e.target).is('.updateProfileOut')) $('.updateProfileOut').slideUp(1500);
     });
     $('#myFile').on('change', function() {
         var filereader = new FileReader();

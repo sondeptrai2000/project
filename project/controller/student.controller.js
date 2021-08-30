@@ -56,6 +56,7 @@ class studentController {
             if (err) {
                 res.json({ msg: 'error' });
             } else {
+                res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
                 res.json({ msg: 'success', data: data });
             }
         })
@@ -66,8 +67,9 @@ class studentController {
 
     allClass(req, res) {
         var params = req.params.id
-        if (params != "0") res.render('student/allClass', { params })
-        if (params == "0") res.render('student/allClass')
+        var studentName = req.cookies.username
+        if (params != "0") res.render('student/allClass', { params, studentName })
+        if (params == "0") res.render('student/allClass', { studentName })
     }
 
 

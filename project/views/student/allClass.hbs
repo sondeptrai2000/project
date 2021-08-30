@@ -3,56 +3,55 @@
 
 <head>
   <script src="/jquery/jquery.js"></script>
+  <link rel="stylesheet" href="/css/teacher/teacherHome.css">
   <link rel="stylesheet" href="/css/student/allClass.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 </head>
 
 <body>
   <input type="hidden" id="getClassID" value="{{params}}">
 
   <div class="studentListOut" style="display:none">
-    <div class="studentList">
-      <div class="option"></div>
-      <table border='solid'>
-        <th>avatar</th>
-        <th>username</th>
-        <th>email</th>
-        <th>Chat</th>
-        <th onclick='$(".studentListOut").fadeOut(500);'>X</th>
-        <tbody class='studentListBody'></tbody>
-      </table>
-    </div>
+    <div class="studentList"></div>
   </div>
-  <div>
 
-    <div class="teacherIn4Out" style="display:none">
-      <div class="teacherIn4">
-        <table id="teacherIn4" border='solid'>
-
-        </table>
-      </div>
-    </div>
+  <div class="teacherIn4Out" style="display:none">
+    <div class="teacherIn4"></div>
   </div>
+
   <header>
     <ul style="float:left;font-family:cursive;">
-      <li style="width:200px"><i class="fas fa-graduation-cap" style="font-size:60px"></i>Sown English</li>
+      <li style="width:200px">Sown English</li>
     </ul>
     <ul>
-      <li><a href="#">Home page</a></li>
-      <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutCourse').offset().top-100)},1000)">About
-          Course</a></li>
-      <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutUs').offset().top-100)},1000)">About
-          Us</a>
+      <li onclick="location.href='/account/homeStudent';">
+        <div style="background-color:lightpink;display:none;height:10px"></div>
+        Trang chủ Student
       </li>
-      <li><a onclick="$('#loginForm').fadeIn(1000);">Log In</a></li>
+      <li onclick="location.href='/student/allClass/0'">
+        <div style="background-color:lightpink;display:none;height:10px"></div>
+        Class
+      </li>
+      <li onclick="location.href='/messenger/chatForm';">
+        <div style="background-color:lightpink;display:none;height:10px"></div>
+        Messenger
+      </li>
+      <li style="width: auto;">Welcome {{studentName}}</li>
+      <li style="width: 60px;text-align:left">
+        <div style="background-color:lightpink;display:none;height:10px"></div>
+        <i class="fas fa-sign-out-alt fa-lg"></i>
+      </li>
     </ul>
   </header>
 
-  <div class="body">
-    <table border="solid" id="tableClass"></table>
+  <div class="content">
+    <div id="tableClass"></div>
   </div>
+
+
 </body>
 
 <script src="/js/student/allClassStudent.js"></script>
+
 </html>

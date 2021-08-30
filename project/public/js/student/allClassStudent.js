@@ -1,5 +1,17 @@
 $(document).ready(function() {
     getClass()
+        //hiệu ứng menu
+    $('header li').hover(function() {
+        $(this).find("div").slideDown()
+    }, function() {
+        $(this).find("div").hide(500)
+    });
+
+
+    $(window).on('click', function(e) {
+        if ($(e.target).is('.studentListOut')) $('.studentListOut').slideUp(1500);
+        if ($(e.target).is('.teacherIn4Out')) $('.teacherIn4Out').slideUp(1500);
+    });
 });
 
 
@@ -13,10 +25,10 @@ function getClass() {
         success: function(response) {
             if (response.msg == 'success') {
                 console.log(response.classInfor)
-                $("#tableClass").html("<th>Class name</th><th>routeName</th><th>stage</th><th>subject</th><th>Description</th><th>Teacher Name</th><th>Start date</th><th>End date</th><th>Student List</th>")
+                $("#tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Teacher Name</div><div class='td'>Start date</div><div class='td'>End date</div class='td'><div class='td'>Student List</div></div>")
                 response.classInfor.forEach((e) => {
                     e.classID.forEach((e) => {
-                        $("#tableClass").append(" <tr id=" + e._id + "><td>" + e.className + "</td><td>" + e.routeName + "</td><td>" + e.stage + "</td><td>" + e.subject + "</td><td>" + e.description + "</td><td onclick=viewTeacherProfile('" + e.teacherID._id + "')>" + e.teacherID.username + "</td><td>" + e.startDate + "</td><td>" + e.endDate + "</td><td><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></td></tr>")
+                        $("#tableClass").append("<div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td' onclick=viewTeacherProfile('" + e.teacherID._id + "')>" + e.teacherID.username + "</div><div class='td'>" + e.startDate + "</div><div class='td'>" + e.endDate + "</div><div class='td'><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></div></div>")
                     })
                 })
                 var getClassID = $("#getClassID").val()
@@ -49,9 +61,8 @@ function viewTeacherProfile(id) {
         data: { abc: _id },
         success: function(response) {
             if (response.msg == 'success') {
-                $("#teacherIn4").html("<tr><th>avatar</th><th>username</th><th>email</th><th onclick=$('.teacherIn4Out').fadeOut(500);>X</th></tr>")
                 $.each(response.data, function(index, data) {
-                    $("#teacherIn4").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.email + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + data._id + "'><input type='hidden' name='studentName' value='" + data.username + "'><button>Chat</button></form></td></td></tr>");
+                    $(".teacherIn4").html("<div class='tr'><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'><label>" + data.username + "</label></div><div class='tr'>" + data.email + "</div><div class='tr'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + data._id + "'><input type='hidden' name='studentName' value='" + data.username + "'><button>Chat</button></form></div>");
                 });
                 $(".teacherIn4Out").fadeIn(500);
             }
@@ -74,10 +85,10 @@ function sendData(id) {
         data: { abc: _id },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".studentListBody").html("")
+                $(".studentList").html('<div class="tr"><div class="td">avatar</div><div class="td">username</div><div class="td">email</div><div class="td">Chat</div></div>')
                 $.each(response.data, function(index, data) {
                     $.each(data.studentID, function(index, studentID) {
-                        $(".studentListBody").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.email + "</td><td><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></td></tr>");
+                        $(".studentList").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></div></div>");
                     });
                 });
                 $(".studentListOut").fadeIn(2000);

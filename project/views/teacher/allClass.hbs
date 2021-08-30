@@ -9,104 +9,42 @@
 
 <body>
     <div class="attendedListOut" style="display: none;">
-        <table border="solid" id="attendedList">
-            <tr>
-                <th>Date</th>
-                <th>Day of week</th>
-                <th>Action</th>
-                <th><button onclick='$(".attendedListOut").fadeOut(500);'>close</button></th>
-
-            </tr>
-        </table>
-    </div>
-
-    <div class="attendedOutDoorOut" style="display:none">
-        <table class='attendedOutDoor' border='solid'>
-            <thead>
-                <tr>
-                    <th>username</th>
-                    <th>note</th>
-                    <th>atended</th>
-                    <th><button onclick='$(".attendedOutDoorOut").fadeOut(500);'>Close</button>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class='attendedOutDoorBody'></tbody>
-        </table>
+        <div id="attendedList"></div>
     </div>
 
 
     <div class="innerOut" style="display:none">
-        <div class="inner">
-            <div class="option"></div>
-            <table border='solid'>
-                <th>avatar</th>
-                <th>username</th>
-                <th>Aim</th>
-                <th>email</th>
-                <th>grade</th>
-                <th>feedBackContent</th>
-                <th>Select</th>
-                <th>Chat</th>
-                <th>đánh giá</th>
-                <th onclick='$(".innerOut").hide();'>X</th>
-                <tbody class='taskrow'></tbody>
-            </table>
-        </div>
+        <div class="inner"></div>
     </div>
-    <div class="studentTableOut" style="display: none;">
-        <div id="studentTable">
-            <table border='solid'>
-                <thead>
-                    <tr>
-                        <th><input id="myInputxxxx" type="text" placeholder="Search.."></th>
-                        <th><button onclick='$(".studentTableOut").hide();'>&times;</button></th>
-                    </tr>
-                    <tr>
-                        <th>avatar</th>
-                        <th>username</th>
-                        <th>email</th>
-                        <th>routeName</th>
-                        <th>stage</th>
-                        <th>Chose</th>
-                        <th>More information</th>
-                    </tr>
-                </thead>
-                <tbody class='taskrow111'></tbody>
-            </table>
-        </div>
-    </div>
+
     <div class="studentAssessmentOut" style="display:none">
         <div class="studentAssessment">
-            <table class='' border='solid'>
-                <h2>studentAssessment form</h2>
-                <span>ClassID: <label id='classID'></label> </span><br>
-                <span>StudentID: <label id='studentID'></label> </span><br>
-                <span>Name: <label id='name'></label> </span><br>
-                <span>Email: <label id='email'></label> </span><br>
-                <span for="topic">Grade</span><br>
+            <h2>Student Assessment </h2>
+            <input type="hidden" id='classID'></input>
+            <input type="hidden" id='studentID'></input>
+            <div class='tr'>Student name: <label id='name'></label></div>
+            <div class='tr'>Email: <label id='email'></label></div>
+            <div class='tr'>
+                <span for="topic">Grade</span>
                 <select class="level" id="grade">
                     <option value="Greate">Greate </option>
                     <option value="Good">Good</option>
                     <option value="Soso">Soso</option>
                     <option value="Restudy">Restudy</option>
                 </select>
-                <br>
-                <label>Comment</label>
-                <input type="text" id="comment">
-                <br>
-                <button onclick="takeFeedBack()"> Tiến hành đánh giá</button>
-                <p onclick='$(".studentAssessmentOut").hide()'>cancle</p>
-            </table>
+            </div>
+            <div class='tr'><label>Comment</label><input type="text" id="comment"></div>
+            <div class='tr'><button onclick="takeFeedBack()">Tiến hành đánh giá</button></div>
         </div>
     </div>
+
     <div class="studentAssessmentUpdateOut" style="display:none">
         <div class="studentAssessmentUpdate">
-            <table border='solid'>
-                <h2>Update studentAssessment form</h2>
-                <span>ClassID: <label id='updateclassID'></label> </span><br>
-                <span>StudentID: <label id='updatestudentID'></label> </span><br>
-                <span>Updatename: <label id='updatename'></label> </span><br>
+            <h2>Update Assessment </h2>
+            <input type="hidden" id='updateclassID'></input>
+            <input type="hidden" id='updatestudentID'></input>
+            <div class='tr'>Student name: <label id='updatename'></label></div>
+            <div class='tr'>
                 <span for="topic">Grade</span>
                 <select class="level" id="updategrade">
                     <option value="Greate">Greate </option>
@@ -114,32 +52,27 @@
                     <option value="Soso">Soso</option>
                     <option value="Restudy">Restudy</option>
                 </select>
-                <br>
-                <label>Comment</label>
-                <input type="text" id="updatecomment">
-                <br>
-                <button onclick="updateFeekBack()">cập nhật Tiến hành đánh giá</button>
-                <p onclick='$(".studentAssessmentUpdateOut").hide();'>cancle</p>
-            </table>
+            </div>
+            <div class='tr'><label>Comment</label><input type="text" id="updatecomment"></div>
+            <div class='tr'><button onclick="updateFeekBack()">cập nhật Tiến hành đánh giá</button></div>
         </div>
     </div>
+
     <div class='lolaOut' style="display: none;">
-        <table border="solid" id='lola'>
-            <tr>
-                <th>ID</th>
-                <th>Status</th>
+        <div id='lola'>
+            <div class='tr'>
+                <div class='td'>ID</div>
+                <div class='td'>Status</div>
                 <input type="hidden" id="loladate">
                 <input type="hidden" id="loladate1">
                 <input type="hidden" id="loladate3">
                 <input type="hidden" id="loladate4">
-                <input type="text" id="scheduleStatus">
-                <input type="text" id="scheduleTime">
-                <input type="text" id="scheduleRoom">
-                <input type="text" id="scheduleDay">
-                <th><button onclick="submitTakeAttend()">submit</button></th>
-                <th><button onclick='$(".lolaOut").fadeOut(500);'>close</button></th>
-            </tr>
-        </table>
+                <input type="hidden" id="scheduleStatus">
+                <input type="hidden" id="scheduleTime">
+                <input type="hidden" id="scheduleRoom">
+                <input type="hidden" id="scheduleDay">
+            </div>
+        </div>
     </div>
     <input type="hidden" id="getClassID" value="{{params}}">
     <header>
@@ -159,7 +92,7 @@
                 <div style="background-color:lightpink;display:none;height:10px"></div>
                 Messenger
             </li>
-            <li id='welcome' style="width: auto;"></li>
+            <li style="width: auto;">Welcome {{teacherName}}</li>
             <li style="width: 60px;text-align:left">
                 <div style="background-color:lightpink;display:none;height:10px"></div>
                 <i class="fas fa-sign-out-alt fa-lg"></i>
@@ -168,16 +101,8 @@
     </header>
     <div class="content">
         <h1>All class level</h1>
-
-        <div id="tableClass">
-            
-        </div>
+        <div id="tableClass"></div>
     </div>
-
-
-
-
-
 
 </body>
 <script src=" /js/teacher/allClass.js"></script>
