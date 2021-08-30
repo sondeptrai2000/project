@@ -25,7 +25,6 @@ var transporter = nodemailer.createTransport({
 
 let getCode = async(req, res) => {
     try {
-        console.log(req.query.email)
         var check = await AccountModel.findOne({ email: req.query.email }, { username: 1 })
         if (check) {
             var code = Crypto.randomBytes(21).toString('base64').slice(0, 21)
@@ -71,59 +70,71 @@ let confirmPass = async(req, res) => {
 
 
 //ok
-let homeAdmin = (req, res) => {
-    let token = req.cookies.token
-    let decodeAccount = jwt.verify(token, 'minhson')
-    AccountModel.findOne({ _id: decodeAccount })
-        .then(data => {
-            if (data.role === 'admin') {
-                res.render('admin/adminHome', { account: data })
-            } else {
-                res.redirect('/')
-            }
-        })
+let homeAdmin = async(req, res) => {
+    try {
+        let token = req.cookies.token
+        if (token) {
+            let decodeAccount = jwt.verify(token, 'minhson')
+            var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
+            if (data.role === 'admin') res.render('admin/adminHome')
+        } else {
+            res.redirect('/')
+        }
+    } catch (e) {
+        console.log(e)
+        res.redirect('/')
+    }
 }
 
 //ok
-let homeTeacher = (req, res) => {
-    let token = req.cookies.token
-    let decodeAccount = jwt.verify(token, 'minhson')
-    AccountModel.findOne({ _id: decodeAccount })
-        .then(data => {
-            if (data.role === 'teacher') {
-                res.render('teacher/teacherHome')
-            } else {
-                res.redirect('/')
-            }
-        })
+let homeTeacher = async(req, res) => {
+    try {
+        let token = req.cookies.token
+        if (token) {
+            let decodeAccount = jwt.verify(token, 'minhson')
+            var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
+            if (data.role === 'teacher') res.render('teacher/teacherHome')
+        } else {
+            res.redirect('/')
+        }
+    } catch (e) {
+        console.log(e)
+        res.redirect('/')
+    }
 }
 
 //ok
-let homeGuardian = (req, res) => {
-    let token = req.cookies.token
-    let decodeAccount = jwt.verify(token, 'minhson')
-    AccountModel.findOne({ _id: decodeAccount })
-        .then(data => {
-            if (data.role === 'guardian') {
-                res.render('guardian/guardianHome')
-            } else {
-                res.redirect('/')
-            }
-        })
+let homeGuardian = async(req, res) => {
+    try {
+        let token = req.cookies.token
+        if (token) {
+            let decodeAccount = jwt.verify(token, 'minhson')
+            var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
+            if (data.role === 'guardian') res.render('guardian/guardianHome')
+        } else {
+            res.redirect('/')
+        }
+    } catch (e) {
+        console.log(e)
+        res.redirect('/')
+    }
 }
 
 
-let homeStudent = (req, res) => {
-    let token = req.cookies.token
-    let decodeAccount = jwt.verify(token, 'minhson')
-    AccountModel.findOne({ _id: decodeAccount })
-        .then(data => {
-            if (data.role === 'student') {
-                res.render('student/studentHome')
-            } else {
-                res.redirect('/')
-            }
-        })
+let homeStudent = async(req, res) => {
+    try {
+        let token = req.cookies.token
+        if (token) {
+            let decodeAccount = jwt.verify(token, 'minhson')
+            var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
+            if (data.role === 'student') res.render('student/studentHome')
+        } else {
+            res.redirect('/')
+        }
+    } catch (e) {
+        console.log(e)
+        res.redirect('/')
+    }
 }
 
 let loginController = function(req, res) {

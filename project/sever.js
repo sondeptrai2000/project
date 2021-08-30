@@ -14,13 +14,13 @@ app.set('view engine', 'hbs');
 app.set('view-engine', 'ejs');
 app.use(cookieParser())
 
-app.get('/logout', function(req, res, next) {
+app.get('/', function(req, res) {
+    res.clearCookie("token");
+    res.clearCookie("username");
     res.render('index/login')
 });
 
-app.get('/', function(req, res, next) {
-    res.render('index/login')
-});
+
 var pathh = path.resolve(__dirname, 'public');
 app.use(express.static(pathh));
 // app.use(bodyParser.urlencoded({ extended: false }));
