@@ -35,7 +35,7 @@ function getClass() {
                 if (getClassID) {
                     $("#" + getClassID).css("background-color", 'red')
                     setTimeout(function() {
-                        $("#" + getClassID).css("background-color", 'white')
+                        $("#" + getClassID).css("background-color", '')
                     }, 5000)
                 }
             }

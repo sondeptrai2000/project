@@ -48,6 +48,20 @@ header li {
     line-height: 60px;
 }
 
+.tr {
+    display: table-row;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.td {
+    display: table-cell;
+    padding: 5px;
+    width: 300px;
+    border: #000000 solid 1px;
+    margin: 5px;
+}
+
 .studentListOut,
 .teacherIn4Out {
     width: 100%;

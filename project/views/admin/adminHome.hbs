@@ -7,130 +7,15 @@
     <script src="/jquery/jquery.js"></script>
     {{!-- jsonToExcel --}}
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="/css/admin/adminHome.css">
 
     <style>
-        i {
-            font-size: 30px;
-        }
 
-        #loading {
-            position: fixed;
-            display: block;
-            top: 0;
-            bottom: 0;
-            z-index: 1000000;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-        }
-
-        #loading img {
-            margin: auto;
-            display: block;
-            top: calc(50% - 100px);
-            left: calc(50% - 10px);
-            position: absolute;
-            z-index: 999999;
-        }
-
-        #table {
-            display: table;
-            padding: 5px;
-        }
-
-        .tr {
-            display: table-row;
-            padding: 5px;
-            overflow: hidden;
-        }
-
-        .tr1 {
-            display: table-row;
-            padding: 5px;
-            overflow: hidden;
-
-        }
-
-        .td {
-            display: table-cell;
-            padding: 5px;
-            width: 300px;
-            border: #000000 solid 1px;
-            margin: 5px;
-        }
-
-        .flip-card {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            background-color: transparent;
-            width: 300px;
-            height: 300px;
-            perspective: 1000px;
-            float: left;
-        }
-
-        .flip-card-inner {
-            border-radius: 30px;
-            position: relative;
-            width: 80%;
-            height: 80%;
-            text-align: center;
-            margin-left: 10%;
-            margin-top: 10%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 8px 0 rgba(185, 69, 69, 0.2);
-        }
-
-        .flip-card:hover .flip-card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .flip-card-front,
-        .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 30px;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-        }
-
-        .flip-card-front {
-            background-color: rgb(175, 156, 156);
-            color: black;
-        }
-
-        .flip-card-back {
-            background-color: #2980b9;
-            color: white;
-            transform: rotateY(180deg);
-
-        }
-
-        .container {
-            text-align: center;
-
-        }
     </style>
 </head>
 
 <body>
-    <div>
-        <div class="tr">
-            <div class="td" onclick="location.href='/admin';"><i class="fas fa-house-user"></i> Trang chủ admin</div>
-            <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i> Manage account</div>
-            <div class="td" onclick="consultingAll('0')"><i class="fas fa-list-alt"></i> Consulting All</div>
-            <div class="td" onclick="location.href='/admin/createRoute';"><i class="fas fa-chart-line"></i> Route
-            </div>
-            <div class="td" onclick="location.href='/admin/assignRoomAndTime';"><i class="fas fa-house-user"></i>
-                assignRoomAndTime</div>
-            <div class="td" onclick="location.href='/admin/createClass';"><i class="fas fa-house-user"></i> Manage Class
-            </div>
-            <div class="td"><i class="fas fa-sign-out-alt"></i> Log Out</div>
-        </div>
-    </div>
+    <header> {{> adminHeader }}</header>
 
     <div class="consultingAll" style="display:none;">
         <div class="tr" style="font-size:15px;font-weight: bolder;">
@@ -156,7 +41,7 @@
     </div>
 </body>
 <script>
-   
+
     var jsonToExcel
     //thông tin tư vấn
     function consultingAll(check) {

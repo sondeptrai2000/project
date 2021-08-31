@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/admin/createClass.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 
+    <link rel="stylesheet" href="/css/admin/adminHome.css">
 
 </head>
 
@@ -148,11 +149,6 @@
                 </table>
                 <br>
                 <label for="topic">Teacher</label>
-                <!-- <select id="teacherID">
-      <% teacher.forEach(function(teacher) { %>
-        <option value="<%= teacher._id %>" ><%= teacher.email %></option>
-        <% }); %>
-    </select><br> -->
                 <div id="teacherID">
                     <img src="{{avatar}}" style="height: 50px;width: 50px;" onclick="$('#span2').toggle(500)">
                     <p>{{email}}</p>
@@ -183,24 +179,7 @@
         </div>
     </div>
 
-
-    <div>
-        <div class="tr">
-            <div class="td" onclick="location.href='/admin';"><i class="fas fa-house-user"></i> Trang chủ admin</div>
-            <div class="td" onclick="location.href='/admin/createAccount';"><i class="fas fa-address-book"></i> Create
-                account
-            </div>
-            <div class="td" onclick="consultingAll('0')"><i class="fas fa-list-alt"></i> Consulting All</div>
-            <div class="td" onclick="location.href='/admin/dashboard';"><i class="fas fa-chart-line"></i> Dashboard
-            </div>
-            <div class="td" onclick="location.href='/admin/assignRoomAndTime';"><i class="fas fa-house-user"></i>
-                assignRoomAndTime
-            </div>
-            <div class="td" onclick="location.href='/admin/createClass';"><i class="fas fa-house-user"></i> createClass
-            </div>
-            <div class="td"><i class="fas fa-sign-out-alt"></i> Log Out</div>
-        </div>
-    </div>
+    <header> {{> adminHeader }}</header>
     <div class="body">
         <h2>All class level</h2>
         <button onclick="$('.createClassOut').toggle(500)"> Tạo lớp</button>

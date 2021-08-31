@@ -5,11 +5,13 @@
         <script src="/jquery/jquery.js"></script>
         <link rel="stylesheet" href="/css/admin/createRoute.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+        <link rel="stylesheet" href="/css/admin/adminHome.css">
 
 </head>
 
 
 <body>
+
         <div class="createRouteOut" style="display: none;">
                 <div class="createRoute">
                         <h2>Create route</h2>
@@ -52,7 +54,7 @@
         </div>
 
 
-           <div class="viewRouteOut" style="display: none;">
+        <div class="viewRouteOut" style="display: none;">
                 <div class="viewRoute">
                         <table border="solid">
                                 <h2>update route</h2>
@@ -70,23 +72,11 @@
                         </table>
                 </div>
         </div>
-        <header>
-                <ul style="float:left;font-family:cursive;">
-                        <li style="width:200px"><i class="fas fa-graduation-cap" style="font-size:60px"></i>Sown English
-                        </li>
-                </ul>
-                <ul>
-                        <li><a href="#">Home page</a></li>
-                        <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutCourse').offset().top-100)},1000)">About
-                                        Course</a></li>
-                        <li><a onclick="$('html, body').animate({scrollTop: ($('#aboutUs').offset().top-100)},1000)">About
-                                        Us</a>
-                        </li>
-                        <li><a onclick="$('#loginForm').fadeIn(1000);">Log In</a></li>
-                </ul>
-        </header>
+        <header> {{> adminHeader }}</header>
+
         <div class="body">
-                <button onclick='$(".createRouteOut").fadeIn(500);'>Create Route</button> <input type="text" id='searchRoute' placeholder="Nhập tên lộ trình "><button onclick="search()">Search</button>
+                <button onclick='$(".createRouteOut").fadeIn(500);'>Create Route</button> <input type="text"
+                        id='searchRoute' placeholder="Nhập tên lộ trình "><button onclick="search()">Search</button>
                 <table border="solid">
                         {{#each data}}
                         <tr>
@@ -159,18 +149,18 @@
                 });
         }
 
-        function search(){
-                var name = "/"+$("#searchRoute").val() +"/i"
-                 $.ajax({
+        function search() {
+                var name = "/" + $("#searchRoute").val() + "/i"
+                $.ajax({
                         url: '/admin/searchRoute',
                         method: 'get',
                         dataType: 'json',
-                        data: {name:name},
+                        data: { name: name },
                         success: function (response) {
                                 if (response.msg == 'success') {
                                         console.log(response.data)
                                 }
-                              
+
                         },
                         error: function (response) {
                                 alert('server error');

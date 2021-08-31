@@ -33,7 +33,7 @@ $(document).ready(function() {
 //tìm kiếm account
 $("#myInput").on("keyup", function() {
     var value = $(this).val().toLowerCase();
-    $(".taskrow tr").filter(function() {
+    $(".taskrow div class='tr'").filter(function() {
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
 });
@@ -54,15 +54,13 @@ function reset() {
 function getAccount(index, page) {
     var role = index
     var page = page
-    $("#loading").show();
-    $(".taskrow").html("");
     $(".tableInforType").html("");
     if (index === 'teacher') {
-        var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>sex</th><th>email</th><th>role</th><th>phone</th><th>address</th><th>birthday</th><th>More information</th></tr>"
+        var tableInfor = "<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>sex</div><div class='td'>email</div><div class='td' style='display:none;'>role</div><div class='td'>phone</div><div class='td'>address</div><div class='td'>birthday</div><div class='td'>More information</div></div >"
     } else {
-        var tableInfor = "<tr></tr><tr><th>avatar</th><th>username</th><th>sex</th><th>email</th><th>role</th><th>phone</th><th>address</th><th>birthday</th><th>routeName</th><th>stage</th><th>Aim</th><th>More information</th></tr>"
+        var tableInfor = "<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>sex</div><div class='td'>email</div><div class='td' style='display:none;'>role</div><div class='td'>phone</div><div class='td' style='display:none;'>address</div><div class='td' style='display:none;'>birthday</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>Aim</div><div class='td'>More information</div></div >"
     }
-    $("#tableInforType").html(tableInfor);
+    $(".tableAccount").html(tableInfor);
     $.ajax({
         url: '/admin/getAccount',
         method: 'get',
@@ -72,9 +70,9 @@ function getAccount(index, page) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
                     if (role == 'teacher') {
-                        $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
+                        $(".tableAccount").append("<div class='tr' id ='" + data._id + "'><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                     } else {
-                        $(".taskrow").append("<tr id ='" + data._id + "'><td><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></td><td>" + data.username + "</td><td>" + data.sex + "</td><td>" + data.email + "</td><td>" + data.role + "</td><td>" + data.phone + "</td><td>" + data.address + "</td><td>" + data.birthday + "</td><td>" + data.routeName + "</td><td>" + data.stage + "</td><td>" + data.aim + "</td><td style='display:none;'>" + data.relationship.username + "</td><td style='display:none;'>" + data.relationship.email + "</td><td style='display:none;'>" + data.relationship.phone + "</td><td><button onclick=search('" + data.email + "')>View more</button><button onclick=updateForm('" + data._id + "')>Update</button></td></tr>");
+                        $(".tableAccount").append("<div class='tr' id ='" + data._id + "'><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=search('" + data.email + "')>View more</button><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                     }
                 });
                 $("#soTrang").html("")
@@ -82,7 +80,6 @@ function getAccount(index, page) {
                     let u = i - 1
                     $("#soTrang").append("<button onclick=getAccount('" + role + "','" + u + "')>" + i + "</button>")
                 }
-                $("#loading").hide();
             }
         },
         error: function(response) {
@@ -173,7 +170,7 @@ function updateForm(id) {
     $('#levelSUpdate').html('');
     $("#AimUpdate").html('');
     $(".updateFormOut").fadeIn(2000);
-    var selector = "#" + id + " td"
+    var selector = "#" + id + " .td"
     var infor4 = []
     $(selector).each(function() {
         infor4.push($(this).text())
@@ -212,7 +209,6 @@ function updateForm(id) {
                             $("#levelSUpdate").append(Schudelstage);
                             $('#levelSUpdate option:selected').removeAttr('selected');
                             $("#levelSUpdate option[value='" + infor4[9] + "']").attr('selected', 'selected');
-
                             $("#AimUpdate").append(Schudelstage);
                             $('#AimUpdate option:selected').removeAttr('selected');
                             $("#AimUpdate option[value='" + infor4[10] + "']").attr('selected', 'selected');
