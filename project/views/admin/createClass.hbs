@@ -8,74 +8,39 @@
     <link rel="stylesheet" href="/css/admin/createClass.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 
-    <link rel="stylesheet" href="/css/admin/adminHome.css">
-
 </head>
 
 <body>
 
     <div class="innerOut" style="display:none">
         <div class="inner">
-            <div class="option"></div>
-            <table border='solid'>
-                <th>avatar</th>
-                <th>username</th>
-                <th>Aim</th>
-                <th>email</th>
-                <th>Select</th>
-                <th onclick='$(".innerOut").hide();'>X</th>
-                <tbody class='taskrow'></tbody>
             </table>
         </div>
     </div>
 
     <div class="studentTableOut" style="display: none;">
         <div id="studentTableAdd">
-            <table border='solid'>
-                <thead>
-                    <tr>
-                        <th><input type="text" placeholder="Search.."></th>
-                        <th><button onclick='$(".studentTableOut").hide();'>&times;</button></th>
-                    </tr>
-                    <tr>
-                        <th>avatar</th>
-                        <th>username</th>
-                        <th>email</th>
-                        <th>routeName</th>
-                        <th>stage</th>
-                        <th>Chose</th>
-                        <th>More information</th>
-                    </tr>
-                </thead>
-                <tbody class='taskrow111'></tbody>
-            </table>
         </div>
     </div>
 
     <div class="attendedListOut" style="display: none;">
-        <table border="solid" id="attendedList">
-            <tr>
-                <th>Date</th>
-                <th>Day of week</th>
-                <th>Room</th>
-                <th>Time</th>
-                <th>Action</th>
-                <th><button onclick='$(".attendedListOut").fadeOut(500);'>close</button></th>
-
-            </tr>
-        </table>
+        <div id="attendedList"></div>
     </div>
 
     <div class="updateScheduleFormOut" style="display: none;">
-        <table border="solid" class="updateScheduleForm">
-            <tr id="oldSchudule">
-
-            </tr>
-            <tr>
+        <div class="updateSchedualContent">
+            <div class='tr'>
+                <div class='td'>Date</div>
+                <div class='td'>Day of week</div>
+                <div class='td'>Room</div>
+                <div class='td'>Time</div>
+            </div>
+            <div class='tr' id="oldSchudule"></div>
+            <div class='tr'>
                 <input name="updateScheduleID" type="hidden">
                 <input name="updateScheduleClassID" type="hidden">
-                <th>Date: <input type="date" name="dateScheduleUpdate"></th>
-                <th>Ca làm việc:
+                <div class='td'>Date: <input type="date" name="dateScheduleUpdate"></div>
+                <div class='td'>Ca làm việc:
                     <select class="cahocUpdate" id="cahocUpdate" onchange="cahocUpdate()">
                         <option value="7:30 đến 9:30">7:30 đến 9:30</option>
                         <option value="9:45 đến 11:45">9:45 đến 11:45</option>
@@ -83,14 +48,13 @@
                         <option value="15:45 đến 17:45">15:45 đến 17:45</option>
                         <option value="18:15 đến 20:15">18:15 đến 20:15</option>
                     </select>
-                </th>
-                <th>
+                </div>
+                <div class='td'>
                     Available room: <select id="roomUpdate"> </select>
-                </th>
-                <th><button onclick='SubmitupdateScheduleForm()'>Submit</button></th>
-                <th><button onclick='$(".updateScheduleFormOut").fadeOut(500);'>close</button></th>
-            </tr>
-        </table>
+                </div>
+            </div>
+            <div class='tr'><button onclick='SubmitupdateScheduleForm()'>Submit</button></div>
+        </div>
     </div>
 
     <div class="createClassOut" style="display: none;">
@@ -100,7 +64,7 @@
             </div>
             <table border="solid">
                 <tbody id="routeTuyBien"> </tbody>
-                <tr id='trss'></tr>
+                <div class='tr' id='trss'></div>
             </table>
             <div>
                 <p>Create class</p>
@@ -131,19 +95,19 @@
 
                 <table id="studentTable" border='solid' style="display: none;">
                     <thead>
-                        <tr>
-                            <th>
+                        <div class='tr'>
+                            <div class='td'>
                                 <inputs type="text" placeholder="Search..">
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>avatar</th>
-                            <th>username</th>
-                            <th>routeName</th>
-                            <th>stage</th>
-                            <th>Chose</th>
-                            <th>More information</th>
-                        </tr>
+                            </div>
+                        </div>
+                        <div class='tr'>
+                            <div class='td'>avatar</div>
+                            <div class='td'>username</div>
+                            <div class='td'>routeName</div>
+                            <div class='td'>stage</div>
+                            <div class='td'>Chose</div>
+                            <div class='td'>More information</div>
+                        </div>
                     </thead>
                     <tbody class='taskrow'></tbody>
                 </table>
@@ -188,7 +152,7 @@
                 </li>
                 <li>
                     <p>Filter:</p>
-                    <select id="accountFilter" onchange="getAccount(this.value,0)">
+                    <select>
                         <option value="teacher">teacher</option>
                         <option value="student">student</option>
                     </select>
@@ -205,6 +169,14 @@
 </body>
 <script>
     getAllClass();
+
+    $(window).on('click', function (e) {
+        if ($(e.target).is('.innerOut')) $('.innerOut').fadeOut(1500);
+        if ($(e.target).is('.studentTableOut')) $('.studentTableOut').fadeOut(1500);
+        if ($(e.target).is('.attendedListOut')) $('.attendedListOut').fadeOut(1500);
+        if ($(e.target).is('.updateScheduleFormOut')) $('.updateScheduleFormOut').fadeOut(1500);
+        if ($(e.target).is('.createClassOut')) $('.createClassOut').fadeOut(1500);
+    });
     function selectedTeacher(email, avatar, id) {
         $("#teacherID").html('<img src="' + avatar + '" style="height: 50px;width: 50px;" onclick=$("#span2").toggle(500)><p>' + email + '<p><input type="hidden" value="' + id + '">')
         $("#span2").toggle(500)
@@ -243,9 +215,9 @@
             },
             success: function (response) {
                 if (response.msg == 'success') {
-                    $("#attendedList").html($("#attendedList tr:first-child"))
+                    $("#attendedList").html("<div class='tr'><div class='td'>Date</div><div class='td'>Day of week</div><div class='td'>Room</div><div class='td'>Time</div><div class='td'>Action</div></div>")
                     $.each(response.data[0].schedule, function (index, data) {
-                        $("#attendedList").append('<tr id="infor' + data._id + '"><td>' + data.date.split("T00:00:00.000Z")[0] + '</td><td>' + data.day + '</td><td>' + data.room + '</td><td>' + data.time + '</td><td><button  onclick=updateScheduleForm("' + data._id + '","' + idClass + '")>Update</button><input id ="' + data._id + '"type="hidden" value="' + data + '"></td></tr>    ')
+                        $("#attendedList").append('<div class="tr" id="infor' + data._id + '"><div class="td">' + data.date.split("T00:00:00.000Z")[0] + '</div><div class="td">' + data.day + '</div><div class="td">' + data.room + '</div><div class="td">' + data.time + '</div><div class="td"><button  onclick=updateScheduleForm("' + data._id + '","' + idClass + '")>Update</button><input id ="' + data._id + '"type="hidden" value="' + data + '"></div></div>    ')
                     });
                     $(".attendedListOut").fadeIn(500)
                 }
@@ -259,7 +231,7 @@
     function updateScheduleForm(scheduleID, classID) {
         $("input[name='updateScheduleID']").val(scheduleID)
         $("input[name='updateScheduleClassID']").val(classID)
-        $("#oldSchudule").html($("#infor" + scheduleID + " td:not(:last-child)").clone())
+        $("#oldSchudule").html($("#infor" + scheduleID + " .td:not(:last-child)").clone())
         $(".updateScheduleFormOut").fadeIn(500)
     }
 
@@ -305,7 +277,7 @@
         var old = []
         var scheduleID = $("input[name='updateScheduleID']").val()
 
-        $("#infor" + scheduleID + " td:not(:last-child)").each(function () {
+        $("#infor" + scheduleID + " .td:not(:last-child)").each(function () {
             old.push($(this).text().trim())
         })
         var update = {
@@ -314,6 +286,11 @@
             "schedule.$.day": dayOfWeek,
             "schedule.$.status": "update"
         }
+        console.log(update)
+        console.log($("input[name='updateScheduleClassID']").val())
+        console.log($("input[name='dateScheduleUpdate']").val())
+        console.log($("input[name='updateScheduleID']").val())
+        console.log(old)
         $.ajax({
             url: '/admin/doupdateSchedule',
             method: 'post',
@@ -361,7 +338,8 @@
     function sendData(id, subject) {
         var _id = id
 
-        $(".option").html("<button onclick=addStudent('" + id + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "','" + subject + "')>Xóa học sinh trong lớp</button>")
+        $(".inner").html("<button onclick=addStudent('" + id + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "','" + subject + "')>Xóa học sinh trong lớp</button>")
+        $(".inner").append('<div class="tr"></div><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">Select</div>')
         $.ajax({
             url: '/teacher/allClassStudent',
             method: 'get',
@@ -371,13 +349,12 @@
             },
             success: function (response) {
                 if (response.msg == 'success') {
-                    $(".taskrow").html("")
                     $.each(response.data, function (index, data) {
                         if (data.studentID.length == 0) {
                             alert('không có học sinh trong lớp')
                         } else {
                             $.each(data.studentID, function (index, studentID) {
-                                $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></td><td>" + studentID.ID.username + "</td><td>" + studentID.ID.aim + "</td><td>" + studentID.ID.email + "</td><td><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></td></tr>");
+                                $(".inner").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div></div>");
                             });
                         }
                     });
@@ -394,7 +371,7 @@
     //hiển thị các học sinh có mức độ tương ứng với lớp đã chọn để xem xét thêm vào lớp
     function addStudent(classID, subject) {
         var infor4 = []
-        $("#" + classID + " td").each(function () {
+        $("#" + classID + " .td").each(function () {
             infor4.push($(this).text())
         })
         console.log(infor4)
@@ -413,7 +390,7 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     console.log(response.data)
-                    $('.taskrow111').html('');
+                    $('#studentTableAdd').html("<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>email</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>Chose</div></div>");
                     $.each(response.data, function (index, student) {
                         var check = false
                         $.each(student.progess, function (index, progess) {
@@ -423,10 +400,9 @@
                                 });
                             }
                         });
-                        if (check == false) $(".taskrow111").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby1' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
+                        if (check == false) $("#studentTableAdd").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td'>" + student.email + "</div><div class='td'>" + student.routeName + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby1' value='" + student._id + "' /></div></div>");
                     });
-
-                    $(".taskrow111").append("<button onclick= doAddToClass('" + classID + "','" + subject + "')>Add to Class</button>");
+                    $("#studentTableAdd").append("<button onclick= doAddToClass('" + classID + "','" + subject + "')>Add to Class</button>");
                     $('.studentTableOut').show();
                 }
             },
@@ -702,7 +678,7 @@
                     $.each(response.targetxxx, function (index, targetxxx) {
                         $("#tieude").append("<p>Lộ trình:" + targetxxx.routeName + "</p><p>Miêu tả:" + targetxxx.description + "</p>");
                         $.each(targetxxx.routeSchedual, function (index, routeSchedual) {
-                            $("#routeTuyBien").append("<th>Stage: " + routeSchedual.stage + "</th>");
+                            $("#routeTuyBien").append("<th>Stage: " + routeSchedual.stage + "</div>");
                         });
                         $.each(targetxxx.routeSchedual, function (index, routeSchedual) {
                             $("#trss").append("<td id='lol" + index + "'></td>");
@@ -784,7 +760,7 @@
                                     });
                                 }
                             });
-                            if (check == false) $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></tr>");
+                            if (check == false) $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></div>");
                         });
                     }
                 }

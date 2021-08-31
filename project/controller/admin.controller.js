@@ -39,7 +39,7 @@ var transporter = nodemailer.createTransport({
     secure: true,
     auth: {
         user: 'fptedunotification@gmail.com',
-        pass: 'son@1234'
+        pass: 'son@123a'
     },
     tls: {
         rejectUnauthorized: false
