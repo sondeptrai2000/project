@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
         <script src="/jquery/jquery.js"></script>
         <link rel="stylesheet" href="/css/admin/createRoute.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
-        <link rel="stylesheet" href="/css/admin/adminHome.css">
-
 </head>
-
-
 <body>
-
         <div class="createRouteOut" style="display: none;">
                 <div class="createRoute">
                         <h2>Create route</h2>
@@ -27,8 +21,6 @@
                         <div id="addStage" style="text-align: left;"></div>
                         <br>
                         <button type="submit" onclick="doCreateRoute()">Submit</button>
-                        <button onclick='$(".createRouteOut").fadeOut(500);'>close</button>
-
                 </div>
         </div>
         <div class="updateRouteOut" style="display: none;">
@@ -47,57 +39,78 @@
                                 <div id="addStageUpdate" style="text-align: left;"></div>
                                 <br>
                                 <button type="submit" onclick="doUpdateRoute()">Submit</button>
-                                <button onclick='$(".updateRouteOut").fadeOut(500);'>close</button>
-
                         </table>
                 </div>
         </div>
 
-
-        <div class="viewRouteOut" style="display: none;">
-                <div class="viewRoute">
-                        <table border="solid">
-                                <h2>update route</h2>
-                                <label>routeName </label>
-                                <input type="text" name="routeName" id="routeNameView">
-                                <br>
-                                <label>Description</label>
-                                <input type="text" name="description" id="descriptionView">
-                                <br>
-                                <button onclick="addRoute('update')">Add route</button>
-                                <br>
-                                <div id="viewStage" style="text-align: left;"></div>
-                                <br>
-                                <button onclick='$(".viewRouteOut").fadeOut(500);'>close</button>
-                        </table>
-                </div>
-        </div>
         <header> {{> adminHeader }}</header>
 
         <div class="body">
-                <button onclick='$(".createRouteOut").fadeIn(500);'>Create Route</button> <input type="text"
-                        id='searchRoute' placeholder="Nhập tên lộ trình "><button onclick="search()">Search</button>
-                <table border="solid">
-                        {{#each data}}
-                        <tr>
-                                <th>Tên lộ trình</th>
-                                <th>Miêu tả</th>
-                                <th>action</th>
-                        </tr>
-                        <tr id="{{_id}}">
-                                <td>{{routeName}}</td>
-                                <td>{{description}}</td>
-                                <td><button onclick="updateRoute('{{_id}}')">Update</button>
-                                        <button onclick="deleteRoute('{{_id}}')">Remove</button>
-                                        <button onclick="viewSchedule('{{_id}}')">Lộ trình học</button>
-                                </td>
-                        </tr>
-                        {{/each}}
-                </table>
-
+                <div class='leftSide'>
+                        <div class="option">
+                                <ul>
+                                        <li onclick='$(".createRouteOut").fadeIn(500);'>
+                                                <button>Create Route</button>
+                                        </li>
+                                        <li>
+                                                <input id='searchRoute' type='text' placeholder="Nhập tên lộ trình ">
+                                                <button onclick="search()">Search</button>
+                                        </li>
+                                </ul>
+                        </div>
+                        <div class="tableRoute"></div>
+                </div>
+                <div class='rightSide'>
+                        <div class="viewRoute">
+                                <table border="solid">
+                                        <h2>view route</h2>
+                                        <label>routeName </label>
+                                        <input type="text" name="routeName" id="routeNameView">
+                                        <br>
+                                        <label>Description</label>
+                                        <input type="text" name="description" id="descriptionView">
+                                        <br>
+                                        <button onclick="addRoute('update')">Add route</button>
+                                        <br>
+                                        <div id="viewStage" style="text-align: left;"></div>
+                                        <br>
+                                        <button onclick='$(".viewRouteOut").fadeOut(500);'>close</button>
+                                </table>
+                        </div>
+                </div>
         </div>
 </body>
 <script>
+        $(document).ready(function () {
+                getAllRoute()
+                $(window).on('click', function (e) {
+                        if ($(e.target).is('.createRouteOut')) $('.createRouteOut').fadeOut(1500);
+                        if ($(e.target).is('.updateRouteOut')) $('.updateRouteOut').fadeOut(1500);
+                });
+        });
+
+        function getAllRoute() {
+                $.ajax({
+                        url: '/admin/getAllRoute',
+                        method: 'get',
+                        dataType: 'json',
+                        data: {},
+                        success: function (response) {
+                                if (response.msg == 'success') {
+                                        $(".tableRoute").html(" <div class='tr'><div class='td'>Tên lộ trình</div><div class='td'>Miêu tả</div><div class='td'>action</div></div>")
+                                        var data = response.data
+                                        data.forEach(function (data) {
+                                                var add = "<div class='tr' id='" + data._id + "' onclick=viewSchedule('" + data._id + "')><div class='td'>" + data.routeName + "</div><div class='td'>" + data.description + "</div><div class='td'><button onclick=updateRoute('" + data._id + "')>Update</button><button onclick=deleteRoute('" + data._id + "')>Remove</button></div></div>"
+                                                $(".tableRoute").append(add)
+                                        })
+                                }
+                        },
+                        error: function (response) {
+                                alert('server error');
+                        }
+                });
+        }
+
 
         function addRoute(type) {
                 if (type == "create") {
@@ -129,6 +142,8 @@
                         data: { _id: _id },
                         success: function (response) {
                                 if (response.msg == 'success') {
+                                        $(".tableRoute .tr").css("background-color", '')
+                                        $("#" + _id).css("background-color", 'red')
                                         $("#viewStage").html("")
                                         var data = response.data
                                         $("#routeNameView").val(data[0].routeName)

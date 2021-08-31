@@ -260,13 +260,23 @@ class adminController {
 
     async createRoute(req, res) {
         try {
-            var data = await studyRouteModel.find({}, { _id: 1, routeName: 1, description: 1 }).lean()
-            res.render('admin/createRoute', { data: data })
+            res.render('admin/createRoute')
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
         }
     }
+
+    async getAllRoute(req, res) {
+        try {
+            var data = await studyRouteModel.find({}, { _id: 1, routeName: 1, description: 1 }).lean()
+            res.json({ msg: 'success', data })
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
 
     async lol(req, res) {
         try {
@@ -424,6 +434,16 @@ class adminController {
             var email = teacher[0].email
             var avatar = teacher[0].avatar
             res.render('admin/createClass', { teacher, targetxxx, classInfor, email, avatar })
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    async getAllClass(req, res) {
+        try {
+            var classInfor = await ClassModel.find({}).lean()
+            res.json({ msg: 'success', classInfor });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });

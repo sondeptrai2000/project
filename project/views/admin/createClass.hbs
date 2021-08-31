@@ -181,44 +181,55 @@
 
     <header> {{> adminHeader }}</header>
     <div class="body">
-        <h2>All class level</h2>
-        <button onclick="$('.createClassOut').toggle(500)"> Tạo lớp</button>
-        <table border="solid">
-            <th>Class name</th>
-            <th>routeName</th>
-            <th>stage</th>
-            <th>subject</th>
-            <th>Description</th>
-            <th>Start date</th>
-            <th>End date</th>
-            <th>Student List</th>
-            <th>Action</th>
-            <th>Status</th>
-            {{#each classInfor}}
-            <tr id="{{_id}}">
-                <td>{{className}}</td>
-                <td>{{routeName}}</td>
-                <td>{{stage}}</td>
-                <td>{{subject}}</td>
-                <td>{{description}}</td>
-                <td>{{startDate}}</td>
-                <td>{{endDate}}</td>
-                <td><button id="btn1" onclick="sendData('{{_id}}','{{subject}}')">List of student</button></td>
-                <td>
-                    <button onclick="upDateSchedule('{{_id}}')">upDate schedule </button>
-                    <button onclick="deleteClass('{{_id}}')">delete</button>
-                </td>
-                <td>{{classStatus}}</td>
-            </tr>
-            {{/each}}
-        </table>
+        <div class="option">
+            <ul>
+                <li onclick="$('.createClassOut').toggle(500)">
+                    <button>Create class</button>
+                </li>
+                <li>
+                    <p>Filter:</p>
+                    <select id="accountFilter" onchange="getAccount(this.value,0)">
+                        <option value="teacher">teacher</option>
+                        <option value="student">student</option>
+                    </select>
+                </li>
+                <li>
+                    <input id='search' type='text' placeholder='Nhập email hoặc số điện thoại'>
+                    <button onclick="search('')">Search</button>
+                </li>
+            </ul>
+        </div>
+        <div class="tableClass"></div>
+    </div>
+
 </body>
 <script>
+    getAllClass();
     function selectedTeacher(email, avatar, id) {
         $("#teacherID").html('<img src="' + avatar + '" style="height: 50px;width: 50px;" onclick=$("#span2").toggle(500)><p>' + email + '<p><input type="hidden" value="' + id + '">')
         $("#span2").toggle(500)
         console.log($("#teacherID input").val())
 
+    }
+
+    function getAllClass() {
+        $.ajax({
+            url: '/admin/getAllClass',
+            method: 'get',
+            dataType: 'json',
+            data: {},
+            success: function (response) {
+                if (response.msg == 'success') {
+                    $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Action</div><div class='td'>Status</div></div>")
+                    $.each(response.classInfor, function (index, data) {
+                        $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate + "</div><div class='td'>" + data.endDate + "</div><div class='td'><button onclick=sendData('" + data._id + "','" + data.subject + "')>List of student</button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')>upDate schedule </button><button onclick=deleteClass('" + data._id + "')>delete</button></div><div class='td'>" + data.classStatus + "</div></div>")
+                    });
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        });
     }
     //hiển thị danh sách lịch giảng dạy để admin chọn vào thay đổi lịch làm việc 1 ngày nào đó trong list
     function upDateSchedule(id) {
