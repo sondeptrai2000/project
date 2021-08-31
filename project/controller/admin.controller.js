@@ -205,7 +205,9 @@ class adminController {
                     select: { username: 1, phone: 1, email: 1 }
                 }
             }).lean()
-            res.json({ msg: 'success', data });
+            if (!data) res.json({ msg: 'none' });
+            if (data) res.json({ msg: 'success', data });
+
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });

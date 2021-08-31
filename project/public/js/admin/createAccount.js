@@ -5,7 +5,18 @@ var myFileUpdate;
 
 $(document).ready(function() {
     getAccount('teacher', 0)
-        //xử lý file khi tạo tài khoản
+    $(window).on('click', function(e) {
+        if ($(e.target).is('.createAccountOut')) $('.createAccountOut').fadeOut(1500);
+        if ($(e.target).is('.updateFormOut')) $('.updateFormOut').fadeOut(1500);
+    });
+    //hiệu ứng menu
+    $('header li').hover(function() {
+        $(this).find("div").slideDown()
+    }, function() {
+        $(this).find("div").hide(500)
+    });
+
+    //xử lý file khi tạo tài khoản
     $('#myFile').on('change', function() {
         var filereader = new FileReader();
         filereader.onload = function(event) {
@@ -56,9 +67,9 @@ function getAccount(index, page) {
     var page = page
     $(".tableInforType").html("");
     if (index === 'teacher') {
-        var tableInfor = "<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>sex</div><div class='td'>email</div><div class='td' style='display:none;'>role</div><div class='td'>phone</div><div class='td'>address</div><div class='td'>birthday</div><div class='td'>More information</div></div >"
+        var tableInfor = "<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>sex</div><div class='td'>email</div><div class='td' style='display:none;'>role</div><div class='td'>phone</div><div class='td'>address</div><div class='td'>birthday</div><div class='td'>Action</div></div >"
     } else {
-        var tableInfor = "<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>sex</div><div class='td'>email</div><div class='td' style='display:none;'>role</div><div class='td'>phone</div><div class='td' style='display:none;'>address</div><div class='td' style='display:none;'>birthday</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>Aim</div><div class='td'>More information</div></div >"
+        var tableInfor = "<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>sex</div><div class='td'>email</div><div class='td' style='display:none;'>role</div><div class='td'>phone</div><div class='td' style='display:none;'>address</div><div class='td' style='display:none;'>birthday</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>Aim</div><div class='td'>Action</div></div >"
     }
     $(".tableAccount").html(tableInfor);
     $.ajax({
@@ -70,9 +81,9 @@ function getAccount(index, page) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
                     if (role == 'teacher') {
-                        $(".tableAccount").append("<div class='tr' id ='" + data._id + "'><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
+                        $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                     } else {
-                        $(".tableAccount").append("<div class='tr' id ='" + data._id + "'><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=search('" + data.email + "')>View more</button><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
+                        $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                     }
                 });
                 $("#soTrang").html("")
@@ -80,6 +91,7 @@ function getAccount(index, page) {
                     let u = i - 1
                     $("#soTrang").append("<button onclick=getAccount('" + role + "','" + u + "')>" + i + "</button>")
                 }
+                search(response.data[0].email)
             }
         },
         error: function(response) {
@@ -333,15 +345,15 @@ function doUpdate() {
 }
 
 
-//tìm kiếm thông tin qua email hoặc số điện thoại
+//tìm kiếm thông tin qua email hoặc số điện thoại cho học sinh
 function search(email) {
     var condition = {}
     if (email != "") {
         condition["email"] = email
     } else {
-        var search = $("#search").val().toString()
-        if (isNaN(search.trim()) == true) condition["email"] = $("#search").val()
-        if (isNaN(search.trim()) == false) condition["phone"] = $("#search").val()
+        var search = $("#search").val().toString().trim()
+        if (isNaN(search) == true) condition["email"] = search
+        if (isNaN(search) == false) condition["phone"] = search
     }
     $.ajax({
         url: '/admin/search',
@@ -350,10 +362,12 @@ function search(email) {
         data: { condition: condition },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".seacherInfor").html("")
-
+                $(".tableAccount .tr").css("background-color", '')
+                $("#" + response.data._id).css("background-color", 'red')
+                $(".rightSide").html("")
+                console.log(response.data)
                 if (response.data.role == "teacher") {
-                    $(".seacherInfor").append("<img src='" + data.avatar + "'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
+                    $(".rightSide").append("<img src='" + response.data.avatar + "'><br> Name: " + response.data.username + "<br> Gender: " + response.data.sex + "<br> Email: " + response.data.email + "<br> Phone: " + response.data.phone + "<br> Role: " + response.data.role + "<br> BirthDay: " + response.data.birthday + "<br> Address: " + response.data.address)
                 } else {
                     if (response.data.role == "student") {
                         var data = response.data
@@ -363,27 +377,25 @@ function search(email) {
                         var data = relationship.relationship
                     }
                     var currentClass = response.data.classID
-                    $(".seacherInfor").append("<h1>Thông tin học sinh</h1>")
-                    $(".seacherInfor").append("<img src='" + data.avatar + "'style='height:100px;width:100px;'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
-                    $(".seacherInfor").append("<h1>Tình trạng học tập</h1>")
-                    $(".seacherInfor").append("<br> Route: " + data.routeName + "<br> Current level: " + data.stage + "<br> Aim : " + data.aim)
-                    $(".seacherInfor").append("<h2>Tiến độ học tập</h2>")
+                    $(".rightSide").append("<h1>Thông tin học sinh</h1>")
+                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:100px;width:100px;'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
+                    $(".rightSide").append("<h1>Tình trạng học tập</h1>")
+                    $(".rightSide").append("<br> Route: " + data.routeName + "<br> Current level: " + data.stage + "<br> Aim : " + data.aim)
+                    $(".rightSide").append("<h2>Tiến độ học tập</h2>")
                     var progress = data.progess
                     progress.forEach((e) => {
-                        $(".seacherInfor").append("<h1>Stage: " + e.stage + "</h1><br>")
-                        e.stageClass.forEach((e) => { if (e.classID != "") $(".seacherInfor").append(" Name: " + e.name + " Status: " + e.status + " <button onclick=copyID('" + e.classID + "')> Lấy ClassID</button><br>") })
+                        $(".rightSide").append("<h1>Stage: " + e.stage + "</h1><br>")
+                        e.stageClass.forEach((e) => { if (e.classID != "") $(".rightSide").append(" Name: " + e.name + " Status: " + e.status + " <button onclick=copyID('" + e.classID + "')> Lấy ClassID</button><br>") })
                     })
-                    $(".seacherInfor").append("<h2>Đang hoạt động trong lớp học</h2>")
-                    currentClass.forEach((e) => { $(".seacherInfor").append("<br>Class Name: " + e.stage + "<br> Subject : " + e.subject + "<br> Teacher : " + e.teacherID.username + "<br> Teacher phone : " + e.teacherID.phone + "<br> Teacher email : " + e.teacherID.email + "<button onclick=copyID('" + e._id + "')> Lấy ClassID</button>") })
-                    $(".seacherInfor").append("<h1>Thông tin phụ huynh</h1>")
-                    $(".seacherInfor").append("<br> Name: " + relationship.username + "<br> Phone: " + relationship.phone + "<br> Email : " + relationship.email)
+                    $(".rightSide").append("<h2>Đang hoạt động trong lớp học</h2>")
+                    currentClass.forEach((e) => { $(".rightSide").append("<br>Class Name: " + e.stage + "<br> Subject : " + e.subject + "<br> Teacher : " + e.teacherID.username + "<br> Teacher phone : " + e.teacherID.phone + "<br> Teacher email : " + e.teacherID.email + "<button onclick=copyID('" + e._id + "')> Lấy ClassID</button>") })
+                    $(".rightSide").append("<h1>Thông tin phụ huynh</h1>")
+                    $(".rightSide").append("<br> Name: " + relationship.username + "<br> Phone: " + relationship.phone + "<br> Email : " + relationship.email)
                 }
-                $(".seacherInfor").append("<br><button onclick=$('.seacherInforOut').slideUp(500)>Close</button>")
                 $(".seacherInforOut").fadeIn(500)
             }
-            if (response.msg == 'err') {
-                alert(' err');
-            }
+            if (response.msg == 'err') alert(' err');
+            if (response.msg == 'none') alert('không tim thấy user');
         },
         error: function(response) {
             alert('server error');

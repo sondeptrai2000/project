@@ -5,18 +5,15 @@
       <script src="/jquery/jquery.js"></script>
       <link rel="stylesheet" href="/css/admin/createAccount.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
-
-
 </head>
 
 <body>
-
       <div class="createAccountOut" style="display: none;">
             <div id="createAccount">
                   <h2>ACCOUNT INFORMATION</h2>
-                  <label for="facultyname">Avatar</label>
-                  Select images: <input type='file' id="myFile" accept='image/*'><br>
-                  <img id='output' style="height:3cm; width:3cm"><br>
+                  <img id='output' style="height:300px; width:auto">
+                  <figcaption>Hãy chọn ảnh đại diện</figcaption>
+                  <input type='file' id="myFile" accept='image/*'><br>
                   <label for="facultyname">Full name:</label>
                   <input type="text" id="username"><br>
                   <label for="facultyname">Gender</label>
@@ -63,15 +60,14 @@
                   <br>
                   <button id="btn1" onclick="signUp()">tiến hành tạo tài khoản</button>
                   <button id="reset" onclick="reset()">Reset thông tin</button>
-                  <button id="btnxx" onclick='$(".createAccountOut").slideToggle();'>Close</button>
-
             </div>
       </div>
       <div class="updateFormOut" style="display: none;">
             <div id="updateForm">
                   <input type='hidden' id='PersonID'><br>
                   <h2>ACCOUNT update INFORMATION</h2>
-                  <img id='currentAvatar' style='max-width:100px;max-height:100px'></img><br>
+                  <img id='currentAvatar' style="height:300px; width:auto"></img>
+                  <figcaption>Hãy chọn ảnh đại diện mới nếu muốn đổi</figcaption>
                   <input type="hidden" id="oldAvatar">
                   <input type='file' id='myFileUpdate'><br>
                   <label>Name</label><input type='text' id='usernameUpdate'><br>
@@ -107,13 +103,10 @@
                   <label>Phone</label><input type='text' id='phoneUpdate'><br>
                   <label>Address</label><input type='text' id='addressUpdate'><br>
                   <button onclick="doUpdate()">tiến hành cập nhật thông tin tài khoản</button>
-                  <button onclick="$('.updateFormOut').slideUp(500)">Close</button>
             </div>
       </div>
 
-      <div class="seacherInforOut" style="display: none;">
-            <div class="seacherInfor"> </div>
-      </div>
+
       <header> {{> adminHeader }}</header>
 
       <div class="body">
@@ -138,9 +131,10 @@
                   </div>
                   <div class="tableAccount"></div>
                   <div id="soTrang"></div>
+            </div>
+            <div class='rightSide'>
 
             </div>
-            <div class='rightSide'></div>
 
       </div>
 
