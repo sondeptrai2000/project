@@ -226,6 +226,8 @@ class teacherController {
             await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl }, "progess.stage": data.stage }, { $push: { "progess.$.stageClass": { classID: data._id, name: data.subject, status: "studying" } } })
                 //Thêm học sinh vào danh sách học sinh trong bảng thông tin lớp
             await ClassModel.findOneAndUpdate({ _id: req.body.classID }, { $push: { studentID: { $each: req.body.studentlist }, } })
+                //thêm trong danh sáhc điểm danh
+            await ClassModel.updateOne({ _id: req.body.classID }, { $push: { "schedule.$[].attend": { $each: req.body.studentlistAttend } } })
             res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)
@@ -244,6 +246,10 @@ class teacherController {
                 })
                 //xóa học sinh vào danh sách học sinh trong bảng thông tin lớp
             await ClassModel.findOneAndUpdate({ _id: req.body.classID }, { $pull: { studentID: { ID: { $in: req.body.studentlistcl } } } })
+                //xóa trong danh sáhc điểm danh
+            await ClassModel.updateOne({ _id: req.body.classID }, {
+                $pull: { "schedule.$[].attend": { studentID: { $in: req.body.studentlistcl } } }
+            })
             res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)

@@ -30,8 +30,6 @@ const auth = new google.auth.GoogleAuth(
 );
 const driveService = google.drive(options = { version: 'v3', auth });
 
-
-
 // set up mail sever
 var transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',

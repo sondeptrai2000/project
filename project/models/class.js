@@ -35,6 +35,7 @@ const classSchema = new Schema({
         ref: 'account'
     },
     schedule: [{
+        commonPoint: { type: String, default: "schedule" },
         date: Date,
         day: String,
         time: String,

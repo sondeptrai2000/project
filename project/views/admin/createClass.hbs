@@ -317,21 +317,23 @@
     }
 
     function deleteClass(id) {
-        $.ajax({
-            url: '/admin/deleteClass',
-            method: 'get',
-            dataType: 'json',
-            data: {
-                id: id
-            },
-            success: function (response) {
-                if (response.msg == 'success') alert('success ');
-                if (response.msg == 'error') alert('error ');
-            },
-            error: function (response) {
-                alert('server error');
-            }
-        });
+        if (confirm("Are you sure you want to delete this?")) {
+            $.ajax({
+                url: '/admin/deleteClass',
+                method: 'get',
+                dataType: 'json',
+                data: {
+                    id: id
+                },
+                success: function (response) {
+                    if (response.msg == 'success') alert('success ');
+                    if (response.msg == 'error') alert('error ');
+                },
+                error: function (response) {
+                    alert('server error');
+                }
+            });
+        }
     }
 
     //lấy danh sách các học sinh trong lớp
@@ -417,20 +419,22 @@
     function doAddToClass(classID, subject) {
         var classID = classID
         var studentlistcl = [];
+        var studentlistAttend = [];
         var studentlist = [];
         $('input[name="hobby1"]').each(function () {
             if ($(this).is(":checked")) {
-                studentlist.push({
-                    'ID': $(this).attr('value')
-                });
+                studentlist.push({ 'ID': $(this).attr('value') });
+                studentlistAttend.push({ 'studentID': $(this).attr('value'), 'attended': '' });
                 studentlistcl.push($(this).attr('value'));
             }
         });
+        console.log(studentlistAttend)
         $.ajax({
             url: '/teacher/doaddStudentToClass',
             method: 'post',
             dataType: 'json',
             data: {
+                studentlistAttend: studentlistAttend,
                 studentlistcl: studentlistcl,
                 studentlist: studentlist,
                 classID: classID,
@@ -458,9 +462,12 @@
     function removeStudent(classID, subject) {
         var classID = classID
         var studentlistcl = [];
+        studentlistAttend = [];
         $('.removeFormClass').each(function () {
             if ($(this).is(":checked")) {
                 studentlistcl.push($(this).attr('value'));
+                studentlistAttend.push({ 'studentID': $(this).attr('value') });
+
             }
         });
         $.ajax({
@@ -468,7 +475,7 @@
             method: 'post',
             dataType: 'json',
             data: {
-                studentlistcl: studentlistcl,
+                studentlistcl: studentlistcl, studentlistAttend: studentlistAttend,
                 classID: classID,
                 subject: subject
             },
@@ -760,7 +767,7 @@
                                     });
                                 }
                             });
-                            if (check == false) $(".taskrow").append("<tr><td><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></td><td>" + student.username + "</td><td>" + student.routeName + "</td><td>" + student.stage + "</td><td><input type='checkbox' name='hobby' value='" + student._id + "' /></td><td>" + "<button class='del' value='" + student._id + "'>View</button>" + "</td></div>");
+                            if (check == false) $(".taskrow").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td'>" + student.routeName + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby' value='" + student._id + "' /></div><div class='td'>" + "<button class='del' value='" + student._id + "'>View</button>" + "</div></div>");
                         });
                     }
                 }
