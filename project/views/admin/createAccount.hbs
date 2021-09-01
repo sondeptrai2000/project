@@ -10,99 +10,94 @@
 <body>
       <div class="createAccountOut" style="display: none;">
             <div id="createAccount">
-                  <h2>ACCOUNT INFORMATION</h2>
-                  <img id='output' style="height:300px; width:auto">
-                  <figcaption>Hãy chọn ảnh đại diện</figcaption>
-                  <input type='file' id="myFile" accept='image/*'><br>
-                  <label for="facultyname">Full name:</label>
-                  <input type="text" id="username"><br>
-                  <label for="facultyname">Gender</label>
-                  <select class="Role" id="gender">
-                        <option value="male">male</option>
-                        <option value="female">female</option>
-                        <option value="other">other</option>
-                  </select><br>
-                  <label for="topic">Email</label>
-                  <input type="email" id="email" class="emailinput"><br>
-                  <label for="topic">Password</label>
-                  <input type="password" id="password"><br>
-                  <label for="topic">Role</label>
-                  <select class="Role" id="role" onchange="role('create')">
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                  </select><br>
-                  <div class="typeRole">
-                        <label>Guardian name: <input type='text' name='guardianName'></label><br>
-                        <label> Guardian phone: <input type='number' name='guardianPhone'></label><br>
-                        <label>Guardian email: <input type='text' name='guardianEmail'></label><br>
-                        <label>Chọn lộ trình học</label>
+                  <div style="text-align: left;">
+                        <h2>ACCOUNT INFORMATION</h2>
+                        <img id='output' style="height:300px; width:auto">
+                        <figcaption>Hãy chọn ảnh đại diện</figcaption>
+                        <input type='file' id="myFile" accept='image/*' style="width: 100%;">
+                        <p>Full name:</p><input type="text" id="username">
+                        <p>Gender</p>
+                        <select class="Role" id="gender">
+                              <option value="male">male</option>
+                              <option value="female">female</option>
+                              <option value="other">other</option>
+                        </select>
+                        <p>Email</p><input type="email" id="email">
+                        <p>Password</p><input type="password" id="password">
+                        <p>Role</p>
+                        <select class="Role" id="role" onchange="role('create')">
+                              <option value="student">Student</option>
+                              <option value="teacher">Teacher</option>
+                        </select>
+                        <p>Birthday</p><input type="date" id="birthday">
+                        <p>Phone</p><input type="text" id="phone">
+                        <p>Address</p><input type="text" id="address">
+                  </div>
+                  <div class="typeRole" style="text-align: left;">
+                        <p>Guardian name:</p> <input type='text' name='guardianName'>
+                        <p>Guardian phone:</p><input type='number' name='guardianPhone'>
+                        <p>Guardian email:</p><input type='text' name='guardianEmail'>
+                        <p>Chọn lộ trình học</p>
                         <select id="routeTypeS" onchange="routeType('create')">
                               {{#each targetxxx}}
                               <option value="{{routeName}}">
                                     {{routeName}}
                               </option>
                               {{/each}}
-                        </select><br>
-                        <label>Level</label>
-                        <select id="levelS"></select><br>
-                        <label>Aim</label>
+                        </select>
+                        <p>Level</p>
+                        <select id="levelS"></select>
+                        <p>Aim</p>
                         <select id="Aim"></select>
                   </div>
-                  <br>
-                  <label for="topic">Birthday</label>
-                  <input type="date" id="birthday">
-                  <br>
-                  <label for="topic">Phone</label>
-                  <input type="text" id="phone">
-                  <br>
-                  <label for="topic">Address</label>
-                  <input type="text" id="address">
-                  <br>
                   <button id="btn1" onclick="signUp()">tiến hành tạo tài khoản</button>
                   <button id="reset" onclick="reset()">Reset thông tin</button>
             </div>
       </div>
+
       <div class="updateFormOut" style="display: none;">
             <div id="updateForm">
-                  <input type='hidden' id='PersonID'><br>
-                  <h2>ACCOUNT update INFORMATION</h2>
-                  <img id='currentAvatar' style="height:300px; width:auto"></img>
-                  <figcaption>Hãy chọn ảnh đại diện mới nếu muốn đổi</figcaption>
-                  <input type="hidden" id="oldAvatar">
-                  <input type='file' id='myFileUpdate'><br>
-                  <label>Name</label><input type='text' id='usernameUpdate'><br>
-                  <label>Email</label><input type='email' id='emailUpdate' class='emailinput'><br>
-                  <label>Password</label><input type='password' id='passwordUpdate'><br>
-                  <label>Current Role: <input type='hidden' id='currentRole'></label>
-                  <label>Role</label>
-                  <select class='Role' id='roleUpdate' onchange="role('update')">
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                  </select><br>
-                  <div class='typeRole'>
-                        <label>Chọn lộ trình học</label>
-                        <select id='routeTypeSUpdate' onchange="routeType('update')"></select>
-                        <label>Level</label>
-                        <select id='levelSUpdate'></select><br>
-                        <label>Aim</label>
-                        <select id='AimUpdate'></select><br>
-                        <label>Guardian name: <input type='text' name='guardianNameUpdate'></label><br>
-                        <label> Guardian phone: <input type='number' name='guardianPhoneUpdate'></label><br>
-                        <label>Guardian email: <input type='text' name='guardianEmailUpdate'></label><br>
-                  </div>
-                  <br>
-                  <div class='gender'>
-                        <label>Gender</label>
+                  <div style="text-align: left;">
+                        <input type='hidden' id='PersonID'>
+                        <h2>ACCOUNT update INFORMATION</h2>
+                        <img id='currentAvatar' style="height:300px; width:auto"></img>
+                        <figcaption>Hãy chọn ảnh đại diện mới nếu muốn đổi</figcaption>
+                        <input type="hidden" id="oldAvatar">
+                        <input type='file' id='myFileUpdate' style="width:100%;">
+                        <p>Name</p><input type='text' id='usernameUpdate'>
+                        <p>Email</p><input type="email" id="emailUpdate">
+
+                        <p>Password</p><input type='password' id='passwordUpdate'
+                              placeholder="update new passwork if you want to">
+                        <p>Gender</p>
                         <select id='genderUpdate'>
                               <option value="male">Male</option>
                               <option value="female">Female</option>
                               <option value="other">Other</option>
                         </select>
+                        <p>Birthday</p><input type='date' id='birthdayUpdate'>
+                        <p>Phone</p><input type='text' id='phoneUpdate'>
+                        <p>Address</p><input type='text' id='addressUpdate'>
+                        <input type='hidden' id='currentRole'>
+                        <p>Role</p>
+                        <select class='Role' id='roleUpdate' onchange="role('update')">
+                              <option value="student">Student</option>
+                              <option value="teacher">Teacher</option>
+                        </select>
                   </div>
-                  <br><label>Birthday</label><input type='date' id='birthdayUpdate'><br>
-                  <label>Phone</label><input type='text' id='phoneUpdate'><br>
-                  <label>Address</label><input type='text' id='addressUpdate'><br>
+                  <div class='typeRole' style="text-align: left;">
+                        <p>Chọn lộ trình học</p>
+                        <select id='routeTypeSUpdate' onchange="routeType('update')"></select>
+                        <p>Level</p>
+                        <select id='levelSUpdate'></select>
+                        <p>Aim</p>
+                        <select id='AimUpdate'></select>
+                        <p>Guardian name:</p><input type='text' name='guardianNameUpdate'>
+                        <p> Guardian phone:</p> <input type='number' name='guardianPhoneUpdate'>
+                        <p>Guardian email:</p><input type='text' name='guardianEmailUpdate'>
+                  </div>
                   <button onclick="doUpdate()">tiến hành cập nhật thông tin tài khoản</button>
+
             </div>
       </div>
 

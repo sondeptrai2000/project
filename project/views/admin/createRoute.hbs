@@ -10,38 +10,27 @@
 <body>
         <div class="createRouteOut" style="display: none;">
                 <div class="createRoute">
-                        <h2>Create route</h2>
-                        <label>routeName </label>
-                        <input type="text" name="routeName" id="routeName">
-                        <br>
-                        <label>Description</label>
-                        <input type="text" name="description" id="description">
-                        <br>
-                        <button onclick="addRoute('create')">Add route</button>
-
-                        <br>
+                        <div>
+                                <h2>Create route</h2>
+                                <p>routeName </p><input type="text" name="routeName" id="routeName">
+                                <p>Description</p><input type="text" name="description" id="description">
+                                <button onclick="addRoute('create')">Add route</button>
+                        </div>
                         <div id="addStage" style="text-align: left;"></div>
-                        <br>
-                        <button type="submit" onclick="doCreateRoute()">Submit</button>
+                        <button type="submit" onclick="doCreateRoute()" style="clear:both;">Submit</button>
                 </div>
         </div>
         <div class="updateRouteOut" style="display: none;">
                 <div class="updateRoute">
-                        <table border="solid">
+                        <div>
                                 <h2>update route</h2>
                                 <input type="hidden" id="routeIDUpdate">
-                                <label>routeName </label>
-                                <input type="text" name="routeName" id="routeNameUpdate">
-                                <br>
-                                <label>Description</label>
-                                <input type="text" name="description" id="descriptionUpdate">
-                                <br>
+                                <p>routeName </p><input type="text" name="routeName" id="routeNameUpdate">
+                                <p>Description</p><input type="text" name="description" id="descriptionUpdate">
                                 <button onclick="addRoute('update')">Add route</button>
-                                <br>
-                                <div id="addStageUpdate" style="text-align: left;"></div>
-                                <br>
-                                <button type="submit" onclick="doUpdateRoute()">Submit</button>
-                        </table>
+                        </div>
+                        <div id="addStageUpdate" style="text-align: left;"></div>
+                        <button type="submit" onclick="doUpdateRoute()" style="clear:both;">Submit</button>
                 </div>
         </div>
 
@@ -65,18 +54,13 @@
                 <div class='rightSide'>
                         <div class="viewRoute">
                                 <table border="solid">
-                                        <h2>view route</h2>
-                                        <label>routeName </label>
-                                        <input type="text" name="routeName" id="routeNameView">
-                                        <br>
-                                        <label>Description</label>
-                                        <input type="text" name="description" id="descriptionView">
-                                        <br>
-                                        <button onclick="addRoute('update')">Add route</button>
-                                        <br>
+                                        <div>
+                                                <h2>view route</h2>
+                                                <p>routeName </p><input type="" name="routeName" id="routeNameView" readonly>
+                                                <p>Description</p><input type="text" name="description"
+                                                        id="descriptionView" readonly>
+                                        </div>
                                         <div id="viewStage" style="text-align: left;"></div>
-                                        <br>
-                                        <button onclick='$(".viewRouteOut").fadeOut(500);'>close</button>
                                 </table>
                         </div>
                 </div>
@@ -116,20 +100,20 @@
 
         function addRoute(type) {
                 if (type == "create") {
-                        var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStage') > Đẩy lên đầu </button><button onclick=addClass($(this).parent(),'create')>Add Class</button><br>Stage: <input type='text' name='stageTest'> Giá tiền: <input type='text' name='stageMoney'><br></div>"
+                        var add = "<div><button onclick =$(this).parent().remove()>Delete</button><button onclick =$(this).parent().prependTo('#addStage') > Đẩy lên đầu </button><button onclick=addClass($(this).parent(),'create')>Add Class</button><p>Stage:</p><input type='text' name='stageTest'><p>Giá tiền:</p><input type='text' name='stageMoney'></div>"
                         $('#addStage').append(add)
                 } else {
-                        var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStageUpdate') > Đẩy lên đầu </button><button onclick=addClass($(this).parent(),'update')>Add Class</button><br>Stage: <input type='text' name='stageTestUpdate'> Giá tiền: <input type='text' name='stageMoneyUpdate'><br></div>"
+                        var add = "<div><button onclick =$(this).parent().remove()>Delete</button><button onclick =$(this).parent().prependTo('#addStageUpdate') > Đẩy lên đầu </button><button onclick=addClass($(this).parent(),'update')>Add Class</button><p>Stage:</p><input type='text' name='stageTestUpdate'><p>Giá tiền:</p><input type='text' name='stageMoneyUpdate'></div>"
                         $('#addStageUpdate').append(add)
                 }
         }
 
         function addClass(test, type) {
                 if (type == "create") {
-                        var add = "<li>route<input type='text' name='classIn'><button onclick=$(this).parent().remove();>Xóa</button><br></li>"
+                        var add = "<div class='route'><p>route</p><input type='text' name='classIn'><button onclick=$(this).parent().remove();>Xóa</button></div>"
                         test.append(add)
                 } else {
-                        var add = "<li><label>route<input type='text' name='classInUpdate'><button onclick=$(this).parent().remove();>Xóa</button><br></label></li>"
+                        var add = "<div class='route'><p>route</p><input type='text' name='classInUpdate'><button onclick=$(this).parent().remove();>Xóa</button></div>"
                         test.append(add)
                 }
         }
@@ -151,11 +135,11 @@
                                         $("#routeNameView").val(data[0].routeName)
                                         $("#descriptionView").val(data[0].description)
                                         data[0].routeSchedual.forEach(function (e, indexBIG) {
-                                                var add = "<div>Stage: <input type='text' name='stageTestUpdate' value='" + e.stage + "'> Giá tiền: <input type='text' name='stageMoneyUpdate'value='" + e.price + "'><br></div>"
+                                                var add = "<p> Stage " + (indexBIG + 1) + ": " + e.stage + " Giá tiền: " + e.price + "</p>"
                                                 $("#viewStage").append(add)
                                                 e.routeabcd.forEach(function (e, index) {
-                                                        var add = "<li>route<input type='text' name='classInUpdate' value='" + e + "'><br></li>"
-                                                        $("#viewStage div:nth-child(" + (indexBIG + 1) + ")").append(add)
+                                                        var add = "<p>Route" + (index + 1) + ": " + e + "</p >"
+                                                        $("#viewStage").append(add)
                                                 })
                                         })
                                 }
@@ -274,10 +258,10 @@
                                         $("#routeNameUpdate").val(data[0].routeName)
                                         $("#descriptionUpdate").val(data[0].description)
                                         data[0].routeSchedual.forEach(function (e, indexBIG) {
-                                                var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStageUpdate') > Đẩy lên đầu </button><button onclick=addClass($(this).parent(),'update')>Add Class</button><br>Stage: <input type='text' name='stageTestUpdate' value='" + e.stage + "'> Giá tiền: <input type='text' name='stageMoneyUpdate'value='" + e.price + "'><br></div>"
+                                                var add = "<div><button onclick =$(this).parent().remove() > Delete </button><button onclick =$(this).parent().prependTo('#addStageUpdate') > Đẩy lên đầu </button><button onclick=addClass($(this).parent(),'update')>Add Class</button>Stage: <input type='text' name='stageTestUpdate' value='" + e.stage + "'> Giá tiền: <input type='text' name='stageMoneyUpdate'value='" + e.price + "'></div>"
                                                 $("#addStageUpdate").append(add)
                                                 e.routeabcd.forEach(function (e, index) {
-                                                        var add = "<li>route<input type='text' name='classInUpdate' value='" + e + "'><button onclick=$(this).parent().remove();>Xóa</button><br></li>"
+                                                        var add = "<div class='route'><p>route</p><input type='text' name='classInUpdate' value='" + e + "'><button onclick=$(this).parent().remove();>Xóa</button></div>"
                                                         $("#addStageUpdate div:nth-child(" + (indexBIG + 1) + ")").append(add)
                                                 })
                                         })

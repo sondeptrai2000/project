@@ -237,3 +237,49 @@ header li {
     border: #000000 solid 1px;
     margin: 5px;
 }
+
+#createAccount,
+#updateForm {
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 20px;
+}
+
+#createAccount div,
+#updateForm div {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    margin: 0;
+    text-align: left;
+}
+
+#createAccount button,
+#updateForm button {
+    width: 33%;
+    font-size: 18px;
+}
+
+#createAccount p,
+#updateForm p {
+    clear: both;
+    width: 30%;
+    float: left;
+    margin-bottom: 10px;
+}
+
+#createAccount input,
+#updateForm input {
+    width: 70%;
+    float: right;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+#createAccount select,
+#updateForm select {
+    width: 70%;
+    float: right;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
