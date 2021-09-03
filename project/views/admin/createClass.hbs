@@ -14,7 +14,6 @@
 
     <div class="innerOut" style="display:none">
         <div class="inner">
-            </table>
         </div>
     </div>
 
@@ -59,85 +58,42 @@
 
     <div class="createClassOut" style="display: none;">
         <div id='createClass'>
-            <div id="tieude">
-                <p>bảng lộ trình tùy biến</p>
-            </div>
-            <table border="solid">
-                <tbody id="routeTuyBien"> </tbody>
+            <div border="solid">
+                <div id="routeTuyBien"> </div>
                 <div class='tr' id='trss'></div>
-            </table>
+            </div>
             <div>
-                <p>Create class</p>
-                <label>Chọn lộ trình học</label>
+                <p>Chọn lộ trình học</p>
                 <select id="routeTypeS" class="routeName" onchange="routeType()">
                     {{#each targetxxx}}
-
                     <option value="{{routeName}}">
                         {{routeName}}
                     </option>
                     {{/each}}
-
                 </select>
-                <br>
-                <label for="level">Level</label>
-                <select id="levelS" class="stage" onchange="level()"></select>
-                <br>
-                <label>Subject</label>
-                <select id="subject" class="subject" onchange="getStudent()"></select>
-                <br>
-                <label for="topic">Class Name</label>
-                <input type="text" class="className">
-                <br>
-                <label for="topic">Description</label>
-                <input type="text" class="description">
-                <br>
-                <label for="topic">Student</label>
-
-                <table id="studentTable" border='solid' style="display: none;">
-                    <thead>
-                        <div class='tr'>
-                            <div class='td'>
-                                <inputs type="text" placeholder="Search..">
-                            </div>
-                        </div>
-                        <div class='tr'>
-                            <div class='td'>avatar</div>
-                            <div class='td'>username</div>
-                            <div class='td'>routeName</div>
-                            <div class='td'>stage</div>
-                            <div class='td'>Chose</div>
-                            <div class='td'>More information</div>
-                        </div>
-                    </thead>
-                    <tbody class='taskrow'></tbody>
-                </table>
-                <br>
-                <label for="topic">Teacher</label>
+                <p>Level</p><select id="levelS" class="stage" onchange="level()"></select>
+                <p>Subject</p><select id="subject" class="subject" onchange="getStudent()"></select>
+                <p>Class Name</p><input type="text" class="className">
+                <p>Description</p><input type="text" class="description">
+                <h3>Student list</h3>
+                <div id="studentTable" border='solid' style="display: none;"></div>
+                <p>Teacher</p>
                 <div id="teacherID">
-                    <img src="{{avatar}}" style="height: 50px;width: 50px;" onclick="$('#span2').toggle(500)">
+                    <img src="{{avatar}}" style="height: 200px;width: 200px;" onclick="$('#span2').toggle(500)">
                     <p>{{email}}</p>
                 </div>
-                <div id="span2" style="display: none;height: 200px;overflow: scroll;">
+                <div id="span2" style="display:none;height: 400px;overflow: scroll;">
                     {{#each teacher}}
-                    <img src="{{avatar}}" style="height: 50px;width: 50px;"
+                    <img src="{{avatar}}" style="height: 200px;width: 200px;"
                         onclick="selectedTeacher('{{email}}','{{avatar}}','{{_id}}')">
                     <p>{{email}}</p>
                     <input type='hidden' value="{{_id}}">
                     {{/each}}
                 </div>
-
-                <br>
-                <label for="topic">startDate</label>
-                <input type="date" class="startDate" id="startDate">
-                <label for="topic">endDate</label>
-                <input type="date" class="endDate" id="endDate">
-                <br>
-                <label for="topic">Số buổi học 1 tuần</label>
-                <input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
-                <br>
+                <p>startDate</p><input type="date" class="startDate" id="startDate">
+                <p>endDate</p><input type="date" class="endDate" id="endDate">
+                <p>Số buổi học 1 tuần</p><input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
                 <div id="datlich"></div>
-                <br>
-                <button onclick="$('.createClassOut').slideUp(500)"> Close</button>
                 <button type="submit" class="btn5" onclick="abc()">Submit1</button>
             </div>
         </div>
@@ -178,10 +134,8 @@
         if ($(e.target).is('.createClassOut')) $('.createClassOut').fadeOut(1500);
     });
     function selectedTeacher(email, avatar, id) {
-        $("#teacherID").html('<img src="' + avatar + '" style="height: 50px;width: 50px;" onclick=$("#span2").toggle(500)><p>' + email + '<p><input type="hidden" value="' + id + '">')
-        $("#span2").toggle(500)
-        console.log($("#teacherID input").val())
-
+        $("#teacherID").html('<img src="' + avatar + '" style="height: 200px;width: 200px;" onclick=$("#span2").toggle(500)><p>' + email + '<p><input type="hidden" value="' + id + '">')
+        $("#span2").fadeOut(500)
     }
 
     function getAllClass() {
@@ -286,11 +240,6 @@
             "schedule.$.day": dayOfWeek,
             "schedule.$.status": "update"
         }
-        console.log(update)
-        console.log($("input[name='updateScheduleClassID']").val())
-        console.log($("input[name='dateScheduleUpdate']").val())
-        console.log($("input[name='updateScheduleID']").val())
-        console.log(old)
         $.ajax({
             url: '/admin/doupdateSchedule',
             method: 'post',
@@ -303,12 +252,8 @@
                 old: old
             },
             success: function (response) {
-                if (response.msg == 'success') {
-                    alert("success")
-                }
-                if (response.msg == 'error') {
-                    alert("error")
-                }
+                if (response.msg == 'success') alert("success")
+                if (response.msg == 'error') alert("error")
             },
             error: function (response) {
                 alert('server error');
@@ -339,16 +284,13 @@
     //lấy danh sách các học sinh trong lớp
     function sendData(id, subject) {
         var _id = id
-
         $(".inner").html("<button onclick=addStudent('" + id + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "','" + subject + "')>Xóa học sinh trong lớp</button>")
         $(".inner").append('<div class="tr"></div><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">Select</div>')
         $.ajax({
             url: '/teacher/allClassStudent',
             method: 'get',
             dataType: 'json',
-            data: {
-                abc: _id
-            },
+            data: { abc: _id },
             success: function (response) {
                 if (response.msg == 'success') {
                     $.each(response.data, function (index, data) {
@@ -506,7 +448,7 @@
     function tuan() {
         $("#datlich").html("")
         for (var i = 0; i < $("#Schedule").val(); i++) {
-            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8 onchange=getTime("' + i + '")> giờ học:<select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"></select>Room:<select class="Room" id="Room' + i + '"></select><br>')
+            $("#datlich").append('Buoi ' + (i + 1) + ' Thứ: <input type="number" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8 onchange=getTime("' + i + '")> giờ học:<select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"></select>Room:<select class="Room" id="Room' + i + '"></select>')
         }
     }
     //lấy các ca làm của giáo viên trong ngày đã chọn (tránh trường hợp 1 giáo viên dạy chung 1 ca làm và ở 2 phòng khác nhau )
@@ -684,16 +626,13 @@
                     });
                     $.each(response.targetxxx, function (index, targetxxx) {
                         $("#tieude").append("<p>Lộ trình:" + targetxxx.routeName + "</p><p>Miêu tả:" + targetxxx.description + "</p>");
-                        $.each(targetxxx.routeSchedual, function (index, routeSchedual) {
-                            $("#routeTuyBien").append("<th>Stage: " + routeSchedual.stage + "</div>");
-                        });
-                        $.each(targetxxx.routeSchedual, function (index, routeSchedual) {
-                            $("#trss").append("<td id='lol" + index + "'></td>");
-                            $.each(routeSchedual.routeabcd, function (indexx, routeabcd) {
-                                var y = '#lol' + index
-                                $(y).append("<li>" + routeabcd + "</li>");
+                        $.each(targetxxx.routeSchedual, function (indexBIG, routeSchedual) {
+                            $("#routeTuyBien").append("<div class='tr'><div class='td'><h3>Stage: " + routeSchedual.stage + "</h3></div></div>");
+                            $.each(routeSchedual.routeabcd, function (index, routeabcd) {
+                                $("#routeTuyBien .tr:nth-child(" + (indexBIG + 1) + ")").append("<div class='td'>Class: " + routeabcd + "</div>");
                             });
                         });
+
                     });
 
                 }
@@ -753,11 +692,11 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     if (response.student.length == 0) {
-                        $('.taskrow').html('');
                         alert("không có học sinh học tập tại giai đoạn này")
                     } else {
-                        $('.taskrow').html('');
                         $('#studentTable').show();
+                        $('#studentTable').html("<div class='tr'><div class='td'><inputs type='text' placeholder='Search..'></div></div><div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>Chose</div><div class='td'>More information</div></div>")
+                        console.log(response.student)
                         $.each(response.student, function (index, student) {
                             var check = false
                             $.each(student.progess, function (index, progess) {
@@ -767,9 +706,11 @@
                                     });
                                 }
                             });
-                            if (check == false) $(".taskrow").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td'>" + student.routeName + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby' value='" + student._id + "' /></div><div class='td'>" + "<button class='del' value='" + student._id + "'>View</button>" + "</div></div>");
+                            if (check == false) $('#studentTable').append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td'>" + student.routeName + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby' value='" + student._id + "' /></div><div class='td'>" + "<button class='del' value='" + student._id + "'>View</button>" + "</div></div>");
                         });
+                        $('#studentTable').show();
                     }
+                    getAllClass();
                 }
             },
             error: function (response) {

@@ -65,17 +65,17 @@ class teacherController {
         res.render('teacher/teacherHome')
     }
 
-    teacherProfile(req, res) {
-        var token = req.cookies.token
-        var decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.findOne({ _id: decodeAccount }).lean().exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
-                res.json({ msg: 'success', data: data });
-            }
-        })
+    async teacherProfile(req, res) {
+        try {
+            var token = req.cookies.token
+            var decodeAccount = jwt.verify(token, 'minhson')
+            var data = await AccountModel.findOne({ _id: decodeAccount }).lean();
+            res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
+            res.json({ msg: 'success', data: data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
     allClass(req, res) {
@@ -83,22 +83,23 @@ class teacherController {
         var teacherName = req.cookies.username
         if (params != "0") res.render('teacher/allClass', { params, teacherName })
         if (params == "0") res.render('teacher/allClass', { teacherName })
-
     }
 
-    getClass(req, res) {
-        var token = req.cookies.token
-        var decodeAccount = jwt.verify(token, 'minhson')
-        if (req.query.time) {
-            var time = new Date(req.query.time)
-            console.log(time)
-            ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: time }, endDate: { $gte: time } }, { StudentIDoutdoor: 0 }).lean().exec((err, classInfor) => {
+    async getClass(req, res) {
+        try {
+            var token = req.cookies.token
+            var decodeAccount = jwt.verify(token, 'minhson')
+            if (req.query.time) {
+                var time = new Date(req.query.time)
+                var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: time }, endDate: { $gte: time } }).lean();
                 res.json({ msg: 'success', classInfor });
-            })
-        } else {
-            ClassModel.find({ teacherID: decodeAccount }, { StudentIDoutdoor: 0 }).lean().exec((err, classInfor) => {
+            } else {
+                var classInfor = await ClassModel.find({ teacherID: decodeAccount }, { StudentIDoutdoor: 0 }).lean();
                 res.json({ msg: 'success', classInfor });
-            })
+            }
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
         }
     }
 
@@ -106,114 +107,88 @@ class teacherController {
         res.render('teacher/schedule')
     }
 
-    getSchedule(req, res) {
-        var token = req.cookies.token
-        var decodeAccount = jwt.verify(token, 'minhson')
+    async getSchedule(req, res) {
+        try {
+            var token = req.cookies.token
+            var decodeAccount = jwt.verify(token, 'minhson');
             //lấy thời điểm đầu tuần để lấy khóa học đang hoạt động trong khoảng thời gian đó. 
-        var sosanh = new Date(req.query.dauTuan)
-        ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean().exec((err, classInfor) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', classInfor });
-            }
-        })
+            var sosanh = new Date(req.query.dauTuan)
+            var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean();
+            res.json({ msg: 'success', classInfor });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
 
 
-    attendedList(req, res) {
-        ClassModel.find({ _id: req.query.id }, { schedule: 1 }).lean().exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
-        })
+    async attendedList(req, res) {
+        try {
+            var data = await ClassModel.find({ _id: req.query.id }, { schedule: 1 }).lean();
+            res.json({ msg: 'success', data: data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
-    attendedListStudent(req, res) {
-        console.log(req.query.idattend)
-        console.log(req.query.idClass)
-        ClassModel.find({ _id: req.query.idClass }, { schedule: { $elemMatch: { _id: req.query.idattend } } }).populate({ path: "schedule.attend.studentID", select: "username avatar" }).lean().exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
-        })
+    async attendedListStudent(req, res) {
+        try {
+            var data = await ClassModel.find({ _id: req.query.idClass }, { schedule: { $elemMatch: { _id: req.query.idattend } } }).populate({ path: "schedule.attend.studentID", select: "username avatar" }).lean();
+            res.json({ msg: 'success', data: data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
-    doTakeAttended(req, res) {
-        var now = new Date()
-        var theLastCourse = new Date(req.body.lastDate.split("T00:00:00.000Z")[0])
-        ClassModel.updateOne({ _id: req.body.idClass, "schedule._id": req.body.schedule }, {
-            $set: {
-                "schedule.$.attend": req.body.attend
-            }
-        }).lean().exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                if (req.body.scheduleStatus == 'update') {
-                    assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.scheduleDay, room: { $elemMatch: { room: req.body.scheduleRoom, time: req.body.scheduleTime } } }, {
-                        $set: { "room.$.status": "None" }
-                    }, function(err, data) {
-                        if (err) {
-                            console.log("err")
-                            res.json({ msg: 'error' });
-                        }
-                    })
+    async doTakeAttended(req, res) {
+        try {
+            var now = new Date()
+            var theLastCourse = new Date(req.body.lastDate.split("T00:00:00.000Z")[0]);
+            //cập nhật điểm danh cho học sinh
+            await ClassModel.updateOne({ _id: req.body.idClass, "schedule._id": req.body.schedule }, { $set: { "schedule.$.attend": req.body.attend } });
+            //nếu là lịch học đã được update (giáo viên bận và đã được chuyển lịch dạy sang ngày khác thì chuyển trạng thái của phòng đó thành none để thành phòng trống)
+            if (req.body.scheduleStatus == 'update') await assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.scheduleDay, room: { $elemMatch: { room: req.body.scheduleRoom, time: req.body.scheduleTime } } }, { $set: { "room.$.status": "None" } })
+                //nếu đó là buổi học cuối cùng (so sánh time) thì sẽ chuyển trạng thái các phòng của lớp đó thành none 
+            if (now >= theLastCourse) {
+                //chuyển phòng thành none 
+                for (var i = 0; i < req.body.time.length; i++) {
+                    assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, { $set: { "room.$.status": "None" } })
                 }
-
-                if (now >= theLastCourse) {
-                    for (var i = 0; i < req.body.time.length; i++) {
-                        console.log(req.body.day[i])
-                        assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, {
-                            $set: { "room.$.status": "None" }
-                        }, function(err, data) {
-                            if (err) {
-                                console.log("err")
-                                res.json({ msg: 'error' });
-                            }
-                        })
-                    }
-                    ClassModel.updateOne({ _id: req.body.idClass }, { classStatus: 'Finished' }, function(err, data) {
-                        if (err) {
-                            res.json({ msg: 'error' });
-                        } else {
-                            res.json({ msg: 'success' });
-                        }
-                    })
-                } else {
-                    res.json({ msg: 'success' });
-                }
-            }
-        })
+                //cập nhật trạng thái của lớp là đã kết thúc
+                await ClassModel.updateOne({ _id: req.body.idClass }, { classStatus: 'Finished' });
+                res.json({ msg: 'success' });
+            } else { res.json({ msg: 'success' }); }
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
 
 
-    allClassStudent(req, res) {
-        var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean().exec((err, selectedClassInfor) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: selectedClassInfor });
-            }
-        })
+    async allClassStudent(req, res) {
+        try {
+            var _id = req.query.abc
+            var selectedClassInfor = await ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
+            res.json({ msg: 'success', data: selectedClassInfor });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
-    addStudentToClass(req, res) {
-        var condition = req.query.condition
-        AccountModel.find(condition, { avatar: 1, username: 1, subject: 1, routeName: 1, stage: 1, email: 1, classID: 1, progess: 1 }).lean().exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data: data });
-            }
-        })
+    async addStudentToClass(req, res) {
+        try {
+            var condition = req.query.condition
+            var data = await AccountModel.find(condition, { avatar: 1, username: 1, subject: 1, routeName: 1, stage: 1, email: 1, classID: 1, progess: 1 }).lean();
+            res.json({ msg: 'success', data: data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
     }
 
     async doaddStudentToClass(req, res) {
@@ -238,18 +213,17 @@ class teacherController {
     async doremoveStudentToClass(req, res) {
         try {
             //xóa classID vào bảng thông tin của các học sinh
-            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID } })
-                //xóa classID vào bảng thông tin lộ trình của các học sinh ( progess)
-
+            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID } });
+            //xóa classID vào bảng thông tin lộ trình của các học sinh ( progess)
             await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl }, "progess.stageClass.classID": req.body.classID }, {
-                    $pull: { "progess.$.stageClass": { classID: req.body.classID } }
-                })
-                //xóa học sinh vào danh sách học sinh trong bảng thông tin lớp
-            await ClassModel.findOneAndUpdate({ _id: req.body.classID }, { $pull: { studentID: { ID: { $in: req.body.studentlistcl } } } })
-                //xóa trong danh sáhc điểm danh
+                $pull: { "progess.$.stageClass": { classID: req.body.classID } }
+            });
+            //xóa học sinh vào danh sách học sinh trong bảng thông tin lớp
+            await ClassModel.findOneAndUpdate({ _id: req.body.classID }, { $pull: { studentID: { ID: { $in: req.body.studentlistcl } } } });
+            //xóa trong danh sáhc điểm danh
             await ClassModel.updateOne({ _id: req.body.classID }, {
                 $pull: { "schedule.$[].attend": { studentID: { $in: req.body.studentlistcl } } }
-            })
+            });
             res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)
@@ -265,39 +239,39 @@ class teacherController {
                     "studentID.$.grade": req.body.grade,
                     "studentID.$.feedBackContent": req.body.comment
                 }
-            })
+            });
             if (req.body.grade != "Restudy") {
                 //cập nhật thông tin về tiến độ của học sinh trong bảng thông tin cá nhân
                 var status = "Pass"
                 await AccountModel.updateOne({ _id: req.body.studentId }, {
-                        "$set": { "progess.$[progess].stageClass.$[stageClass].status": status }
-                    }, { "arrayFilters": [{ "progess.stage": classInfor.stage }, { "stageClass.classID": req.body.classID }] })
-                    //lấy tiến độ học tập của học sinh từ bảng thông tin cá nhân
+                    "$set": { "progess.$[progess].stageClass.$[stageClass].status": status }
+                }, { "arrayFilters": [{ "progess.stage": classInfor.stage }, { "stageClass.classID": req.body.classID }] });
+                //lấy tiến độ học tập của học sinh từ bảng thông tin cá nhân
                 var studentProgress
-                var progess = await AccountModel.findOne({ _id: req.body.studentId }, { progess: 1, aim: 1, email: 1, username: 1 })
-                    //lấy số lượng pass các khóa học để so sánh với số lượng class trong giai đoạn. == thì đã hoàn thành hết các lớp trong giai đoạn đó và sẽ tiến hành chuyển tiépe giai đoạn 
+                var progess = await AccountModel.findOne({ _id: req.body.studentId }, { progess: 1, aim: 1, email: 1, username: 1 });
+                //lấy số lượng pass các khóa học để so sánh với số lượng class trong giai đoạn. == thì đã hoàn thành hết các lớp trong giai đoạn đó và sẽ tiến hành chuyển tiépe giai đoạn 
                 var Passed = 0
                 progess.progess.forEach((e, index) => {
-                        if (e.stage == classInfor.stage) {
-                            studentProgress = e.stageClass
-                            e.stageClass.forEach((check, index) => {
-                                if (check.status == "Pass") {
-                                    Passed++
-                                }
-                            })
-                        }
-                    })
-                    //lấy lộ trình mà học sinh đang theo học để xem xét chuyển giai đoạn
+                    if (e.stage == classInfor.stage) {
+                        studentProgress = e.stageClass
+                        e.stageClass.forEach((check, index) => {
+                            if (check.status == "Pass") {
+                                Passed++
+                            }
+                        })
+                    }
+                });
+                //lấy lộ trình mà học sinh đang theo học để xem xét chuyển giai đoạn
                 var route = await studyRouteModel.findOne({ routeName: classInfor.routeName }, { routeSchedual: 1 })
                 var indexOfNextClass
                 var routeClass
                 route.routeSchedual.forEach((e, index) => {
-                        if (e.stage == classInfor.stage) {
-                            routeClass = e.routeabcd
-                            indexOfNextClass = index + 1
-                        }
-                    })
-                    //check xem học sinh đã hoàn thành các lớp của giai đoạn hiện tại chưa
+                    if (e.stage == classInfor.stage) {
+                        routeClass = e.routeabcd
+                        indexOfNextClass = index + 1
+                    }
+                });
+                //check xem học sinh đã hoàn thành các lớp của giai đoạn hiện tại chưa
                 if (Passed == routeClass.length + 1) {
                     //kiểm tra xem lộ trình học của học sinh đã kết thúc chưa. Check theo aim mà học sinh đã đăng ký.
                     if (classInfor.stage == progess.aim) {

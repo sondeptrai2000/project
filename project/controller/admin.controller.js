@@ -68,7 +68,7 @@ async function uploadFile(name, rootID, path) {
 }
 class adminController {
     async adminHome(req, res) {
-        // AccountModel.updateMany({}, { $set: { classID: [], subject: [] } }, function(err, data) {
+        // AccountModel.updateMany({}, { $set: { classID: [] } }, function(err, data) {
         //     if (err) {
         //         console.log("k ok")
         //     } else {

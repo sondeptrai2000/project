@@ -18,20 +18,10 @@ const AccountSchema = new Schema({
     achive: String,
     routeName: String,
     stage: String,
-    chat: [{
-        type: String,
-    }],
-    relationship: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'account'
-    },
-    role: {
-        type: String,
-    },
-    classID: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'class'
-    }],
+    chat: [{ type: String, }],
+    relationship: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
+    role: String,
+    classID: [{ type: mongoose.Schema.Types.ObjectId, ref: 'class' }],
     progess: [{
         stage: String,
         stageClass: [{ classID: String, name: String, status: String }]
