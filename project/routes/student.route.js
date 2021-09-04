@@ -18,6 +18,7 @@ studentRouter.post('/doeditAccount', studentController.doeditAccount)
 studentRouter.get('/allClass/:id', studentController.allClass)
 studentRouter.get('/getClass', studentController.getClass)
 studentRouter.get('/viewschedule', studentController.viewschedule)
+studentRouter.get('/myAttended', studentController.myAttended)
 
 
 studentRouter.get('/allClassStudent', studentController.allClassStudent)

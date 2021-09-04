@@ -185,12 +185,12 @@ function takeAttend(idattend, idClass) {
                             $("#scheduleRoom").val(data.room)
                             $("#scheduleDay").val(data.day)
                             $("#lola").append('<div class="tr"><div class="td"><input class ="attendStudentID" type="hidden" value="' + attend.studentID._id + '">' + attend.studentID.username + '</div><div class="td"><select class ="attendStudentStatus" id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></div></div>')
-                            $("#lola").append('<div class="tr"><button onclick="submitTakeAttend()">submit</button></div>')
                             $('#' + attend.studentID._id + ' option:selected').removeAttr('selected');
                             $('#' + attend.studentID._id + ' option[value="' + attend.attended + '"]').attr('selected', 'selected');
                         });
                     }
                 });
+                $("#lola").append('<div class="tr"><button onclick="submitTakeAttend()">submit</button></div>')
                 $(".lolaOut").fadeIn(500)
             }
         },

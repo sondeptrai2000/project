@@ -28,7 +28,8 @@ const classSchema = new Schema({
         feedBackContent: {
             type: String,
             default: "Has not been commented yet"
-        }
+        },
+        absentRate: Number,
     }],
     teacherID: {
         type: mongoose.Schema.Types.ObjectId,

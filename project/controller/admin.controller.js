@@ -84,9 +84,8 @@ class adminController {
         //         console.log(" ok 2 ")
         //     }
         // })
-
-
-        res.render('admin/adminHome')
+        res.json(data)
+            // res.render('admin/adminHome')
     }
 
     async assignRoomAndTime(req, res) {

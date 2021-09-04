@@ -62,6 +62,20 @@ class studentController {
         })
     }
 
+    async myAttended(req, res) {
+        try {
+            let token = req.cookies.token
+            let decodeAccount = jwt.verify(token, 'minhson')
+            console.log(req.query.classID)
+            var data = await ClassModel.find({ _id: req.query.classID }, { schedule: 1, "studentID.absentRate": 1 }).populate({ path: "schedule.attend.studentID", select: { username: 1, avatar: 1 } }).lean();
+            res.json({ msg: 'success', data: data, studentID: decodeAccount._id });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+
+        }
+    }
+
 
 
 
