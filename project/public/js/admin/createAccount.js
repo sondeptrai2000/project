@@ -385,6 +385,7 @@ function search(email) {
                     $(".rightSide").append("<h1>Tình trạng học tập</h1>")
                     $(".rightSide").append("<br> Route: " + data.routeName + "<br> Current level: " + data.stage + "<br> Aim : " + data.aim)
                     $(".rightSide").append("<h2>Tiến độ học tập</h2>")
+                    $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "'>Click here to see more</a>")
                     var progress = data.progess
                     progress.forEach((e) => {
                         $(".rightSide").append("<h3>Stage: " + e.stage + "</h3><br>")

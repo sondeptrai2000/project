@@ -190,6 +190,15 @@ class adminController {
 
     }
 
+    async studentClass(req, res) {
+        try {
+            var data = await AccountModel.findOne({ _id: "612248f3192f4803b0ac5482" }).populate("classID").lean()
+            res.render('admin/studentClassDetail', { data: [data] })
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
 
     async search(req, res) {
         try {

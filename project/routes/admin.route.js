@@ -5,7 +5,9 @@ var adminController = require('../controller/admin.controller')
 
 adminRouter.get('/', adminController.adminHome)
 adminRouter.get('/getAccount', adminController.getAccount)
-adminRouter.get('/search', adminController.search)
+adminRouter.get('/search', adminController.search);
+//xem các lớp mà học sinh đã học
+adminRouter.get('/studentClass/:id', adminController.studentClass)
 
 
 adminRouter.get('/getStage', adminController.getStage)

@@ -1,0 +1,93 @@
+* {
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    padding: 2%;
+    margin: 0;
+}
+
+body {
+    width: 100%;
+    background-image: url("/images/background.jpg");
+    background-repeat: repeat-x;
+    padding: 0;
+    margin: 0;
+    margin-top: 1%;
+    z-index: 1;
+}
+
+header {
+    box-sizing: border-box;
+    height: 60px;
+    width: 100%;
+    color: black;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    border: solid;
+}
+
+header ul {
+    margin: 0;
+    overflow: hidden;
+    list-style-type: none;
+    height: 100%;
+    width: auto;
+    padding: 0;
+    font-size: 20px;
+    float: right;
+}
+
+header li {
+    padding: 0;
+    height: 100%;
+    float: left;
+    width: 190.5px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 60px;
+}
+
+.tr {
+    display: table-row;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.td {
+    display: table-cell;
+    padding: 5px;
+    width: 300px;
+    border: #000000 solid 1px;
+    margin: 5px;
+}
+
+.studentListOut,
+.myAttendOut,
+.teacherIn4Out {
+    width: 100% !important;
+    height: 100%!important;
+    margin: 0 !important;
+    padding: 5%;
+    z-index: 10;
+    position: fixed;
+    text-align: center;
+    /* Stay in place */
+    background-color: rgb(215, 225, 230);
+    /* Fallback color */
+    background-color: rgba(209, 189, 189, 0.4);
+    /* Black w/ opacity */
+    overflow: scroll;
+    vertical-align: middle;
+}
+
+.studentList,
+.myAttendContent,
+.teacherIn4 {
+    background-color: aquamarine;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}
