@@ -381,17 +381,15 @@ function search(email) {
                     }
                     var currentClass = response.data.classID
                     $(".rightSide").append("<h1>Thông tin học sinh</h1>")
-                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:100px;width:100px;'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
+                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:300px; width:auto'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
                     $(".rightSide").append("<h1>Tình trạng học tập</h1>")
                     $(".rightSide").append("<br> Route: " + data.routeName + "<br> Current level: " + data.stage + "<br> Aim : " + data.aim)
                     $(".rightSide").append("<h2>Tiến độ học tập</h2>")
                     var progress = data.progess
                     progress.forEach((e) => {
-                        $(".rightSide").append("<h1>Stage: " + e.stage + "</h1><br>")
+                        $(".rightSide").append("<h3>Stage: " + e.stage + "</h3><br>")
                         e.stageClass.forEach((e) => { if (e.classID != "") $(".rightSide").append(" Name: " + e.name + " Status: " + e.status + " <button onclick=copyID('" + e.classID + "')> Lấy ClassID</button><br>") })
                     })
-                    $(".rightSide").append("<h2>Đang hoạt động trong lớp học</h2>")
-                    currentClass.forEach((e) => { $(".rightSide").append("<br>Class Name: " + e.stage + "<br> Subject : " + e.subject + "<br> Teacher : " + e.teacherID.username + "<br> Teacher phone : " + e.teacherID.phone + "<br> Teacher email : " + e.teacherID.email + "<button onclick=copyID('" + e._id + "')> Lấy ClassID</button>") })
                     $(".rightSide").append("<h1>Thông tin phụ huynh</h1>")
                     $(".rightSide").append("<br> Name: " + relationship.username + "<br> Phone: " + relationship.phone + "<br> Email : " + relationship.email)
                 }
@@ -408,5 +406,5 @@ function search(email) {
 
 async function copyID(id) {
     await navigator.clipboard.writeText(id);
-
+    alert("copied")
 }

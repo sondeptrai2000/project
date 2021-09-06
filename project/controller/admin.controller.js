@@ -194,17 +194,9 @@ class adminController {
     async search(req, res) {
         try {
             var condition = req.query.condition
-            var data = await AccountModel.findOne(condition).populate("relationship").populate({
-                path: 'classID',
-                match: { classStatus: "Processing" },
-                populate: {
-                    path: 'teacherID',
-                    select: { username: 1, phone: 1, email: 1 }
-                }
-            }).lean()
+            var data = await AccountModel.findOne(condition).populate("relationship").lean()
             if (!data) res.json({ msg: 'none' });
             if (data) res.json({ msg: 'success', data });
-
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });

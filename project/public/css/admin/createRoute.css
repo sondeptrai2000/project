@@ -1,7 +1,5 @@
 * {
     box-sizing: border-box;
-    width: 100%;
-    text-align: center;
     padding: 2%;
     margin: 0;
     vertical-align: middle;
@@ -163,13 +161,6 @@ header li {
     margin: 5px;
 }
 
-#addStage div,
-#viewStage div,
-#addStageUpdate div {
-    margin-bottom: 10px;
-    width: 100%;
-}
-
 .updateRouteOut,
 .createRouteOut {
     width: 100%;
@@ -196,11 +187,7 @@ header li {
     -ms-overflow-style: none;
 }
 
-.createRoute::-webkit-scrollbar {
-    width: 0 !important;
-    display: none;
-}
-
+.createRoute::-webkit-scrollbar,
 .updateRoute::-webkit-scrollbar {
     width: 0 !important;
     display: none;
@@ -211,139 +198,79 @@ header li {
 .viewRoute div {
     box-sizing: border-box;
     width: 100%;
-    padding: 10px;
+    padding: 0;
     margin: 0;
     text-align: center;
     vertical-align: middle;
 }
 
-.createRoute p,
-.updateRoute p,
-.viewRoute p {
+.submitButton {
+    margin-top: 10px;
+}
+
+.createFirstDIV p,
+.updateFirstDIV p,
+.viewRoute div:nth-child(1) p {
     clear: both;
     width: 30%;
     float: left;
+}
+
+.createFirstDIV input,
+.updateFirstDIV input,
+.viewRoute div:nth-child(1) input {
+    width: 70%;
     margin-bottom: 10px;
 }
 
-.createRoute input,
-.updateRoute input,
-.viewRoute input {
-    width: 70%;
-    float: right;
+.createFirstDIV button,
+.updateFirstDIV button {
+    clear: both;
+    width: 50%;
     margin-bottom: 10px;
-    font-size: 18px;
 }
 
 #addStage div,
 #addStageUpdate div {
     box-sizing: border-box;
-    width: 100%;
     margin: 0;
     padding: 0;
-    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+#addStage p,
+#addStageUpdate p {
+    clear: both;
+    width: 26%;
+    float: left;
+}
+
+#addStage input,
+#addStageUpdate input {
+    width: 50%;
 }
 
 #addStage button,
 #addStageUpdate button {
-    width: 33%;
-    margin-bottom: 10px;
-}
-
-.route {
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+    width: 8%;
 }
 
 .route p {
     clear: both;
-    width: 25%;
+    width: 26% !important;
+    text-align: right !important;
     float: left;
 }
 
 .route input {
-    width: 60%;
-    float: left;
+    width: 66% !important;
 }
 
 .route button {
-    width: 15% !important;
-    float: left;
+    width: 8% !important;
 }
 
-.createRoute p,
-.updateRoute p,
-.viewRoute p {
-    clear: both;
-    width: 30%;
-    float: left;
-    margin-bottom: 10px;
-}
-
-.createRoute input,
-.updateRoute input,
-.viewRoute input {
-    width: 70%;
-    float: right;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-#addStage div,
-#addStageUpdate div {
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-}
-
-#addStage button,
-#addStageUpdate button {
-    width: 33%;
-    margin-bottom: 10px;
-}
-
-.route {
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.route p {
-    clear: both;
-    width: 25%;
-    float: left;
-}
-
-.route input {
-    width: 60%;
-    float: left;
-}
-
-.route button {
-    width: 15% !important;
-    float: left;
-}
-
-.viewRoute p {
-    clear: both;
-    width: 30%;
-    float: left;
-    margin-bottom: 10px;
-}
-
-.viewRoute input {
-    width: 70%;
-    float: right;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-#viewStage p {
-    width: 100%;
-    font-size: 19px;
+.viewFirstDIV p {
+    width: 100% !important;
 }
