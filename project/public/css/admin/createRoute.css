@@ -1,22 +1,16 @@
 * {
     box-sizing: border-box;
-    padding: 2%;
-    margin: 0;
-    vertical-align: middle;
 }
 
 body {
     width: 100%;
     background-image: url("/images/background.jpg");
     background-repeat: repeat-x;
-    padding: 0;
+    padding: 2%;
     margin: 0;
-    margin-top: 1%;
-    z-index: 1;
 }
 
 header {
-    box-sizing: border-box;
     height: 60px;
     width: 100%;
     color: black;
@@ -53,29 +47,35 @@ header li {
     width: 100%;
     padding: 0;
     margin: 0;
-    border: solid black;
+    margin-top: 10px;
+    border-radius: 20px;
+    border: solid 3px black;
 }
 
 .leftSide {
-    box-sizing: border-box;
-    padding: 10px;
+    padding: 20px;
     margin: 0;
     width: 70%;
     float: left;
-    height: 560px;
-    border-right: solid black;
+    height: 554px;
+    border-right: solid 3px black;
 }
 
 .rightSide {
-    box-sizing: border-box;
-    padding: 0;
+    padding: 10px;
     margin: 0;
     width: 30%;
-    height: 560px;
+    height: 554px;
     float: right;
+}
+
+.rightSide,
+.leftSide {
     overflow: auto;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .rightSide::-webkit-scrollbar {
@@ -83,51 +83,26 @@ header li {
     display: none;
 }
 
-.option {
-    box-sizing: border-box;
+#option input,
+#option select,
+#option button {
+    font-size: 18px;
+}
+
+#option .tr {
+    height: 40px;
+    border: none;
     padding: 0;
     margin: 0;
-    margin-top: 20px;
-    width: 100%;
-    height: 30px;
 }
 
-.option ul {
-    box-sizing: border-box;
+#option .td {
+    width: auto;
+    padding: 0;
     margin: 0;
-    overflow: hidden;
-    list-style-type: none;
-    height: 100%;
-    width: 100%;
-    padding: 0;
+    border: none;
     font-size: 20px;
-    vertical-align: middle;
-    font-size: 20px;
-}
-
-.option button {
-    height: 100%;
-    font-size: 15px;
-}
-
-.option li:nth-child(2) input {
-    width: 65%;
-    float: right;
-    height: 100%;
-    font-size: 15px;
-}
-
-.option li:nth-child(2) button {
-    width: 30%;
-    float: right;
-    height: 100%;
-}
-
-.option li {
-    padding: 0;
-    height: 100%;
-    float: left;
-    width: 33.333%;
+    padding-right: 20px;
 }
 
 .tableRoute {
@@ -165,7 +140,8 @@ header li {
 .createRouteOut {
     width: 100%;
     height: 100%;
-    padding: 5%;
+    margin: 0;
+    padding: 0;
     z-index: 10;
     position: fixed;
     text-align: center;
@@ -174,17 +150,21 @@ header li {
     /* Fallback color */
     background-color: rgba(209, 189, 189, 0.4);
     /* Black w/ opacity */
-    overflow: scroll;
 }
 
 .createRoute,
 .updateRoute {
-    background-color: aquamarine;
-    height: 100%;
+    box-sizing: border-box;
+    background-color: whitesmoke;
+    height: 80%;
     width: 50%;
+    margin: 0;
+    padding: 10px;
+    margin-left: 25%;
     overflow: auto;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
+    font-size: 20px;
 }
 
 .createRoute::-webkit-scrollbar,
@@ -196,81 +176,37 @@ header li {
 .createRoute div,
 .updateRoute div,
 .viewRoute div {
-    box-sizing: border-box;
     width: 100%;
-    padding: 0;
+    padding: 10px;
     margin: 0;
-    text-align: center;
-    vertical-align: middle;
+    text-align: left;
 }
 
-.submitButton {
+.button {
     margin-top: 10px;
-}
-
-.createFirstDIV p,
-.updateFirstDIV p,
-.viewRoute div:nth-child(1) p {
-    clear: both;
-    width: 30%;
-    float: left;
+    font-size: 18px;
 }
 
 .createFirstDIV input,
-.updateFirstDIV input,
-.viewRoute div:nth-child(1) input {
-    width: 70%;
+.updateFirstDIV input {
+    width: 100%;
     margin-bottom: 10px;
-}
-
-.createFirstDIV button,
-.updateFirstDIV button {
-    clear: both;
-    width: 50%;
-    margin-bottom: 10px;
+    font-size: 18px;
 }
 
 #addStage div,
 #addStageUpdate div {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    margin-top: 10px;
+    width: 100%
 }
 
-#addStage p,
-#addStageUpdate p {
-    clear: both;
-    width: 26%;
-    float: left;
+#addStage div input,
+#addStageUpdate div input {
+    width: 60%;
+    font-size: 18px;
 }
 
-#addStage input,
-#addStageUpdate input {
-    width: 50%;
-}
-
-#addStage button,
-#addStageUpdate button {
+#addStage div button,
+#addStageUpdate div button {
     width: 8%;
-}
-
-.route p {
-    clear: both;
-    width: 26% !important;
-    text-align: right !important;
-    float: left;
-}
-
-.route input {
-    width: 66% !important;
-}
-
-.route button {
-    width: 8% !important;
-}
-
-.viewFirstDIV p {
-    width: 100% !important;
+    font-size: 18px;
 }
