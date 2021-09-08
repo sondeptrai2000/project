@@ -4,7 +4,7 @@ var fileDataUpdate;
 var myFileUpdate;
 
 $(document).ready(function() {
-    getAccount('teacher', 0)
+    count()
     $(window).on('click', function(e) {
         if ($(e.target).is('.createAccountOut')) $('.createAccountOut').fadeOut(1500);
         if ($(e.target).is('.updateFormOut')) $('.updateFormOut').fadeOut(1500);
@@ -61,12 +61,35 @@ function reset() {
     document.getElementById('address').value = ''
     document.getElementById('output').src = ''
 }
-//lấy danh sách theo role (index)
-function getAccount(index, page) {
-    var role = index
-    var page = page
+
+
+//đếm số tk để hiển thị theo danh sachs trang
+function count() {
+    console.log($("#accountFilter").val())
+    $.ajax({
+        url: '/admin/count',
+        method: 'get',
+        dataType: 'json',
+        data: { role: $("#accountFilter").val() },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#soTrang").html("Page:<select onchange=getAccount()></select>")
+                for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
+                getAccount()
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+//lấy danh sách theo role
+function getAccount() {
+    var role = $("#accountFilter").val()
+    var page = $("#soTrang select").val()
+    console.log(page)
     $(".tableInforType").html("");
-    if (index === 'teacher') {
+    if (role === 'teacher') {
         var tableInfor = "<div class='tr'>\
         <div class='td'>avatar</div>\
         <div class='td'>username</div>\
@@ -85,18 +108,13 @@ function getAccount(index, page) {
         url: '/admin/getAccount',
         method: 'get',
         dataType: 'json',
-        data: { role: index, sotrang: page },
+        data: { role: role, sotrang: page },
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
                     if (role == 'teacher') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                     if (role == 'student') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                 });
-                $("#soTrang").html("")
-                for (let i = 1; i < response.soTrang; i++) {
-                    let u = i - 1
-                    $("#soTrang").append("<button onclick=getAccount('" + role + "','" + u + "')>" + i + "</button>")
-                }
                 search(response.data[0].email)
             }
         },
@@ -368,9 +386,8 @@ function search(email) {
                 $(".tableAccount .tr").css("background-color", '')
                 $("#" + response.data._id).css("background-color", 'red')
                 $(".rightSide").html("")
-                console.log(response.data)
                 if (response.data.role == "teacher") {
-                    $(".rightSide").append("<img src='" + response.data.avatar + "'><br> Name: " + response.data.username + "<br> Gender: " + response.data.sex + "<br> Email: " + response.data.email + "<br> Phone: " + response.data.phone + "<br> Role: " + response.data.role + "<br> BirthDay: " + response.data.birthday + "<br> Address: " + response.data.address)
+                    $(".rightSide").append("<img src='" + response.data.avatar + "'><p>Name: " + response.data.username + "</p>Gender: " + response.data.sex + "</p>Email: " + response.data.email + "</p><p>Phone: " + response.data.phone + "</p><p>Role: " + response.data.role + "</p><p>BirthDay: " + response.data.birthday + "</p><p>Address: " + response.data.address + "</p>")
                 } else {
                     if (response.data.role == "student") {
                         var data = response.data
@@ -381,18 +398,20 @@ function search(email) {
                     }
                     var currentClass = response.data.classID
                     $(".rightSide").append("<h1>Thông tin học sinh</h1>")
-                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:300px; width:auto'><br> Name: " + data.username + "<br> Gender: " + data.sex + "<br> Email: " + data.email + "<br> Phone: " + data.phone + "<br> Role: " + data.role + "<br> BirthDay: " + data.birthday + "<br> Address: " + data.address)
+                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:300px; width:auto'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>")
                     $(".rightSide").append("<h1>Tình trạng học tập</h1>")
-                    $(".rightSide").append("<br> Route: " + data.routeName + "<br> Current level: " + data.stage + "<br> Aim : " + data.aim)
+                    $(".rightSide").append("<p>Route: " + data.routeName + " </p><p>Current level: " + data.stage + " </p><p>Aim : " + data.aim + "</p>")
                     $(".rightSide").append("<h2>Tiến độ học tập</h2>")
-                    $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "'>Click here to see more</a>")
+                    $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "' target='_blank'>Click here to see more</a>")
                     var progress = data.progess
                     progress.forEach((e) => {
-                        $(".rightSide").append("<h3>Stage: " + e.stage + "</h3><br>")
-                        e.stageClass.forEach((e) => { if (e.classID != "") $(".rightSide").append(" Name: " + e.name + " Status: " + e.status + " <button onclick=copyID('" + e.classID + "')> Lấy ClassID</button><br>") })
+                        $(".rightSide").append("<h3>Stage: " + e.stage + "</h3>")
+                        e.stageClass.forEach((e) => {
+                            if (e.classID != "") $(".rightSide").append("<div class='tr'><div class='td'>Name: " + e.name + " </div><div class='td'>Status: " + e.status + " </div><div class='td'><button onclick=copyID('" + e.classID + "')> Lấy ClassID</button></div></div>")
+                        })
                     })
                     $(".rightSide").append("<h1>Thông tin phụ huynh</h1>")
-                    $(".rightSide").append("<br> Name: " + relationship.username + "<br> Phone: " + relationship.phone + "<br> Email : " + relationship.email)
+                    $(".rightSide").append("<p>Name: " + relationship.username + " </p><p>Phone: " + relationship.phone + " </p><p>Email : " + relationship.email + "</p>")
                 }
                 $(".seacherInforOut").fadeIn(500)
             }

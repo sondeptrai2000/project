@@ -106,26 +106,26 @@
 
       <div class="body">
             <div class='leftSide'>
-                  <div class="option">
-                        <ul>
-                              <li onclick='$(".createAccountOut").slideToggle();'>
-                                    <button>Create account</button>
-                              </li>
-                              <li>
-                                    <p>Filter:</p>
-                                    <select id="accountFilter" onchange="getAccount(this.value,0)">
-                                          <option value="teacher">teacher</option>
-                                          <option value="student">student</option>
-                                    </select>
-                              </li>
-                              <li>
-                                    <input id='search' type='text' placeholder='Nhập email hoặc số điện thoại'>
-                                    <button onclick="search('')">Search</button>
-                              </li>
-                        </ul>
+                  <div class='tr' id="option">
+                        <div class='td'>
+                              <button onclick='$(".createAccountOut").slideToggle();'>Create account</button>
+                        </div>
+                        <div class='td'>
+                              Filter:
+                              <select id="accountFilter" onchange="count()">
+                                    <option value="teacher">teacher</option>
+                                    <option value="student">student</option>
+                              </select>
+                        </div>
+                        <div class='td'>
+                              <input id='search' type='text' placeholder='Nhập email hoặc số điện thoại'>
+                              <button onclick="search('')">Search</button>
+                        </div>
+                        <div class='td' id="soTrang">
+                        </div>
                   </div>
+
                   <div class="tableAccount"></div>
-                  <div id="soTrang"></div>
             </div>
             <div class='rightSide'>
 

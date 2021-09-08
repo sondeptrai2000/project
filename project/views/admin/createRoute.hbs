@@ -86,6 +86,7 @@
                                                 var add = "<div class='tr' id='" + data._id + "' onclick=viewSchedule('" + data._id + "')><div class='td'>" + data.routeName + "</div><div class='td'>" + data.description + "</div><div class='td'><button onclick=updateRoute('" + data._id + "')>Update</button><button onclick=deleteRoute('" + data._id + "')>Remove</button></div></div>"
                                                 $(".tableRoute").append(add)
                                         })
+                                        viewSchedule(data[0]._id)
                                 }
                         },
                         error: function (response) {

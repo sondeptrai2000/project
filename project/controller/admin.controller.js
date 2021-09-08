@@ -176,23 +176,45 @@ class adminController {
         }
     }
 
+    //lấy account ở trang ?
     async getAccount(req, res) {
         try {
+            //số tài khoản hiển thị trên 1 trang
+            var accountPerPage = 1
             var numberOfAccount = await AccountModel.find({ role: req.query.role }).lean().countDocuments()
-            var skip = parseInt(req.query.sotrang) * 3
-            var soTrang = numberOfAccount / 3 + 1
-            var data = await AccountModel.find({ role: req.query.role }).populate("relationship", { username: 1, email: 1, phone: 1 }).skip(skip).limit(3).lean()
+            var skip = parseInt(req.query.sotrang) * accountPerPage
+            var soTrang = numberOfAccount / accountPerPage + 1
+            var data = await AccountModel.find({ role: req.query.role }).populate("relationship", { username: 1, email: 1, phone: 1 }).skip(skip).limit(1).lean()
             res.json({ msg: 'success', data, numberOfAccount, soTrang });
+        } catch (e) {    
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    //đếm số lượng account dựa trên role
+    async count(req, res) {
+        try {
+            //số tài khoản hiển thị trên 1 trang
+            var accountPerPage = 1
+            var numberOfAccount = await AccountModel.find({ role: req.query.role }).lean().countDocuments()
+            var soTrang = numberOfAccount / accountPerPage + 1
+            res.json({ msg: 'success', soTrang });
         } catch (e) {    
             console.log(e)
             res.json({ msg: 'error' });
         }
 
     }
-
     async studentClass(req, res) {
         try {
-            var data = await AccountModel.findOne({ _id: "612248f3192f4803b0ac5482" }).populate("classID").lean()
+            var data = await AccountModel.findOne({ _id: req.params.id }).populate({
+                path: 'classID',
+                populate: {
+                    path: 'teacherID',
+                    select: 'username',
+                }
+            }).lean()
             res.render('admin/studentClassDetail', { data: [data] })
         } catch (e) {
             console.log(e)
@@ -430,8 +452,9 @@ class adminController {
             var targetxxx = await studyRouteModel.find({}).lean()
             var teacher = await AccountModel.find({ role: 'teacher' }).lean()
             var email = teacher[0].email
+            var _id = teacher[0]._id
             var avatar = teacher[0].avatar
-            res.render('admin/createClass', { teacher, targetxxx, classInfor, email, avatar })
+            res.render('admin/createClass', { teacher, targetxxx, classInfor, email, avatar, _id })
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
@@ -440,7 +463,7 @@ class adminController {
 
     async getAllClass(req, res) {
         try {
-            var classInfor = await ClassModel.find({}).lean()
+            var classInfor = await ClassModel.find({ classStatus: "Processing" }).lean()
             res.json({ msg: 'success', classInfor });
         } catch (e) {
             console.log(e)
@@ -481,6 +504,32 @@ class adminController {
             res.json({ msg: 'success' });
         } catch (error) {
             console.log(err)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    async searchClass(req, res) {
+        try {
+            console.log(req.query.className)
+            var classInfor = await ClassModel.find({ className: req.query.className }).lean();
+            if (classInfor.length == 0) {
+                res.json({ msg: 'notFound' });
+            } else {
+                res.json({ msg: 'success', classInfor });
+            }
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    async getClass(req, res) {
+        try {
+            var time = new Date(req.query.time)
+            var classInfor = await ClassModel.find({ startDate: { $lte: time }, endDate: { $gte: time }, classStatus: "finished" }).lean();
+            res.json({ msg: 'success', classInfor });
+        } catch (e) {
+            console.log(e)
             res.json({ msg: 'error' });
         }
     }

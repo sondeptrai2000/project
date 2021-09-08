@@ -81,6 +81,7 @@
                 <div id="teacherID">
                     <img src="{{avatar}}" style="height: 200px;width: 200px;" onclick="$('#span2').toggle(500)">
                     <p>{{email}}</p>
+                    <input type='hidden' value="{{_id}}">
                 </div>
                 <div id="span2" style="display:none;height: 400px;overflow: scroll;">
                     {{#each teacher}}
@@ -101,23 +102,25 @@
 
     <header> {{> adminHeader }}</header>
     <div class="body">
-        <div class="option">
-            <ul>
-                <li onclick="$('.createClassOut').toggle(500)">
-                    <button>Create class</button>
-                </li>
-                <li>
-                    <p>Filter:</p>
-                    <select>
-                        <option value="teacher">teacher</option>
-                        <option value="student">student</option>
-                    </select>
-                </li>
-                <li>
-                    <input id='search' type='text' placeholder='Nhập email hoặc số điện thoại'>
-                    <button onclick="search('')">Search</button>
-                </li>
-            </ul>
+        <div class="tr" id="option">
+            <div class='td'>
+                <button onclick="$('.createClassOut').toggle(500)">Create class</button>
+            </div>
+            <div class='td'>
+                Filter by Status:
+                <select id="typeClass" onchange="typeClass()">
+                    <option value="processing">Processing</option>
+                    <option value="finished">finished</option>
+                </select>
+            </div>
+            <div class='td' id="formSearchEndClass" style="display: none;">
+                <input type="month" id="monthClass">
+                <button onclick="searchEndClass()">Search</button>
+            </div>
+            <div class='td'>
+                <input id='search' type='text' placeholder='Nhập tên lớp'>
+                <button onclick="search()">Search</button>
+            </div>
         </div>
         <div class="tableClass"></div>
     </div>
@@ -133,6 +136,63 @@
         if ($(e.target).is('.updateScheduleFormOut')) $('.updateScheduleFormOut').fadeOut(1500);
         if ($(e.target).is('.createClassOut')) $('.createClassOut').fadeOut(1500);
     });
+
+    //lọc phân loại tìm kiếm (lớp đang dạy hay đã dạy và khoảng thời gian)
+    function typeClass() {
+        var type = $("#typeClass").val()
+        if (type == "processing") {
+            $("#formSearchEndClass").hide(500)
+            getAllClass();
+        }
+        if (type == "finished") $("#formSearchEndClass").slideDown(1200)
+    }
+
+
+    //tiến hành tìm kiếm và trả về kết quả
+    function searchEndClass() {
+        var time = $("#monthClass").val() + "-01"
+        $.ajax({
+            url: '/admin/getClass',
+            method: 'get',
+            dataType: 'json',
+            data: { check: "1", time: time },
+            success: function (response) {
+                if (response.msg == 'success') {
+                    $(".tableClass").html("")
+                    $.each(response.classInfor, function (index, data) {
+                        $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate + "</div><div class='td'>" + data.endDate + "</div><div class='td'><button onclick=sendData('" + data._id + "','" + data.subject + "')>List of student</button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')>upDate schedule </button><button onclick=deleteClass('" + data._id + "')>delete</button></div><div class='td'>" + data.classStatus + "</div></div>")
+                    });
+                }
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        });
+    }
+
+
+    function search() {
+        if ($("#search").val() == "") alert("Input class name")
+        $.ajax({
+            url: '/admin/searchClass',
+            method: 'get',
+            dataType: 'json',
+            data: { className: $("#search").val() },
+            success: function (response) {
+                if (response.msg == 'success') {
+                    $(".tableClass").html("")
+                    $.each(response.classInfor, function (index, data) {
+                        $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate + "</div><div class='td'>" + data.endDate + "</div><div class='td'><button onclick=sendData('" + data._id + "','" + data.subject + "')>List of student</button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')>upDate schedule </button><button onclick=deleteClass('" + data._id + "')>delete</button></div><div class='td'>" + data.classStatus + "</div></div>")
+                    });
+                }
+                if (response.msg == 'notFound') alert("Can't found class")
+            },
+            error: function (response) {
+                alert('server error');
+            }
+        });
+    }
+
     function selectedTeacher(email, avatar, id) {
         $("#teacherID").html('<img src="' + avatar + '" style="height: 200px;width: 200px;" onclick=$("#span2").toggle(500)><p>' + email + '<p><input type="hidden" value="' + id + '">')
         $("#span2").fadeOut(500)
@@ -148,7 +208,7 @@
                 if (response.msg == 'success') {
                     $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Action</div><div class='td'>Status</div></div>")
                     $.each(response.classInfor, function (index, data) {
-                        $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate + "</div><div class='td'>" + data.endDate + "</div><div class='td'><button onclick=sendData('" + data._id + "','" + data.subject + "')>List of student</button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')>upDate schedule </button><button onclick=deleteClass('" + data._id + "')>delete</button></div><div class='td'>" + data.classStatus + "</div></div>")
+                        $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>List of student</button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')>upDate schedule </button><button onclick=deleteClass('" + data._id + "')>delete</button></div><div class='td'>" + data.classStatus + "</div></div>")
                     });
                 }
             },
@@ -282,10 +342,8 @@
     }
 
     //lấy danh sách các học sinh trong lớp
-    function sendData(id, subject) {
+    function sendData(id) {
         var _id = id
-        $(".inner").html("<button onclick=addStudent('" + id + "','" + subject + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "','" + subject + "')>Xóa học sinh trong lớp</button>")
-        $(".inner").append('<div class="tr"></div><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">Select</div>')
         $.ajax({
             url: '/teacher/allClassStudent',
             method: 'get',
@@ -293,6 +351,8 @@
             data: { abc: _id },
             success: function (response) {
                 if (response.msg == 'success') {
+                    $(".inner").html("<button onclick=addStudent('" + id + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
+                    $(".inner").append('<div class="tr"></div><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">Select</div>')
                     $.each(response.data, function (index, data) {
                         if (data.studentID.length == 0) {
                             alert('không có học sinh trong lớp')
@@ -313,12 +373,13 @@
     }
 
     //hiển thị các học sinh có mức độ tương ứng với lớp đã chọn để xem xét thêm vào lớp
-    function addStudent(classID, subject) {
+    function addStudent(classID) {
         var infor4 = []
         $("#" + classID + " .td").each(function () {
             infor4.push($(this).text())
         })
         console.log(infor4)
+        console.log(infor4[3])
         var condition = {
             role: 'student',
             routeName: infor4[1].trim(),
@@ -328,9 +389,7 @@
             url: '/teacher/addStudentToClass',
             method: 'get',
             dataType: 'json',
-            data: {
-                condition
-            },
+            data: { condition },
             success: function (response) {
                 if (response.msg == 'success') {
                     console.log(response.data)
@@ -340,13 +399,13 @@
                         $.each(student.progess, function (index, progess) {
                             if (progess.stage == student.stage) {
                                 $.each(progess.stageClass, function (index, stageClass) {
-                                    if (stageClass.classID == classID || stageClass.subject == subject) check = true
+                                    if (stageClass.classID == classID || stageClass.subject == infor4[3]) check = true
                                 });
                             }
                         });
                         if (check == false) $("#studentTableAdd").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td'>" + student.email + "</div><div class='td'>" + student.routeName + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby1' value='" + student._id + "' /></div></div>");
                     });
-                    $("#studentTableAdd").append("<button onclick= doAddToClass('" + classID + "','" + subject + "')>Add to Class</button>");
+                    $("#studentTableAdd").append("<button onclick= doAddToClass('" + classID + "')>Add to Class</button>");
                     $('.studentTableOut').show();
                 }
             },
@@ -358,7 +417,7 @@
 
 
     //thêm học sinh vaof 1 lớp
-    function doAddToClass(classID, subject) {
+    function doAddToClass(classID) {
         var classID = classID
         var studentlistcl = [];
         var studentlistAttend = [];
@@ -380,18 +439,15 @@
                 studentlistcl: studentlistcl,
                 studentlist: studentlist,
                 classID: classID,
-                subject: subject
             },
             success: function (response) {
                 if (response.msg == 'success') {
-                    alert('add success ');
+                    alert('add success');
                     $(".innerOut").hide();
                     $(".studentTableOut").hide();
                     sendData(classID);
                 }
-                if (response.msg == 'error') {
-                    alert('add error ');
-                }
+                if (response.msg == 'error') alert('add error ');
             },
             error: function (response) {
                 alert('server error');
@@ -612,24 +668,22 @@
                 abc: routeName
             },
             success: function (response) {
-                $('#tieude').html('');
-                $('#routeTuyBien').html('');
-                $('#trss').html('');
-
                 if (response.msg == 'success') {
+                    $('#trss').html('');
+                    $("#routeTuyBien").html("<div class='tr'></div><div class='tr'></div>");
                     $('#levelS').html('');
                     $.each(response.data, function (index, data) {
                         $.each(data.routeSchedual, function (index, routeSchedual) {
-                            var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
+                            var update = "<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>"
                             $("#levelS").append(update);
                         });
                     });
                     $.each(response.targetxxx, function (index, targetxxx) {
-                        $("#tieude").append("<p>Lộ trình:" + targetxxx.routeName + "</p><p>Miêu tả:" + targetxxx.description + "</p>");
                         $.each(targetxxx.routeSchedual, function (indexBIG, routeSchedual) {
-                            $("#routeTuyBien").append("<div class='tr'><div class='td'><h3>Stage: " + routeSchedual.stage + "</h3></div></div>");
+                            $("#routeTuyBien .tr:nth-child(1)").append("<div class='td'><h3>Stage: " + routeSchedual.stage + "</h3></div>");
+                            $("#routeTuyBien .tr:nth-child(2)").append("<div class='td'></div>");
                             $.each(routeSchedual.routeabcd, function (index, routeabcd) {
-                                $("#routeTuyBien .tr:nth-child(" + (indexBIG + 1) + ")").append("<div class='td'>Class: " + routeabcd + "</div>");
+                                $("#routeTuyBien .tr:nth-child(2) .td:nth-child(" + (indexBIG + 1) + ")").append("<p>Class: " + routeabcd + "</p>");
                             });
                         });
 
@@ -646,6 +700,7 @@
     function level() {
         var routeName = $('#routeTypeS').val();
         var levelS = $('#levelS').val();
+        console.log(levelS)
         $.ajax({
             url: '/admin/getStage',
             method: 'get',
@@ -659,11 +714,12 @@
                     $('#subject').html('');
                     $('.taskrow').html('');
                     $('#studentTableOut').show();
+                    console.log(response.data)
                     $.each(response.data, function (index, data) {
                         $.each(data.routeSchedual, function (index, routeSchedual) {
                             if (routeSchedual.stage == levelS) {
                                 $.each(routeSchedual.routeabcd, function (index, routeabcd) {
-                                    var update = "<option value=" + routeabcd + ">" + routeabcd + "</option>"
+                                    var update = "<option value='" + routeabcd + "'>" + routeabcd + "</option>"
                                     $("#subject").append(update);
                                 });
                             }
