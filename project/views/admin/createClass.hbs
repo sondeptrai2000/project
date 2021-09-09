@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <div class="studentTableOut" style="display: none;">
+    <div class="studentTableAddOut" style="display: none;">
         <div id="studentTableAdd">
         </div>
     </div>
@@ -30,18 +30,24 @@
     <div class="updateScheduleFormOut" style="display: none;">
         <div class="updateSchedualContent">
             <div class='tr'>
-                <div class='td'>Date</div>
-                <div class='td'>Day of week</div>
-                <div class='td'>Room</div>
-                <div class='td'>Time</div>
+                <div class='td' style="width:5%;">Type</div>
+                <div class='td' style="width:30%;">Date</div>
+                <div class='td' style="width:10%;">Day of week</div>
+                <div class='td' style="width:30%;">Room</div>
+                <div class='td' style="width:25%;">Time</div>
             </div>
             <div class='tr' id="oldSchudule"></div>
             <div class='tr'>
                 <input name="updateScheduleID" type="hidden">
                 <input name="updateScheduleClassID" type="hidden">
-                <div class='td'>Date: <input type="date" name="dateScheduleUpdate"></div>
-                <div class='td'>Ca làm việc:
-                    <select class="cahocUpdate" id="cahocUpdate" onchange="cahocUpdate()">
+                <div class='td'>New</div>
+                <div class='td'>Date: <input type="date" name="dateScheduleUpdate" style="font-size:18px;"></div>
+                <div class="td" id="dayOfWeekUpdate"></div>
+                <div class='td'>
+                    Available room: <select id="roomUpdate"> </select>
+                </div>
+                <div class='td'>
+                    <select class="cahocUpdate" id="cahocUpdate" style="font-size:18px;" onchange="cahocUpdate()">
                         <option value="7:30 đến 9:30">7:30 đến 9:30</option>
                         <option value="9:45 đến 11:45">9:45 đến 11:45</option>
                         <option value="13:30 đến 15:30">13:30 đến 15:30</option>
@@ -49,16 +55,13 @@
                         <option value="18:15 đến 20:15">18:15 đến 20:15</option>
                     </select>
                 </div>
-                <div class='td'>
-                    Available room: <select id="roomUpdate"> </select>
-                </div>
             </div>
-            <div class='tr'><button onclick='SubmitupdateScheduleForm()'>Submit</button></div>
+            <button onclick='SubmitupdateScheduleForm()' style="margin-top:10px;font-size:18px;">Submit</button>
         </div>
     </div>
 
     <div class="createClassOut" style="display: none;">
-        <div id='createClass'>
+        <div id='createClass' style="text-align:left !important;">
             <div id="routeTuyBien" border="solid"></div>
             <div>
                 <p>Chọn lộ trình học:</p>
@@ -133,7 +136,7 @@
     });
     $(window).on('click', function (e) {
         if ($(e.target).is('.studentListOut')) $('.studentListOut').fadeOut(1500);
-        if ($(e.target).is('.studentTableOut')) $('.studentTableOut').fadeOut(1500);
+        if ($(e.target).is('.studentTableAddOut')) $('.studentTableAddOut').fadeOut(1500);
         if ($(e.target).is('.attendedListOut')) $('.attendedListOut').fadeOut(1500);
         if ($(e.target).is('.updateScheduleFormOut')) $('.updateScheduleFormOut').fadeOut(1500);
         if ($(e.target).is('.createClassOut')) $('.createClassOut').fadeOut(1500);
@@ -231,7 +234,7 @@
             },
             success: function (response) {
                 if (response.msg == 'success') {
-                    $("#attendedList").html("<div class='tr'><div class='td'>Date</div><div class='td'>Day of week</div><div class='td'>Room</div><div class='td'>Time</div><div class='td'>Action</div></div>")
+                    $("#attendedList").html("<div class='tr'><div class='td' style='width:20%'>Date</div><div class='td'style='width:20%'>Day of week</div><div class='td'style='width:20%' >Room</div><div class='td'style='width:30%'>Time</div><div class='td'style='width:10%'>Action</div></div>")
                     $.each(response.data[0].schedule, function (index, data) {
                         $("#attendedList").append('<div class="tr" id="infor' + data._id + '"><div class="td">' + data.date.split("T00:00:00.000Z")[0] + '</div><div class="td">' + data.day + '</div><div class="td">' + data.room + '</div><div class="td">' + data.time + '</div><div class="td"><button  onclick=updateScheduleForm("' + data._id + '","' + idClass + '")>Update</button><input id ="' + data._id + '"type="hidden" value="' + data + '"></div></div>    ')
                     });
@@ -247,7 +250,8 @@
     function updateScheduleForm(scheduleID, classID) {
         $("input[name='updateScheduleID']").val(scheduleID)
         $("input[name='updateScheduleClassID']").val(classID)
-        $("#oldSchudule").html($("#infor" + scheduleID + " .td:not(:last-child)").clone())
+        $("#oldSchudule").html('<div class="td">Old</div>')
+        $("#oldSchudule").append($("#infor" + scheduleID + " .td:not(:last-child)").clone())
         $(".updateScheduleFormOut").fadeIn(500)
     }
 
@@ -258,6 +262,7 @@
         if (dayOfWeek == '1') {
             dayOfWeek = "8"
         }
+        $("#dayOfWeekUpdate").html("0" + dayOfWeek)
         $.ajax({
             url: '/admin/getThu',
             method: 'get',
@@ -354,13 +359,13 @@
             success: function (response) {
                 if (response.msg == 'success') {
                     $(".studentListContent").html("<button onclick=addStudent('" + id + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
-                    $(".studentListContent").append('<div class="tr"></div><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">Select</div>')
+                    $(".studentListContent").append('<div class="tr"><div class="td" style="width:20%;">avatar</div><div class="td"style="width:20%;">username</div><div class="td" style="width:15%;">Aim</div><div class="td" style="width:35%;">email</div><div class="td"style="width:10%;">Select</div></div>')
                     $.each(response.data, function (index, data) {
                         if (data.studentID.length == 0) {
                             alert('không có học sinh trong lớp')
                         } else {
                             $.each(data.studentID, function (index, studentID) {
-                                $(".studentListContent").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:150px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div></div>");
+                                $(".studentListContent").append("<div class='tr'><div class='td'><img src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div></div>");
                             });
                         }
                     });
@@ -405,10 +410,10 @@
                                 });
                             }
                         });
-                        if (check == false) $("#studentTableAdd").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td'>" + student.email + "</div><div class='td'>" + student.routeName + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby1' value='" + student._id + "' /></div></div>");
+                        if (check == false) $("#studentTableAdd").append("<div class='tr'><div class='td'><img style ='max-width:100px;max-height:100px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td'>" + student.email + "</div><div class='td'>" + student.routeName + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby1' value='" + student._id + "' /></div></div>");
                     });
                     $("#studentTableAdd").append("<button onclick= doAddToClass('" + classID + "')>Add to Class</button>");
-                    $('.studentTableOut').show();
+                    $('.studentTableAddOut').show();
                 }
             },
             error: function (response) {
@@ -446,7 +451,7 @@
                 if (response.msg == 'success') {
                     alert('add success');
                     $(".studentListOut").hide();
-                    $(".studentTableOut").hide();
+                    $(".studentTableAddOut").hide();
                     sendData(classID);
                 }
                 if (response.msg == 'error') alert('add error ');
@@ -714,7 +719,7 @@
                 if (response.msg == 'success') {
                     $('#subject').html('');
                     $('.taskrow').html('');
-                    $('#studentTableOut').show();
+                    $('#studentTableAddOut').show();
                     console.log(response.data)
                     $.each(response.data, function (index, data) {
                         $.each(data.routeSchedual, function (index, routeSchedual) {

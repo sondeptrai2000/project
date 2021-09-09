@@ -14,17 +14,17 @@ $(document).ready(function() {
     $(window).on('click', function(e) {
         if ($(e.target).is('.attendedListOut')) $('.attendedListOut').slideUp(1500);
         if ($(e.target).is('.attendedOutDoorOut')) $('.attendedOutDoorOut').slideUp(1500);
-        if ($(e.target).is('.innerOut')) $('.innerOut').slideUp(1500);
+        if ($(e.target).is('.studentListContentOut')) $('.studentListContentOut').slideUp(1500);
         if ($(e.target).is('.studentAssessmentOut')) $('.studentAssessmentOut').slideUp(1500);
         if ($(e.target).is('.studentAssessmentUpdateOut')) $('.studentAssessmentUpdateOut').slideUp(1500);
-        if ($(e.target).is('.lolaOut')) $('.lolaOut').slideUp(1500);
+        if ($(e.target).is('.takeAttendFormOut')) $('.takeAttendFormOut').slideUp(1500);
     });
 
 
 });
 
 //lấy danh sách học sinh trong lớp
-function sendData(id, subject) {
+function sendData(id) {
     var _id = id
     $.ajax({
         url: '/teacher/allClassStudent',
@@ -33,21 +33,21 @@ function sendData(id, subject) {
         data: { abc: _id },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".inner").html('<div class="tr"><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">grade</div><div class="td">feedBackContent</div><div class="td">Select</div><div class="td">Chat</div><div class="td">đánh giá</div></div>')
+                $(".studentListContent").html('<div class="tr"><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">grade</div><div class="td">feedBackContent</div><div class="td">Select</div><div class="td">Chat</div><div class="td">đánh giá</div></div>')
                 $.each(response.data, function(index, data) {
                     if (data.studentID.length == 0) {
                         alert('không có học sinh trong lớp')
                     } else {
                         $.each(data.studentID, function(index, studentID) {
                             if (studentID.grade === "Has not been commented yet") {
-                                $(".inner").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'>" + studentID.grade + "</div><div class='td' id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div><div class='td'>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></div></div>");
+                                $(".studentListContent").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'>" + studentID.grade + "</div><div class='td' id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div><div class='td'>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Đánh giá học sinh</button>" + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></div></div>");
                             } else {
-                                $(".inner").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'>" + studentID.grade + "</div><div class='td' id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div><div class='td'>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></div></div>");
+                                $(".studentListContent").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'>" + studentID.grade + "</div><div class='td' id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div><div class='td'>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Chinh sua danh gia</button>" + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></div></div>");
                             }
                         });
                     }
                 });
-                $(".innerOut").fadeIn(500);
+                $(".studentListContentOut").fadeIn(500);
             }
         },
         error: function(response) {
@@ -90,7 +90,7 @@ function takeFeedBack() {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
-                $(".innerOut").hide();
+                $(".studentListContentOut").hide();
                 sendData($("#classID").text());
                 alert("take feedback success")
             }
@@ -115,7 +115,7 @@ function updateFeekBack() {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
-                $(".innerOut").hide();
+                $(".studentListContentOut").hide();
                 sendData($("#updateclassID").text());
                 alert("update feedback success")
             }
@@ -173,7 +173,7 @@ function takeAttend(idattend, idClass) {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
-                $("#lola").html($("#lola .tr:first-child"))
+                $("#takeAttendContent").html($("#takeAttendContent .tr:first-child"))
                 $.each(response.data[0].schedule, function(index, data) {
                     if (data._id == idattend) {
                         $.each(data.attend, function(index, attend) {
@@ -184,14 +184,14 @@ function takeAttend(idattend, idClass) {
                             $("#scheduleTime").val(data.time)
                             $("#scheduleRoom").val(data.room)
                             $("#scheduleDay").val(data.day)
-                            $("#lola").append('<div class="tr"><div class="td"><input class ="attendStudentID" type="hidden" value="' + attend.studentID._id + '">' + attend.studentID.username + '</div><div class="td"><select class ="attendStudentStatus" id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></div></div>')
+                            $("#takeAttendContent").append('<div class="tr"><div class="td"><input class ="attendStudentID" type="hidden" value="' + attend.studentID._id + '">' + attend.studentID.username + '</div><div class="td"><select class ="attendStudentStatus" id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></div></div>')
                             $('#' + attend.studentID._id + ' option:selected').removeAttr('selected');
                             $('#' + attend.studentID._id + ' option[value="' + attend.attended + '"]').attr('selected', 'selected');
                         });
                     }
                 });
-                $("#lola").append('<div class="tr"><button onclick="submitTakeAttend()">submit</button></div>')
-                $(".lolaOut").fadeIn(500)
+                $("#takeAttendContent").append('<div class="tr"><button onclick="submitTakeAttend()">submit</button></div>')
+                $(".takeAttendFormOut").fadeIn(500)
             }
         },
         error: function(response) {
@@ -254,7 +254,7 @@ function getProcesscingClass() {
                 $("#tableClass").html('<div class="tr"><div class="td">Filter by Status:<select id="typeClass" onchange="typeClass()"><option value="processing">Processing</option><option value="end">End</option></select></div><div class="td" id="formSearchEndClass"style="display: none;"><input type="month" id="monthClass"><button onclick="searchEndClass()">Search</button></div></div></div>')
                 $("#tableClass").append("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Take attended</div></div>")
                 response.classInfor.forEach((e) => {
-                    $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate + "</div><div class='td'>" + e.endDate + "</div><div class='td'><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
+                    $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate + "</div><div class='td'>" + e.endDate + "</div><div class='td'><button onclick=sendData('" + e._id + "')>List of student</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
                 })
                 var getClassID = $("#getClassID").val()
                 if (getClassID) $("#" + getClassID).css("background-color", 'red')
@@ -289,7 +289,7 @@ function searchEndClass() {
                 $("#tableClass").html('<div class="tr"><div class="td">Filter by Status:<select id="typeClass" onchange="typeClass()"><option value="processing">Processing</option><option value="end">End</option></select></div><div class="td" id="formSearchEndClass"style="display: none;"><input type="month" id="monthClass"><button onclick="searchEndClass()">Search</button></div></div></div>')
                 $("#tableClass").append("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Take attended</div></div>")
                 response.classInfor.forEach((e) => {
-                    $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate + "</div><div class='td'>" + e.endDate + "</div><div class='td'><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
+                    $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate + "</div><div class='td'>" + e.endDate + "</div><div class='td'><button onclick=sendData('" + e._id + "')>List of student</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
                 })
             }
         },

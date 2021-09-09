@@ -180,12 +180,11 @@ class adminController {
     async getAccount(req, res) {
         try {
             //số tài khoản hiển thị trên 1 trang
-            var accountPerPage = 1
-            var numberOfAccount = await AccountModel.find({ role: req.query.role }).lean().countDocuments()
-            var skip = parseInt(req.query.sotrang) * accountPerPage
-            var soTrang = numberOfAccount / accountPerPage + 1
-            var data = await AccountModel.find({ role: req.query.role }).populate("relationship", { username: 1, email: 1, phone: 1 }).skip(skip).limit(1).lean()
-            res.json({ msg: 'success', data, numberOfAccount, soTrang });
+            var accountPerPage = 10
+            var skip = accountPerPage * parseInt(req.query.sotrang)
+            console.log(skip)
+            var data = await AccountModel.find({ role: req.query.role }).populate("relationship", { username: 1, email: 1, phone: 1 }).skip(skip).limit(accountPerPage).lean()
+            res.json({ msg: 'success', data });
         } catch (e) {    
             console.log(e)
             res.json({ msg: 'error' });
@@ -196,7 +195,7 @@ class adminController {
     async count(req, res) {
         try {
             //số tài khoản hiển thị trên 1 trang
-            var accountPerPage = 1
+            var accountPerPage = 10
             var numberOfAccount = await AccountModel.find({ role: req.query.role }).lean().countDocuments()
             var soTrang = numberOfAccount / accountPerPage + 1
             res.json({ msg: 'success', soTrang });

@@ -40,7 +40,7 @@ body {
     vertical-align: middle;
 }
 
-.innerOut,
+.studentListContentOut,
 .attendedOutDoorOut,
 .attendedListOut {
     width: 100%;
@@ -58,7 +58,7 @@ body {
     vertical-align: middle;
 }
 
-.lolaOut,
+.takeAttendFormOut,
 .studentAssessmentOut,
 .studentAssessmentUpdateOut {
     width: 100%;
@@ -75,13 +75,13 @@ body {
     vertical-align: middle;
 }
 
-.inner,
-#lola,
+.studentListContent,
+#takeAttendContent,
 .attendedOutDoor,
 #attendedList,
 .studentAssessment,
 .studentAssessmentUpdate {
-    background-color: aquamarine;
+    background-color: whitesmoke;
     height: 100%;
     width: 100%;
     overflow: auto;

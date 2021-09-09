@@ -25,31 +25,6 @@
         width: auto;
         padding: 0;
         font-size: 20px;
-    }
-    
-    header li {
-        padding: 0;
-        height: 100%;
-        float: left;
-        width: 170.5px;
-        cursor: pointer;
-        text-align: center;
-        line-height: 60px;
-    }
-    
-    .body {
-        box-sizing: border-box;
-        height: 560px;
-        width: 100%;
-        padding: 20px;
-        margin: 0;
-        margin-top: 10px;
-        border-radius: 20px;
-        border: solid 3px black;
-    }
-    
-    #routeTuyBien {
-        width: auto;
         overflow-x: auto;
     }
     
@@ -98,6 +73,7 @@
         width: 100%;
         font-size: 18px;
     }
+    /* modeal cấp 1 */
     
     .studentListOut,
     .createClassOut,
@@ -110,6 +86,7 @@
         z-index: 10;
         position: fixed;
         text-align: center;
+        vertical-align: middle;
         /* Stay in place */
         background-color: rgb(215, 225, 230);
         /* Fallback color */
@@ -126,19 +103,25 @@
         height: 80%;
         width: 50%;
         margin: 0;
-        padding: 10px;
+        padding: 20px;
         margin-left: 25%;
         overflow: auto;
         overflow: -moz-scrollbars-none;
         -ms-overflow-style: none;
         font-size: 20px;
-        text-align: left;
+        text-align: center;
     }
     
-    .studentListContent {
-        width: 70%;
-        margin-left: 15%;
+    .studentListContent button {
+        font-size: 18px;
+        margin-bottom: 10px;
     }
+    
+    .studentListContent img {
+        height: 100px;
+        width: 100px;
+    }
+    /* bảng học sinh ở trong tạo class */
     
     #studentTable {
         overflow: auto;
@@ -148,28 +131,15 @@
         height: 400px;
         display: none;
     }
+    /* chỉnh css form tạo lớp */
     
-    .studentListContent::-webkit-scrollbar,
-    #createClass::-webkit-scrollbar,
-    #attendedList::-webkit-scrollbar,
-    #updateClass::-webkit-scrollbar,
-    #studentTable::-webkit-scrollbar {
-        width: 0 !important;
-        display: none;
-    }
-    
-    .studentListContent input,
-    #createClass input,
-    #attendedList input,
-    #updateClass input {
+    #createClass input {
         width: 100%;
         margin-bottom: 10px;
         font-size: 18px;
     }
     
-    .studentListContent select,
     #createClass select,
-    #attendedList select,
     #updateClass select {
         width: 100%;
         margin-bottom: 10px;
@@ -187,8 +157,9 @@
         height: 200px;
         width: 200px;
     }
+    /* form cấp 2 */
     
-    .studentTableOut,
+    .studentTableAddOut,
     .updateScheduleFormOut {
         width: 100%;
         height: 100%;
@@ -204,21 +175,38 @@
         overflow: scroll;
     }
     
-    #studentTableAdd,
+    .updateScheduleFormOut {
+        padding: 15%;
+    }
+    
     .updateSchedualContent {
-        background-color: aquamarine;
+        box-sizing: border-box;
+        background-color: whitesmoke;
         height: 100%;
         width: 100%;
         overflow: scroll;
+        font-size: 18px;
+        padding: 2%;
+    }
+    
+    #studentTableAdd {
+        box-sizing: border-box;
+        font-size: 18px;
+        padding: 2%;
+        height: 100%;
+        width: 70%;
+        margin-left: 10%;
+        background-color: whitesmoke;
+        overflow: scroll;
+    }
+    
+    #studentTableAdd button {
+        font-size: 18px;
+        margin-top: 10px;
     }
     
     i {
         font-size: 30px;
-    }
-    
-    #table {
-        display: table;
-        padding: 5px;
     }
     
     .tr {
@@ -230,7 +218,16 @@
     .td {
         display: table-cell;
         padding: 5px;
-        width: auto;
         border: #000000 solid 1px;
-        margin: 5px;
+        vertical-align: middle;
+    }
+    /* chỉnh  ẩn thanh cuộn  */
+    
+    .studentListContent::-webkit-scrollbar,
+    #createClass::-webkit-scrollbar,
+    #attendedList::-webkit-scrollbar,
+    #updateClass::-webkit-scrollbar,
+    #studentTable::-webkit-scrollbar {
+        width: 0 !important;
+        display: none;
     }

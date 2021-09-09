@@ -91,17 +91,17 @@ function getAccount() {
     $(".tableInforType").html("");
     if (role === 'teacher') {
         var tableInfor = "<div class='tr'>\
-        <div class='td'>avatar</div>\
-        <div class='td'>username</div>\
-        <div class='td'>sex</div>\
-        <div class='td'>email</div>\
-        <div class='td' style='display:none;'>role</div>\
-        <div class='td'>phone</div>\
-        <div class='td'>address</div>\
-        <div class='td'>birthday</div>\
-        <div class='td'>Action</div></div>"
+        <div class='td'style='width:5%;'>avatar</div>\
+        <div class='td'style='width:5%;'>username</div>\
+        <div class='td'style='width:5%;'>sex</div>\
+        <div class='td'style='width:20%;'>email</div>\
+        <div class='td'style='display:none;'>role</div>\
+        <div class='td'style='width:10%;'>phone</div>\
+        <div class='td'style='width:10%;'>address</div>\
+        <div class='td'style='width:10%;'>birthday</div>\
+        <div class='td'style='width:10%;'>Action</div></div>"
     } else {
-        var tableInfor = "<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>sex</div><div class='td'>email</div><div class='td' style='display:none;'>role</div><div class='td'>phone</div><div class='td' style='display:none;'>address</div><div class='td' style='display:none;'>birthday</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>Aim</div><div class='td'>Action</div></div >"
+        var tableInfor = "<div class='tr'><div class='td' style='width:5%;'>avatar</div><div class='td'style='width:5%;'>username</div><div class='td'style='width:5%;'>sex</div><div class='td'>email</div><div class='td' style='display:none;'>role</div><div class='td'style='width:5%;'>phone</div><div class='td' style='display:none;'>address</div><div class='td' style='display:none;'>birthday</div><div class='td'style='width:5%;'>routeName</div><div class='td'style='width:5%;'>stage</div><div class='td'style='width:5%;'>Aim</div><div class='td'style='width:5%;'>Action</div></div >"
     }
     $(".tableAccount").html(tableInfor);
     $.ajax({
@@ -111,9 +111,10 @@ function getAccount() {
         data: { role: role, sotrang: page },
         success: function(response) {
             if (response.msg == 'success') {
+                console.log(response.data)
                 $.each(response.data, function(index, data) {
-                    if (role == 'teacher') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
-                    if (role == 'student') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img style ='max-width:100px;max-height:100px' src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
+                    if (role == 'teacher') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
+                    if (role == 'student') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                 });
                 search(response.data[0].email)
             }
@@ -398,8 +399,7 @@ function search(email) {
                     }
                     var currentClass = response.data.classID
                     $(".rightSide").append("<img src='" + data.avatar + "'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>")
-                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:300px; width:auto'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>") >>>
-                        $(".rightSide").append("<h1>Tình trạng học tập</h1>")
+                    $(".rightSide").append("<h1>Tình trạng học tập</h1>")
                     $(".rightSide").append("<p>Route: " + data.routeName + " </p><p>Current level: " + data.stage + " </p><p>Aim : " + data.aim + "</p>")
                     $(".rightSide").append("<h2>Tiến độ học tập</h2>")
                     $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "' target='_blank'>Click here to see more</a>")
