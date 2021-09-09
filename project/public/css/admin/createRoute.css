@@ -2,17 +2,6 @@
     box-sizing: border-box;
 }
 
-<<<<<<< HEAD
-#option input,
-#option select,
-#option button {
-    font-size: 18px;
-}
-
-#option .tr {
-    height: 40px;
-    border: none;
-=======
 body {
     width: 100%;
     background-image: url("/images/background.jpg");
@@ -26,7 +15,6 @@ header {
     width: 100%;
     color: black;
     text-align: center;
->>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
     padding: 0;
     margin: 0;
 }
@@ -34,9 +22,7 @@ header {
 #option .td {
     width: auto;
     padding: 0;
-<<<<<<< HEAD
     margin: 0;
-=======
     font-size: 20px;
     float: right;
 }
@@ -110,7 +96,6 @@ header li {
     width: auto;
     padding: 0;
     margin: 0;
->>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
     border: none;
     font-size: 20px;
     padding-right: 20px;

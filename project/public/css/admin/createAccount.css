@@ -15,96 +15,11 @@
     border: #000000 solid 1px;
 }
 
-<<<<<<< HEAD
 .rightSide img {
     padding: 0;
     margin: 0;
     max-height: auto;
     max-width: 100%;
-=======
-body {
-    width: 100%;
-    background-image: url("/images/background.jpg");
-    background-repeat: repeat-x;
-    padding: 2%;
-    margin: 0;
-}
-
-header {
-    height: 60px;
-    width: 100%;
-    color: black;
-    text-align: center;
-    padding: 0;
-    margin: 0;
-    border: solid;
-}
-
-header ul {
-    margin: 0;
-    overflow: hidden;
-    list-style-type: none;
-    height: 100%;
-    width: auto;
-    padding: 0;
-    font-size: 20px;
-    float: right;
-}
-
-header li {
-    padding: 0;
-    height: 100%;
-    float: left;
-    width: 170.5px;
-    cursor: pointer;
-    text-align: center;
-    line-height: 60px;
-}
-
-.body {
-    box-sizing: border-box;
-    height: 560px;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    margin-top: 10px;
-    border-radius: 20px;
-    border: solid 3px black;
-}
-
-.leftSide {
-    box-sizing: border-box;
-    padding: 20px;
-    margin: 0;
-    width: 70%;
-    float: left;
-    height: 554px;
-    border-right: solid 3px black;
-    overflow: auto;
-    overflow: -moz-scrollbars-none;
-    -ms-overflow-style: none;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.rightSide {
-    padding: 10px;
-    margin: 0;
-    width: 30%;
-    height: 554px;
-    float: right;
-    overflow: auto;
-    overflow: -moz-scrollbars-none;
-    -ms-overflow-style: none;
-    text-align: center;
-}
-
-.rightSide img {
-    padding: 0;
-    margin: 0;
-    max-height: 300px;
-    max-width: 300px;
->>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
 }
 
 .rightSide::-webkit-scrollbar,

@@ -397,12 +397,9 @@ function search(email) {
                         var data = relationship.relationship
                     }
                     var currentClass = response.data.classID
-<<<<<<< HEAD
                     $(".rightSide").append("<img src='" + data.avatar + "'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>")
-=======
-                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:300px; width:auto'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>")
->>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
-                    $(".rightSide").append("<h1>Tình trạng học tập</h1>")
+                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:300px; width:auto'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>") >>>
+                        $(".rightSide").append("<h1>Tình trạng học tập</h1>")
                     $(".rightSide").append("<p>Route: " + data.routeName + " </p><p>Current level: " + data.stage + " </p><p>Aim : " + data.aim + "</p>")
                     $(".rightSide").append("<h2>Tiến độ học tập</h2>")
                     $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "' target='_blank'>Click here to see more</a>")
