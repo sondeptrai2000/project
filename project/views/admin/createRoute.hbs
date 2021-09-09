@@ -3,6 +3,8 @@
 
 <head>
         <script src="/jquery/jquery.js"></script>
+        <link rel="stylesheet" href="/css/admin/menu.css">
+        <link rel="stylesheet" href="/css/admin/layOut.css">
         <link rel="stylesheet" href="/css/admin/createRoute.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 </head>
@@ -12,12 +14,12 @@
                 <div class="createRoute">
                         <div class="createFirstDIV">
                                 <h2>Create route</h2>
-                                <p>routeName </p><input type="text" name="routeName" id="routeName">
-                                <p>Description</p><input type="text" name="description" id="description">
-                                <button onclick="addStage('create')">Add Stage</button>
+                                Route name: <input type="text" name="routeName" id="routeName">
+                                Description:<input type="text" name="description" id="description">
+                                <button class='button' onclick="addStage('create')">Add Stage</button>
                         </div>
                         <div id="addStage" style="text-align: left;"></div>
-                        <button class='submitButton' onclick="doCreateRoute()" style="clear:both;">Submit</button>
+                        <button class='button' onclick="doCreateRoute()" style="clear:both;">Submit</button>
                 </div>
         </div>
         <div class="updateRouteOut" style="display: none;">
@@ -25,42 +27,33 @@
                         <div class="updateFirstDIV">
                                 <h2>update route</h2>
                                 <input type="hidden" id="routeIDUpdate">
-                                <p>routeName </p><input type="text" name="routeName" id="routeNameUpdate">
-                                <p>Description</p><input type="text" name="description" id="descriptionUpdate">
-                                <button onclick="addStage('update')">Add route</button>
+                                Route name: <input type="text" name="routeName" id="routeNameUpdate">
+                                Description: <input type="text" name="description" id="descriptionUpdate">
+                                <button class='button' onclick="addStage('update')">Add Stage</button>
                         </div>
                         <div id="addStageUpdate" style="text-align: left;"></div>
-                        <button class='submitButton' onclick="doUpdateRoute()" style="clear:both;">Submit</button>
+                        <button class='button' onclick="doUpdateRoute()" style="clear:both;">Submit</button>
                 </div>
         </div>
 
         <header> {{> adminHeader }}</header>
-
         <div class="body">
                 <div class='leftSide'>
-                        <div class="option">
-                                <ul>
-                                        <li onclick='$(".createRouteOut").fadeIn(500);'>
-                                                <button>Create Route</button>
-                                        </li>
-                                        <li>
-                                                <input id='searchRoute' type='text' placeholder="Nhập tên lộ trình ">
-                                                <button onclick="search()">Search</button>
-                                        </li>
-                                </ul>
+                        <div class="tr" id="option">
+                                <div class='td'>
+                                        <button onclick='$(".createRouteOut").fadeIn(500);'>Create Route</button>
+                                </div>
+                                <div class='td'>
+                                        <input id='searchRoute' type='text' placeholder="Nhập tên lộ trình ">
+                                        <button onclick="search()">Search</button>
+                                </div>
                         </div>
                         <div class="tableRoute"></div>
                 </div>
                 <div class='rightSide'>
-                        <div class="viewRoute">
-                                <div class="viewFirstDIV">
-                                        <h2>View route</h2>
-                                        <p id="routeNameView">routeName </p>
-                                        <p id="descriptionView">Description</p>
-                                </div>
-                                <div id="viewStage" style="text-align: left !important;"></div>
-                        </div>
+                        <div class="viewRoute" style="text-align: left !important;"></div>
                 </div>
+        </div>
         </div>
 </body>
 <script>
@@ -69,6 +62,13 @@
                 $(window).on('click', function (e) {
                         if ($(e.target).is('.createRouteOut')) $('.createRouteOut').fadeOut(1500);
                         if ($(e.target).is('.updateRouteOut')) $('.updateRouteOut').fadeOut(1500);
+                });
+
+                //hiệu ứng menu
+                $('header li').hover(function () {
+                        $(this).find("div").slideDown()
+                }, function () {
+                        $(this).find("div").hide(500)
                 });
         });
 
@@ -98,26 +98,27 @@
 
         function addStage(type) {
                 if (type == "create") {
-                        var add = "<div><p>Stage:</p><input type='text' name='stageTest'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().prependTo('#addStage') > <i class='fas fa-sort-amount-up-alt'></i> </button><button onclick=addClass($(this).parent(),'create')><i class='fas fa-plus-square'></i></button></div>"
+                        var add = "<div>Stage: <input type='text' name='stageTest'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStage') > <i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'create')><i class='fas fa-plus-square'></i></button></div>"
                         $('#addStage').append(add)
                 } else {
-                        var add = "<div><p>Stage:</p><input type='text' name='stageTestUpdate'><button onclick =$(this).parent().remove()>Dele<i class='fas fa-trash-alt'></i>te</button><button onclick =$(this).parent().prependTo('#addStageUpdate') > <i class='fas fa-sort-amount-up-alt'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
+                        var add = "<div>Stage: <input type='text' name='stageTestUpdate'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStageUpdate') ><i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
                         $('#addStageUpdate').append(add)
                 }
         }
 
         function addClass(test, type) {
                 if (type == "create") {
-                        var add = "<div class='route'><p>route</p><input type='text' name='classIn'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
+                        var add = "<div class='route'>Route: <input type='text' name='classIn'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
                         test.append(add)
                 } else {
-                        var add = "<div class='route'><p>route</p><input type='text' name='classInUpdate'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
+                        var add = "<div class='route'>Route: <input type='text' name='classInUpdate'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
                         test.append(add)
                 }
         }
 
         function viewSchedule(id) {
                 $(".viewRouteOut").fadeIn(500)
+                console.log("vào")
                 var _id = id
                 $.ajax({
                         url: '/admin/lol',
@@ -127,17 +128,15 @@
                         success: function (response) {
                                 if (response.msg == 'success') {
                                         $(".tableRoute .tr").css("background-color", '')
-                                        $("#" + _id).css("background-color", 'red')
-                                        $("#viewStage").html("")
+                                        $("#" + _id).css("background-color", 'gray')
                                         var data = response.data
-                                        $("#routeNameView").html("Route Name: " + data[0].routeName)
-                                        $("#descriptionView").html("Description: " + data[0].description)
+                                        console.log(data)
+                                        $(".viewRoute").html("<h1>Route Name: " + data[0].routeName + "</h1>")
+                                        $(".viewRoute").append("<h2>Description: " + data[0].description + "</h2>")
                                         data[0].routeSchedual.forEach(function (e, indexBIG) {
-                                                var add = "<h3> Stage " + (indexBIG + 1) + ": " + e.stage + "</h3>"
-                                                $("#viewStage").append(add)
+                                                $(".viewRoute").append("<h3> Stage " + (indexBIG + 1) + ": " + e.stage + "</h3>")
                                                 e.routeabcd.forEach(function (e, index) {
-                                                        var add = "<li>Route" + (index + 1) + ": " + e + "</li>"
-                                                        $("#viewStage").append(add)
+                                                        $(".viewRoute").append("<li>" + e + "</li>")
                                                 })
                                         })
                                 }
@@ -252,11 +251,9 @@
                                         $("#routeNameUpdate").val(data[0].routeName)
                                         $("#descriptionUpdate").val(data[0].description)
                                         data[0].routeSchedual.forEach(function (e, indexBIG) {
-                                                var add = "<div><p>Stage:</p><input type='text' name='stageTestUpdate' value='" + e.stage + "'><button onclick =$(this).parent().remove() > <i class='fas fa-trash-alt'></i> </button><button onclick =$(this).parent().prependTo('#addStageUpdate') > <i class='fas fa-sort-amount-up-alt'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
-                                                $("#addStageUpdate").append(add)
-                                                e.routeabcd.forEach(function (e, index) {
-                                                        var add = "<div class='route'><p>route</p><input type='text' name='classInUpdate' value='" + e + "'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
-                                                        $("#addStageUpdate div:nth-child(" + (indexBIG + 1) + ")").append(add)
+                                                $("#addStageUpdate").append("<div id='updateStage" + indexBIG + "'>Stage: <input type='text' name='stageTestUpdate' value='" + e.stage + "'><button onclick =$(this).parent().remove() > <i class='fas fa-trash-alt'></i> </button><button onclick =$(this).parent().appendTo('#addStageUpdate') > <i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>")
+                                                e.routeabcd.forEach(function (e) {
+                                                        $("#updateStage" + indexBIG).append("<div class='route'>Route: <input type='text' name='classInUpdate' value='" + e + "'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>")
                                                 })
                                         })
                                 }

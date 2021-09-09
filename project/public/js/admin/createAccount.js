@@ -384,7 +384,7 @@ function search(email) {
         success: function(response) {
             if (response.msg == 'success') {
                 $(".tableAccount .tr").css("background-color", '')
-                $("#" + response.data._id).css("background-color", 'red')
+                $("#" + response.data._id).css("background-color", 'gray')
                 $(".rightSide").html("")
                 if (response.data.role == "teacher") {
                     $(".rightSide").append("<img src='" + response.data.avatar + "'><p>Name: " + response.data.username + "</p>Gender: " + response.data.sex + "</p>Email: " + response.data.email + "</p><p>Phone: " + response.data.phone + "</p><p>Role: " + response.data.role + "</p><p>BirthDay: " + response.data.birthday + "</p><p>Address: " + response.data.address + "</p>")
@@ -397,8 +397,7 @@ function search(email) {
                         var data = relationship.relationship
                     }
                     var currentClass = response.data.classID
-                    $(".rightSide").append("<h1>Thông tin học sinh</h1>")
-                    $(".rightSide").append("<img src='" + data.avatar + "'style='height:300px; width:auto'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>")
+                    $(".rightSide").append("<img src='" + data.avatar + "'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>")
                     $(".rightSide").append("<h1>Tình trạng học tập</h1>")
                     $(".rightSide").append("<p>Route: " + data.routeName + " </p><p>Current level: " + data.stage + " </p><p>Aim : " + data.aim + "</p>")
                     $(".rightSide").append("<h2>Tiến độ học tập</h2>")

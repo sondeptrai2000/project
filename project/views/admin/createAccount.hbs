@@ -3,6 +3,8 @@
 
 <head>
       <script src="/jquery/jquery.js"></script>
+      <link rel="stylesheet" href="/css/admin/menu.css">
+      <link rel="stylesheet" href="/css/admin/layOut.css">
       <link rel="stylesheet" href="/css/admin/createAccount.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 </head>
@@ -11,33 +13,33 @@
       <div class="createAccountOut" style="display: none;">
             <div id="createAccount">
                   <div style="text-align: left;">
-                        <h2>ACCOUNT INFORMATION</h2>
-                        <img id='output' style="height:300px; width:auto">
+                        <h2 style="text-align: center;">ACCOUNT INFORMATION</h2>
+                        <img id='output' style="height:300px; width:auto;text-align: center;">
                         <figcaption>Hãy chọn ảnh đại diện</figcaption>
                         <input type='file' id="myFile" accept='image/*' style="width: 100%;">
-                        <p>Full name:</p><input type="text" id="username">
-                        <p>Gender</p>
-                        <select class="Role" id="gender">
+                        Full name:<input type="text" id="username">
+                        Gender:<select class="Role" id="gender">
                               <option value="male">male</option>
                               <option value="female">female</option>
                               <option value="other">other</option>
                         </select>
-                        <p>Email</p><input type="email" id="email">
-                        <p>Password</p><input type="password" id="password">
-                        <p>Role</p>
+
+                        Email:<input type="email" id="email">
+                        Password:<input type="password" id="password">
+                        Role:
                         <select class="Role" id="role" onchange="role('create')">
                               <option value="student">Student</option>
                               <option value="teacher">Teacher</option>
                         </select>
-                        <p>Birthday</p><input type="date" id="birthday">
-                        <p>Phone</p><input type="text" id="phone">
-                        <p>Address</p><input type="text" id="address">
+                        Birthday:<input type="date" id="birthday">
+                        Phone:<input type="text" id="phone">
+                        Address:<input type="text" id="address">
                   </div>
                   <div class="typeRole" style="text-align: left;">
-                        <p>Guardian name:</p> <input type='text' name='guardianName'>
-                        <p>Guardian phone:</p><input type='number' name='guardianPhone'>
-                        <p>Guardian email:</p><input type='text' name='guardianEmail'>
-                        <p>Chọn lộ trình học</p>
+                        Guardian name: <input type='text' name='guardianName'>
+                        Guardian phone:<input type='number' name='guardianPhone'>
+                        Guardian email:<input type='text' name='guardianEmail'>
+                        Chọn lộ trình học
                         <select id="routeTypeS" onchange="routeType('create')">
                               {{#each targetxxx}}
                               <option value="{{routeName}}">
@@ -45,13 +47,13 @@
                               </option>
                               {{/each}}
                         </select>
-                        <p>Level</p>
+                        Level
                         <select id="levelS"></select>
-                        <p>Aim</p>
+                        Aim
                         <select id="Aim"></select>
                   </div>
-                  <button id="btn1" onclick="signUp()">tiến hành tạo tài khoản</button>
-                  <button id="reset" onclick="reset()">Reset thông tin</button>
+                  <button class='button' onclick="signUp()">tiến hành tạo tài khoản</button>
+                  <button class='button' onclick="reset()">Reset thông tin</button>
             </div>
       </div>
 
@@ -59,44 +61,44 @@
             <div id="updateForm">
                   <div style="text-align: left;">
                         <input type='hidden' id='PersonID'>
-                        <h2>ACCOUNT update INFORMATION</h2>
-                        <img id='currentAvatar' style="height:300px; width:auto">
+                        <h2 style="text-align: center;"> UPDATE ACCOUNT INFORMATION</h2>
+                        <img id='currentAvatar' style="height:300px; width:auto;text-align:center;">
                         <figcaption>Hãy chọn ảnh đại diện mới nếu muốn đổi</figcaption>
                         <input type="hidden" id="oldAvatar">
                         <input type='file' id='myFileUpdate' style="width:100%;">
-                        <p>Name</p><input type='text' id='usernameUpdate'>
-                        <p>Email</p><input type="email" id="emailUpdate">
+                        Name<input type='text' id='usernameUpdate'>
+                        Email<input type="email" id="emailUpdate">
 
-                        <p>Password</p><input type='password' id='passwordUpdate'
+                        Password<input type='password' id='passwordUpdate'
                               placeholder="update new passwork if you want to">
-                        <p>Gender</p>
+                        Gender
                         <select id='genderUpdate'>
                               <option value="male">Male</option>
                               <option value="female">Female</option>
                               <option value="other">Other</option>
                         </select>
-                        <p>Birthday</p><input type='date' id='birthdayUpdate'>
-                        <p>Phone</p><input type='text' id='phoneUpdate'>
-                        <p>Address</p><input type='text' id='addressUpdate'>
+                        Birthday<input type='date' id='birthdayUpdate'>
+                        Phone<input type='text' id='phoneUpdate'>
+                        Address<input type='text' id='addressUpdate'>
                         <input type='hidden' id='currentRole'>
-                        <p>Role</p>
+                        Role
                         <select class='Role' id='roleUpdate' onchange="role('update')">
                               <option value="student">Student</option>
                               <option value="teacher">Teacher</option>
                         </select>
                   </div>
                   <div class='typeRole' style="text-align: left;">
-                        <p>Chọn lộ trình học</p>
+                        Chọn lộ trình học
                         <select id='routeTypeSUpdate' onchange="routeType('update')"></select>
-                        <p>Level</p>
+                        Level
                         <select id='levelSUpdate'></select>
-                        <p>Aim</p>
+                        Aim
                         <select id='AimUpdate'></select>
-                        <p>Guardian name:</p><input type='text' name='guardianNameUpdate'>
-                        <p> Guardian phone:</p> <input type='number' name='guardianPhoneUpdate'>
-                        <p>Guardian email:</p><input type='text' name='guardianEmailUpdate'>
+                        Guardian name:<input type='text' name='guardianNameUpdate'>
+                        Guardian phone: <input type='number' name='guardianPhoneUpdate'>
+                        Guardian email:<input type='text' name='guardianEmailUpdate'>
                   </div>
-                  <button onclick="doUpdate()">tiến hành cập nhật thông tin tài khoản</button>
+                  <button class='button' onclick="doUpdate()">tiến hành cập nhật thông tin tài khoản</button>
 
             </div>
       </div>
@@ -124,7 +126,6 @@
                         <div class='td' id="soTrang">
                         </div>
                   </div>
-
                   <div class="tableAccount"></div>
             </div>
             <div class='rightSide'>

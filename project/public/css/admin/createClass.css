@@ -1,6 +1,5 @@
 * {
     box-sizing: border-box;
-    margin: 0;
 }
 
 body {
@@ -9,49 +8,22 @@ body {
     background-repeat: repeat-x;
     padding: 2%;
     margin: 0;
-    margin-top: 1%;
-    z-index: 1;
-}
-
-header {
-    box-sizing: border-box;
-    height: 60px;
-    width: 100%;
-    color: black;
-    text-align: center;
-    padding: 0;
-    margin: 0;
-    border: solid;
-}
-
-header ul {
-    margin: 0;
-    overflow: hidden;
-    list-style-type: none;
-    height: 100%;
-    width: auto;
-    padding: 0;
-    font-size: 20px;
-    float: right;
-}
-
-header li {
-    padding: 0;
-    height: 100%;
-    float: left;
-    width: 170.5px;
-    cursor: pointer;
-    text-align: center;
-    line-height: 60px;
 }
 
 .body {
     box-sizing: border-box;
     height: 560px;
     width: 100%;
-    padding: 0;
-    padding: 10px;
-    border: solid black;
+    padding: 20px;
+    margin: 0;
+    margin-top: 10px;
+    border-radius: 20px;
+    border: solid 3px black;
+}
+
+#routeTuyBien {
+    width: auto;
+    overflow-x: auto;
 }
 
 #routeTuyBien .tr,
@@ -67,18 +39,18 @@ header li {
 
 #option .tr {
     height: 40px;
+    border: none;
     padding: 0;
     margin: 0;
-    border: none;
 }
 
 #option .td {
     width: auto;
+    padding: 0;
+    margin: 0;
     border: none;
     font-size: 20px;
-    padding: 0;
     padding-right: 20px;
-    margin: 0;
 }
 
 .tableClass {
@@ -89,6 +61,7 @@ header li {
     margin-top: 20px;
     height: 530px;
     text-align: center;
+    font-size: 18px;
 }
 
 .tableClass button {
@@ -96,15 +69,17 @@ header li {
     padding: 0;
     margin: 0;
     width: 100%;
+    font-size: 18px;
 }
 
-.innerOut,
+.studentListOut,
 .createClassOut,
 .attendedListOut,
 .updateClassOut {
     width: 100%;
     height: 100%;
-    padding: 5%;
+    margin: 0;
+    padding: 0;
     z-index: 10;
     position: fixed;
     text-align: center;
@@ -113,17 +88,77 @@ header li {
     /* Fallback color */
     background-color: rgba(209, 189, 189, 0.4);
     /* Black w/ opacity */
-    overflow: scroll;
 }
 
-.inner,
+.studentListContent,
 #createClass,
 #attendedList,
 #updateClass {
-    background-color: aquamarine;
-    height: 100%;
+    box-sizing: border-box;
+    background-color: whitesmoke;
+    height: 80%;
+    width: 50%;
+    margin: 0;
+    padding: 10px;
+    margin-left: 25%;
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    font-size: 20px;
+    text-align: left;
+}
+
+.studentListContent {
+    width: 70%;
+    margin-left: 15%;
+}
+
+#studentTable {
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    font-size: 20px;
+    height: 400px;
+    display: none;
+}
+
+.studentListContent::-webkit-scrollbar,
+#createClass::-webkit-scrollbar,
+#attendedList::-webkit-scrollbar,
+#updateClass::-webkit-scrollbar,
+#studentTable::-webkit-scrollbar {
+    width: 0 !important;
+    display: none;
+}
+
+.studentListContent input,
+#createClass input,
+#attendedList input,
+#updateClass input {
     width: 100%;
-    overflow: scroll;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.studentListContent select,
+#createClass select,
+#attendedList select,
+#updateClass select {
+    width: 100%;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+#teacherID,
+#span2 {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#teacherID img,
+#span2 img {
+    height: 200px;
+    width: 200px;
 }
 
 .studentTableOut,
@@ -154,26 +189,6 @@ i {
     font-size: 30px;
 }
 
-#loading {
-    position: fixed;
-    display: block;
-    top: 0;
-    bottom: 0;
-    z-index: 1000000;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-}
-
-#loading img {
-    margin: auto;
-    display: block;
-    top: calc(50% - 100px);
-    left: calc(50% - 10px);
-    position: absolute;
-    z-index: 999999;
-}
-
 #table {
     display: table;
     padding: 5px;
@@ -185,16 +200,10 @@ i {
     overflow: hidden;
 }
 
-.tr1 {
-    display: table-row;
-    padding: 5px;
-    overflow: hidden;
-}
-
 .td {
     display: table-cell;
     padding: 5px;
-    width: 300px;
+    width: auto;
     border: #000000 solid 1px;
     margin: 5px;
 }

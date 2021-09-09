@@ -33,7 +33,7 @@ function getClass() {
                 })
                 var getClassID = $("#getClassID").val()
                 if (getClassID) {
-                    $("#" + getClassID).css("background-color", 'red')
+                    $("#" + getClassID).css("background-color", 'gray')
                     setTimeout(function() {
                         $("#" + getClassID).css("background-color", '')
                     }, 5000)
