@@ -15,8 +15,8 @@ var transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: {
-        user: 'fptedunotification@gmail.com',
-        pass: 'son@1234'
+        user: 'sownenglishedu@gmail.com',
+        pass: 'son123@123'
     },
     tls: {
         rejectUnauthorized: false
@@ -28,7 +28,8 @@ let getCode = async(req, res) => {
         var check = await AccountModel.findOne({ email: req.query.email }, { username: 1 })
         if (check) {
             var code = Crypto.randomBytes(21).toString('base64').slice(0, 21)
-            var content = check.username + " mã code để làm mới mật khẩu của bạn là: " + code + ". Note: Mã này sẽ tồn tại trong 5p."
+            console.log(code)
+            var content = check.username + " mã code để làm mới mật khẩu của bạn là: " + code + "\n Note: Mã này sẽ tồn tại trong 5p."
             var mainOptions = {
                 from: 'fptedunotification@gmail.com',
                 to: req.query.email,
@@ -52,6 +53,8 @@ let getCode = async(req, res) => {
 
 let confirmPass = async(req, res) => {
     try {
+        console.log("vvaof")
+        console.log(req.body.codeForgot)
         var check = await AccountModel.findOne({ email: req.body.email }, { username: 1, codeRefresh: 1 })
         if (check) {
             if (check.codeRefresh == req.body.codeForgot) {
