@@ -98,10 +98,17 @@
 
         function addStage(type) {
                 if (type == "create") {
+<<<<<<< HEAD
                         var add = "<div>Stage: <input type='text' name='stageTest'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStage') > <i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'create')><i class='fas fa-plus-square'></i></button></div>"
                         $('#addStage').append(add)
                 } else {
                         var add = "<div>Stage: <input type='text' name='stageTestUpdate'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStageUpdate') ><i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
+=======
+                        var add = "<div>Stage: <input type='text' name='stageTest'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().prependTo('#addStage') > <i class='fas fa-sort-amount-up-alt'></i> </button><button onclick=addClass($(this).parent(),'create')><i class='fas fa-plus-square'></i></button></div>"
+                        $('#addStage').append(add)
+                } else {
+                        var add = "<div>Stage: <input type='text' name='stageTestUpdate'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().prependTo('#addStageUpdate') ><i class='fas fa-sort-amount-up-alt'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
+>>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
                         $('#addStageUpdate').append(add)
                 }
         }
@@ -251,8 +258,15 @@
                                         $("#routeNameUpdate").val(data[0].routeName)
                                         $("#descriptionUpdate").val(data[0].description)
                                         data[0].routeSchedual.forEach(function (e, indexBIG) {
+<<<<<<< HEAD
                                                 $("#addStageUpdate").append("<div id='updateStage" + indexBIG + "'>Stage: <input type='text' name='stageTestUpdate' value='" + e.stage + "'><button onclick =$(this).parent().remove() > <i class='fas fa-trash-alt'></i> </button><button onclick =$(this).parent().appendTo('#addStageUpdate') > <i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>")
                                                 e.routeabcd.forEach(function (e) {
+=======
+                                                console.log("div lớn:" + e.stage)
+                                                $("#addStageUpdate").append("<div id='updateStage" + indexBIG + "'>Stage: <input type='text' name='stageTestUpdate' value='" + e.stage + "'><button onclick =$(this).parent().remove() > <i class='fas fa-trash-alt'></i> </button><button onclick =$(this).parent().prependTo('#addStageUpdate') > <i class='fas fa-sort-amount-up-alt'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>")
+                                                e.routeabcd.forEach(function (e) {
+                                                        console.log("cho vào div lớn:" + e)
+>>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
                                                         $("#updateStage" + indexBIG).append("<div class='route'>Route: <input type='text' name='classInUpdate' value='" + e + "'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>")
                                                 })
                                         })

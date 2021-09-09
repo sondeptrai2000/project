@@ -2,6 +2,97 @@
     box-sizing: border-box;
 }
 
+<<<<<<< HEAD
+#option input,
+#option select,
+#option button {
+    font-size: 18px;
+}
+
+#option .tr {
+    height: 40px;
+    border: none;
+=======
+body {
+    width: 100%;
+    background-image: url("/images/background.jpg");
+    background-repeat: repeat-x;
+    padding: 2%;
+    margin: 0;
+}
+
+header {
+    height: 60px;
+    width: 100%;
+    color: black;
+    text-align: center;
+>>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
+    padding: 0;
+    margin: 0;
+}
+
+#option .td {
+    width: auto;
+    padding: 0;
+<<<<<<< HEAD
+    margin: 0;
+=======
+    font-size: 20px;
+    float: right;
+}
+
+header li {
+    padding: 0;
+    height: 100%;
+    float: left;
+    width: 170.5px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 60px;
+}
+
+.body {
+    box-sizing: border-box;
+    height: 560px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    margin-top: 10px;
+    border-radius: 20px;
+    border: solid 3px black;
+}
+
+.leftSide {
+    padding: 20px;
+    margin: 0;
+    width: 70%;
+    float: left;
+    height: 554px;
+    border-right: solid 3px black;
+}
+
+.rightSide {
+    padding: 10px;
+    margin: 0;
+    width: 30%;
+    height: 554px;
+    float: right;
+}
+
+.rightSide,
+.leftSide {
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.rightSide::-webkit-scrollbar {
+    width: 0 !important;
+    display: none;
+}
+
 #option input,
 #option select,
 #option button {
@@ -19,6 +110,7 @@
     width: auto;
     padding: 0;
     margin: 0;
+>>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
     border: none;
     font-size: 20px;
     padding-right: 20px;

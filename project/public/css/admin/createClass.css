@@ -10,6 +10,41 @@ body {
     margin: 0;
 }
 
+<<<<<<< HEAD
+.body {
+    box-sizing: border-box;
+    height: 560px;
+=======
+header {
+    height: 60px;
+>>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
+    width: 100%;
+    padding: 20px;
+    margin: 0;
+    margin-top: 10px;
+    border-radius: 20px;
+    border: solid 3px black;
+}
+
+#routeTuyBien {
+    width: auto;
+<<<<<<< HEAD
+=======
+    padding: 0;
+    font-size: 20px;
+    float: right;
+}
+
+header li {
+    padding: 0;
+    height: 100%;
+    float: left;
+    width: 170.5px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 60px;
+}
+
 .body {
     box-sizing: border-box;
     height: 560px;
@@ -23,6 +58,7 @@ body {
 
 #routeTuyBien {
     width: auto;
+>>>>>>> f351d3a2e0fb326a733744610cbb149f0a03526f
     overflow-x: auto;
 }
 
