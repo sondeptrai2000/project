@@ -48,11 +48,11 @@
                 </div>
                 <div class='td'>
                     <select class="cahocUpdate" id="cahocUpdate" style="font-size:18px;" onchange="cahocUpdate()">
-                        <option value="7:30 đến 9:30">7:30 đến 9:30</option>
-                        <option value="9:45 đến 11:45">9:45 đến 11:45</option>
-                        <option value="13:30 đến 15:30">13:30 đến 15:30</option>
-                        <option value="15:45 đến 17:45">15:45 đến 17:45</option>
-                        <option value="18:15 đến 20:15">18:15 đến 20:15</option>
+                        <option value="7:30 to 9:30">7:30 to 9:30</option>
+                        <option value="9:45 to 11:45">9:45 to 11:45</option>
+                        <option value="13:30 to 15:30">13:30 to 15:30</option>
+                        <option value="15:45 to 17:45">15:45 to 17:45</option>
+                        <option value="18:15 to 20:15">18:15 to 20:15</option>
                     </select>
                 </div>
             </div>
@@ -516,7 +516,7 @@
     }
     //lấy các ca làm của giáo viên trong ngày đã chọn (tránh trường hợp 1 giáo viên dạy chung 1 ca làm và ở 2 phòng khác nhau )
     function getTime(i) {
-        $('#cahoc' + i).html('<option value="7:30 đến 9:30">7:30 đến 9:30</option><option value="9:45 đến 11:45">9:45 đến 11:45</option><option value="13:30 đến 15:30">13:30 đến 15:30</option><option value="15:45 đến 17:45">15:45 đến 17:45</option><option value="18:15 đến 20:15">18:15 đến 20:15</option>')
+        $('#cahoc' + i).html('<option value="7:30 to 9:30">7:30 to 9:30</option><option value="9:45 to 11:45">9:45 to 11:45</option><option value="13:30 to 15:30">13:30 to 15:30</option><option value="15:45 to 17:45">15:45 to 17:45</option><option value="18:15 to 20:15">18:15 to 20:15</option>')
         $.ajax({
             url: '/admin/getTime',
             method: 'get',

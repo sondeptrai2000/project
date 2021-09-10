@@ -40,7 +40,7 @@ function test() {
         var lol = date.getFullYear() + "-" + month + "-" + date.getDate().toString().padStart(2, "0");
         arr.push({ "ngay": lol, "thu": (date.getDay() + 1) });
     }
-    //chia thành các tuần từ thứ 2 đến CN
+    //chia thành các tuần từ thứ 2 to CN
     var tuan = []
     var check = false
     var check2 = false
@@ -48,14 +48,14 @@ function test() {
         var d = new Date(arr[i].ngay);
         var n = d.getDay();
         if (arr[i].thu != 2 && i < 7 && check2 == false) {
-            tuan.push(arr[i].ngay + ' đến ' + arr[7 - n].ngay)
+            tuan.push(arr[i].ngay + ' to ' + arr[7 - n].ngay)
             check2 = true
         }
         if (arr[i].thu == 2 && (i + 7) < arr.length) {
-            tuan.push(arr[i].ngay + ' đến ' + arr[i + 6].ngay)
+            tuan.push(arr[i].ngay + ' to ' + arr[i + 6].ngay)
         }
         if (arr[i].thu != 2 && (i + 7) > arr.length && check == false) {
-            tuan.push(arr[i + 1].ngay + ' đến ' + arr[arr.length - 1].ngay)
+            tuan.push(arr[i + 1].ngay + ' to ' + arr[arr.length - 1].ngay)
             check = true
         }
     }
@@ -67,8 +67,8 @@ function test() {
     var now = date1.getFullYear() + "-" + month.toString().padStart(2, "0") + "-" + date1.getDate();
     for (var u = 0; u < tuan.length; u++) {
         $("#chonTuan").append('<option value="' + tuan[u] + '">' + tuan[u] + '</option>');
-        dauTuan = tuan[u].split(" đến ")[0]
-        cuoiTuan = tuan[u].split(" đến ")[1]
+        dauTuan = tuan[u].split(" to ")[0]
+        cuoiTuan = tuan[u].split(" to ")[1]
         if ((dauTuan <= now) && (now <= cuoiTuan)) {
             $('#chonTuan option:selected').removeAttr('selected');
             $("#chonTuan option[value='" + tuan[u] + "']").attr('selected', 'selected');
@@ -89,8 +89,8 @@ var getDaysArray = function(start, end) {
 //lấy thông tin lịch trình học, làm việc
 function tuanoi() {
     var tuan = $("#chonTuan").val()
-    var dauTuan = tuan.split(" đến ")[0]
-    var cuoiTuan = tuan.split(" đến ")[1]
+    var dauTuan = tuan.split(" to ")[0]
+    var cuoiTuan = tuan.split(" to ")[1]
     var formData = {
             dauTuan: dauTuan,
             cuoiTuan: cuoiTuan
@@ -113,11 +113,11 @@ function tuanoi() {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
-                $("#time1").html('<div class="td">7:30 đến 9:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
-                $("#time2").html('<div class="td">9:45 đến 11:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
-                $("#time3").html('<div class="td">13:30 đến 15:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
-                $("#time4").html('<div class="td">15:45 đến 17:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
-                $("#time5").html('<div class="td">18:15 đến 20:15</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time1").html('<div class="td">7:30 to 9:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time2").html('<div class="td">9:45 to 11:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time3").html('<div class="td">13:30 to 15:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time4").html('<div class="td">15:45 to 17:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time5").html('<div class="td">18:15 to 20:15</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
                 $.each(response.classInfor, function(index, classInfor) {
                     $.each(classInfor.schedule, function(index, schedule) {
                         if (start <= schedule.date && schedule.date <= end) {
@@ -141,11 +141,11 @@ function tuanoi() {
 function typeTime(time) {
     var caLam
     console.log(time)
-    if (time == "7:30 đến 9:30") caLam = "time1"
-    if (time == "9:45 đến 11:45") caLam = "time2"
-    if (time == "13:30 đến 15:30") caLam = "time3"
-    if (time == "15:45 đến 17:45") caLam = "time4"
-    if (time == "18:15 đến 20:15") caLam = "time5"
+    if (time == "7:30 to 9:30") caLam = "time1"
+    if (time == "9:45 to 11:45") caLam = "time2"
+    if (time == "13:30 to 15:30") caLam = "time3"
+    if (time == "15:45 to 17:45") caLam = "time4"
+    if (time == "18:15 to 20:15") caLam = "time5"
     return caLam
 }
 
