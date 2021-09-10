@@ -19,7 +19,7 @@
         <div class="chatHistory">
             <div class="chatOption">
                 <h2>Chat</h2>
-                <input type='text' id='addChat' placeholder='tìm kiến hoặc thêm người chat'><button onclick='addChat() '>Search</button>
+                <input type='text' id='addChat' placeholder='Find or add conversation'><button onclick='addChat() '>Search</button>
             </div>
             <div class="history">
                 <% data1.forEach(function(data1) { %>
@@ -50,10 +50,9 @@
         </div>
         <div class='chat'>
             <div class='chatTitle'>
-                <h2>Conversation between
-                    <%=formData.sender %> and
-                        <%=formData.receiver %>
-                </h2>
+                Conversation between
+                <%=formData.sender %> and
+                    <%=formData.receiver %>
             </div>
             <div class="chatBox">
                 <div id='messContent'>
@@ -73,7 +72,7 @@
                                     </p>
                                 </div>
                                 <% } else { %>
-                                    <div style="width: 100%;padding: 0;margin: 0;text-align: center;">
+                                    <div style="width:100%;padding: 0;margin: 0;text-align: center;">
                                         <p>
                                             <%= message.ownermessenger %>
                                                 <%= message.messContent %>
@@ -181,7 +180,7 @@
         $(Room).css("font-weight", "normal");
         $('#receiver').val(receiver)
         $('#_idRoom').val(_idRoom)
-        $('.chatTitle').html("<h2>Conversation between " + name.value + " and " + receiver + "</h2>")
+        $('.chatTitle').html("Conversation between " + name.value + " and " + receiver)
         $('#messContent').html("")
         $.ajax({
             url: '/messenger/getMessenger',
