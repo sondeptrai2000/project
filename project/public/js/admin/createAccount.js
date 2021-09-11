@@ -406,8 +406,9 @@ function search(email) {
                     var progress = data.progess
                     progress.forEach((e) => {
                         $(".rightSide").append("<h3>Stage: " + e.stage + "</h3>")
+                        $(".rightSide").append("<div class='tr'><div class='td'>Subject</div><div class='td'>Status</div><div class='td'>ClassID</div></div>")
                         e.stageClass.forEach((e) => {
-                            if (e.classID != "") $(".rightSide").append("<div class='tr'><div class='td'>Name: " + e.name + " </div><div class='td'>Status: " + e.status + " </div><div class='td'><button onclick=copyID('" + e.classID + "')> Lấy ClassID</button></div></div>")
+                            if (e.classID != "") $(".rightSide").append("<div class='tr'><div class='td'>" + e.name + " </div><div class='td'> " + e.status + " </div><div class='td'><button onclick=copyID('" + e.classID + "')>Get ClassID</button></div></div>")
                         })
                     })
                     $(".rightSide").append("<h1>Thông tin phụ huynh</h1>")

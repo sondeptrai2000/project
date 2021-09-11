@@ -12,13 +12,13 @@ mongoose.set('useFindAndModify', false);
 
 
 var chatSchema = new mongoose.Schema({
-    person1: String,
-    person1Ava: String,
-    person2: String,
-    person2Ava: String,
+    person1: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
+    person2: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
     message: [{
+        ownermessengerID: String,
         ownermessenger: String,
         messContent: String,
+        time: { type: Date, default: Date.now }
     }],
     updateTime: { type: Date, default: Date.now }
 })

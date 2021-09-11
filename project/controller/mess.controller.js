@@ -30,28 +30,21 @@ class messtController {
         try {
             let token = req.cookies.token
             let decodeAccount = jwt.verify(token, 'minhson')
-            var sender = await AccountModel.findOne({ _id: decodeAccount }, { username: 1, avatar: 1, chat: 1 }).lean()
-            var receiver = await AccountModel.findOne({ username: req.body.studentName }, { avatar: 1, chat: 1 }).lean()
-            var receiverName = req.body.studentName
-            var senderName = sender.username
-            var person1ListChat = sender.chat
-            var person2ListChat = receiver.chat
-                //kiểm tra xem đã trò chuyện với nhau chưa
-            var check = findChat(person1ListChat, person2ListChat)
-                //chưa thì sẽ tạo mới cuộc trò chuyện
+            var sender = await AccountModel.findOne({ _id: decodeAccount }, { chat: 1 }).lean()
+            var receiver = await AccountModel.findOne({ _id: req.body.studentID }, { chat: 1 }).lean()
+            var person1ListChat = sender.chat;
+            var person2ListChat = receiver.chat;
+            //kiểm tra xem đã trò chuyện với nhau chưa
+            var check = findChat(person1ListChat, person2ListChat);
+            //chưa thì sẽ tạo mới cuộc trò chuyện
             if (check.check == false) {
                 var createConnection = {
-                    person1: sender.username,
-                    person1Ava: sender.avatar,
-                    person2: req.body.studentName,
-                    person2Ava: receiver.avatar,
-                    message: {
-                        ownermessenger: "Hệ thống",
-                        messContent: "Đã kết nối! Ấn vào để chat",
-                    }
+                    person1: sender._id,
+                    person2: receiver._id,
+                    message: { ownermessenger: "Hệ thống", messContent: "Đã kết nối! Ấn vào để chat", }
                 }
                 var data = await chatModel.create(createConnection)
-                await AccountModel.updateMany({ username: { $in: [senderName, receiverName] } }, { $push: { chat: data._id } })
+                await AccountModel.updateMany({ _id: { $in: [sender._id, receiver._id] } }, { $push: { chat: data._id } })
                 next();
             } else {
                 next();
@@ -65,47 +58,47 @@ class messtController {
 
     //render giao diện chat cùng với lịch sử chat
     async chatForm(req, res) {
-            try {
-                let token = req.cookies.token
-                let decodeAccount = jwt.verify(token, 'minhson')
-                var sender = await AccountModel.findOne({ _id: decodeAccount }, { username: 1, chat: 1, role: 1 }).lean()
-                var role = sender.role
-                var data1 = await chatModel.find({ _id: { $in: sender.chat } }, {
-                    // lấy tin nhắn cuối cùng trong mảng message
-                    message: { $slice: -1 },
-                }).sort({ updateTime: -1 }).lean()
-                if (data1.length == "0") {
-                    res.render("message/chatTrong.ejs", { role })
+        try {
+            let token = req.cookies.token
+            let decodeAccount = jwt.verify(token, 'minhson')
+            var sender = await AccountModel.findOne({ _id: decodeAccount }, { username: 1, chat: 1, role: 1 }).lean()
+                // lấy tin nhắn cuối cùng trong mảng message để hiển thị trong lịch sử chat
+            var data1 = await chatModel.find({ _id: { $in: sender.chat } }, { message: { $slice: -1 }, }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).sort({ updateTime: -1 }).lean();
+            if (data1.length == "0") {
+                res.render("message/chatTrong.ejs", { role })
+            } else {
+                //xác định người gửi trong đoạn chat đầu tiên để hiển thị
+                if (sender._id.toString() == data1[0].person1._id.toString()) {
+                    var formData = {
+                        senderID: data1[0].person1._id,
+                        senderName: data1[0].person1.username,
+                        receiverID: data1[0].person2._id,
+                        receiverName: data1[0].person2.username,
+                    }
                 } else {
-                    if (sender.username != data1[0].person1) {
-                        var formData = {
-                            sender: data1[0].person2,
-                            senderAva: data1[0].person2Ava,
-                            receiver: data1[0].person1,
-                            receiverAva: data1[0].person1Ava,
-                        }
+                    var formData = {
+                        senderID: data1[0].person2._id,
+                        senderName: data1[0].person2.username,
+                        receiverID: data1[0].person1._id,
+                        receiverName: data1[0].person1.username,
                     }
-                    if (sender.username != data1[0].person2) {
-                        var formData = {
-                            sender: data1[0].person1,
-                            senderAva: data1[0].person1Ava,
-                            receiver: data1[0].person2,
-                            receiverAva: data1[0].person2Ava,
-                        }
-                    }
-                    var listID = sender.chat
-                    var data = await chatModel.findOne({ _id: data1[0]._id }, { message: 1 }).lean()
-                    res.render("message/chatBoxHistory.ejs", { data1, data, formData, listID, role })
                 }
-            } catch (e) {    
-                if (e) {
-                    res.json('error')
-                }
+                //lấy list chat để join người user vào các phòng để nhận tin nhắn chat
+                var listID = sender.chat;
+                //lấy role để tùy biến cho header
+                var role = sender.role;
+                res.render("message/chatBoxHistory.ejs", { data1, formData, listID, role })
+            }
+        } catch (e) {    
+            if (e) {
+                res.json('error')
             }
         }
-        //lấy cuộc hội thoại
+    };
+
+    //lấy cuộc hội thoại
     getMessenger(req, res) {
-        chatModel.findOne({ _id: req.query._idRoom }).lean().exec(function(err, data) {
+        chatModel.findOne({ _id: req.query._idRoom }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).lean().exec(function(err, data) {
             if (err) {
                 res.json({ msg: 'error' });
             } else {

@@ -11,7 +11,7 @@
 .td {
     display: table-cell;
     padding: 2px;
-    width: auto;
+    width: 300px;
     border: #000000 solid 1px;
 }
 

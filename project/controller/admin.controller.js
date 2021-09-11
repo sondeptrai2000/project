@@ -371,10 +371,13 @@ class adminController {
                 var phuhuynh = req.body.phuhuynh
                 var role = student.role
                 var password = req.body.password
+                var password2 = req.body.password + "@123"
                 const salt = bcrypt.genSaltSync(saltRounds);
                 const hash = bcrypt.hashSync(password, salt);
+                const hash2 = bcrypt.hashSync(password2, salt);
                 student["avatar"] = fileLink
                 student["password"] = hash
+                phuhuynh["password"] = hash2
                 if (role === "teacher") {
                     await AccountModel.create(student)
                     res.json({ msg: 'success' });
@@ -407,7 +410,7 @@ class adminController {
     async doeditAccount(req, res) {
         try {
             var password = req.body.password
-            var password1 = req.body.password + "phuhuynh"
+            var password1 = req.body.password + "@123"
             var formData1 = req.body.formData1
             var formData2 = req.body.formData2
             if (password.length != 0) {

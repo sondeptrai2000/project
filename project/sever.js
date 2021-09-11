@@ -17,7 +17,7 @@ app.use(cookieParser())
 app.get('/', function(req, res) {
     res.clearCookie("token");
     res.clearCookie("username");
-    res.render('index/login')
+    res.render('index/SownEnglish')
 });
 
 
@@ -65,54 +65,32 @@ io.on("connection", function(socket) {
         // console.log("tao-room" + lol)
     })
 
-    socket.on("user-chat", function(data) {
-        var condition = {
-            person1: data.sender,
-            person2: data.receiver,
+    socket.on("user-chat", async function(data) {
+        try {
+            await chatModel.findOneAndUpdate({ _id: data._idRoom }, {
+                $push: {
+                    message: {
+                        ownermessengerID: data.senderID,
+                        ownermessenger: data.senderName,
+                        messContent: data.mess,
+                    }
+                },
+            })
+            socket.Phong = data._idRoom
+            io.sockets.in(socket.Phong).emit("server-chat", data)
+        } catch (e) {
+            console.log(e)
         }
-        var condition1 = {
-            person1: data.receiver,
-            person2: data.sender,
-        }
-        chatModel.findOneAndUpdate({ $or: [condition, condition1] }, {
-            $push: {
-                message: {
-                    ownermessenger: data.sender,
-                    messContent: data.mess,
-                }
-            },
-            updateTime: new Date
-        }, function(err, data) {
-            if (err) {
-                // console.log("lỗi khi thêm tin nhắn vào đb")
-            } else {
-                // console.log("lưu tiin nhắn ok")
-            }
-        })
-        socket.Phong = data._idRoom
-        io.sockets.in(socket.Phong).emit("server-chat", data)
     })
 
     socket.on("typing", function(data) {
         socket.Phong = data._idRoom
-        var action = 'typing'
-        var infor = {
-            action: action,
-            person: data.sender,
-            _idRoom: data._idRoom
-        }
-        io.sockets.in(socket.Phong).emit("Typing", infor)
+        io.sockets.in(socket.Phong).emit("Typing", data)
     })
 
     socket.on("stopTyping", function(data) {
         socket.Phong = data._idRoom
-        var action = 'notTyping'
-        var infor = {
-            action: action,
-            person: data.sender,
-            _idRoom: data._idRoom
-        }
-        io.sockets.in(socket.Phong).emit("notTyping", infor)
+        io.sockets.in(socket.Phong).emit("notTyping", data)
     })
 });
 

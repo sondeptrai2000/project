@@ -2,7 +2,7 @@ const consultingInformationModel = require('../models/consultingInformation');
 
 class indexController {
     home(req, res) {
-        res.render('index/login')
+        res.render('index/SownEnglish')
             // res.json('Trang chủ của trung tâm')
     }
 
