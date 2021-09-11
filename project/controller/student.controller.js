@@ -131,9 +131,9 @@ class studentController {
         try {
             var check = await AccountModel.find({ email: req.body.formData1.email }).lean()
             var checkphone = await AccountModel.find({ phone: req.body.formData1.phone }).lean()
-            if (check.length != 1) {
+            if (check.length > 1) {
                 res.json({ msg: 'Account already exists' })
-            } else if (checkphone.length != 1) {
+            } else if (checkphone.length > 1) {
                 res.json({ msg: 'Phone already exists' })
             } else {
                 var password = req.body.password
@@ -152,8 +152,10 @@ class studentController {
                     if (!response) res.json({ msg: 'error' });
                     formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
                     var oldImg = req.body.oldLink
-                    oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
-                    await driveService.files.delete({ fileId: oldImg })
+                    if (oldImg) {
+                        oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
+                        await driveService.files.delete({ fileId: oldImg })
+                    }
                 }
                 await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
                 res.json({ msg: 'success', data: data });

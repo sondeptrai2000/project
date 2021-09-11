@@ -10,33 +10,6 @@ body {
     margin: 0;
 }
 
-header {
-    height: 60px;
-    width: 100%;
-    color: black;
-    text-align: center;
-    padding: 0;
-    margin: 0;
-}
-
-#option .td {
-    width: auto;
-    padding: 0;
-    margin: 0;
-    font-size: 20px;
-    float: right;
-}
-
-header li {
-    padding: 0;
-    height: 100%;
-    float: left;
-    width: 170.5px;
-    cursor: pointer;
-    text-align: center;
-    line-height: 60px;
-}
-
 .body {
     box-sizing: border-box;
     height: 560px;
@@ -57,26 +30,12 @@ header li {
     border-right: solid 3px black;
 }
 
-.rightSide {
-    padding: 10px;
+#option .td {
+    width: auto;
+    padding: 0;
     margin: 0;
-    width: 30%;
-    height: 554px;
+    font-size: 20px;
     float: right;
-}
-
-.rightSide,
-.leftSide {
-    overflow: auto;
-    overflow: -moz-scrollbars-none;
-    -ms-overflow-style: none;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.rightSide::-webkit-scrollbar {
-    width: 0 !important;
-    display: none;
 }
 
 #option input,

@@ -10,25 +10,26 @@
 </head>
 
 <body>
-    <div class="updateProfileOut" style="text-align: center; display:none">
+      <div class="updateProfileOut" style="display:none">
         <div class="updateProfile">
+            <input type='hidden' id='idProfileUpdate'>
             <h2>Update profile</h2>
             <div>
                 <img id='currentAvatar' style='max-width:auto;max-height:auto'></img>
-                <input type="hidden" id="avatarOldProfile">
+                <input type='hidden' id='avatarOldProfile'></input>
                 <input type='file' id='myFile'>
-                Full Name: <input id='usernameUpdate'></input>
+                Name:<input id='usernameUpdate'></input>
                 Password:<input id='newPassWord' placeholder="Input New password if you wanna change"></input>
-                Gender: <input id='genderUpdate'></input>
-                Email: <input id='emailUpdate'></input>
-                Phone: <input id='phoneUpdate'></input>
-                BirthDay: <input id='birthdayUpdate'></input>
-                Address: <input id='addressUpdate'></input>
+                Gender:<input id='genderUpdate'></input>
+                Email:<input id='emailUpdate'></input>
+                Phone:<input id='phoneUpdate'></input>
+                BirthDay:<input id='birthdayUpdate' type="date"></input>
+                Address:<input id='addressUpdate'></input>
                 <button onclick="doUpdateProfile()">Update</button>
             </div>
         </div>
     </div>
-     <header> {{> studentHeader }}</header>
+     <header> {{> guardianHeader }}</header>
 
     <div class="content">
         <div id="studentProfile">

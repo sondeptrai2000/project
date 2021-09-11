@@ -24,7 +24,7 @@ $(document).ready(function() {
         filereader.onload = function(event) {
             fileData = event.target.result;
             var dataURL = filereader.result;
-            $("#output").attr("src", dataURL);
+            $("#currentAvatar").attr("src", dataURL);
         };
         myFile = $('#myFile').prop('files')[0];
         console.log('myfile', myFile)
@@ -179,14 +179,15 @@ function studentProfile() {
 }
 //đưa thông tin cũ vào form update thông tin
 function updateProfile() {
-    $("#avatarOldProfile").val($('#avatarProfile').attr('src'));
     $("#currentAvatar").attr("src", $('#avatarProfile').attr('src'));
-    $("#usernameUpdate").val($("#usernameProfile").text());
-    $("#genderUpdate").val($("#genderProfile").text());
-    $("#emailUpdate").val($("#emailProfile").text());
-    $("#phoneUpdate").val($("#phoneProfile").text());
-    $("#birthdayUpdate").val($("#birthdayProfile").text());
-    $("#addressUpdate").val($("#addressProfile").text());
+    $("#avatarOldProfile").val($('#avatarProfile').attr('src'));
+    $("#idProfileUpdate").html($("#idProfile").text());
+    $("#usernameUpdate").val($("#usernameProfile").text().split("Full Name: ")[1]);
+    $("#genderUpdate").val($("#genderProfile").text().split("Gender: ")[1]);
+    $("#emailUpdate").val($("#emailProfile").text().split("Email: ")[1]);
+    $("#phoneUpdate").val($("#phoneProfile").text().split("Phone: ")[1]);
+    $("#birthdayUpdate").val($("#birthdayProfile").text().split("BirthDay: ")[1]);
+    $("#addressUpdate").val($("#addressProfile").text().split("Address: ")[1]);
     $(".updateProfileOut").toggle(2000);
 }
 
@@ -197,14 +198,15 @@ function doUpdateProfile() {
     }
     var password = $("#newPassWord").val()
     var formData1 = {
-        sex: $("#genderUpdate").val().split("Gender: ")[1],
-        username: $("#usernameUpdate").val().split("Full Name: ")[1],
-        email: $("#emailUpdate").val().split("Email: ")[1],
-        phone: $("#phoneUpdate").val().split("Phone: ")[1],
-        address: $("#addressUpdate").val().split("Address: ")[1],
-        birthday: $("#birthdayUpdate").val().split("BirthDay: ")[1],
+        sex: $("#genderUpdate").val(),
+        username: $("#usernameUpdate").val(),
+        email: $("#emailUpdate").val(),
+        phone: $("#phoneUpdate").val(),
+        address: $("#addressUpdate").val(),
+        birthday: $("#birthdayUpdate").val(),
         avatar: $('#currentAvatar').attr('src'),
     };
+    console.log(formData1)
     $.ajax({
         url: '/student/doeditAccount',
         method: 'post',

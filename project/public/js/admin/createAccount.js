@@ -146,7 +146,7 @@ function routeType(action) {
                 if (action === 'create') {
                     $.each(response.data, function(index, data) {
                         $.each(data.routeSchedual, function(index, routeSchedual) {
-                            var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
+                            var update = "<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>"
                             $("#levelS").append(update);
                             $("#Aim").append(update);
                         });
@@ -155,7 +155,7 @@ function routeType(action) {
                     $.each(response.data, function(index, data) {
                         if ($("#routeTypeSUpdate").val() == data.routeName) {
                             $.each(data.routeSchedual, function(index, routeSchedual) {
-                                var update = "<option value=" + routeSchedual.stage + ">" + routeSchedual.stage + "</option>"
+                                var update = "<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>"
                                 $("#levelSUpdate").append(update);
                                 $("#AimUpdate").append(update);
                             });
@@ -186,7 +186,7 @@ function role(action) {
                     if (response.msg == 'success') {
                         console.log(response.data)
                         $.each(response.data, function(index, data) {
-                            var update = "<option value=" + data.routeName + ">" + data.routeName + "</option>"
+                            var update = "<option value='" + data.routeName + "'>" + data.routeName + "</option>"
                             $("#routeTypeSUpdate").append(update)
                         });
                     }

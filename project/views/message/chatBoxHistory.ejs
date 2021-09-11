@@ -165,6 +165,7 @@
                         var receiverName = response.data.person1.username
                     }
                     $('#receiverAva').attr("src", receiverAva);
+                    $('#senderAva').attr("src", senderAva);
                     $('#receiverName').val(receiverName)
                     $('.chatTitle').html("Conversation between " + senderName + " and " + receiverName)
                     $.each(response.data.message, function(index, message) {
