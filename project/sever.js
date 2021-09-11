@@ -73,8 +73,11 @@ io.on("connection", function(socket) {
                         ownermessengerID: data.senderID,
                         ownermessenger: data.senderName,
                         messContent: data.mess,
+                        time: new Date
                     }
                 },
+                updateTime: new Date
+
             })
             socket.Phong = data._idRoom
             io.sockets.in(socket.Phong).emit("server-chat", data)

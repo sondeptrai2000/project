@@ -97,55 +97,57 @@ class messtController {
     };
 
     //lấy cuộc hội thoại
-    getMessenger(req, res) {
-        chatModel.findOne({ _id: req.query._idRoom }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).lean().exec(function(err, data) {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.json({ msg: 'success', data });
-            }
-        })
+    async getMessenger(req, res) {
+        try {
+            var data = await chatModel.findOne({ _id: req.query._idRoom }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).lean()
+            res.json({ msg: 'success', data });
+
+        } catch (e) {
+            console.log(e);
+            res.json({ msg: 'error' });
+        }
     }
 
 
     async addChat(req, res) {
         try {
-            var receiverName = req.body.receiver
-            var data = await AccountModel.findOne({ username: receiverName }, { username: 1, avatar: 1, chat: 1 }).lean()
-            var receiverAva = data.avatar
+            //lấy thông tin người muốn kết nối
+            var condition = req.body.condition
+            console.log(req.body.condition)
+            var receiver = await AccountModel.findOne(condition, { username: 1, avatar: 1, chat: 1 }).lean()
             let token = req.cookies.token
             let decodeAccount = jwt.verify(token, 'minhson')
             var sender = await AccountModel.findOne({ _id: decodeAccount }, { username: 1, avatar: 1, chat: 1 }).lean()
-            var senderName = sender.username
-            var senderAva = sender.avatar
-            var person1ListChat = sender.chat
-            var person2ListChat = data.chat
-                //tìm kiếm xem đã từng chat vs nhau chưa
-            var check = findChat(person1ListChat, person2ListChat)
-                //nếu chưa sẽ tạo cuộc trò chuyện mới
-            if (check.check == false) {
-                var createConnection = {
-                    person1: senderName,
-                    person1Ava: senderAva,
-                    person2: receiverName,
-                    person2Ava: receiverAva,
-                    message: {
-                        ownermessenger: "Hệ thống",
-                        messContent: "Đã kết nối! Ấn vào để chat",
+            if (receiver && receiver._id.toString() != sender._id.toString()) {
+                var person1ListChat = sender.chat
+                var person2ListChat = receiver.chat
+                    //tìm kiếm xem đã từng chat vs nhau chưa
+                var check = findChat(person1ListChat, person2ListChat)
+                    //nếu chưa sẽ tạo cuộc trò chuyện mới
+                if (check.check == false) {
+                    var createConnection = {
+                        person1: sender._id,
+                        person2: receiver._id,
+                        message: {
+                            ownermessenger: "Hệ thống",
+                            messContent: "Đã kết nối! Ấn vào để chat",
+                        }
                     }
+                    var data = await chatModel.create(createConnection)
+                    await AccountModel.updateMany({ _id: { $in: [receiver._id, sender._id] } }, { $push: { chat: data._id } })
+                    var idRoom = data._id
+                    res.json({ msg: 'createSuccess', receiver, idRoom });
+                } else {
+                    //nếu đã chat vs nhau rồi sẽ trả về cuộc trò chuyện
+                    var data = await chatModel.findOne({ _id: check._id }).lean()
+                    var receiverID = receiver._id
+                    var idRoom = data._id
+                    res.json({ msg: 'conversation is already exist ', receiverID, idRoom });
                 }
-                var data = await chatModel.create(createConnection)
-                await AccountModel.updateMany({ username: { $in: [senderName, receiverName] } }, { $push: { chat: data._id } })
-                var _idRoom = data._id
-                res.json({ msg: 'tạo cuộc hội thoại thành công', senderName, _idRoom, receiverName, senderAva, receiverAva });
-            } else {
-                //nếu đã chat vs nhau rồi sẽ trả về cuộc trò chuyện
-                var data = await chatModel.findOne({ _id: check._id }).lean()
-                res.json({ msg: 'cuộc hội thoại đã được tạo', senderName, data, receiverName, senderAva, receiverAva });
-            }
+            } else { res.json({ msg: 'user not found' }) }
         } catch (error) {
             console.log(error)
-            res.json({ msg: 'user not found' })
+            res.json({ msg: 'error' })
         }
     }
 }
