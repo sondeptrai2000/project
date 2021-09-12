@@ -111,8 +111,15 @@
     display: none;
 }
 
+.typeRole,
+.typeRoleUpdate {
+    margin-top: -10px !important;
+    padding-top: 0 !important;
+}
+
 .button {
     font-size: 18px;
+    width: auto !important;
 }
 
 #createAccount div,

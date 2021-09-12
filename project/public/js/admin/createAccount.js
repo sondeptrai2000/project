@@ -51,15 +51,13 @@ $("#myInput").on("keyup", function() {
 
 
 // làm trống thông tin tạo tài khoản
-function reset() {
-    document.getElementById('myFile').value = ''
-    document.getElementById('username').value = ''
-    document.getElementById('password').value = ''
-    document.getElementById('email').value = ''
-    document.getElementById('levelS').value = ''
-    document.getElementById('phone').value = ''
-    document.getElementById('address').value = ''
-    document.getElementById('output').src = ''
+async function reset() {
+    console.log(myFile)
+    $("#createAccount input").val('');
+    $("#output").attr('src', '');
+    fileData = undefined
+    myFile = undefined
+    console.log(myFile)
 }
 
 
@@ -169,35 +167,57 @@ function routeType(action) {
         }
     })
 }
-
-function role(action) {
-    if (action === 'create') var accountRole = $('#role').val();
-    if (action === 'update') {
-        var accountRole = $('#roleUpdate').val();
-        var currentRole = $("#currentRole").val()
-        if ((currentRole == "techer") != accountRole) {
-            $('.typeRole').slideDown()
-            $("#routeTypeSUpdate").html("")
-            $.ajax({
-                url: '/admin/getRoute',
-                method: 'get',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.msg == 'success') {
-                        console.log(response.data)
-                        $.each(response.data, function(index, data) {
-                            var update = "<option value='" + data.routeName + "'>" + data.routeName + "</option>"
-                            $("#routeTypeSUpdate").append(update)
-                        });
-                    }
-                }
-            })
-        }
+$("#role").change(async function() {
+    var accountRole = $('#role').val();
+    if (accountRole == "teacher") {
+        $('.typeRole').slideUp();
+        $('.typeRole').html('');
     }
-    if (accountRole === "teacher") $('.typeRole').slideUp()
-    if (accountRole !== "teacher") $('.typeRole').slideDown()
+    if (accountRole != "teacher") {
+        $('.typeRole').html(" Chọn lộ trình học<select id='routeTypeS' onchange=routeType('create')></select>Level<select id='levelS'></select>Aim<select id='Aim'></select>Guardian name:<input type='text' name='guardianName'>Guardian phone: <input type='number' name='guardianPhone'>Guardian email:<input type='text' name='guardianEmail'>")
+        getRoute('create')
+        $('.typeRole').slideDown()
+    }
+});
 
+$("#roleUpdate").change(async function() {
+    console.log("Vaof")
+    var accountRole = $('#roleUpdate').val();
+    if (accountRole == "teacher") {
+        $('.typeRoleUpdate').slideUp();
+        $('.typeRoleUpdate').html('');
+    }
+    if (accountRole != "teacher") {
+        $('.typeRoleUpdate').html(" Chọn lộ trình học<select id='routeTypeSUpdate' onchange=routeType('update')></select>Level<select id='levelSUpdate'></select>Aim<select id='AimUpdate'></select>Guardian name:<input type='text' name='guardianNameUpdate'>Guardian phone: <input type='number' name='guardianPhoneUpdate'>Guardian email:<input type='text' name='guardianEmailUpdate'>")
+        getRoute('update')
+        $('.typeRoleUpdate').slideDown()
+    }
+});
+
+
+function getRoute(type) {
+    var id
+    if (type == 'create') id = "#routeTypeS";
+    if (type == 'update') id = "#routeTypeSUpdate";
+    console.log(id)
+    $.ajax({
+        url: '/admin/getRoute',
+        method: 'get',
+        dataType: 'json',
+        success: function(response) {
+            if (response.msg == 'success') {
+                console.log(response.data)
+                $.each(response.data, function(index, data) {
+                    var update = "<option value='" + data.routeName + "'>" + data.routeName + "</option>"
+                    $(id).append(update)
+                });
+            }
+        }
+    })
 }
+
+
+
 
 //chuyền thông tin cũ vào form cập nhật thông tin
 function updateForm(id) {
@@ -225,7 +245,7 @@ function updateForm(id) {
     $("input[name='guardianNameUpdate']").val(infor4[11])
     $("input[name='guardianPhoneUpdate']").val(infor4[13])
     $("input[name='guardianEmailUpdate']").val(infor4[12])
-    role('update');
+    $("#roleUpdate").change()
     $.ajax({
         url: '/admin/editAccount',
         method: 'get',
@@ -258,7 +278,8 @@ function updateForm(id) {
 }
 
 //thực hiện đăng ký và lưu tài khỏan vào đb
-function signUp() {
+$("#myform").submit(function(event) {
+    event.preventDefault();
     var role = $("#role").val()
     var formData1 = {
         sex: $("#gender").val(),
@@ -269,18 +290,19 @@ function signUp() {
         address: $("#address").val(),
         birthday: $("#birthday").val(),
     };
+    var formData2
     if (role != "teacher") {
         formData1["stage"] = $("#levelS").val()
         formData1["routeName"] = $("#routeTypeS").val()
         formData1["aim"] = $("#Aim").val()
         formData1["startStage"] = $("#levelS").val()
+        formData2 = {
+            role: "guardian",
+            username: $("input[name='guardianName']").val(),
+            phone: $("input[name='guardianPhone']").val(),
+            email: $("input[name='guardianEmail']").val(),
+        };
     }
-    var formData2 = {
-        role: "guardian",
-        username: $("input[name='guardianName']").val(),
-        phone: $("input[name='guardianPhone']").val(),
-        email: $("input[name='guardianEmail']").val(),
-    };
     $.ajax({
         url: '/admin/doCreateAccount',
         method: 'post',
@@ -307,9 +329,13 @@ function signUp() {
             alert('server error');
         }
     })
-}
-//cập nhạta thông tin tk
-function doUpdate() {
+
+});
+
+//thực hiện cập nhật thông tin tài khỏan vào đb
+
+$("#myformUpdate").submit(function(event) {
+    event.preventDefault();
     if (!fileDataUpdate) {
         fileDataUpdate = "none"
     }
@@ -323,23 +349,19 @@ function doUpdate() {
         address: $("#addressUpdate").val(),
         birthday: $("#birthdayUpdate").val(),
     };
-    if (role === "teacher") {
-        formData1["stage"] = "none"
-        formData1["routeName"] = "none"
-        formData1["aim"] = "none"
-    } else {
+    var formData2
+
+    if (role != "teacher") {
         formData1["stage"] = $("#levelSUpdate").val()
         formData1["routeName"] = $("#routeTypeSUpdate").val()
         formData1["aim"] = $("#AimUpdate").val()
+        formData2 = {
+            role: "guardian",
+            username: $("input[name='guardianNameUpdate']").val(),
+            phone: $("input[name='guardianPhoneUpdate']").val(),
+            email: $("input[name='guardianEmailUpdate']").val(),
+        }
     }
-
-    var formData2 = {
-        role: "guardian",
-        username: $("input[name='guardianNameUpdate']").val(),
-        phone: $("input[name='guardianPhoneUpdate']").val(),
-        email: $("input[name='guardianEmailUpdate']").val(),
-    };
-
     $.ajax({
         url: '/admin/doeditAccount',
         method: 'post',
@@ -364,7 +386,7 @@ function doUpdate() {
             alert('server error');
         }
     })
-}
+})
 
 
 //tìm kiếm thông tin qua email hoặc số điện thoại cho học sinh
