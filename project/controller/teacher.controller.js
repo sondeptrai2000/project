@@ -319,43 +319,7 @@ class teacherController {
         }
     }
 
-    async doeditAccount(req, res) {
-        try {
-            var check = await AccountModel.find({ email: req.body.formData1.email }).lean()
-            var checkphone = await AccountModel.find({ phone: req.body.formData1.phone }).lean()
-            if (check.length != 1) {
-                res.json({ msg: 'Account already exists' })
-            } else if (checkphone.length != 1) {
-                res.json({ msg: 'Phone already exists' })
-            } else {
-                var password = req.body.password
-                var formData1 = req.body.formData1
-                if (password.length != 0) {
-                    const salt = bcrypt.genSaltSync(saltRounds);
-                    const hash = bcrypt.hashSync(password, salt);
-                    formData1["password"] = hash
-                }
-                if (req.body.file != "none") {
-                    var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
-                    var image = req.body.file;
-                    var data = image.split(',')[1];
-                    fs.writeFileSync(path, data, { encoding: 'base64' });
-                    var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
-                    if (!response) res.json({ msg: 'error' });
-                    formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
-                    var oldImg = req.body.oldLink
-                    console.log(oldImg)
-                    oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
-                    await driveService.files.delete({ fileId: oldImg })
-                }
-                await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
-                res.json({ msg: 'success', data: data });
-            }
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    }
+
 }
 
 

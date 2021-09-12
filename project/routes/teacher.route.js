@@ -8,7 +8,6 @@ teacherRouter.get('/', teacherController.teacherHome)
 
 //Account
 teacherRouter.get('/teacherProfile', teacherController.teacherProfile)
-teacherRouter.post('/doeditAccount', teacherController.doeditAccount)
 
 //liên quan đến lớp học
 teacherRouter.get('/allClass/:id', teacherController.allClass)

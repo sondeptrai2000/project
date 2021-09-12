@@ -79,25 +79,4 @@
 </body>
 
 <script src="/js/teacher/teacherHome.js"></script>
-
-<script>
-    $(document).ready(function () {
-        test()
-        $('header li').hover(function () {
-            $(this).find("div").slideDown()
-        }, function () {
-            $(this).find("div").hide(500)
-        });
-
-        $(window).on('click', function (e) {
-            if ($(e.target).is('.updateProfileOut')) {
-                $('.updateProfileOut').slideUp(1500);
-            }
-        });
-
-    });
-
-
-</script>
-
 </html>

@@ -84,7 +84,7 @@ function doUpdateProfile() {
         avatar: $('#currentAvatar').attr('src'),
     };
     $.ajax({
-        url: '/teacher/doeditAccount',
+        url: '/account/doeditAccount',
         method: 'post',
         dataType: 'json',
         data: {

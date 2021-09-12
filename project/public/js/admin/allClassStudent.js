@@ -49,7 +49,7 @@ function getClass() {
     });
 }
 
-//xem danh sách điểm danh của chính mình
+//xem danh sách điểm danh của học sinh
 function myAttended(classID) {
     $.ajax({
         url: '/student/myAttended',

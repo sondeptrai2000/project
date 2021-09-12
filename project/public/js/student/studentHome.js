@@ -208,7 +208,7 @@ function doUpdateProfile() {
     };
     console.log(formData1)
     $.ajax({
-        url: '/student/doeditAccount',
+        url: '/account/doeditAccount',
         method: 'post',
         dataType: 'json',
         data: {

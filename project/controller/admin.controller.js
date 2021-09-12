@@ -409,39 +409,47 @@ class adminController {
 
     async doeditAccount(req, res) {
         try {
-            var password = req.body.password
-            var password1 = req.body.password + "@123"
-            var formData1 = req.body.formData1
-            var formData2 = req.body.formData2
-            if (password.length != 0) {
-                const salt = bcrypt.genSaltSync(saltRounds);
-                const hash = bcrypt.hashSync(password, salt);
-                const salt1 = bcrypt.genSaltSync(saltRounds);
-                const hash1 = bcrypt.hashSync(password1, salt);
-                formData1["password"] = hash
-                formData2["password"] = hash1
-            }
-            if (req.body.file != "none") {
-                var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
-                var image = req.body.file;
-                var data = image.split(',')[1];
-                fs.writeFileSync(path, data, { encoding: 'base64' });
-                var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
-                if (!response) res.json({ msg: 'error' });
-                formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
-                var oldImg = req.body.oldLink
-                oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
-                await driveService.files.delete({ fileId: oldImg })
+            var check = await AccountModel.find({ email: req.body.formData1.email }).lean()
+            var checkphone = await AccountModel.find({ phone: req.body.formData1.phone }).lean()
+            if (check.length > 1) {
+                res.json({ msg: 'Account already exists' })
+            } else if (checkphone.length > 1) {
+                res.json({ msg: 'Phone already exists' })
             } else {
-                formData1["avatar"] = req.body.oldLink
+                var password = req.body.password
+                var password1 = req.body.password + "@123"
+                var formData1 = req.body.formData1
+                var formData2 = req.body.formData2
+                if (password.length != 0) {
+                    const salt = bcrypt.genSaltSync(saltRounds);
+                    const hash = bcrypt.hashSync(password, salt);
+                    const salt1 = bcrypt.genSaltSync(saltRounds);
+                    const hash1 = bcrypt.hashSync(password1, salt);
+                    formData1["password"] = hash
+                    formData2["password"] = hash1
+                }
+                if (req.body.file != "none") {
+                    var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
+                    var image = req.body.file;
+                    var data = image.split(',')[1];
+                    fs.writeFileSync(path, data, { encoding: 'base64' });
+                    var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
+                    if (!response) res.json({ msg: 'error' });
+                    formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
+                    var oldImg = req.body.oldLink
+                    oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
+                    await driveService.files.delete({ fileId: oldImg })
+                } else {
+                    formData1["avatar"] = req.body.oldLink
+                }
+                if (formData1.role == "teacher") {
+                    await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
+                } else {
+                    await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
+                    await AccountModel.findOneAndUpdate({ relationship: req.body.id }, formData2)
+                }
+                res.json({ msg: 'success', data: data });
             }
-            if (formData1.role == "teacher") {
-                await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
-            } else {
-                await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
-                await AccountModel.findOneAndUpdate({ relationship: req.body.id }, formData2)
-            }
-            res.json({ msg: 'success', data: data });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
