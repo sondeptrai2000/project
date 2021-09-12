@@ -39,20 +39,20 @@ function getAllRoute() {
 
 function addStage(type) {
     if (type == "create") {
-        var add = "<div>Stage: <input type='text' name='stageTest'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStage') > <i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'create')><i class='fas fa-plus-square'></i></button></div>"
+        var add = "<div>Stage: <input type='text' name='stageTest'required/><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStage') > <i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'create')><i class='fas fa-plus-square'></i></button></div>"
         $('#addStage').append(add)
     } else {
-        var add = "<div>Stage: <input type='text' name='stageTestUpdate'><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStageUpdate') ><i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
+        var add = "<div>Stage: <input type='text' name='stageTestUpdate'required/><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStageUpdate') ><i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
         $('#addStageUpdate').append(add)
     }
 }
 
 function addClass(test, type) {
     if (type == "create") {
-        var add = "<div class='route'>Route: <input type='text' name='classIn'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
+        var add = "<div class='route'>Route: <input type='text' name='classIn' required/><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
         test.append(add)
     } else {
-        var add = "<div class='route'>Route: <input type='text' name='classInUpdate'><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
+        var add = "<div class='route'>Route: <input type='text' name='classInUpdate'required/><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
         test.append(add)
     }
 }
@@ -107,7 +107,8 @@ function search() {
     })
 }
 
-function doCreateRoute() {
+$("#doCreateRoute").submit(async function(event) {
+    event.preventDefault();
     var schedule = []
     $("input[name='stageTest']").each(function(index, e) {
         var routeabcd = []
@@ -138,9 +139,10 @@ function doCreateRoute() {
             alert('server error');
         }
     })
-}
+})
 
-function doUpdateRoute() {
+$("#doUpdateRoute").submit(async function(event) {
+    event.preventDefault();
     var schedule = []
     var stageMoney = [];
     $("input[name='stageMoneyUpdate']").each(function(index, e) {
@@ -153,7 +155,6 @@ function doUpdateRoute() {
         })
         schedule.push({ stage: $(this).val(), price: stageMoney[index], routeabcd: routeabcd })
     })
-    console.log(schedule)
     var formData = {
         id: $("#routeIDUpdate").val(),
         schedule: schedule,
@@ -174,7 +175,7 @@ function doUpdateRoute() {
             alert('server error');
         }
     })
-}
+})
 
 async function updateRoute(id) {
     $("#routeIDUpdate").val(id)

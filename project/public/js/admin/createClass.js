@@ -127,7 +127,7 @@ function updateScheduleForm(scheduleID, classID) {
 }
 
 //hiênr thị các phòng trống để giáo viên giảng dạy khi cập nhật, chuyển lịch giảng dạy
-function cahocUpdate() {
+$("#cahocUpdate").change(async function() {
     var date = new Date($("input[name='dateScheduleUpdate']").val())
     var dayOfWeek = (date.getDay() + 1)
     if (dayOfWeek == '1') {
@@ -159,10 +159,12 @@ function cahocUpdate() {
             alert('server error');
         }
     })
-}
+});
+
 
 //thực hiện cập nhật, chuyển đổ lịch giảng dạy cho giáo viên
-function SubmitupdateScheduleForm() {
+$("#SubmitupdateScheduleForm").submit(async function(event) {
+    event.preventDefault();
     var date = new Date($("input[name='dateScheduleUpdate']").val())
     var dayOfWeek = '0' + (date.getDay() + 1)
     if (dayOfWeek == '01') dayOfWeek = "08"
@@ -197,7 +199,7 @@ function SubmitupdateScheduleForm() {
             alert('server error');
         }
     });
-}
+})
 
 function deleteClass(id) {
     if (confirm("Are you sure you want to delete this?")) {
@@ -383,7 +385,7 @@ var getDaysArray = function(start, end) {
 function tuan() {
     $("#datlich").html("")
     for (var i = 0; i < $("#Schedule").val(); i++) {
-        $("#datlich").append('<h4>Day ' + (i + 1) + ':</h4><input type="number" placeholder="Enter day of week" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8 onchange=getTime("' + i + '")>Time: <select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"></select>Room:<select class="Room" id="Room' + i + '"></select>')
+        $("#datlich").append('<h4>Day ' + (i + 1) + ':</h4><input type="number" placeholder="Enter day of week" class ="buoihocthu" name="Schedule' + i + '" min=2 max=8 onchange=getTime("' + i + '") required/>Time: <select class= "cahoc" id="cahoc' + i + '" onchange="getThu(' + i + ')"></select>Room:<select class="Room" id="Room' + i + '"></select>')
     }
 }
 //lấy các ca làm của giáo viên trong ngày đã chọn (tránh trường hợp 1 giáo viên dạy chung 1 ca làm và ở 2 phòng khác nhau )
@@ -445,8 +447,9 @@ function getThu(i) {
     })
 }
 
-//tiến hành tạo lớp
-async function abc() {
+//thực hiện đăng ký và lưu tài khỏan vào đb
+$("#myform").submit(async function(event) {
+    event.preventDefault();
 
     var studentID = []
     var listStudent = []
@@ -534,7 +537,7 @@ async function abc() {
         }
     })
 
-}
+})
 
 //lấy thông tin của lộ trình học
 function routeType() {

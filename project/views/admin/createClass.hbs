@@ -29,74 +29,79 @@
 
     <div class="updateScheduleFormOut" style="display: none;">
         <div class="updateSchedualContent">
-            <div class='tr'>
-                <div class='td' style="width:5%;">Type</div>
-                <div class='td' style="width:30%;">Date</div>
-                <div class='td' style="width:10%;">Day of week</div>
-                <div class='td' style="width:30%;">Room</div>
-                <div class='td' style="width:25%;">Time</div>
-            </div>
-            <div class='tr' id="oldSchudule"></div>
-            <div class='tr'>
-                <input name="updateScheduleID" type="hidden">
-                <input name="updateScheduleClassID" type="hidden">
-                <div class='td'>New</div>
-                <div class='td'>Date: <input type="date" name="dateScheduleUpdate" style="font-size:18px;"></div>
-                <div class="td" id="dayOfWeekUpdate"></div>
-                <div class='td'>
-                    Available room: <select id="roomUpdate"> </select>
+            <form id='SubmitupdateScheduleForm'>
+                <div class='tr'>
+                    <div class='td' style="width:5%;">Type</div>
+                    <div class='td' style="width:30%;">Date</div>
+                    <div class='td' style="width:10%;">Day of week</div>
+                    <div class='td' style="width:30%;">Room</div>
+                    <div class='td' style="width:25%;">Time</div>
                 </div>
-                <div class='td'>
-                    <select class="cahocUpdate" id="cahocUpdate" style="font-size:18px;" onchange="cahocUpdate()">
-                        <option value="7:30 to 9:30">7:30 to 9:30</option>
-                        <option value="9:45 to 11:45">9:45 to 11:45</option>
-                        <option value="13:30 to 15:30">13:30 to 15:30</option>
-                        <option value="15:45 to 17:45">15:45 to 17:45</option>
-                        <option value="18:15 to 20:15">18:15 to 20:15</option>
-                    </select>
+                <div class='tr' id="oldSchudule"></div>
+                <div class='tr'>
+                    <input name="updateScheduleID" type="hidden">
+                    <input name="updateScheduleClassID" type="hidden">
+                    <div class='td'>New</div>
+                    <div class='td'><input type="date" name="dateScheduleUpdate" style="font-size:18px;" required /></div>
+                    <div class="td" id="dayOfWeekUpdate"></div>
+                    <div class='td'>
+                        Available room: <select id="roomUpdate" style="font-size:18px;"> </select>
+                    </div>
+                    <div class='td'>
+                        <select class="cahocUpdate" id="cahocUpdate" style="font-size:18px;">
+                            <option value="7:30 to 9:30">7:30 to 9:30</option>
+                            <option value="9:45 to 11:45">9:45 to 11:45</option>
+                            <option value="13:30 to 15:30">13:30 to 15:30</option>
+                            <option value="15:45 to 17:45">15:45 to 17:45</option>
+                            <option value="18:15 to 20:15">18:15 to 20:15</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <button onclick='SubmitupdateScheduleForm()' style="margin-top:10px;font-size:18px;">Submit</button>
+                <input type="submit" class='button'style="margin-top:10px;font-size:18px;" value="Submit">
+            </form>
         </div>
     </div>
 
     <div class="createClassOut" style="display: none;">
         <div id='createClass' style="text-align:left !important;">
             <div id="routeTuyBien" border="solid"></div>
-            <div>
-                <p>Chọn lộ trình học:</p>
-                <select id="routeTypeS" class="routeName" onchange="routeType()">
-                    {{#each targetxxx}}
-                    <option value="{{routeName}}">
-                        {{routeName}}
-                    </option>
-                    {{/each}}
-                </select>
-                Level: <select id="levelS" class="stage" onchange="level()"></select>
-                Subject: <select id="subject" class="subject" onchange="getStudent()"></select>
-                Class name: <input type="text" class="className">
-                Description: <input type="text" class="description">
-                <h3>Student list</h3>
-                <div id="studentTable" border='solid'></div>
-                <h3>Teacher: </h3>
-                <div id="teacherID">
-                    <img src="{{avatar}}" onclick="$('#span2').toggle(500)">
-                    <figcaption>{{email}}</figcaption>
-                    <input type='hidden' value="{{_id}}">
+            <form id='myform'>
+                <div>
+                    <p>Chọn lộ trình học:</p>
+                    <select id="routeTypeS" class="routeName" onchange="routeType()">
+                        {{#each targetxxx}}
+                        <option value="{{routeName}}">
+                            {{routeName}}
+                        </option>
+                        {{/each}}
+                    </select>
+                    Level: <select id="levelS" class="stage" onchange="level()"></select>
+                    Subject: <select id="subject" class="subject" onchange="getStudent()"></select>
+                    Class name: <input type="text" class="className" required />
+                    Description: <input type="text" class="description" required />
+                    <h3>Student list</h3>
+                    <div id="studentTable" border='solid'></div>
+                    <h3>Teacher: </h3>
+                    <div id="teacherID">
+                        <img src="{{avatar}}" onclick="$('#span2').toggle(500)">
+                        <figcaption>{{email}}</figcaption>
+                        <input type='hidden' value="{{_id}}">
+                    </div>
+                    <div id="span2" style="display:none;height: 400px;overflow: scroll;border:solid">
+                        {{#each teacher}}
+                        <img src="{{avatar}}" onclick="selectedTeacher('{{email}}','{{avatar}}','{{_id}}')">
+                        <figcaption>{{email}}</figcaption>
+                        <input type='hidden' value="{{_id}}">
+                        {{/each}}
+                    </div>
+                    Start date: <input type="date" class="startDate" id="startDate" required />
+                    End date: <input type="date" class="endDate" id="endDate" required />
+                    Number of slot per week: <input type="number" id="Schedule" onchange="tuan()" min=0 max=7
+                        required />
+                    <div id="datlich"></div>
+                    <input type="submit" class='button' name="submit" value="Submit">
                 </div>
-                <div id="span2" style="display:none;height: 400px;overflow: scroll;border:solid">
-                    {{#each teacher}}
-                    <img src="{{avatar}}" onclick="selectedTeacher('{{email}}','{{avatar}}','{{_id}}')">
-                    <figcaption>{{email}}</figcaption>
-                    <input type='hidden' value="{{_id}}">
-                    {{/each}}
-                </div>
-                Start date: <input type="date" class="startDate" id="startDate">
-                End date: <input type="date" class="endDate" id="endDate">
-                Number of slot per week: <input type="number" id="Schedule" onchange="tuan()" min=0 max=7>
-                <div id="datlich"></div>
-                <button onclick="abc()" style="font-size:18px;">Submit1</button>
-            </div>
+            </form>
         </div>
     </div>
 

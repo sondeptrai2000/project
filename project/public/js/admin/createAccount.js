@@ -181,7 +181,6 @@ $("#role").change(async function() {
 });
 
 $("#roleUpdate").change(async function() {
-    console.log("Vaof")
     var accountRole = $('#roleUpdate').val();
     if (accountRole == "teacher") {
         $('.typeRoleUpdate').slideUp();
