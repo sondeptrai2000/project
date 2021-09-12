@@ -107,7 +107,9 @@
   }
 
   //khi người dùng ấn chat thì sẽ server sẽ nhận tin nhắn và xử lý (server on "user-chat" )
-  $("#btnChat").click(function() {
+  $("#messengerSubmit").submit(function(event) {
+      event.preventDefault();
+
       if (mess.value != "") {
           //sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
           socket.emit("user-chat", {

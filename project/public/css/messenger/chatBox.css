@@ -265,6 +265,10 @@ div.chatBox {
     margin: 0;
 }
 
+#messengerSubmit {
+    height: 100%;
+}
+
 div.sendMess {
     box-sizing: border-box;
     height: 7%;
@@ -280,7 +284,7 @@ div.sendMess {
     font-size: 18px;
 }
 
-.sendMess button {
+.sendMess .button {
     width: 20%;
     height: 100%;
     text-align: center;
