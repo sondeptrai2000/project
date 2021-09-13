@@ -58,8 +58,8 @@ function sendData(id) {
 
 //đưa thông tin cũ vào form đnash giá
 function studentAssessmentForm(classID, studentid, username, email) {
-    $("#classID").html(classID);
-    $("#studentID").html(studentid);
+    $("#classID").val(classID);
+    $("#studentID").val(studentid);
     $("#name").html(username);
     $("#email").html(email);
     $(".studentAssessmentOut").fadeIn(2000);
@@ -78,8 +78,8 @@ function updateStudentAssessmentForm(classID, studentID, name, grade) {
 //tiến hành Grade
 function takeFeedBack() {
     var formData = {
-        classID: $("#classID").text(),
-        studentId: $("#studentID").text(),
+        classID: $("#classID").val(),
+        studentId: $("#studentID").val(),
         grade: $("#grade").val(),
         comment: $("#comment").val(),
     };
@@ -103,11 +103,12 @@ function takeFeedBack() {
 //tiến hành cập nhật thôn tin Grade
 function updateFeekBack() {
     var formData = {
-        classID: $("#updateclassID").text(),
-        studentId: $("#updatestudentID").text(),
+        classID: $("#updateclassID").val(),
+        studentId: $("#updatestudentID").val(),
         grade: $("#updategrade").val(),
         comment: $("#updatecomment").val(),
     };
+    console.log(formData)
     $.ajax({
         url: '/teacher/studentAssessment',
         method: 'post',

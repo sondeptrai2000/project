@@ -84,6 +84,8 @@ class adminController {
         //         console.log(" ok 2 ")
         //     }
         // })
+
+
         res.json(data)
             // res.render('admin/adminHome')
     }
@@ -380,7 +382,6 @@ class adminController {
                 phuhuynh["password"] = hash2
                 if (role === "teacher") {
                     await AccountModel.create(student)
-                    res.json({ msg: 'success' });
                 }
                 if (role === "student") {
                     var studentAcc = await AccountModel.create(student)
@@ -388,9 +389,9 @@ class adminController {
                     var guardianAcc = await AccountModel.create(phuhuynh)
                     var relationship = guardianAcc._id
                     var studentAcc = await AccountModel.findOneAndUpdate({ _id: studentAcc._id }, { relationship: relationship, $push: { progess: { stage: student.stage, stageClass: [{ classID: "", name: "", status: "Pass" }] } } })
-                    res.json({ msg: 'success' });
                 }
             }
+            res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });

@@ -640,7 +640,7 @@ function getStudent() {
                         $.each(student.progess, function(index, progess) {
                             if (progess.stage == levelS) {
                                 $.each(progess.stageClass, function(index, stageClass) {
-                                    if (stageClass.name == $("#subject").val()) check = true
+                                    if (stageClass.name == $("#subject").val() && stageClass.status != "Restudy") check = true
                                 });
                             }
                         });
