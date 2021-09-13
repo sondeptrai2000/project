@@ -32,7 +32,7 @@ $(document).ready(function() {
 //lấy thông tin cá nhân
 function teacherProfile() {
     $.ajax({
-        url: '/teacher/teacherProfile',
+        url: '/account/Profile',
         method: 'get',
         dataType: 'json',
         data: {},

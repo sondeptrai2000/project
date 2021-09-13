@@ -152,7 +152,7 @@ function typeTime(time) {
 //lấy thông tin học sinh
 function studentProfile() {
     $.ajax({
-        url: '/teacher/teacherProfile',
+        url: '/account/Profile',
         method: 'get',
         dataType: 'json',
         data: {},

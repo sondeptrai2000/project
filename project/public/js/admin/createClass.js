@@ -97,7 +97,7 @@ function getAllClass() {
 function upDateSchedule(id) {
     var idClass = id
     $.ajax({
-        url: '/teacher/attendedList',
+        url: '/admin/attendedList',
         method: 'get',
         dataType: 'json',
         data: {
@@ -225,7 +225,7 @@ function deleteClass(id) {
 function sendData(id) {
     var _id = id
     $.ajax({
-        url: '/teacher/allClassStudent',
+        url: '/admin/allClassStudent',
         method: 'get',
         dataType: 'json',
         data: { abc: _id },
@@ -266,7 +266,7 @@ function addStudent(classID) {
         stage: infor4[2].trim(),
     }
     $.ajax({
-        url: '/teacher/addStudentToClass',
+        url: '/admin/addStudentToClass',
         method: 'get',
         dataType: 'json',
         data: { condition },
@@ -311,7 +311,7 @@ function doAddToClass(classID) {
     });
     console.log(studentlistAttend)
     $.ajax({
-        url: '/teacher/doaddStudentToClass',
+        url: '/admin/doaddStudentToClass',
         method: 'post',
         dataType: 'json',
         data: {
@@ -349,7 +349,7 @@ function removeStudent(classID, subject) {
         }
     });
     $.ajax({
-        url: '/teacher/doremoveStudentToClass',
+        url: '/admin/doremoveStudentToClass',
         method: 'post',
         dataType: 'json',
         data: {

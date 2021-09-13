@@ -49,18 +49,7 @@ class studentController {
         res.json('Trang chủ student')
     }
 
-    studentProfile(req, res) {
-        let token = req.cookies.token
-        let decodeAccount = jwt.verify(token, 'minhson')
-        AccountModel.find({ _id: decodeAccount }).populate('classID').lean().exec((err, data) => {
-            if (err) {
-                res.json({ msg: 'error' });
-            } else {
-                res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
-                res.json({ msg: 'success', data: data });
-            }
-        })
-    }
+
 
     async myAttended(req, res) {
         try {
@@ -75,9 +64,6 @@ class studentController {
 
         }
     }
-
-
-
 
     allClass(req, res) {
         var params = req.params.id
@@ -128,9 +114,7 @@ class studentController {
     }
 
 
-    viewschedule(req, res) {
-        res.render('student/schedule')
-    }
+
 
 
     async getSchedule(req, res) {
@@ -150,21 +134,7 @@ class studentController {
     }
 
 
-    allextracurricularActivities(req, res) {
-        res.json('Trang xem tất cả các hoạt động ngoại khóa mà con đã tham gia + đánh giá')
-    }
 
-    allChat(req, res) {
-        res.json('Tất cả những cuộc trò chuyện')
-    }
-
-    connectToChat(req, res) {
-        res.json('chọn người để trò chuyện')
-    }
-
-    chatConversation(req, res) {
-        res.json('Thực hiện cuộc trò chuyện')
-    }
 
 
 }

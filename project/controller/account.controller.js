@@ -195,6 +195,18 @@ let doeditAccount = async function(req, res) {
     }
 }
 
+let profile = async function(req, res) {
+    try {
+        var token = req.cookies.token
+        var decodeAccount = jwt.verify(token, 'minhson')
+        var data = await AccountModel.findOne({ _id: decodeAccount }).lean();
+        res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
+        res.json({ msg: 'success', data: data });
+    } catch (e) {
+        console.log(e)
+        res.json({ msg: 'error' });
+    }
+}
 module.exports = {
     homeAdmin,
     homeGuardian,
@@ -203,5 +215,6 @@ module.exports = {
     loginController,
     getCode,
     confirmPass,
-    doeditAccount
+    doeditAccount,
+    profile
 }

@@ -65,18 +65,6 @@ class teacherController {
         res.render('teacher/teacherHome')
     }
 
-    async teacherProfile(req, res) {
-        try {
-            var token = req.cookies.token
-            var decodeAccount = jwt.verify(token, 'minhson')
-            var data = await AccountModel.findOne({ _id: decodeAccount }).lean();
-            res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
-            res.json({ msg: 'success', data: data });
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    }
 
     allClass(req, res) {
         var params = req.params.id
@@ -103,10 +91,6 @@ class teacherController {
         }
     }
 
-    schedule(req, res) {
-        res.render('teacher/schedule')
-    }
-
     async getSchedule(req, res) {
         try {
             var token = req.cookies.token
@@ -123,15 +107,6 @@ class teacherController {
 
 
 
-    async attendedList(req, res) {
-        try {
-            var data = await ClassModel.find({ _id: req.query.id }, { schedule: 1 }).lean();
-            res.json({ msg: 'success', data: data });
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    }
 
     async attendedListStudent(req, res) {
         try {
@@ -180,67 +155,9 @@ class teacherController {
 
 
 
-    async allClassStudent(req, res) {
-        try {
-            var _id = req.query.abc
-            var selectedClassInfor = await ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
-            res.json({ msg: 'success', data: selectedClassInfor });
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    }
 
-    async addStudentToClass(req, res) {
-        try {
-            var condition = req.query.condition
-            var data = await AccountModel.find(condition, { avatar: 1, username: 1, subject: 1, routeName: 1, stage: 1, email: 1, classID: 1, progess: 1 }).lean();
-            res.json({ msg: 'success', data: data });
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    }
 
-    async doaddStudentToClass(req, res) {
-        try {
-            //lấy dữ liệu của lớp
-            var data = await ClassModel.findOne({ _id: req.body.classID }).lean()
-                //thêm classID vào bảng thông tin của các học sinh
-            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $push: { classID: req.body.classID } })
-                //thêm classID vào bảng thông tin lộ trình của các học sinh ( progess)
-            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl }, "progess.stage": data.stage }, { $push: { "progess.$.stageClass": { classID: data._id, name: data.subject, status: "studying" } } })
-                //Thêm học sinh vào danh sách học sinh trong bảng thông tin lớp
-            await ClassModel.findOneAndUpdate({ _id: req.body.classID }, { $push: { studentID: { $each: req.body.studentlist }, } })
-                //thêm trong danh sáhc điểm danh
-            await ClassModel.updateOne({ _id: req.body.classID }, { $push: { "schedule.$[].attend": { $each: req.body.studentlistAttend } } })
-            res.json({ msg: 'success' });
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    }
 
-    async doremoveStudentToClass(req, res) {
-        try {
-            //xóa classID vào bảng thông tin của các học sinh
-            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl } }, { $pull: { classID: req.body.classID } });
-            //xóa classID vào bảng thông tin lộ trình của các học sinh ( progess)
-            await AccountModel.updateMany({ _id: { $in: req.body.studentlistcl }, "progess.stageClass.classID": req.body.classID }, {
-                $pull: { "progess.$.stageClass": { classID: req.body.classID } }
-            });
-            //xóa học sinh vào danh sách học sinh trong bảng thông tin lớp
-            await ClassModel.findOneAndUpdate({ _id: req.body.classID }, { $pull: { studentID: { ID: { $in: req.body.studentlistcl } } } });
-            //xóa trong danh sáhc điểm danh
-            await ClassModel.updateOne({ _id: req.body.classID }, {
-                $pull: { "schedule.$[].attend": { studentID: { $in: req.body.studentlistcl } } }
-            });
-            res.json({ msg: 'success' });
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    }
 
     async studentAssessment(req, res) {
         try {
@@ -319,7 +236,26 @@ class teacherController {
         }
     }
 
+    async allClassStudent(req, res) {
+        try {
+            var _id = req.query.abc
+            var selectedClassInfor = await ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
+            res.json({ msg: 'success', data: selectedClassInfor });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
 
+    async attendedList(req, res) {
+        try {
+            var data = await ClassModel.find({ _id: req.query.id }, { schedule: 1 }).lean();
+            res.json({ msg: 'success', data: data });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
 }
 
 

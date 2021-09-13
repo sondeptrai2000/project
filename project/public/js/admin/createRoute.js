@@ -62,7 +62,7 @@ function viewSchedule(id) {
     console.log("vào")
     var _id = id
     $.ajax({
-        url: '/admin/lol',
+        url: '/admin/viewSchedule',
         method: 'get',
         dataType: 'json',
         data: { _id: _id },
@@ -182,7 +182,7 @@ async function updateRoute(id) {
     $(".updateRouteOut").fadeIn(500)
     var _id = id
     $.ajax({
-        url: '/admin/lol',
+        url: '/admin/viewSchedule',
         method: 'get',
         dataType: 'json',
         data: { _id: _id },
