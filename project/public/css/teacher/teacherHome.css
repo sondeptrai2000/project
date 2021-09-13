@@ -130,6 +130,12 @@ body {
     margin-bottom: 10px;
 }
 
+.updateProfile select {
+    width: 100%;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
 .updateProfile img {
     width: 250px;
     height: 250px;

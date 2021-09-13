@@ -50,15 +50,11 @@
       if (data._idRoom == $("#_idRoom").val()) {
           if (data.action === 'typing') {
               if (data.senderID != $("#senderID").val()) {
-                  $("#action").show()
-                  $("#action").html(data.senderName + 'is typing')
+                  $("#messContent").append('<p class="action" style="color:blanchedalmond;height:20px;padding-left:20px;">' + data.senderName + 'is typing</p>')
                   $('#messContent').scrollTop($('#messContent')[0].scrollHeight);
               }
           }
-          if (data.action === 'notTyping') {
-              $("#action").hide()
-              $("#action").html('')
-          }
+          if (data.action === 'notTyping') $('.action').remove();
       }
   }
 

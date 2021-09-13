@@ -183,7 +183,8 @@ function updateProfile() {
     $("#avatarOldProfile").val($('#avatarProfile').attr('src'));
     $("#idProfileUpdate").html($("#idProfile").text());
     $("#usernameUpdate").val($("#usernameProfile").text().split("Full Name: ")[1]);
-    $("#genderUpdate").val($("#genderProfile").text().split("Gender: ")[1]);
+    $('#genderUpdate option:selected').removeAttr('selected');
+    $("#genderUpdate option[value='" + $("#genderProfile").text().split("Gender: ")[1] + "']").attr('selected', 'selected');
     $("#emailUpdate").val($("#emailProfile").text().split("Email: ")[1]);
     $("#phoneUpdate").val($("#phoneProfile").text().split("Phone: ")[1]);
     $("#birthdayUpdate").val($("#birthdayProfile").text().split("BirthDay: ")[1]);

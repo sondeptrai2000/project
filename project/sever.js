@@ -43,6 +43,8 @@ var teacher = require('./routes/teacher.route')
 app.use('/teacher', teacher);
 var student = require('./routes/student.route')
 app.use('/student', student);
+var guardian = require('./routes/guardian.route')
+app.use('/guardian', guardian);
 var messenger = require('./routes/mess.route')
 app.use('/messenger', messenger);
 

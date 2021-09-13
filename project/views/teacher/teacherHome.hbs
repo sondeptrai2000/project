@@ -22,10 +22,14 @@
                 <input type='file' id='myFile'>
                 Name:<input id='usernameUpdate'></input>
                 Password:<input id='newPassWord' placeholder="Input New password if you wanna change"></input>
-                Gender:<input id='genderUpdate'></input>
+                Gender: <select id='genderUpdate'>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
                 Email:<input id='emailUpdate'></input>
                 Phone:<input id='phoneUpdate'></input>
-                BirthDay:<input id='birthdayUpdate' type="date"></input>
+                BirthDay:<input type="date" id='birthdayUpdate'></input>
                 Address:<input id='addressUpdate'></input>
                 <button onclick="doUpdateProfile()">Update</button>
             </div>
@@ -79,4 +83,5 @@
 </body>
 
 <script src="/js/teacher/teacherHome.js"></script>
+
 </html>

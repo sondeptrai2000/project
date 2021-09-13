@@ -3,47 +3,11 @@ const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 var jwt = require('jsonwebtoken');
 const fs = require("fs")
-
 var path = require('path');
-
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
-const { google } = require("googleapis")
-
-//set up kết nối tới ggdrive
-const KEYFILEPATH = path.join(__dirname, 'service_account.json')
-const SCOPES = ['https://www.googleapis.com/auth/drive'];
-
-const auth = new google.auth.GoogleAuth(
-    opts = {
-        keyFile: KEYFILEPATH,
-        scopes: SCOPES
-    }
-);
-const driveService = google.drive(options = { version: 'v3', auth });
 
 
-async function uploadFile(name, rootID, path) {
-    var id = []
-    id.push(rootID)
-    var responese = await driveService.files.create(param = {
-        resource: {
-            "name": name,
-            "parents": id
-        },
-        media: {
-            body: fs.createReadStream(path = path)
-        },
-    })
-    await driveService.permissions.create({
-        fileId: responese.data.id,
-        requestBody: {
-            role: 'reader',
-            type: 'anyone',
-        },
-    });
-    return responese.data.id
-}
 class studentController {
     studentHome(req, res) {
         res.json('Trang chủ student')
@@ -77,14 +41,15 @@ class studentController {
         try {
             let token = req.cookies.token
             let decodeAccount = jwt.verify(token, 'minhson')
-            var classInfor = await AccountModel.find({ _id: decodeAccount._id }).populate({
+            var classInfor = await AccountModel.find({ _id: decodeAccount._id }, { classID: 1 }).populate({
                 path: 'classID',
+                select: '-schedule',
                 populate: {
                     path: 'teacherID',
                     select: 'username',
                 }
             }).lean()
-            res.json({ msg: 'success', classInfor });
+            res.json({ msg: 'success', classInfor, studentID: decodeAccount._id });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });

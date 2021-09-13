@@ -19,7 +19,7 @@ $(document).ready(function() {
 //lấy thông tin các lớp đã và đang học
 function getClass() {
     $.ajax({
-        url: '/student/getClass',
+        url: '/guardian/getClass',
         method: 'get',
         dataType: 'json',
         data: { check: "0" },
@@ -58,7 +58,7 @@ function getClass() {
 //xem danh sách điểm danh của chính mình
 function myAttended(classID) {
     $.ajax({
-        url: '/student/myAttended',
+        url: '/guardian/myAttended',
         method: 'get',
         dataType: 'json',
         data: { classID: classID },
@@ -91,7 +91,7 @@ function viewTeacherProfile(id) {
     var _id = id
     $(".teacherIn4Body").html("");
     $.ajax({
-        url: '/student/getTeacherProfile',
+        url: '/guardian/getTeacherProfile',
         method: 'get',
         dataType: 'json',
         data: { abc: _id },
@@ -107,33 +107,5 @@ function viewTeacherProfile(id) {
             alert('server error');
         }
     });
-
-}
-
-
-//lấy danh sáhc học sinh trong lớp
-function sendData(id) {
-    var _id = id
-    $.ajax({
-        url: '/student/allClassStudent',
-        method: 'get',
-        dataType: 'json',
-        data: { abc: _id },
-        success: function(response) {
-            if (response.msg == 'success') {
-                $(".studentList").html('<div class="tr"><div class="td">avatar</div><div class="td">username</div><div class="td">email</div><div class="td">Chat</div></div>')
-                $.each(response.data, function(index, data) {
-                    $.each(data.studentID, function(index, studentID) {
-                        $(".studentList").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><input type='hidden' name='studentName' value='" + studentID.ID.username + "'><button>Chat</button></form></div></div>");
-                    });
-                });
-                $(".studentListOut").fadeIn(2000);
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-
 
 }

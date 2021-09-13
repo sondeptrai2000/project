@@ -2,20 +2,23 @@ var fileData;
 var myFile;
 
 $(document).ready(function() {
-    //thông tin cá nhân
-    teacherProfile();
-    //lịch học or làm việc
-    test();
-    //hiệu ứng menu
+    //lấy thông tin cá nhân
+    studentProfile()
+        //lấy lịch học
+    test()
+        //hiệu ứng menu
     $('header li').hover(function() {
         $(this).find("div").slideDown()
     }, function() {
         $(this).find("div").hide(500)
     });
-    //close modal box
+    //thoát update form
     $(window).on('click', function(e) {
-        if ($(e.target).is('.updateProfileOut')) $('.updateProfileOut').slideUp(1500);
+        if ($(e.target).is('.updateProfileOut')) {
+            $('.updateProfileOut').slideUp(1500);
+        }
     });
+
     $('#myFile').on('change', function() {
         var filereader = new FileReader();
         filereader.onload = function(event) {
@@ -28,91 +31,7 @@ $(document).ready(function() {
         filereader.readAsDataURL(myFile)
     });
 });
-
-//lấy thông tin cá nhân
-function teacherProfile() {
-    $.ajax({
-        url: '/account/Profile',
-        method: 'get',
-        dataType: 'json',
-        data: {},
-        success: function(response) {
-            if (response.msg == 'success') {
-                $("#avatarProfile").attr("src", response.data.avatar);
-                $("#idProfile").html(response.data._id);
-                $("#welcome").html("Welcome " + response.data.username);
-                $("#usernameProfile").html("Full Name: " + response.data.username);
-                $("#genderProfile").html("Gender: " + response.data.sex);
-                $("#emailProfile").html("Email: " + response.data.email);
-                $("#phoneProfile").html("Phone: " + response.data.phone);
-                $("#birthdayProfile").html("BirthDay: " + response.data.birthday);
-                $("#addressProfile").html("Address: " + response.data.address);
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-}
-//đưa thông tin cũ vào bảng cập nhật thông tin
-function updateProfile() {
-    $("#currentAvatar").attr("src", $('#avatarProfile').attr('src'));
-    $("#avatarOldProfile").val($('#avatarProfile').attr('src'));
-    $("#idProfileUpdate").html($("#idProfile").text());
-    $("#usernameUpdate").val($("#usernameProfile").text().split("Full Name: ")[1]);
-    $('#genderUpdate option:selected').removeAttr('selected');
-    $("#genderUpdate option[value='" + $("#genderProfile").text().split("Gender: ")[1] + "']").attr('selected', 'selected');
-
-    $("#emailUpdate").val($("#emailProfile").text().split("Email: ")[1]);
-    $("#phoneUpdate").val($("#phoneProfile").text().split("Phone: ")[1]);
-    $("#birthdayUpdate").val($("#birthdayProfile").text().split("BirthDay: ")[1]);
-    $("#addressUpdate").val($("#addressProfile").text().split("Address: ")[1]);
-    $(".updateProfileOut").toggle(2000);
-}
-
-//cập nhật thông tin giáo viên
-function doUpdateProfile() {
-    if (!fileData) {
-        fileData = "none"
-    }
-    var password = $("#newPassWord").val()
-    var formData1 = {
-        sex: $("#genderUpdate").val(),
-        username: $("#usernameUpdate").val(),
-        email: $("#emailUpdate").val(),
-        phone: $("#phoneUpdate").val(),
-        address: $("#addressUpdate").val(),
-        birthday: $("#birthdayUpdate").val(),
-        avatar: $('#currentAvatar').attr('src'),
-    };
-    $.ajax({
-        url: '/account/doeditAccount',
-        method: 'post',
-        dataType: 'json',
-        data: {
-            id: $("#idProfileUpdate").text(),
-            password: password,
-            formData1: formData1,
-            file: fileData,
-            oldLink: $('#avatarOldProfile').val(),
-        },
-        success: function(response) {
-            if (response.msg == 'success') {
-                teacherProfile();
-                $('.updateProfileOut').slideUp(1500);
-            }
-            if (response.msg == 'Account already exists') alert("Account already exists")
-            if (response.msg == 'Phone already exists') alert("Phone already exists")
-            if (response.msg == 'error') alert("error")
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-}
-
-
-
+//lấy lịch học 
 function test() {
     //lấy các ngày trong năm
     for (var arr = [], dt = new Date("2021-01-01"); dt <= new Date("2021-12-31"); dt.setDate(dt.getDate() + 1)) {
@@ -188,7 +107,7 @@ function tuanoi() {
     });
     //lấy thông tin lịch học
     $.ajax({
-        url: '/teacher/getSchedule',
+        url: '/guardian/getSchedule',
         method: 'get',
         dataType: 'json',
         data: formData,
@@ -204,7 +123,7 @@ function tuanoi() {
                         if (start <= schedule.date && schedule.date <= end) {
                             //ghi thông tin lịch học, làm việc vào bảng
                             var caLam = typeTime(schedule.time)
-                            $("#" + caLam + " div:nth-child(" + schedule.day + ")").append("<a href='/teacher/allClass/" + classInfor._id + "'>Class: " + classInfor.className + "</a> Room: " + schedule.room)
+                            $("#" + caLam + " div:nth-child(" + schedule.day + ")").append("<a href='/guardian/allClass/" + classInfor._id + "'>Class: " + classInfor.className + "</a> Room: " + schedule.room)
                         }
                     });
                 });
@@ -218,13 +137,101 @@ function tuanoi() {
         }
     })
 }
-//chia 3 làm việc để in vào bảng theo id
+//phân ca để dưa vào bảng lịch học
 function typeTime(time) {
     var caLam
+    console.log(time)
     if (time == "7:30 to 9:30") caLam = "time1"
     if (time == "9:45 to 11:45") caLam = "time2"
     if (time == "13:30 to 15:30") caLam = "time3"
     if (time == "15:45 to 17:45") caLam = "time4"
     if (time == "18:15 to 20:15") caLam = "time5"
     return caLam
+}
+
+//lấy thông tin học sinh
+function studentProfile() {
+    $.ajax({
+        url: '/account/Profile',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $(".content").show();
+                $("#idProfile").text(response.data._id);
+                $("#routeProfile").html("Route: " + response.data.routeName);
+                $("#stageProfile").html("Stage: " + response.data.stage);
+                $("#avatarProfile").attr("src", response.data.avatar);
+                $("#welcome").html("Welcome " + response.data.username);
+                console.log(response.data.username)
+                $("#usernameProfile").html("Full Name: " + response.data.username);
+                $("#genderProfile").html("Gender: " + response.data.sex);
+                $("#emailProfile").html("Email: " + response.data.email);
+                $("#phoneProfile").html("Phone: " + response.data.phone);
+                $("#birthdayProfile").html("BirthDay: " + response.data.birthday);
+                $("#addressProfile").html("Address: " + response.data.address);
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+//đưa thông tin cũ vào form update thông tin
+function updateProfile() {
+    $("#currentAvatar").attr("src", $('#avatarProfile').attr('src'));
+    $("#avatarOldProfile").val($('#avatarProfile').attr('src'));
+    $("#idProfileUpdate").html($("#idProfile").text());
+    $("#usernameUpdate").val($("#usernameProfile").text().split("Full Name: ")[1]);
+    $('#genderUpdate option:selected').removeAttr('selected');
+    $("#genderUpdate option[value='" + $("#genderProfile").text().split("Gender: ")[1] + "']").attr('selected', 'selected');
+
+    $("#emailUpdate").val($("#emailProfile").text().split("Email: ")[1]);
+    $("#phoneUpdate").val($("#phoneProfile").text().split("Phone: ")[1]);
+    $("#birthdayUpdate").val($("#birthdayProfile").text().split("BirthDay: ")[1]);
+    $("#addressUpdate").val($("#addressProfile").text().split("Address: ")[1]);
+    $(".updateProfileOut").toggle(2000);
+}
+
+//tiến hành cập nhật thông tin
+function doUpdateProfile() {
+    if (!fileData) {
+        fileData = "none"
+    }
+    var password = $("#newPassWord").val()
+    var formData1 = {
+        sex: $("#genderUpdate").val(),
+        username: $("#usernameUpdate").val(),
+        email: $("#emailUpdate").val(),
+        phone: $("#phoneUpdate").val(),
+        address: $("#addressUpdate").val(),
+        birthday: $("#birthdayUpdate").val(),
+        avatar: $('#currentAvatar').attr('src'),
+    };
+    console.log(formData1)
+    $.ajax({
+        url: '/account/doeditAccount',
+        method: 'post',
+        dataType: 'json',
+        data: {
+            id: $("#idProfile").text(),
+            password: password,
+            formData1: formData1,
+            file: fileData,
+            oldLink: $('#avatarOldProfile').val(),
+        },
+        success: function(response) {
+            if (response.msg == 'success') {
+                studentProfile();
+                $('.updateProfileOut').slideUp(1500);
+            }
+            if (response.msg == 'Account already exists') alert("Account already exists")
+            if (response.msg == 'Phone already exists') alert("Phone already exists")
+            if (response.msg == 'error') alert("error")
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
 }
