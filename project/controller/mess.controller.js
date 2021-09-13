@@ -1,13 +1,5 @@
 const AccountModel = require('../models/account')
-const ClassModel = require('../models/class');
 const chatModel = require('../models/messenger');
-
-const { data, param, css } = require('jquery')
-var jwt = require('jsonwebtoken')
-var bcrypt = require('bcrypt');
-const mongodb = require("mongodb");
-const sizeof = require('object-sizeof');
-
 
 function findChat(person1ListChat, person2ListChat) {
     var check = false

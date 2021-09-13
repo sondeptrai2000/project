@@ -1,12 +1,11 @@
-const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
-const { data } = require('jquery');
 const saltRounds = 10;
 const nodemailer = require('nodemailer');
-
-
+const fs = require("fs")
+const { google } = require("googleapis")
+var path = require('path');
 const Crypto = require('crypto')
 
 // set up mail sever
@@ -22,6 +21,41 @@ var transporter = nodemailer.createTransport({
         rejectUnauthorized: false
     }
 });
+
+
+//set up kết nối tới ggdrive
+const KEYFILEPATH = path.join(__dirname, 'service_account.json')
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
+const auth = new google.auth.GoogleAuth(
+    opts = {
+        keyFile: KEYFILEPATH,
+        scopes: SCOPES
+    }
+);
+const driveService = google.drive(options = { version: 'v3', auth });
+
+//thực hiện upflie lên ggdrive và trả về ID của file đó trên drive
+async function uploadFile(name, rootID, path) {
+    var id = []
+    id.push(rootID)
+    var responese = await driveService.files.create(param = {
+        resource: {
+            "name": name,
+            "parents": id
+        },
+        media: {
+            body: fs.createReadStream(path = path)
+        },
+    })
+    await driveService.permissions.create({
+        fileId: responese.data.id,
+        requestBody: {
+            role: 'reader',
+            type: 'anyone',
+        },
+    });
+    return responese.data.id
+}
 
 let getCode = async(req, res) => {
     try {

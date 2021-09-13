@@ -1,4 +1,3 @@
-const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const studyRouteModel = require('../models/studyRoute');
 const ClassModel = require('../models/class');
@@ -6,7 +5,6 @@ const consultingInformationModel = require('../models/consultingInformation');
 const assignRoomAndTimeModel = require('../models/assignRoomAndTime');
 
 const fs = require("fs")
-const readline = require("readline")
 const { google } = require("googleapis")
 var path = require('path');
 var jwt = require('jsonwebtoken');
@@ -44,7 +42,7 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-
+//thực hiện upflie lên ggdrive và trả về ID của file đó trên drive
 async function uploadFile(name, rootID, path) {
     var id = []
     id.push(rootID)

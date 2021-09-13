@@ -2,12 +2,7 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 const AccountModel = require('../models/account');
 const ClassModel = require('../models/class');
 var jwt = require('jsonwebtoken');
-const fs = require("fs")
 
-var path = require('path');
-
-var bcrypt = require('bcrypt');
-const saltRounds = 10;
 
 
 
