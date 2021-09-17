@@ -2,21 +2,13 @@
 <html lang="en">
 
 <head>
-    <script src="/jquery/jquery.js"></script>
-    <!-- checkdate -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.29.0/date_fns.min.js"></script>
-    <link rel="stylesheet" href="/css/admin/layOut.css">
-    <link rel="stylesheet" href="/css/admin/menu.css">
     <link rel="stylesheet" href="/css/admin/createClass.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
-
 </head>
 
 <body>
-
     <div class="studentListOut" style="display:none">
-        <div class="studentListContent">
-        </div>
+        <div class="studentListContent"></div>
     </div>
 
     <div class="studentTableAddOut" style="display: none;">
@@ -43,14 +35,14 @@
                     <input name="updateScheduleID" type="hidden">
                     <input name="updateScheduleClassID" type="hidden">
                     <div class='td'>New</div>
-                    <div class='td'><input type="date" name="dateScheduleUpdate" style="font-size:18px;" required />
+                    <div class='td'><input type="date" name="dateScheduleUpdate" required />
                     </div>
                     <div class="td" id="dayOfWeekUpdate"></div>
                     <div class='td'>
-                        Available room: <select id="roomUpdate" style="font-size:18px;"> </select>
+                        Available room: <select id="roomUpdate"> </select>
                     </div>
                     <div class='td'>
-                        <select class="cahocUpdate" id="cahocUpdate" style="font-size:18px;">
+                        <select class="cahocUpdate" id="cahocUpdate">
                             <option value="7:30 to 9:30">7:30 to 9:30</option>
                             <option value="9:45 to 11:45">9:45 to 11:45</option>
                             <option value="13:30 to 15:30">13:30 to 15:30</option>
@@ -70,13 +62,7 @@
             <form id='myform'>
                 <div>
                     <p>Chọn lộ trình học:</p>
-                    <select id="routeTypeS" class="routeName" onchange="routeType()">
-                        {{#each targetxxx}}
-                        <option value="{{routeName}}">
-                            {{routeName}}
-                        </option>
-                        {{/each}}
-                    </select>
+                    <select id="routeTypeS" class="routeName" onchange="routeType()"></select>
                     Level: <select id="levelS" class="stage" onchange="level()"></select>
                     Subject: <select id="subject" class="subject" onchange="getStudent()"></select>
                     Class name: <input type="text" class="className" required />
@@ -85,17 +71,11 @@
                     <div id="studentTable" border='solid'></div>
                     <h3>Teacher: </h3>
                     <div id="teacherID">
-                        <img src="{{avatar}}" onclick="$('#span2').toggle(500)">
-                        <figcaption>{{email}}</figcaption>
-                        <input type='hidden' value="{{_id}}">
+                        <img src="" onclick="$('#span2').toggle(500)">
+                        <figcaption></figcaption>
+                        <input type='hidden' value="">
                     </div>
-                    <div id="span2" style="display:none;height: 400px;overflow: scroll;border:solid">
-                        {{#each teacher}}
-                        <img src="{{avatar}}" onclick="selectedTeacher('{{email}}','{{avatar}}','{{_id}}')">
-                        <figcaption>{{email}}</figcaption>
-                        <input type='hidden' value="{{_id}}">
-                        {{/each}}
-                    </div>
+                    <div id="span2" style="display:none;height: 400px;overflow: scroll;border:solid"></div>
                     Start date: <input type="date" class="startDate" id="startDate" required />
                     End date: <input type="date" class="endDate" id="endDate" required />
                     Number of slot per week: <input type="number" id="Schedule" onchange="tuan()" min=0 max=7
@@ -111,7 +91,7 @@
     <div class="body">
         <div class="tr" id="option">
             <div class='td'>
-                <button onclick="$('.createClassOut').toggle(500)">Create class</button>
+                <button onclick="createClassForm()">Create class</button>
             </div>
             <div class='td'>
                 Filter by Status:
@@ -133,7 +113,9 @@
     </div>
 
 </body>
+<!-- checkdate -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.29.0/date_fns.min.js"></script>
+<script src="/jquery/jquery.js"></script>
 <script src="/js/admin/createClass.js"></script>
-
 
 </html>

@@ -4,43 +4,48 @@ var fileDataUpdate;
 var myFileUpdate;
 
 $(document).ready(function() {
-    count()
-    $(window).on('click', function(e) {
-        if ($(e.target).is('.createAccountOut')) $('.createAccountOut').fadeOut(1500);
-        if ($(e.target).is('.updateFormOut')) $('.updateFormOut').fadeOut(1500);
-    });
-    //hiệu ứng menu
-    $('header li').hover(function() {
-        $(this).find("div").slideDown()
-    }, function() {
-        $(this).find("div").hide(500)
-    });
-
-    //xử lý file khi tạo tài khoản
-    $('#myFile').on('change', function() {
-        var filereader = new FileReader();
-        filereader.onload = function(event) {
-            fileData = event.target.result;
-            var dataURL = filereader.result;
-            $("#output").attr("src", dataURL);
-        };
-        myFile = $('#myFile').prop('files')[0];
-        console.log('myfile', myFile)
-        filereader.readAsDataURL(myFile)
-    });
-    //xử lý file khi câpj nhật thông tin tài khoản
-    $('#myFileUpdate').on('change', function() {
-        var filereaderUpdate = new FileReader();
-        filereaderUpdate.onload = function(event) {
-            fileDataUpdate = event.target.result;
-            var dataURLUpdate = filereaderUpdate.result;
-            $("#currentAvatar").attr("src", dataURLUpdate);
-        };
-        myFileUpdate = $('#myFileUpdate').prop('files')[0];
-        console.log('myfileUpdate', myFileUpdate)
-        filereaderUpdate.readAsDataURL(myFileUpdate)
-    });
+    //chạy hàm đếm số lượng giáo viên trong lớp và hiển thị số trang và giáo viên
+    count();
 });
+
+//thoát modal box bằng cách ấn ra ngàoi form
+$(window).on('click', function(e) {
+    if ($(e.target).is('.createAccountOut')) $('.createAccountOut').fadeOut(1500);
+    if ($(e.target).is('.updateFormOut')) $('.updateFormOut').fadeOut(1500);
+});
+
+//hiệu ứng menu
+$('header li').hover(function() {
+    $(this).find("div").slideDown()
+}, function() {
+    $(this).find("div").hide(500)
+});
+
+//xử lý file khi tạo tài khoản
+$('#myFile').on('change', function() {
+    var filereader = new FileReader();
+    filereader.onload = function(event) {
+        fileData = event.target.result;
+        var dataURL = filereader.result;
+        $("#output").attr("src", dataURL);
+    };
+    myFile = $('#myFile').prop('files')[0];
+    console.log('myfile', myFile)
+    filereader.readAsDataURL(myFile)
+});
+//xử lý file khi câpj nhật thông tin tài khoản
+$('#myFileUpdate').on('change', function() {
+    var filereaderUpdate = new FileReader();
+    filereaderUpdate.onload = function(event) {
+        fileDataUpdate = event.target.result;
+        var dataURLUpdate = filereaderUpdate.result;
+        $("#currentAvatar").attr("src", dataURLUpdate);
+    };
+    myFileUpdate = $('#myFileUpdate').prop('files')[0];
+    console.log('myfileUpdate', myFileUpdate)
+    filereaderUpdate.readAsDataURL(myFileUpdate)
+});
+
 //tìm kiếm account
 $("#myInput").on("keyup", function() {
     var value = $(this).val().toLowerCase();
@@ -72,7 +77,9 @@ function count() {
         success: function(response) {
             if (response.msg == 'success') {
                 $("#soTrang").html("Page:<select onchange=getAccount()></select>")
+                    //hiển thị số trang vào thẻ select cho dễ chọn trang
                 for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
+                //hiển thị thông tin các tài khoản theo role và số trang.
                 getAccount()
             }
         },
@@ -81,11 +88,11 @@ function count() {
         }
     });
 }
+
 //lấy danh sách theo role
 function getAccount() {
     var role = $("#accountFilter").val()
     var page = $("#soTrang select").val()
-    console.log(page)
     $(".tableInforType").html("");
     if (role === 'teacher') {
         var tableInfor = "<div class='tr'>\
@@ -114,6 +121,7 @@ function getAccount() {
                     if (role == 'teacher') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                     if (role == 'student') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                 });
+                //hiển thị thông tin chi tiết trang form bên phải
                 search(response.data[0].email)
             }
         },
@@ -123,7 +131,7 @@ function getAccount() {
     });
 }
 
-//phân loại đăng ký khóa học dựa vào role, teacher và guardian không cần cho cả create and update
+//phân loại đăng ký khóa học dựa vào role cho cả create and update
 function routeType(action) {
     if (action === 'create') {
         var routeName = $('#routeTypeS').val();
@@ -167,6 +175,8 @@ function routeType(action) {
         }
     })
 }
+
+//ấn hiển đăgn ký khóa học dựa theo role cho việc tạo tài khoản. Học sinh sẽ hiển ra còn giáo viên sẽ đóng lại vì không cần thiết
 $("#role").change(async function() {
     var accountRole = $('#role').val();
     if (accountRole == "teacher") {
@@ -179,7 +189,7 @@ $("#role").change(async function() {
         $('.typeRole').slideDown()
     }
 });
-
+//ấn hiển đăgn ký khóa học dựa theo role cho việc update tài khoản. Học sinh sẽ hiển ra còn giáo viên sẽ đóng lại vì không cần thiết 
 $("#roleUpdate").change(async function() {
     var accountRole = $('#roleUpdate').val();
     if (accountRole == "teacher") {
@@ -193,23 +203,18 @@ $("#roleUpdate").change(async function() {
     }
 });
 
-
+//lấy cái lộ trình học để chọn trong cả 2 form tạo và update tài khoản
 function getRoute(type) {
     var id
     if (type == 'create') id = "#routeTypeS";
     if (type == 'update') id = "#routeTypeSUpdate";
-    console.log(id)
     $.ajax({
         url: '/admin/getRoute',
         method: 'get',
         dataType: 'json',
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.data)
-                $.each(response.data, function(index, data) {
-                    var update = "<option value='" + data.routeName + "'>" + data.routeName + "</option>"
-                    $(id).append(update)
-                });
+                $.each(response.data, function(index, data) { $(id).append("<option value='" + data.routeName + "'>" + data.routeName + "</option>") });
             }
         }
     })
@@ -225,9 +230,7 @@ function updateForm(id) {
     $(".updateFormOut").fadeIn(2000);
     var selector = "#" + id + " .td"
     var infor4 = []
-    $(selector).each(function() {
-        infor4.push($(this).text())
-    })
+    $(selector).each(function() { infor4.push($(this).text()) })
     $("#PersonID").val(id)
     $("#currentAvatar").attr("src", $("#" + id + " img").attr('src'));
     $("#oldAvatar").val($("#" + id + " img").attr('src'));
@@ -275,6 +278,8 @@ function updateForm(id) {
         }
     });
 }
+
+//hiệu ứng chọn các buổi học sinh có thể học tập tại trung tâm
 $(".checkTtime").on("change", function() {
     $("#availbleTime input").each(function() {
         if ($(this).is(':checked')) {
@@ -289,6 +294,7 @@ $(".checkTtime").on("change", function() {
 //thực hiện đăng ký và lưu tài khỏan vào đb
 $("#myform").submit(function(event) {
     event.preventDefault();
+    //lấy các thời gian học sinh có thể đi học tại trung tâm
     var availableTime = []
     $("#availbleTime input").each(function() {
         if ($(this).is(':checked')) {
@@ -306,6 +312,7 @@ $("#myform").submit(function(event) {
         alert("nhaajp vaof")
     } else {
         var role = $("#role").val()
+            //thôn tin bắt buộc của giáo viên or học sinh
         var formData1 = {
             sex: $("#gender").val(),
             username: $("#username").val(),
@@ -316,6 +323,7 @@ $("#myform").submit(function(event) {
             birthday: $("#birthday").val(),
         };
         var formData2
+            //thông tin bổ sung dựa trên role
         if (role != "teacher") {
             formData1["stage"] = $("#levelS").val()
             formData1["routeName"] = $("#routeTypeS").val()
@@ -329,22 +337,15 @@ $("#myform").submit(function(event) {
                 email: $("input[name='guardianEmail']").val(),
             };
         }
-        console.log(formData1)
         $.ajax({
-            // url: '/admin/doCreateAccount',
+            url: '/admin/doCreateAccount',
             method: 'post',
             dataType: 'json',
-            data: {
-                password: $("#password").val(),
-                filename: myFile.name,
-                file: fileData,
-                student: formData1,
-                phuhuynh: formData2,
-            },
+            data: { password: $("#password").val(), filename: myFile.name, file: fileData, student: formData1, phuhuynh: formData2 },
             success: function(response) {
                 if (response.msg == 'success') {
                     reset();
-                    getAccount(role, 0);
+                    getAccount();
                     $(".createAccountOut").slideUp();
                     alert('Sign Up success');
                 }
@@ -360,7 +361,7 @@ $("#myform").submit(function(event) {
 });
 
 //thực hiện cập nhật thông tin tài khỏan vào đb
-
+//giống kha khá với tạo tài khoản
 $("#myformUpdate").submit(function(event) {
     event.preventDefault();
     if (!fileDataUpdate) {
@@ -393,20 +394,13 @@ $("#myformUpdate").submit(function(event) {
         url: '/admin/doeditAccount',
         method: 'post',
         dataType: 'json',
-        data: {
-            id: $("#PersonID").val(),
-            oldLink: $('#oldAvatar').val(),
-            password: $("#passwordUpdate").val(),
-            formData1: formData1,
-            formData2: formData2,
-            file: fileDataUpdate,
-        },
+        //Note: oldLink: là link avatar cũ
+        data: { id: $("#PersonID").val(), oldLink: $('#oldAvatar').val(), password: $("#passwordUpdate").val(), formData1: formData1, formData2: formData2, file: fileDataUpdate, },
         success: function(response) {
             if (response.msg == 'success') {
                 alert('update success');
                 $('.updateFormOut').fadeOut(2000);
-                getAccount($("#roleUpdate").val(), 0);
-                // $("#routeTypeSUpdate option[value='" + response.data.routeName + "']").attr('selected', 'selected');
+                getAccount();
             }
         },
         error: function(response) {
@@ -416,7 +410,7 @@ $("#myformUpdate").submit(function(event) {
 })
 
 
-//tìm kiếm thông tin qua email hoặc số điện thoại cho học sinh
+//tìm kiếm thông tin qua email hoặc số điện thoại cho học sinh và hiển thị thông tin sang form bên phải
 function search(email) {
     var condition = {}
     if (email != "") {
@@ -446,12 +440,12 @@ function search(email) {
                         var relationship = response.data
                         var data = relationship.relationship
                     }
-                    var currentClass = response.data.classID
                     $(".rightSide").append("<img src='" + data.avatar + "'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>")
                     $(".rightSide").append("<h1>Tình trạng học tập</h1>")
                     $(".rightSide").append("<p>Route: " + data.routeName + " </p><p>Current level: " + data.stage + " </p><p>Aim : " + data.aim + "</p>")
                     $(".rightSide").append("<h2>Tiến độ học tập</h2>")
-                    $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "' target='_blank'>Click here to see more</a>")
+                    $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "' target='_blank'>Click here to see more</a>");
+                    //hiển thị lộ trình học của học sinh
                     var progress = data.progess
                     progress.forEach((e) => {
                         $(".rightSide").append("<h3>Stage: " + e.stage + "</h3>")
@@ -474,6 +468,8 @@ function search(email) {
     })
 }
 
+
+//copy classId
 async function copyID(id) {
     await navigator.clipboard.writeText(id);
     alert("copied")

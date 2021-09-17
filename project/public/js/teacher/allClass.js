@@ -1,26 +1,26 @@
 $(document).ready(function() {
+    //lấy các lớp mà giáo viên đang dạy
     getProcesscingClass()
 
-    //hiệu ứng menu
-    $('header li').hover(function() {
-        $(this).find("div").slideDown()
-    }, function() {
-        $(this).find("div").hide(500)
-    });
-    let username = Cookies.get('username'); // => 'value'
-    $("#welcome").html("Welcome " + username)
+});
 
+//hiệu ứng menu
+$('header li').hover(function() {
+    $(this).find("div").slideDown()
+}, function() {
+    $(this).find("div").hide(500)
+});
+let username = Cookies.get('username'); // => 'value'
+$("#welcome").html("Welcome " + username)
 
-    $(window).on('click', function(e) {
-        if ($(e.target).is('.attendedListOut')) $('.attendedListOut').slideUp(1500);
-        if ($(e.target).is('.attendedOutDoorOut')) $('.attendedOutDoorOut').slideUp(1500);
-        if ($(e.target).is('.studentListContentOut')) $('.studentListContentOut').slideUp(1500);
-        if ($(e.target).is('.studentAssessmentOut')) $('.studentAssessmentOut').slideUp(1500);
-        if ($(e.target).is('.studentAssessmentUpdateOut')) $('.studentAssessmentUpdateOut').slideUp(1500);
-        if ($(e.target).is('.takeAttendFormOut')) $('.takeAttendFormOut').slideUp(1500);
-    });
-
-
+//thoát modal box
+$(window).on('click', function(e) {
+    if ($(e.target).is('.attendedListOut')) $('.attendedListOut').slideUp(1500);
+    if ($(e.target).is('.attendedOutDoorOut')) $('.attendedOutDoorOut').slideUp(1500);
+    if ($(e.target).is('.studentListContentOut')) $('.studentListContentOut').slideUp(1500);
+    if ($(e.target).is('.studentAssessmentOut')) $('.studentAssessmentOut').slideUp(1500);
+    if ($(e.target).is('.studentAssessmentUpdateOut')) $('.studentAssessmentUpdateOut').slideUp(1500);
+    if ($(e.target).is('.takeAttendFormOut')) $('.takeAttendFormOut').slideUp(1500);
 });
 
 //lấy danh sách học sinh trong lớp
@@ -108,7 +108,6 @@ function updateFeekBack() {
         grade: $("#updategrade").val(),
         comment: $("#updatecomment").val(),
     };
-    console.log(formData)
     $.ajax({
         url: '/teacher/studentAssessment',
         method: 'post',
@@ -210,7 +209,6 @@ function submitTakeAttend() {
     $(".attendStudentStatus").each(function() { attended.push($(this).val()) })
     var attend = []
     for (var i = 0; i < attended.length; i++) { attend.push({ "studentID": studentID[i], "attended": attended[i] }) }
-
     //Note: room,day,time là số buổi học và giờ học được gán từ lúc lấy danh sách lịch học
     var formData = {
         attend: attend,

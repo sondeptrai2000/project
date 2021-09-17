@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-      <script src="/jquery/jquery.js"></script>
+      <meta charset="UTF-8" />
+
       <link rel="stylesheet" href="/css/admin/menu.css">
       <link rel="stylesheet" href="/css/admin/layOut.css">
-      <meta charset="UTF-8" />
 
       <link rel="stylesheet" href="/css/admin/createAccount.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
@@ -35,22 +35,16 @@
                               Address:<input type="text" id="address" required />
                               Role:
                               <select class="Role" id="role">
-                                    <option value="student">Student</option>
                                     <option value="teacher">Teacher</option>
+                                    <option value="student">Student</option>
                               </select>
                         </div>
-                        <div class="typeRole" style="text-align: left;">
+                        <div class="typeRole" style="text-align: left;display:none;">
                               Guardian name: <input type='text' name='guardianName' required />
                               Guardian phone:<input type='number' name='guardianPhone' required />
                               Guardian email:<input type='text' name='guardianEmail' required />
                               Chọn lộ trình học
-                              <select id="routeTypeS" onchange="routeType('create')">
-                                    {{#each targetxxx}}
-                                    <option value="{{routeName}}">
-                                          {{routeName}}
-                                    </option>
-                                    {{/each}}
-                              </select>
+                              <select id="routeTypeS" onchange="routeType('create')"></select>
                               Level
                               <select id="levelS"></select>
                               Aim
@@ -148,6 +142,7 @@
 
       </div>
 </body>
+<script src="/jquery/jquery.js"></script>
 
 <script src="/js/admin/createAccount.js"></script>
 

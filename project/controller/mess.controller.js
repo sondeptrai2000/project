@@ -2,20 +2,22 @@ const AccountModel = require('../models/account')
 const chatModel = require('../models/messenger');
 var jwt = require('jsonwebtoken');
 
+//tìm xem giữa 2 người đã từng chat hay chưa
 function findChat(person1ListChat, person2ListChat) {
     var check = false
     var _id
     for (var i = 0; i < person1ListChat.length; i++) {
         for (var u = 0; u < person2ListChat.length; u++) {
             if (person1ListChat[i] == person2ListChat[u]) {
-                _id = person1ListChat[i]
+                _id = person1ListChat[i];
                 check = true;
                 break;
             }
         }
     }
+    // trả về kết quả , nếu true thì sẽ trả về cả _id của cuộc trò chuyện
     return { check, _id };
-}
+};
 
 class messtController {
     //ấn chat vào người bất kỳ r dẫn đến form chat và lịch sử
@@ -31,11 +33,7 @@ class messtController {
             var check = findChat(person1ListChat, person2ListChat);
             //chưa thì sẽ tạo mới cuộc trò chuyện
             if (check.check == false) {
-                var createConnection = {
-                    person1: sender._id,
-                    person2: receiver._id,
-                    message: { ownermessenger: "Hệ thống", messContent: "Đã kết nối! Ấn vào để chat", }
-                }
+                var createConnection = { person1: sender._id, person2: receiver._id, message: { ownermessenger: "Hệ thống", messContent: "Đã kết nối! Ấn vào để chat", } }
                 var data = await chatModel.create(createConnection)
                 await AccountModel.updateMany({ _id: { $in: [sender._id, receiver._id] } }, { $push: { chat: data._id } })
                 next();
@@ -62,19 +60,9 @@ class messtController {
             } else {
                 //xác định người gửi trong đoạn chat đầu tiên để hiển thị
                 if (sender._id.toString() == data1[0].person1._id.toString()) {
-                    var formData = {
-                        senderID: data1[0].person1._id,
-                        senderName: data1[0].person1.username,
-                        receiverID: data1[0].person2._id,
-                        receiverName: data1[0].person2.username,
-                    }
+                    var formData = { senderID: data1[0].person1._id, senderName: data1[0].person1.username, receiverID: data1[0].person2._id, receiverName: data1[0].person2.username }
                 } else {
-                    var formData = {
-                        senderID: data1[0].person2._id,
-                        senderName: data1[0].person2.username,
-                        receiverID: data1[0].person1._id,
-                        receiverName: data1[0].person1.username,
-                    }
+                    var formData = { senderID: data1[0].person2._id, senderName: data1[0].person2.username, receiverID: data1[0].person1._id, receiverName: data1[0].person1.username }
                 }
                 //lấy list chat để join người user vào các phòng để nhận tin nhắn chat
                 var listID = sender.chat;
@@ -94,7 +82,6 @@ class messtController {
         try {
             var data = await chatModel.findOne({ _id: req.query._idRoom }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).lean()
             res.json({ msg: 'success', data });
-
         } catch (e) {
             console.log(e);
             res.json({ msg: 'error' });
@@ -118,15 +105,9 @@ class messtController {
                 var check = findChat(person1ListChat, person2ListChat)
                     //nếu chưa sẽ tạo cuộc trò chuyện mới
                 if (check.check == false) {
-                    var createConnection = {
-                        person1: sender._id,
-                        person2: receiver._id,
-                        message: {
-                            ownermessenger: "Hệ thống",
-                            messContent: "Đã kết nối! Ấn vào để chat",
-                        }
-                    }
-                    var data = await chatModel.create(createConnection)
+                    var createConnection = { person1: sender._id, person2: receiver._id, message: { ownermessenger: "Hệ thống", messContent: "Đã kết nối! Ấn vào để chat" } }
+                    var data = await chatModel.create(createConnection);
+                    //thêm id cuộc trò chuyện vào lịch sử trò chuyển ở thông tin người dùng
                     await AccountModel.updateMany({ _id: { $in: [receiver._id, sender._id] } }, { $push: { chat: data._id } })
                     var idRoom = data._id
                     res.json({ msg: 'createSuccess', receiver, idRoom });

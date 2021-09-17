@@ -16,7 +16,8 @@ adminRouter.post('/doCreateAccount', adminController.doCreateAccount);
 adminRouter.post('/doeditAccount', adminController.doeditAccount);
 
 //Manage class page
-adminRouter.get('/allClassLevel', adminController.allClassLevel);
+// adminRouter.get('/allClassLevel', adminController.allClassLevel);
+adminRouter.get('/getTeacherAndClass', adminController.getTeacherAndClass);
 
 adminRouter.get('/getClass', adminController.getClass);
 adminRouter.get('/searchClass', adminController.searchClass);

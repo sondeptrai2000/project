@@ -5,19 +5,16 @@ $(document).ready(function() {
     //thông tin cá nhân
     teacherProfile();
     //lịch học or làm việc
-    var before = new Date();
-
     test();
-    var after = new Date();
-    console.log(after - before)
-
 });
+
 //hiệu ứng menu
 $('header li').hover(function() {
     $(this).find("div").slideDown()
 }, function() {
     $(this).find("div").hide(500)
 });
+
 //close modal box
 $(window).on('click', function(e) {
     if ($(e.target).is('.updateProfileOut')) $('.updateProfileOut').slideUp(1500);
@@ -62,7 +59,8 @@ async function teacherProfile() {
     } catch (e) {
         console.log(e)
     }
-}
+};
+
 //đưa thông tin cũ vào bảng cập nhật thông tin
 async function updateProfile() {
     try {
@@ -80,7 +78,7 @@ async function updateProfile() {
     } catch (error) {
         console.log(error)
     }
-}
+};
 
 //cập nhật thông tin giáo viên
 async function doUpdateProfile() {
@@ -125,10 +123,10 @@ async function doUpdateProfile() {
     } catch (error) {
         console.log(error)
     }
-}
+};
 
 
-
+//tạo lịch
 async function test() {
     try {
         //lấy các ngày trong năm
@@ -149,9 +147,8 @@ async function test() {
                 tuan.push(arr[i].ngay + ' to ' + arr[7 - n].ngay)
                 check2 = true
             }
-            if (arr[i].thu == 2 && (i + 7) < arr.length) {
-                tuan.push(arr[i].ngay + ' to ' + arr[i + 6].ngay)
-            }
+            if (arr[i].thu == 2 && (i + 7) < arr.length) tuan.push(arr[i].ngay + ' to ' + arr[i + 6].ngay)
+
             if (arr[i].thu != 2 && (i + 7) > arr.length && check == false) {
                 tuan.push(arr[i + 1].ngay + ' to ' + arr[arr.length - 1].ngay)
                 check = true

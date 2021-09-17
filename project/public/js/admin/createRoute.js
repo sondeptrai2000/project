@@ -1,16 +1,17 @@
 $(document).ready(function() {
     getAllRoute()
-    $(window).on('click', function(e) {
-        if ($(e.target).is('.createRouteOut')) $('.createRouteOut').fadeOut(1500);
-        if ($(e.target).is('.updateRouteOut')) $('.updateRouteOut').fadeOut(1500);
-    });
 
-    //hiệu ứng menu
-    $('header li').hover(function() {
-        $(this).find("div").slideDown()
-    }, function() {
-        $(this).find("div").hide(500)
-    });
+});
+$(window).on('click', function(e) {
+    if ($(e.target).is('.createRouteOut')) $('.createRouteOut').fadeOut(1500);
+    if ($(e.target).is('.updateRouteOut')) $('.updateRouteOut').fadeOut(1500);
+});
+
+//hiệu ứng menu
+$('header li').hover(function() {
+    $(this).find("div").slideDown()
+}, function() {
+    $(this).find("div").hide(500)
 });
 
 function getAllRoute() {
@@ -56,6 +57,7 @@ function addClass(test, type) {
         test.append(add)
     }
 }
+//xem các lịch trình giảng dạy của 1 lộ trình học
 
 function viewSchedule(id) {
     $(".viewRouteOut").fadeIn(500)
@@ -128,12 +130,8 @@ $("#doCreateRoute").submit(async function(event) {
         dataType: 'json',
         data: formData,
         success: function(response) {
-            if (response.msg == 'success') {
-                alert('Sign Up success');
-            }
-            if (response.msg == 'Account already exists') {
-                alert('Account already exists');
-            }
+            if (response.msg == 'success') alert('Sign Up success');
+            if (response.msg == 'Account already exists') alert('Account already exists');
         },
         error: function(response) {
             alert('server error');

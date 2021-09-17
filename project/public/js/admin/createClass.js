@@ -1,10 +1,34 @@
-getAllClass();
+$(document).ready(function() {
+    getAllClass();
+});
+
+function getAllClass() {
+    $.ajax({
+        url: '/admin/getAllClass',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div><div class='td'>Status</div></div>")
+                $.each(response.classInfor, function(index, data) {
+                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div><div class='td'> data.classStatus </div></div>")
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
 //hiệu ứng menu
 $('header li').hover(function() {
     $(this).find("div").slideDown()
 }, function() {
     $(this).find("div").hide(500)
 });
+// thoát khỏi modal box
 $(window).on('click', function(e) {
     if ($(e.target).is('.studentListOut')) $('.studentListOut').fadeOut(1500);
     if ($(e.target).is('.studentTableAddOut')) $('.studentTableAddOut').fadeOut(1500);
@@ -12,6 +36,32 @@ $(window).on('click', function(e) {
     if ($(e.target).is('.updateScheduleFormOut')) $('.updateScheduleFormOut').fadeOut(1500);
     if ($(e.target).is('.createClassOut')) $('.createClassOut').fadeOut(1500);
 });
+
+//mở form tạo class và lấy thông tin của giáo viên và các khóa học đẻe chọn giaos viên và lộ trình của lớp
+function createClassForm() {
+    $.ajax({
+        url: '/admin/getTeacherAndClass',
+        method: 'get',
+        dataType: 'json',
+        success: function(response) {
+            if (response.msg == 'success') {
+                $('.createClassOut').toggle(500)
+                $("#routeTypeS").html("")
+                $("#span2").html("")
+                $.each(response.targetxxx, function(index, data) { $("#routeTypeS").append('<option value="' + data.routeName + '">' + data.routeName + '</option>') });
+                $.each(response.teacher, function(index, data) { $("#span2").append('<img src="' + data.avatar + '" onclick="selectedTeacher("' + data.email + '","' + data.avatar + '","' + data._id + '")"><figcaption>' + data.email + '</figcaption><input type="hidden" value="' + data._id + '">') });
+                $("#teacherID img").attr("src", response.teacher[0].avatar)
+                $("#teacherID figcaption").text(response.teacher[0].email)
+                $("#teacherID input").val(response.teacher[0]._id)
+            }
+            if (response.msg == 'error') alert("error")
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+
+}
 
 //lọc phân loại tìm kiếm (lớp đang dạy hay đã dạy và khoảng thời gian)
 function typeClass() {
@@ -68,31 +118,12 @@ function search() {
         }
     });
 }
-
+//chọn giáo viên ở bảng chọn r hiển thị lại ở mục giáo viên chỉ định (tạo lớp form)
 function selectedTeacher(email, avatar, id) {
     $("#teacherID").html('<img src="' + avatar + '" style="height: 200px;width: 200px;" onclick=$("#span2").toggle(500)><figcaption>' + email + '</figcaption><input type="hidden" value="' + id + '">')
     $("#span2").fadeOut(500)
 }
 
-function getAllClass() {
-    $.ajax({
-        url: '/admin/getAllClass',
-        method: 'get',
-        dataType: 'json',
-        data: {},
-        success: function(response) {
-            if (response.msg == 'success') {
-                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div><div class='td'>Status</div></div>")
-                $.each(response.classInfor, function(index, data) {
-                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div><div class='td'>" + data.classStatus + "</div></div>")
-                });
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
 //hiển thị danh sách lịch giảng dạy để admin chọn vào thay đổi lịch làm việc 1 ngày nào đó trong list
 function upDateSchedule(id) {
     var idClass = id
@@ -100,9 +131,7 @@ function upDateSchedule(id) {
         url: '/admin/attendedList',
         method: 'get',
         dataType: 'json',
-        data: {
-            id: id
-        },
+        data: { id: id },
         success: function(response) {
             if (response.msg == 'success') {
                 $("#attendedList").html("<div class='tr'><div class='td' style='width:20%'>Date</div><div class='td'style='width:20%'>Day of week</div><div class='td'style='width:20%' >Room</div><div class='td'style='width:30%'>Time</div><div class='td'style='width:10%'>Action</div></div>")
@@ -138,10 +167,7 @@ $("#cahocUpdate").change(async function() {
         url: '/admin/getThu',
         method: 'get',
         dataType: 'json',
-        data: {
-            dayOfWeek: dayOfWeek,
-            time: $('#cahocUpdate').val()
-        },
+        data: { dayOfWeek: dayOfWeek, time: $('#cahocUpdate').val() },
         success: function(response) {
             if (response.msg == 'success') {
                 $("#roomUpdate").html("")
@@ -425,10 +451,7 @@ function getThu(i) {
         url: '/admin/getThu',
         method: 'get',
         dataType: 'json',
-        data: {
-            dayOfWeek: dayOfWeek,
-            time: time
-        },
+        data: { dayOfWeek: dayOfWeek, time: time },
         success: function(response) {
             if (response.msg == 'success') {
                 $("#Room" + i + "").html("")
@@ -448,57 +471,36 @@ function getThu(i) {
     })
 }
 
-//thực hiện đăng ký và lưu tài khỏan vào đb
+//thực hiện tạo lớp và lưu vào đb
 $("#myform").submit(async function(event) {
     event.preventDefault();
-
     var studentID = []
     var listStudent = []
     var attend = []
     $("input[name='hobby']").each(function(data) {
         if ($(this).is(':checked')) {
             studentID.push($(this).val())
-            listStudent.push({
-                'ID': $(this).val()
-            });
-            attend.push({
-                "studentID": $(this).val(),
-                "attended": ""
-            })
+            listStudent.push({ 'ID': $(this).val() });
+            attend.push({ "studentID": $(this).val(), "attended": "" })
         }
-    })
-
-    //lấy các thứ trong tuần
+    });
+    //lấy các thứ trong tuần, giờ học, phòng
     var buoihoc = []
-    $(".buoihocthu").each(function(data) {
-        buoihoc.push($(this).val())
-    })
-
     var time = []
-    $(".cahoc").each(function() {
-        time.push($(this).val())
-    })
-
     var room = []
-    $(".Room").each(function() {
-        room.push($(this).val())
-    })
+    $(".buoihocthu").each(function(data) { buoihoc.push($(this).val()) });
+    $(".cahoc").each(function() { time.push($(this).val()) });
+    $(".Room").each(function() { room.push($(this).val()) });
+    //lấy các buổi học trong khoảng thời gian từ ngày bắt đầu môn học đến ngày kết thúc môn học
     var schedual = []
-
     var range = getDaysArray(new Date($("#startDate").val()), new Date($("#endDate").val()));
-    //lấy các buổi học trong khoảng thời gian
     for (var i = 0; i < range.length; i++) {
         for (var u = 0; u < buoihoc.length; u++) {
+            // trừ 1 bời vì getDay luôn có giá trị nhỏ hơn giá trị của  thứ. EX: thứ 2 => getDay sẽ là 1 
             if (range[i].getDay() == (buoihoc[u] - 1)) {
                 var date = range[i].getFullYear() + "-" + (range[i].getMonth() + 1).toString().padStart(2, "0") + "-" + range[i].getDate().toString().padStart(2, "0")
                 var day = (range[i].getDay() + 1).toString().padStart(2, "0")
-                schedual.push({
-                    "time": time[u],
-                    "room": room[u],
-                    "date": date,
-                    "day": day,
-                    "attend": attend
-                })
+                schedual.push({ "time": time[u], "room": room[u], "date": date, "day": day, "attend": attend })
                 break;
             }
         }
@@ -526,12 +528,8 @@ $("#myform").submit(async function(event) {
         dataType: 'json',
         data: formData,
         success: function(response) {
-            if (response.msg == 'success') {
-                alert("OK")
-            }
-            if (response.msg == 'error') {
-                alert("error")
-            }
+            if (response.msg == 'success') alert("create class success")
+            if (response.msg == 'error') alert("error")
         },
         error: function(response) {
             alert('server error');
@@ -547,19 +545,19 @@ function routeType() {
         url: '/admin/getStage',
         method: 'get',
         dataType: 'json',
-        data: {
-            abc: routeName
-        },
+        data: { abc: routeName },
         success: function(response) {
             if (response.msg == 'success') {
                 $("#routeTuyBien").html("<div class='tr'></div><div class='tr'></div>");
                 $('#levelS').html('');
+                //hiển thị thông tin các giai đoạn của 1 lộ trình học
                 $.each(response.data, function(index, data) {
                     $.each(data.routeSchedual, function(index, routeSchedual) {
                         var update = "<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>"
                         $("#levelS").append(update);
                     });
                 });
+                //hiển thị thông tin 1 lộ trình học lên đầu form tạo lớp sau khi chọn 1 khóa học
                 $.each(response.targetxxx, function(index, targetxxx) {
                     $.each(targetxxx.routeSchedual, function(indexBIG, routeSchedual) {
                         $("#routeTuyBien .tr:nth-child(1)").append("<div class='td' style='font-size:20px;'>Stage " + (indexBIG + 1) + ": " + routeSchedual.stage + "</div>");
@@ -578,32 +576,25 @@ function routeType() {
         }
     })
 }
-//lấy thông tin level, mốc của lộ trình đã chọn
+//lấy thông tin các môn học của 1 mốc giai đoạn đã chọn của lộ trình đã chọn
 function level() {
     var routeName = $('#routeTypeS').val();
     var levelS = $('#levelS').val();
-    console.log(levelS)
     $.ajax({
         url: '/admin/getStage',
         method: 'get',
         dataType: 'json',
-        data: {
-            abc: routeName,
-            levelS: levelS,
-        },
+        data: { abc: routeName, levelS: levelS },
         success: function(response) {
             if (response.msg == 'success') {
                 $('#subject').html('');
                 $('.taskrow').html('');
                 $('#studentTableAddOut').show();
-                console.log(response.data)
+                //hiển thị bảo thẻ select các môn học của mốc giai đoạn 
                 $.each(response.data, function(index, data) {
                     $.each(data.routeSchedual, function(index, routeSchedual) {
                         if (routeSchedual.stage == levelS) {
-                            $.each(routeSchedual.routeabcd, function(index, routeabcd) {
-                                var update = "<option value='" + routeabcd + "'>" + routeabcd + "</option>"
-                                $("#subject").append(update);
-                            });
+                            $.each(routeSchedual.routeabcd, function(index, routeabcd) { $("#subject").append("<option value='" + routeabcd + "'>" + routeabcd + "</option>"); });
                         }
                     });
                 });
@@ -615,7 +606,7 @@ function level() {
     })
 }
 
-//lấy các học sinh đang học tình trạng học tập tại mức độ đã chọn để thêm vào lớp
+//lấy các học sinh đang học tình trạng học tập tại mức độ đã chọn để thêm vào lớp trong form tạo lớp
 function getStudent() {
     var routeName = $('#routeTypeS').val();
     var levelS = $('#levelS').val();
@@ -623,10 +614,7 @@ function getStudent() {
         url: '/admin/getStudent',
         method: 'get',
         dataType: 'json',
-        data: {
-            abc: routeName,
-            levelS: levelS,
-        },
+        data: { abc: routeName, levelS: levelS },
         success: function(response) {
             if (response.msg == 'success') {
                 if (response.student.length == 0) {
@@ -635,16 +623,18 @@ function getStudent() {
                     $('#studentTable').slideDown(1500);
                     $('#createClassOut,#createClass').animate({ scrollTop: ($('#studentTable').offset().top) }, 500)
                     $('#studentTable').html("<div class='tr'></div><div class='tr'><div class='td'>Avatar</div><div class='td'>Username</div><div class='td' style='display:none;'>Email</div><div class='td'>stage</div><div class='td'>Chose</div><div class='td'>More information</div></div>")
-                    console.log(response.student)
                     $.each(response.student, function(index, student) {
                         var check = false
                         $.each(student.progess, function(index, progess) {
+                            //tiến hành lọc các học sinh có cùng mốc giai đoạn 
                             if (progess.stage == levelS) {
                                 $.each(progess.stageClass, function(index, stageClass) {
+                                    //nếu trong lộ trình học cá nhân của học sinh đã học bộ môn này và không bị restudy thì sẽ bỏ qua k hiển thị ra danh sách để thêm vào lớp
                                     if (stageClass.name == $("#subject").val() && stageClass.status != "Restudy") check = true
                                 });
                             }
                         });
+                        //nếu trong lộ trình học cá nhân của học sinh đã học bộ môn này và  bị restudy hoặc chưa học thì sẽ hiển thị ra danh sách để thêm vào lớp
                         if (check == false) $('#studentTable').append("<div class='tr'><div class='td'><img style ='max-width:200;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td' style='display:none;'>" + student.email + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby' value='" + student._id + "' /></div><div class='td'>" + "<button class='del' value='" + student._id + "'>View</button>" + "</div></div>");
                     });
                     $('#studentTable').show();
