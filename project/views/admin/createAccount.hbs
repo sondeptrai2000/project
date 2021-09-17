@@ -55,6 +55,13 @@
                               <select id="levelS"></select>
                               Aim
                               <select id="Aim"></select>
+                              Available time:
+                              <div id='availbleTime' style='width:100%;padding:0;margin-top:10px;'>
+                                    <ul>Morning<input type='checkbox' class='checkTtime' value='Morning'></ul>
+                                    <ul>Afternoon<input type='checkbox' class='checkTtime' value='Afternoon'></ul>
+                                    <ul>Night<input type='checkbox' class='checkTtime' value='Night'></ul>
+                                    <ul>All<input type='checkbox' class='checkTtime' value='All'></ul>
+                              </div>
                         </div>
                         <input type="submit" class='button' name="submit" value="Submit">
                         <button class='button' onclick="reset()">Reset information</button>
@@ -72,19 +79,19 @@
                               <figcaption>Post new image if you wanna change</figcaption>
                               <input type="hidden" id="oldAvatar">
                               <input type='file' id='myFileUpdate' style="width:100%;">
-                              Name<input type='text' id='usernameUpdate'required />
-                              Email<input type="email" id="emailUpdate"required />
+                              Name<input type='text' id='usernameUpdate' required />
+                              Email<input type="email" id="emailUpdate" required />
                               Password<input type='password' id='passwordUpdate'
-                                    placeholder="update new passwork if you want to"/>
+                                    placeholder="update new passwork if you want to" />
                               Gender
                               <select id='genderUpdate'>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="other">Other</option>
                               </select>
-                              Birthday<input type='date' id='birthdayUpdate'required />
-                              Phone<input type='text' id='phoneUpdate'required />
-                              Address<input type='text' id='addressUpdate'required />
+                              Birthday<input type='date' id='birthdayUpdate' required />
+                              Phone<input type='text' id='phoneUpdate' required />
+                              Address<input type='text' id='addressUpdate' required />
                               <input type='hidden' id='currentRole'>
                               Role
                               <select class='Role' id='roleUpdate'>
@@ -99,9 +106,9 @@
                               <select id='levelSUpdate'></select>
                               Aim
                               <select id='AimUpdate'></select>
-                              Guardian name:<input type='text' name='guardianNameUpdate'required />
-                              Guardian phone: <input type='number' name='guardianPhoneUpdate'required />
-                              Guardian email:<input type='text' name='guardianEmailUpdate'required />
+                              Guardian name:<input type='text' name='guardianNameUpdate' required />
+                              Guardian phone: <input type='number' name='guardianPhoneUpdate' required />
+                              Guardian email:<input type='text' name='guardianEmailUpdate' required />
                         </div>
                         <input type="submit" class='button' name="submit" value="Submit">
                   </form>
@@ -143,5 +150,6 @@
 </body>
 
 <script src="/js/admin/createAccount.js"></script>
+
 
 </html>

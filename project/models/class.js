@@ -52,7 +52,6 @@ const classSchema = new Schema({
             }
         }]
     }],
-    fileLink: String,
     uploadDate: String,
     endDate: Date,
     startDate: Date,

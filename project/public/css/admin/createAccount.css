@@ -143,3 +143,12 @@
     margin-bottom: 10px;
     font-size: 18px;
 }
+
+#createAccount input[type=checkbox] {
+    width: auto;
+}
+
+#availbleTime ul {
+    width: 25%;
+    float: left;
+}

@@ -20,28 +20,38 @@ var transporter = nodemailer.createTransport({
 });
 
 class teacherController {
-    teacherHome(req, res) {
-        res.render('teacher/teacherHome')
+    async teacherHome(req, res) {
+        try {
+            res.render('teacher/teacherHome')
+        } catch (e) {
+            console.log(e)
+            res.json("lỗi")
+        }
     }
 
 
-    allClass(req, res) {
-        var params = req.params.id
-        var teacherName = req.cookies.username
-        if (params != "0") res.render('teacher/allClass', { params, teacherName })
-        if (params == "0") res.render('teacher/allClass', { teacherName })
+    async allClass(req, res) {
+        try {
+            var params = req.params.id
+            var teacherName = req.cookies.username
+            if (params != "0") res.render('teacher/allClass', { params, teacherName })
+            if (params == "0") res.render('teacher/allClass', { teacherName })
+        } catch (e) {
+            console.log(e)
+            res.json("lỗi")
+        }
     }
 
     async getClass(req, res) {
         try {
             var token = req.cookies.token
             var decodeAccount = jwt.verify(token, 'minhson')
-            if (req.query.time) {
+            if (req.query.time != '0') {
                 var time = new Date(req.query.time)
-                var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: time }, endDate: { $gte: time } }).lean();
+                var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: time }, endDate: { $gte: time } }, { schedule: 0, studentID: 0, teacherID: 0 }).lean();
                 res.json({ msg: 'success', classInfor });
             } else {
-                var classInfor = await ClassModel.find({ teacherID: decodeAccount }, { StudentIDoutdoor: 0 }).lean();
+                var classInfor = await ClassModel.find({ teacherID: decodeAccount, classStatus: "Processing" }, { schedule: 0, studentID: 0, teacherID: 0, classStatus: 0, }).lean();
                 res.json({ msg: 'success', classInfor });
             }
         } catch (e) {
@@ -55,8 +65,12 @@ class teacherController {
             var token = req.cookies.token
             var decodeAccount = jwt.verify(token, 'minhson');
             //lấy thời điểm đầu tuần để lấy khóa học đang hoạt động trong khoảng thời gian đó. 
-            var sosanh = new Date(req.query.dauTuan)
-            var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean();
+            var sosanh = new Date(req.query.dauTuan);
+            var before = new Date();
+            var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }, { className: 1, schedule: 1 });
+            var after = new Date();
+            console.log("Đầu tuần: " + req.query.dauTuan)
+            console.log(after - before)
             res.json({ msg: 'success', classInfor });
         } catch (e) {
             console.log(e)
@@ -79,26 +93,24 @@ class teacherController {
 
     async doTakeAttended(req, res) {
         try {
-            var now = new Date()
-            var theLastCourse = new Date(req.body.lastDate.split("T00:00:00.000Z")[0]);
+            var now = new Date();
             //cập nhật điểm danh cho học sinh
             await ClassModel.updateOne({ _id: req.body.idClass, "schedule._id": req.body.schedule }, { $set: { "schedule.$.attend": req.body.attend } });
             //tính số buổi học sinh đã nghỉ
             var data = await ClassModel.find({ _id: req.body.idClass }, { schedule: 1, studentID: 1 }).lean();
-            var student1 = data[0].studentID
+            var student1 = data[0].studentID;
             student1.forEach((student, index) => { student1[index].absentRate = 0 });
             data[0].schedule.forEach((e) => {
                 e.attend.forEach((e) => {
-                    student1.forEach((student, index) => {
-                        if (e.attended == "absent" && e.studentID.toString() == student.ID.toString()) student1[index].absentRate++;
-                    })
+                    student1.forEach((student, index) => { if (e.attended == "absent" && e.studentID.toString() == student.ID.toString()) student1[index].absentRate++; })
                 })
             });
             //cập nhật % số lần học sinh nghỉ học
             await ClassModel.updateOne({ _id: req.body.idClass }, { studentID: student1 });
             //nếu là lịch học đã được update (giáo viên bận và đã được chuyển lịch dạy sang ngày khác thì chuyển trạng thái của phòng đó thành none để thành phòng trống)
-            if (req.body.scheduleStatus == 'update') await assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.scheduleDay, room: { $elemMatch: { room: req.body.scheduleRoom, time: req.body.scheduleTime } } }, { $set: { "room.$.status": "None" } })
-                //nếu đó là buổi học cuối cùng (so sánh time) thì sẽ chuyển trạng thái các phòng của lớp đó thành none 
+            if (req.body.scheduleStatus == 'update') await assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.scheduleDay, room: { $elemMatch: { room: req.body.scheduleRoom, time: req.body.scheduleTime } } }, { $set: { "room.$.status": "None" } });
+            //nếu đó là buổi học cuối cùng (so sánh time) thì sẽ chuyển trạng thái các phòng của lớp đó thành none 
+            var theLastCourse = new Date(req.body.lastDate.split("T00:00:00.000Z")[0]);
             if (now >= theLastCourse) {
                 //chuyển phòng thành none 
                 for (var i = 0; i < req.body.time.length; i++) { assignRoomAndTimeModel.updateOne({ dayOfWeek: req.body.day[i], room: { $elemMatch: { room: req.body.room[i], time: req.body.time[i] } } }, { $set: { "room.$.status": "None" } }) }

@@ -150,25 +150,22 @@ class adminController {
 
     async doupdateSchedule(req, res) {
         try {
-            var oldSchuedule = req.body.old
-            var update = req.body.update
-            update["schedule.$.date"] = new Date(req.body.date)
-            await ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, { $set: update })
-            await assignRoomAndTimeModel.updateOne({ dayOfWeek: update['schedule.$.day'], room: { $elemMatch: { room: update['schedule.$.room'], time: update['schedule.$.time'] } } }, { $set: { "room.$.status": "Ok" } })
-            var getListEmail = await ClassModel.find({ _id: req.body.classID }, { "studentID.ID": 1, className: 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean()
-            var listEmail = ""
-            getListEmail[0].studentID.forEach(element => {
-                listEmail = listEmail + element.ID.email + ', '
-            })
-            listEmail.slice(0, -2)
+            var oldSchuedule = req.body.old;
+            var update = req.body.update;
+            //format date
+            update["schedule.$.date"] = new Date(req.body.date);
+            //cập nhật lịch học mới ở bảng class
+            await ClassModel.updateOne({ _id: req.body.classID, "schedule._id": req.body.scheduleID }, { $set: update });
+            //cập nhật trạng thái phòng của lịch mới
+            await assignRoomAndTimeModel.updateOne({ dayOfWeek: update['schedule.$.day'], room: { $elemMatch: { room: update['schedule.$.room'], time: update['schedule.$.time'] } } }, { $set: { "room.$.status": "Ok" } });
+            //lấy danh sách học lịch trong lớp để tiến hành gửi mail thông báo về sự thay đổi
+            var getListEmail = await ClassModel.find({ _id: req.body.classID }, { "studentID.ID": 1, className: 1 }).populate({ path: 'studentID.ID', select: 'email' }).lean();
+            var listEmail = "";
+            getListEmail[0].studentID.forEach(element => { listEmail = listEmail + element.ID.email + ', ' });
+            listEmail.slice(0, -2);
             var content = 'Do 1 số vấn đề giáo viên, buổi học của lớp ' + getListEmail[0].className + ' vào ngày ' + oldSchuedule[0] + ' từ ' + oldSchuedule[3] + " chuyển sang ngày " + update['schedule.$.date'] + ' từ ' + update['schedule.$.time'] + '.';
-            var mainOptions = {
-                from: 'fptedunotification@gmail.com',
-                to: listEmail,
-                subject: 'Notification',
-                text: content
-            }
-            await transporter.sendMail(mainOptions)
+            var mainOptions = { from: 'sownenglishedu@gmail.com', to: listEmail, subject: 'Notification', text: content };
+            await transporter.sendMail(mainOptions);
             res.json({ msg: 'success' });
         } catch (e) {    
             console.log(e)

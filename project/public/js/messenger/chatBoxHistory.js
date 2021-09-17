@@ -1,19 +1,21 @@
   // establish socket.io connection
   const socket = io();
 
-  $(document).ready(function() {
-      document.cookie = "promo_shown=1; SameSite=None;Secure"
-
-      $("#welcome").html("Welcome " + senderName.value)
-      $(".chatBox").scrollTop($('#messContent').height())
-          //hiệu ứng menu
-      $('header li').hover(function() {
-          $(this).find("div").slideDown()
-      }, function() {
-          $(this).find("div").hide(500)
-      });
-      connectAllConversation();
-      chatBox(receiverID.value, _idRoom.value)
+  $(document).ready(async function() {
+      try {
+          $("#welcome").html("Welcome " + senderName.value)
+          $(".chatBox").scrollTop($('#messContent').height())
+              //hiệu ứng menu
+          $('header li').hover(function() {
+              $(this).find("div").slideDown()
+          }, function() {
+              $(this).find("div").hide(500)
+          });
+          connectAllConversation();
+          chatBox($('#receiverID').val(), $('#_idRoom').val())
+      } catch (e) {
+          console.log(e)
+      }
   });
 
   //tạo room cho tất cả cuọco trò chuyện "online" để nhận thông báo khi người khác gửi tin nhắn

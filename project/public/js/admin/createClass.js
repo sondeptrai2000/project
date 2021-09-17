@@ -180,8 +180,9 @@ $("#SubmitupdateScheduleForm").submit(async function(event) {
         "schedule.$.day": dayOfWeek,
         "schedule.$.status": "update"
     }
+    console.log(update)
     $.ajax({
-        url: '/admin/doupdateSchedule',
+        // url: '/admin/doupdateSchedule',
         method: 'post',
         dataType: 'json',
         data: {

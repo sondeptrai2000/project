@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    getProcesscingClass()
 
     //hiệu ứng menu
     $('header li').hover(function() {
@@ -9,7 +10,6 @@ $(document).ready(function() {
     let username = Cookies.get('username'); // => 'value'
     $("#welcome").html("Welcome " + username)
 
-    getProcesscingClass()
 
     $(window).on('click', function(e) {
         if ($(e.target).is('.attendedListOut')) $('.attendedListOut').slideUp(1500);
@@ -129,10 +129,10 @@ function updateFeekBack() {
 }
 
 
-var room = []
-var day = []
-var time = []
-    //đưa ra list các ngày để trọn điểm danh
+var room = [];
+var day = [];
+var time = [];
+//đưa ra list các ngày để trọn điểm danh
 function attendedList(id) {
     var idClass = id
     $.ajax({
@@ -148,9 +148,13 @@ function attendedList(id) {
                 $("#attendedList").html('<div class="tr"><div class="td">Date</div><div class="td">Day of week</div><div class="td">Action</div></div>')
                 $("#loladate4").val(response.data[0].schedule[response.data[0].schedule.length - 1].date)
                 $.each(response.data[0].schedule, function(index, data) {
-                    if (!room.includes(data.room)) room.push(data.room)
-                    if (!day.includes(data.day)) day.push(data.day)
-                    if (!time.includes(data.time)) time.push(data.time)
+                    //lấy các ngày giờ học để tiện cho việc xét tragnj thái cho phòng nếu đó là ngày cuối cùng của khóa học
+                    //không bao gồm những lịch học đã update vì chúng đã được chuyển trạng thái ở 1 câu lệnh riêng
+                    if (data.status != 'update') {
+                        if (!room.includes(data.room)) room.push(data.room)
+                        if (!day.includes(data.day)) day.push(data.day)
+                        if (!time.includes(data.time)) time.push(data.time)
+                    }
                     $("#attendedList").append('<div class="tr"><div class="td">' + data.date.split("T00:00:00.000Z")[0] + '</div><div class="td">' + data.day + '</div><div class="td"><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></div></div>')
                 });
                 $(".attendedListOut").fadeIn(500)
@@ -176,20 +180,18 @@ function takeAttend(idattend, idClass) {
             if (response.msg == 'success') {
                 $("#takeAttendContent").html($("#takeAttendContent .tr:first-child"))
                 $.each(response.data[0].schedule, function(index, data) {
-                    if (data._id == idattend) {
-                        $.each(data.attend, function(index, attend) {
-                            $("#loladate").val(data.date.split("T00:00:00.000Z")[0])
-                            $("#loladate1").val(data._id)
-                            $("#loladate3").val(idClass)
-                            $("#scheduleStatus").val(data.status)
-                            $("#scheduleTime").val(data.time)
-                            $("#scheduleRoom").val(data.room)
-                            $("#scheduleDay").val(data.day)
-                            $("#takeAttendContent").append('<div class="tr"><div class="td"><input class ="attendStudentID" type="hidden" value="' + attend.studentID._id + '"><img src="' + attend.studentID.avatar + '"><figcaption>' + attend.studentID.username + '</figcaption></div><div class="td"><select class ="attendStudentStatus" id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></div></div>')
-                            $('#' + attend.studentID._id + ' option:selected').removeAttr('selected');
-                            $('#' + attend.studentID._id + ' option[value="' + attend.attended + '"]').attr('selected', 'selected');
-                        });
-                    }
+                    $.each(data.attend, function(index, attend) {
+                        $("#loladate").val(data.date.split("T00:00:00.000Z")[0])
+                        $("#loladate1").val(data._id)
+                        $("#loladate3").val(idClass)
+                        $("#scheduleStatus").val(data.status)
+                        $("#scheduleTime").val(data.time)
+                        $("#scheduleRoom").val(data.room)
+                        $("#scheduleDay").val(data.day)
+                        $("#takeAttendContent").append('<div class="tr"><div class="td"><input class ="attendStudentID" type="hidden" value="' + attend.studentID._id + '"><img src="' + attend.studentID.avatar + '"><figcaption>' + attend.studentID.username + '</figcaption></div><div class="td"><select class ="attendStudentStatus" id="' + attend.studentID._id + '"><option value="attended">attended </option><option value="absent">absent</option><option value="None">none</option></select></div></div>')
+                        $('#' + attend.studentID._id + ' option:selected').removeAttr('selected');
+                        $('#' + attend.studentID._id + ' option[value="' + attend.attended + '"]').attr('selected', 'selected');
+                    });
                 });
                 $("#takeAttendContent").append('<button onclick="submitTakeAttend()">submit</button>')
                 $(".takeAttendFormOut").fadeIn(500)
@@ -203,17 +205,13 @@ function takeAttend(idattend, idClass) {
 //tiến hành cập nhật danh sachs điểm danh
 function submitTakeAttend() {
     var studentID = []
-    $(".attendStudentID").each(function() {
-        studentID.push($(this).val())
-    })
+    $(".attendStudentID").each(function() { studentID.push($(this).val()) })
     var attended = []
-    $(".attendStudentStatus").each(function() {
-        attended.push($(this).val())
-    })
+    $(".attendStudentStatus").each(function() { attended.push($(this).val()) })
     var attend = []
-    for (var i = 0; i < attended.length; i++) {
-        attend.push({ "studentID": studentID[i], "attended": attended[i] })
-    }
+    for (var i = 0; i < attended.length; i++) { attend.push({ "studentID": studentID[i], "attended": attended[i] }) }
+
+    //Note: room,day,time là số buổi học và giờ học được gán từ lúc lấy danh sách lịch học
     var formData = {
         attend: attend,
         idClass: $("#loladate3").val(),
@@ -233,9 +231,7 @@ function submitTakeAttend() {
         dataType: 'json',
         data: formData,
         success: function(response) {
-            if (response.msg == 'success') {
-                alert('success');
-            }
+            if (response.msg == 'success') alert('success');
         },
         error: function(response) {
             alert('server error');
@@ -249,9 +245,10 @@ function getProcesscingClass() {
         url: '/teacher/getClass',
         method: 'get',
         dataType: 'json',
-        data: { check: "0" },
+        data: { time: "0" },
         success: function(response) {
             if (response.msg == 'success') {
+                console.log(response.classInfor)
                 $("#tableClass").html('')
                 $("#tableClass").append("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Take attended</div></div>")
                 response.classInfor.forEach((e) => {

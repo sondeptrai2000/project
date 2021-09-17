@@ -1,5 +1,6 @@
 const AccountModel = require('../models/account')
 const chatModel = require('../models/messenger');
+var jwt = require('jsonwebtoken');
 
 function findChat(person1ListChat, person2ListChat) {
     var check = false

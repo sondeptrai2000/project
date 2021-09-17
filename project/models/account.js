@@ -18,6 +18,7 @@ const AccountSchema = new Schema({
     achive: String,
     routeName: String,
     stage: String,
+    avalableTime: [{ type: String }],
     chat: [{ type: String, }],
     relationship: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
     role: String,

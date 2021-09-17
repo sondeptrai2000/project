@@ -174,10 +174,10 @@ let homeStudent = async(req, res) => {
     }
 }
 
-let loginController = function(req, res) {
-    bcrypt.compare(req.body.password, req.user.password, function(err, result) {
-        if (err) res.json({ message: "error" })
-        if (result) {
+let loginController = async function(req, res) {
+    try {
+        var result = await bcrypt.compare(req.body.password, req.user.password)
+        if (result == true) {
             let token = jwt.sign({ _id: req.user._id }, 'minhson', { expiresIn: '1d' })
             res.cookie("token", token, { maxAge: 24 * 60 * 60 * 10000 });
             let user = req.user
@@ -185,10 +185,11 @@ let loginController = function(req, res) {
             if (user.role === "student") res.json({ msg: 'success', data: "./homeStudent" });
             if (user.role === "guardian") res.json({ msg: 'success', data: "./homeGuardian" });
             if (user.role === "teacher") res.json({ msg: 'success', data: "./homeTeacher" });
-        } else {
-            res.json({ msg: 'invalid_Info', message: "Username or password is invalid" });
-        }
-    })
+        } else { res.json({ msg: 'invalid_Info' }); }
+    } catch (e) {
+        console.log(e)
+        res.json({ message: "error" })
+    }
 }
 let doeditAccount = async function(req, res) {
     try {
@@ -233,8 +234,11 @@ let profile = async function(req, res) {
     try {
         var token = req.cookies.token
         var decodeAccount = jwt.verify(token, 'minhson')
+        var before = new Date();
         var data = await AccountModel.findOne({ _id: decodeAccount }).lean();
         res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
+        var after = new Date();
+        console.log("profile: ", (after - before))
         res.json({ msg: 'success', data: data });
     } catch (e) {
         console.log(e)

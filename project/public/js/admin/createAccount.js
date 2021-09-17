@@ -174,7 +174,7 @@ $("#role").change(async function() {
         $('.typeRole').html('');
     }
     if (accountRole != "teacher") {
-        $('.typeRole').html(" Chọn lộ trình học<select id='routeTypeS' onchange=routeType('create')></select>Level<select id='levelS'></select>Aim<select id='Aim'></select>Guardian name:<input type='text' name='guardianName'>Guardian phone: <input type='number' name='guardianPhone'>Guardian email:<input type='text' name='guardianEmail'>")
+        $('.typeRole').html(" Chọn lộ trình học<select id='routeTypeS' onchange=routeType('create')></select>Level<select id='levelS'></select>Aim<select id='Aim'></select>Guardian name:<input type='text' name='guardianName'>Guardian phone: <input type='number' name='guardianPhone'>Guardian email:<input type='text' name='guardianEmail'>                              <div id='availbleTime' style='width:100%;padding:0;margin-top:10px;'><ul>Morning<input type='checkbox' class='checkTtime' value='Morning'></ul><ul>Afternoon<input type='checkbox' class='checkTtime' value='Afternoon'></ul><ul>Night<input type='checkbox' class='checkTtime' value='Night'></ul><ul>All<input type='checkbox' class='checkTtime' value='All'></ul></div>")
         getRoute('create')
         $('.typeRole').slideDown()
     }
@@ -275,60 +275,88 @@ function updateForm(id) {
         }
     });
 }
+$(".checkTtime").on("change", function() {
+    $("#availbleTime input").each(function() {
+        if ($(this).is(':checked')) {
+            if ($(this).val() == "All") {
+                $("#availbleTime input").prop('checked', false);
+                $(this).prop('checked', true);
+            }
+        }
+    })
+})
 
 //thực hiện đăng ký và lưu tài khỏan vào đb
 $("#myform").submit(function(event) {
     event.preventDefault();
-    var role = $("#role").val()
-    var formData1 = {
-        sex: $("#gender").val(),
-        username: $("#username").val(),
-        email: $("#email").val(),
-        role: role,
-        phone: $("#phone").val(),
-        address: $("#address").val(),
-        birthday: $("#birthday").val(),
-    };
-    var formData2
-    if (role != "teacher") {
-        formData1["stage"] = $("#levelS").val()
-        formData1["routeName"] = $("#routeTypeS").val()
-        formData1["aim"] = $("#Aim").val()
-        formData1["startStage"] = $("#levelS").val()
-        formData2 = {
-            role: "guardian",
-            username: $("input[name='guardianName']").val(),
-            phone: $("input[name='guardianPhone']").val(),
-            email: $("input[name='guardianEmail']").val(),
-        };
-    }
-    $.ajax({
-        url: '/admin/doCreateAccount',
-        method: 'post',
-        dataType: 'json',
-        data: {
-            password: $("#password").val(),
-            filename: myFile.name,
-            file: fileData,
-            student: formData1,
-            phuhuynh: formData2,
-        },
-        success: function(response) {
-            if (response.msg == 'success') {
-                reset();
-                getAccount(role, 0);
-                $(".createAccountOut").slideUp();
-                alert('Sign Up success');
+    var availableTime = []
+    $("#availbleTime input").each(function() {
+        if ($(this).is(':checked')) {
+            if ($(this).val() == "All") {
+                availableTime.length = 0
+                availableTime.push($(this).val())
+                $("#availbleTime input").prop('checked', false);
+                $(this).prop('checked', true);
+            } else {
+                availableTime.push($(this).val())
             }
-            if (response.msg == 'Account already exists') alert('Account already exists');
-            if (response.msg == 'Phone already exists') alert('Phone already exists');
-            if (response.msg == 'error') alert('error');
-        },
-        error: function(response) {
-            alert('server error');
         }
     })
-
+    if (availableTime.length == 0) {
+        alert("nhaajp vaof")
+    } else {
+        var role = $("#role").val()
+        var formData1 = {
+            sex: $("#gender").val(),
+            username: $("#username").val(),
+            email: $("#email").val(),
+            role: role,
+            phone: $("#phone").val(),
+            address: $("#address").val(),
+            birthday: $("#birthday").val(),
+        };
+        var formData2
+        if (role != "teacher") {
+            formData1["stage"] = $("#levelS").val()
+            formData1["routeName"] = $("#routeTypeS").val()
+            formData1["aim"] = $("#Aim").val()
+            formData1["startStage"] = $("#levelS").val()
+            formData1["availableTime"] = availableTime
+            formData2 = {
+                role: "guardian",
+                username: $("input[name='guardianName']").val(),
+                phone: $("input[name='guardianPhone']").val(),
+                email: $("input[name='guardianEmail']").val(),
+            };
+        }
+        console.log(formData1)
+        $.ajax({
+            // url: '/admin/doCreateAccount',
+            method: 'post',
+            dataType: 'json',
+            data: {
+                password: $("#password").val(),
+                filename: myFile.name,
+                file: fileData,
+                student: formData1,
+                phuhuynh: formData2,
+            },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    reset();
+                    getAccount(role, 0);
+                    $(".createAccountOut").slideUp();
+                    alert('Sign Up success');
+                }
+                if (response.msg == 'Account already exists') alert('Account already exists');
+                if (response.msg == 'Phone already exists') alert('Phone already exists');
+                if (response.msg == 'error') alert('error');
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
 });
 
 //thực hiện cập nhật thông tin tài khỏan vào đb
