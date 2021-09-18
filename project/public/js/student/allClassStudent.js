@@ -65,6 +65,7 @@ function myAttended(classID) {
         success: function(response) {
             if (response.msg == 'success') {
                 var data = response.data
+                console.log(data)
                 var studentIndex
                 $(".myAttendContent").html("<div class='tr'><div class='td'>Date</div><div class='td'>Time</div><div class='td'>Status</div></div>")
                 data[0].schedule.forEach((e, indexBIG) => {

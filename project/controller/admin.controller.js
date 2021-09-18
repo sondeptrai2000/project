@@ -10,6 +10,7 @@ var path = require('path');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
+const chatModel = require('../models/messenger');
 
 const { data } = require('jquery');
 const { inflate } = require('zlib');
@@ -69,6 +70,10 @@ class adminController {
         //     }
         // })
         // res.render('admin/adminHome')
+        // await chatModel.updateMany({
+        //     read: []
+        // })
+        // console.log("ok")
     }
 
     async assignRoomAndTime(req, res) {
@@ -157,6 +162,61 @@ class adminController {
         }
     }
 
+
+
+    //đếm số lượng account dựa trên role
+    async countAccount(req, res) {
+        try {
+            console.log("countAccount")
+            var A = new Date()
+                //số tài khoản hiển thị trên 1 trang
+            var accountPerPage = 10
+            var numberOfAccount = await AccountModel.find({ role: req.query.role }, { role: 1 }).lean().countDocuments()
+            var soTrang = numberOfAccount / accountPerPage + 1
+            var B = new Date()
+            console.log(B - A)
+            res.json({ msg: 'success', soTrang });
+        } catch (e) {    
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    //đếm số lượng account dựa trên trạng thái của lớp học
+    async countClass(req, res) {
+        try {
+            console.log("countClass")
+            var A = new Date()
+                //số lớp hiển thị trên 1 trang
+            var classPerPage = 2
+            var numberOfClass = await ClassModel.find({ classStatus: req.query.status }, { _id: 1 }).lean().countDocuments()
+            console.log(req.query.status)
+            console.log(numberOfClass)
+            var soTrang = numberOfClass / classPerPage + 1
+            var B = new Date()
+            console.log(B - A)
+            res.json({ msg: 'success', soTrang });
+        } catch (e) {    
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    };
+    //lấy tất cả cacs lớp đang hoạt động
+    //Note: Chỉnh thành số trang
+    async getAllClass(req, res) {
+        try {
+            var A = new Date()
+            var classPerPage = 2
+            var skip = classPerPage * parseInt(req.query.page)
+            var classInfor = await ClassModel.find({ classStatus: req.query.status }, { schedule: 0, studentID: 0, classStatus: 0 }).skip(skip).limit(classPerPage).lean();
+            var B = new Date()
+            console.log(B - A)
+            res.json({ msg: 'success', classInfor });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    };
     //lấy account ở trang ?
     async getAccount(req, res) {
         try {
@@ -173,26 +233,7 @@ class adminController {
             console.log(e)
             res.json({ msg: 'error' });
         }
-    }
-
-    //đếm số lượng account dựa trên role
-    async count(req, res) {
-        try {
-            console.log("count")
-            var A = new Date()
-                //số tài khoản hiển thị trên 1 trang
-            var accountPerPage = 10
-            var numberOfAccount = await AccountModel.find({ role: req.query.role }, { role: 1 }).lean().countDocuments()
-            var soTrang = numberOfAccount / accountPerPage + 1
-            var B = new Date()
-            console.log(B - A)
-            res.json({ msg: 'success', soTrang });
-        } catch (e) {    
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    }
-
+    };
     //trang xem thông tin cụ thể thông tin quá trình học của học sinh 
     async studentClass(req, res) {
         try {
@@ -515,20 +556,7 @@ class adminController {
             res.json({ msg: 'error' });
         }
     };
-    //lấy tất cả cacs lớp đang hoạt động
-    //Note: Chỉnh thành số trang
-    async getAllClass(req, res) {
-        try {
-            var A = new Date()
-            var classInfor = await ClassModel.find({ classStatus: "Processing" }, { schedule: 0, studentID: 0, classStatus: 0 }).lean()
-            var B = new Date()
-            console.log(B - A)
-            res.json({ msg: 'success', classInfor });
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    };
+
     //tạo lớp
     async docreateClass(req, res) {
         try {
@@ -579,17 +607,6 @@ class adminController {
         }
     };
 
-    //tiến hành tìm kiếm lớp học và trả về kết quả
-    async getClass(req, res) {
-        try {
-            var time = new Date(req.query.time)
-            var classInfor = await ClassModel.find({ startDate: { $lte: time }, endDate: { $gte: time }, classStatus: "finished" }, { schedule: 0, studentID: 0, classStatus: 0 }).lean();
-            res.json({ msg: 'success', classInfor });
-        } catch (e) {
-            console.log(e)
-            res.json({ msg: 'error' });
-        }
-    };
 
     // async allClassLevel(req, res) {
     //     try {
@@ -630,4 +647,5 @@ class adminController {
         }
     }
 }
+
 module.exports = new adminController

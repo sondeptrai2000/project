@@ -66,9 +66,7 @@
           url: '/messenger/getMessenger',
           method: 'get',
           dataType: 'json',
-          data: {
-              _idRoom: _idRoom
-          },
+          data: { _idRoom: _idRoom },
           success: function(response) {
               if (response.msg == 'success') {
                   $('#' + _idRoom).css("font-weight", "normal");
@@ -91,8 +89,9 @@
                   $('#receiverName').val(receiverName)
                   $('.chatTitle').html("Conversation between " + senderName + " and " + receiverName)
                   $.each(response.data.message, function(index, message) {
-                      if (message.ownermessengerID === $('#senderID').val()) $('#messContent').append("<div class='sender'><p>" + message.messContent + "</p>" + "<img src='" + senderAva + "'></div>")
-                      if (message.ownermessengerID === $('#receiverID').val()) $('#messContent').append("<div class='receiver'><img src='" + receiverAva + "'>" + "<p>" + message.messContent + "</p></div>")
+                      console.log(typeof(message.time))
+                      if (message.ownermessengerID === $('#senderID').val()) $('#messContent').append("<div class='sender' onclick=$(this).find('label').toggle();><p>" + message.messContent + "</p>" + "<img src='" + senderAva + "'><br><label style='display:none;'>" + message.time.toString() + "</label></div>")
+                      if (message.ownermessengerID === $('#receiverID').val()) $('#messContent').append("<div class='receiver' onclick=$(this).find('label').toggle();><img src='" + receiverAva + "'>" + "<p>" + message.messContent + "</p><br><label style='display:none;'>" + message.time.toString() + "</label></div>")
                       if (message.ownermessengerID !== $('#senderID').val() && message.ownermessengerID !== $('#receiverID').val()) $('#messContent').append("<div style='width: 100%;padding: 0;margin: 0;text-align: center;'><p>" + message.ownermessenger + ": " + message.messContent + "</p></div>")
                   });
                   $('#messContent').scrollTop($('#messContent')[0].scrollHeight);
@@ -107,7 +106,6 @@
   //khi người dùng ấn chat thì sẽ server sẽ nhận tin nhắn và xử lý (server on "user-chat" )
   $("#messengerSubmit").submit(function(event) {
       event.preventDefault();
-
       if (mess.value != "") {
           //sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
           socket.emit("user-chat", {
@@ -140,8 +138,9 @@
           $("#messContent").append(div);
       }
       //hiển thị tin nhắn mới nhất ở lịch sử chat
-      if ($("#senderID").val() == message.senderID) $('#' + message._idRoom).html(" " + message.receiverName + "<br>" + message.senderName + ": " + message.mess)
-      if ($("#senderID").val() == message.receiverID) $('#' + message._idRoom).html(" " + message.senderName + "<br>" + message.senderName + ": " + message.mess)
+      var now = Date().toString().split("GMT")[0]
+      if ($("#senderID").val() == message.senderID) $('#' + message._idRoom).html(" " + message.receiverName + "<br>" + message.senderName + ": " + message.mess.slice(0, 9).toLowerCase() + "<br><label>" + now + "</label>")
+      if ($("#senderID").val() == message.receiverID) $('#' + message._idRoom).html(" " + message.senderName + "<br>" + message.senderName + ": " + message.mess.slice(0, 9).toLowerCase() + "<br><label>" + now + "</label>")
 
       //tin nhắn gửi đến nếu chưa xem thì in đậm, xem r thì in bt
       if (message._idRoom != $("#_idRoom").val()) {
@@ -165,9 +164,7 @@
           url: '/messenger/addChat',
           method: 'post',
           dataType: 'json',
-          data: {
-              condition: condition
-          },
+          data: { condition: condition },
           success: function(response) {
               if (response.msg == 'error') alert('There are some error. \nContact with IT deparment to fix to this!')
               if (response.msg == 'user not found') alert('User not found. \nNote: You can"t add chat with yourself!')
@@ -179,7 +176,8 @@
               }
               if (response.msg == 'createSuccess') {
                   //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
-                  $(".history").prepend("<div class='" + response._idRoom + "'onclick=chatBox('" + response.receiver._id + "','" + response.idRoom + "')><img src='" + response.receiver.avatar + "'><p>  " + response.receiver.username + "<br>Hệ thống: Đã kết nối! Ấn vào để chat </p></div>")
+                  var now = Date().toString().split("GMT")[0]
+                  $(".history").prepend("<div class='" + response._idRoom + "'onclick=chatBox('" + response.receiver._id + "','" + response.idRoom + "')><img src='" + response.receiver.avatar + "'><p>  " + response.receiver.username + "<br>Hệ thống: Đã kết nố...</p><br><label>" + now + "</label></div>")
                   chatBox(response.receiver._id, response.idRoom);
                   var idConversationList = [];
                   idConversationList.push(response._idRoom);

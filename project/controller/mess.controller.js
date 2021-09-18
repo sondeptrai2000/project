@@ -80,6 +80,13 @@ class messtController {
     //lấy cuộc hội thoại
     async getMessenger(req, res) {
         try {
+            var token = req.cookies.token
+            var decodeAccount = jwt.verify(token, 'minhson')
+                //lấy trạng thái read của cuọc hồi thoại
+            var chatInfor = await chatModel.findOne({ _id: req.query._idRoom }, { read: 1 }).lean();
+            //lấy chưa read thì sẽ thêm id vào read để thành read (Note: cuộc trò chuyện có 2 người, nếu mảng read = 2 thì nghĩa là cả 2 đã đọc)
+            if (!chatInfor.read.includes(decodeAccount._id)) await chatModel.findOneAndUpdate({ _id: req.query._idRoom }, { $push: { read: decodeAccount._id } });
+            //trả về cuộc trò chuyện
             var data = await chatModel.findOne({ _id: req.query._idRoom }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).lean()
             res.json({ msg: 'success', data });
         } catch (e) {

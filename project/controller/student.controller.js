@@ -14,7 +14,6 @@ class studentController {
         try {
             let token = req.cookies.token
             let decodeAccount = jwt.verify(token, 'minhson')
-            console.log(req.query.classID)
             var data = await ClassModel.find({ _id: req.query.classID }, { schedule: 1, "studentID.absentRate": 1 }).populate({ path: "schedule.attend.studentID", select: { username: 1, avatar: 1 } }).lean();
             res.json({ msg: 'success', data: data, studentID: decodeAccount._id });
         } catch (e) {
@@ -38,11 +37,8 @@ class studentController {
             let decodeAccount = jwt.verify(token, 'minhson')
             var classInfor = await AccountModel.find({ _id: decodeAccount._id }, { classID: 1 }).populate({
                 path: 'classID',
-                select: '-schedule',
-                populate: {
-                    path: 'teacherID',
-                    select: 'username',
-                }
+                select: { 'schedule': 0 },
+                populate: { path: 'teacherID', select: 'username' }
             }).lean()
             res.json({ msg: 'success', classInfor, studentID: decodeAccount._id });
         } catch (e) {
@@ -82,10 +78,9 @@ class studentController {
             var token = req.cookies.token
             var decodeAccount = jwt.verify(token, 'minhson')
             var studentID = decodeAccount._id
-                //lấy thời hiện tại để lấy khóa học đang hoạt động trong thời gian hiện tại. 
-            var sosanh = new Date(req.query.dauTuan)
             var data = await AccountModel.findOne({ _id: decodeAccount }, { classID: 1 }).lean()
-            var classInfor = await ClassModel.find({ _id: { $in: data.classID }, startDate: { $lte: new Date(req.query.dauTuan) }, endDate: { $gte: sosanh } }).lean()
+            var sosanh = new Date(req.query.dauTuan)
+            var classInfor = await ClassModel.find({ _id: { $in: data.classID }, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean()
             res.json({ msg: 'success', classInfor, studentID });
         } catch (e) {
             console.log(e)

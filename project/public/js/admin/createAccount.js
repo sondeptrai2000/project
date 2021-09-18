@@ -5,7 +5,7 @@ var myFileUpdate;
 
 $(document).ready(function() {
     //chạy hàm đếm số lượng giáo viên trong lớp và hiển thị số trang và giáo viên
-    count();
+    countAccount();
 
 });
 
@@ -68,15 +68,16 @@ async function reset() {
 
 
 //đếm số tk để hiển thị theo danh sachs trang
-function count() {
+function countAccount() {
     console.log($("#accountFilter").val())
     $.ajax({
-        url: '/admin/count',
+        url: '/admin/countAccount',
         method: 'get',
         dataType: 'json',
         data: { role: $("#accountFilter").val() },
         success: function(response) {
             if (response.msg == 'success') {
+                console.log(response.soTrang)
                 $("#soTrang").html("Page:<select onchange=getAccount()></select>");
                 //hiển thị số trang vào thẻ select cho dễ chọn trang
                 for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }

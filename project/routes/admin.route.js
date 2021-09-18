@@ -7,7 +7,7 @@ adminRouter.get('/', adminController.adminHome)
 adminRouter.get('/createAccount', adminController.createAccount);
 
 adminRouter.get('/getAccount', adminController.getAccount);
-adminRouter.get('/count', adminController.count);
+adminRouter.get('/countAccount', adminController.countAccount);
 adminRouter.get('/search', adminController.search);
 adminRouter.get('/getStage', adminController.getStage);
 adminRouter.get('/getRoute', adminController.getRoute);
@@ -19,7 +19,8 @@ adminRouter.post('/doeditAccount', adminController.doeditAccount);
 // adminRouter.get('/allClassLevel', adminController.allClassLevel);
 adminRouter.get('/getTeacherAndClass', adminController.getTeacherAndClass);
 
-adminRouter.get('/getClass', adminController.getClass);
+adminRouter.get('/countClass', adminController.countClass);
+
 adminRouter.get('/searchClass', adminController.searchClass);
 adminRouter.get('/getAllClass', adminController.getAllClass);
 adminRouter.get('/attendedList', adminController.attendedList);

@@ -11,11 +11,15 @@ teacherRouter.get('/getSchedule', teacherController.getSchedule)
 
 //All class page
 teacherRouter.get('/allClass/:id', teacherController.allClass)
-teacherRouter.get('/getClass', teacherController.getClass)
+
+teacherRouter.get('/countClass', teacherController.countClass);
+teacherRouter.get('/getAllClass', teacherController.getAllClass);
 teacherRouter.get('/allClassStudent', teacherController.allClassStudent)
 teacherRouter.post('/studentAssessment', teacherController.studentAssessment)
 teacherRouter.get('/attendedList', teacherController.attendedList)
 teacherRouter.get('/attendedListStudent', teacherController.attendedListStudent)
 teacherRouter.post('/doTakeAttended', teacherController.doTakeAttended)
+
+
 
 module.exports = teacherRouter

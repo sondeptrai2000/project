@@ -34,7 +34,7 @@ function getClass() {
                         e.studentID.forEach((e) => {
                             if (e.ID == response.studentID) $("#" + classID).append("<div class='td'>" + e.grade + "</div><div class='td'>" + e.feedBackContent + "</div>")
                         })
-                        $("#" + classID).append("<div class='td'><button onclick=sendData('" + e._id + "')>List student</button><button onclick=myAttended('" + e._id + "')>My attend</button></div>")
+                        $("#" + classID).append("<div class='td'><button onclick=myAttended('" + e._id + "')>My attend</button></div>")
                     })
                 })
                 var getClassID = $("#getClassID").val()

@@ -42,10 +42,7 @@ class guardianController {
             var classInfor = await AccountModel.find({ _id: guardian.relationship }, { classID: 1 }).populate({
                 path: 'classID',
                 select: '-schedule',
-                populate: {
-                    path: 'teacherID',
-                    select: 'username',
-                }
+                populate: { path: 'teacherID', select: 'username' }
             }).lean()
             res.json({ msg: 'success', classInfor, studentID: guardian.relationship });
         } catch (e) {
@@ -85,12 +82,11 @@ class guardianController {
             var token = req.cookies.token
             var decodeAccount = jwt.verify(token, 'minhson')
             var studentID = decodeAccount._id
-                //lấy thời hiện tại để lấy khóa học đang hoạt động trong thời gian hiện tại. 
-            var sosanh = new Date(req.query.dauTuan)
             var guardian = await AccountModel.findOne({ _id: decodeAccount }, { relationship: 1 }).lean()
             var student = await AccountModel.findOne({ _id: guardian.relationship }, { classID: 1 }).lean()
             var studentID = guardian.relationship
-            var classInfor = await ClassModel.find({ _id: { $in: student.classID }, startDate: { $lte: new Date(req.query.dauTuan) }, endDate: { $gte: sosanh } }).lean()
+            var sosanh = new Date(req.query.dauTuan)
+            var classInfor = await ClassModel.find({ _id: { $in: student.classID }, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean()
             res.json({ msg: 'success', classInfor, studentID });
         } catch (e) {
             console.log(e)

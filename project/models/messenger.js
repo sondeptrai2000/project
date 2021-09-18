@@ -13,6 +13,7 @@ mongoose.connect(url, {
 var chatSchema = new mongoose.Schema({
     person1: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
     person2: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
+    read: [{ type: String }],
     message: [{
         ownermessengerID: String,
         ownermessenger: String,

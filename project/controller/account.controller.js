@@ -221,7 +221,7 @@ let profile = async function(req, res) {
         var token = req.cookies.token
         var decodeAccount = jwt.verify(token, 'minhson')
         var before = new Date();
-        var data = await AccountModel.findOne({ _id: decodeAccount }).lean();
+        var data = await AccountModel.findById({ _id: decodeAccount._id }).lean();
         res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
         var after = new Date();
         console.log("profile: ", (after - before))

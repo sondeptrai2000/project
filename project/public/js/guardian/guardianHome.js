@@ -88,15 +88,11 @@ var getDaysArray = function(start, end) {
 
 //lấy thông tin lịch trình học, làm việc
 function tuanoi() {
-    var tuan = $("#chonTuan").val()
-    var dauTuan = tuan.split(" to ")[0]
-    var cuoiTuan = tuan.split(" to ")[1]
-    var formData = {
-            dauTuan: dauTuan,
-            cuoiTuan: cuoiTuan
-        }
-        //chỉnh fomat date giống Type Date trong mongoDB để so sánh 
-        // link src hàm moment ở head
+    var tuan = $("#chonTuan").val();
+    var dauTuan = tuan.split(" to ")[0];
+    var cuoiTuan = tuan.split(" to ")[1];
+    //chỉnh fomat date giống Type Date trong mongoDB để so sánh 
+    // link src hàm moment ở head
     var start = moment(new Date(dauTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
     var end = moment(new Date(cuoiTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
     var a = getDaysArray(new Date(dauTuan), new Date(cuoiTuan));
@@ -110,7 +106,6 @@ function tuanoi() {
         url: '/guardian/getSchedule',
         method: 'get',
         dataType: 'json',
-        data: formData,
         success: function(response) {
             if (response.msg == 'success') {
                 $("#time1").html('<div class="td">7:30 to 9:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')

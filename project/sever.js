@@ -78,8 +78,8 @@ io.on("connection", function(socket) {
                         time: new Date
                     }
                 },
-                updateTime: new Date
-
+                read: [data.senderID],
+                updateTime: new Date,
             })
             socket.Phong = data._idRoom
             io.sockets.in(socket.Phong).emit("server-chat", data)

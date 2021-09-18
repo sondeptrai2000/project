@@ -10,13 +10,8 @@ var transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
-    auth: {
-        user: 'sownenglishedu@gmail.com',
-        pass: 'son123@123'
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
+    auth: { user: 'sownenglishedu@gmail.com', pass: 'son123@123' },
+    tls: { rejectUnauthorized: false }
 });
 
 class teacherController {
@@ -40,32 +35,51 @@ class teacherController {
             console.log(e)
             res.json("lỗi")
         }
-    }
-
-    async getClass(req, res) {
+    };
+    //đếm số lượng account dựa trên trạng thái của lớp học
+    async countClass(req, res) {
         try {
             var token = req.cookies.token
             var decodeAccount = jwt.verify(token, 'minhson')
-            if (req.query.time != '0') {
-                var time = new Date(req.query.time)
-                var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: time }, endDate: { $gte: time } }, { schedule: 0, studentID: 0, teacherID: 0 }).lean();
-                res.json({ msg: 'success', classInfor });
-            } else {
-                var classInfor = await ClassModel.find({ teacherID: decodeAccount, classStatus: "Processing" }, { schedule: 0, studentID: 0, teacherID: 0, classStatus: 0, }).lean();
-                res.json({ msg: 'success', classInfor });
-            }
+            var A = new Date()
+                //số lớp hiển thị trên 1 trang
+            var classPerPage = 2
+            var numberOfClass = await ClassModel.find({ teacherID: decodeAccount, classStatus: req.query.status }, { _id: 1 }).lean().countDocuments()
+            var soTrang = numberOfClass / classPerPage + 1
+            var B = new Date()
+            console.log("countClass", B - A)
+            res.json({ msg: 'success', soTrang });
+        } catch (e) {    
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    };
+
+    //lấy tất cả cacs lớp đang hoạt động
+    //Note: Chỉnh thành số trang
+    async getAllClass(req, res) {
+        try {
+            var token = req.cookies.token
+            var decodeAccount = jwt.verify(token, 'minhson')
+            var A = new Date()
+            var classPerPage = 2
+            var skip = classPerPage * parseInt(req.query.page)
+            var classInfor = await ClassModel.find({ teacherID: decodeAccount, classStatus: req.query.status }, { schedule: 0, studentID: 0, classStatus: 0 }).skip(skip).limit(classPerPage).lean();
+            var B = new Date()
+            console.log(B - A)
+            res.json({ msg: 'success', classInfor });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
         }
-    }
+    };
 
     async getSchedule(req, res) {
         try {
             var token = req.cookies.token
             var decodeAccount = jwt.verify(token, 'minhson');
             //lấy thời điểm đầu tuần để lấy khóa học đang hoạt động trong khoảng thời gian đó. 
-            var sosanh = new Date(req.query.dauTuan);
+            var sosanh = new Date(req.query.dauTuan)
             var before = new Date();
             var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }, { className: 1, schedule: 1 });
             var after = new Date();
@@ -195,7 +209,7 @@ class teacherController {
     async allClassStudent(req, res) {
         try {
             var _id = req.query.abc
-            var selectedClassInfor = await ClassModel.find({ _id: _id }, { 'studentID.ID': 1 }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
+            var selectedClassInfor = await ClassModel.find({ _id: _id }, { studentID: 1 }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
             res.json({ msg: 'success', data: selectedClassInfor });
         } catch (e) {
             console.log(e)

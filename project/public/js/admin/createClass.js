@@ -1,27 +1,9 @@
 $(document).ready(function() {
-    getAllClass();
+    countClass()
     createClassForm();
 });
 
-function getAllClass() {
-    $.ajax({
-        url: '/admin/getAllClass',
-        method: 'get',
-        dataType: 'json',
-        data: {},
-        success: function(response) {
-            if (response.msg == 'success') {
-                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div><div class='td'>Status</div></div>")
-                $.each(response.classInfor, function(index, data) {
-                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div><div class='td'> data.classStatus </div></div>")
-                });
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
+
 
 //hiệu ứng menu
 $('header li').hover(function() {
@@ -63,30 +45,41 @@ function createClassForm() {
 
 }
 
-//lọc phân loại tìm kiếm (lớp đang dạy hay đã dạy và khoảng thời gian)
-function typeClass() {
-    var type = $("#typeClass").val()
-    if (type == "processing") {
-        $("#formSearchEndClass").hide(500)
-        getAllClass();
-    }
-    if (type == "finished") $("#formSearchEndClass").slideDown(1200)
-}
 
-
-//tiến hành tìm kiếm và trả về kết quả
-function searchEndClass() {
-    var time = $("#monthClass").val() + "-01"
+//đếm số lớp để hiển thị theo danh sachs trang
+function countClass() {
     $.ajax({
-        url: '/admin/getClass',
+        url: '/admin/countClass',
         method: 'get',
         dataType: 'json',
-        data: { check: "1", time: time },
+        data: { status: $("#typeClass").val() },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".tableClass").html("")
+                console.log(response.soTrang)
+                $("#soTrang").html("Page:<select onchange=getAllClass()></select>");
+                //hiển thị số trang vào thẻ select cho dễ chọn trang
+                for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
+                //hiển thị thông tin các tài khoản theo role và số trang.
+                getAllClass();
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+function getAllClass() {
+    $.ajax({
+        url: '/admin/getAllClass',
+        method: 'get',
+        dataType: 'json',
+        data: { status: $("#typeClass").val(), page: $("#soTrang select").val() },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div><div class='td'>Status</div></div>")
                 $.each(response.classInfor, function(index, data) {
-                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate + "</div><div class='td'>" + data.endDate + "</div><div class='td'><button onclick=sendData('" + data._id + "','" + data.subject + "')>View Student List</button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')>upDate schedule </button><button onclick=deleteClass('" + data._id + "')>delete</button></div><div class='td'>" + data.classStatus + "</div></div>")
+                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div><div class='td'> data.classStatus </div></div>")
                 });
             }
         },
@@ -96,8 +89,9 @@ function searchEndClass() {
     });
 }
 
+//tìm kiếm class
 
-function search() {
+function searchClass() {
     if ($("#search").val() == "") alert("Input class name")
     $.ajax({
         url: '/admin/searchClass',
@@ -106,9 +100,9 @@ function search() {
         data: { className: $("#search").val() },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".tableClass").html("")
+                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div><div class='td'>Status</div></div>")
                 $.each(response.classInfor, function(index, data) {
-                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate + "</div><div class='td'>" + data.endDate + "</div><div class='td'><button onclick=sendData('" + data._id + "','" + data.subject + "')><i class='fas fa-clipboard-list'></i></button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')>upDate schedule </button><button onclick=deleteClass('" + data._id + "')>delete</button></div><div class='td'>" + data.classStatus + "</div></div>")
+                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div><div class='td'> data.classStatus </div></div>")
                 });
             }
             if (response.msg == 'notFound') alert("Can't found class")

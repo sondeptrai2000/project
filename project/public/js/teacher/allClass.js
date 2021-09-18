@@ -1,7 +1,6 @@
 $(document).ready(function() {
-    //lấy các lớp mà giáo viên đang dạy
-    getProcesscingClass()
-
+    countClass()
+        //lấy các lớp mà giáo viên đang dạy
 });
 
 //hiệu ứng menu
@@ -23,6 +22,59 @@ $(window).on('click', function(e) {
     if ($(e.target).is('.takeAttendFormOut')) $('.takeAttendFormOut').slideUp(1500);
 });
 
+
+//đếm số lớp để hiển thị theo danh sachs trang
+function countClass() {
+    $.ajax({
+        url: '/teacher/countClass',
+        method: 'get',
+        dataType: 'json',
+        data: { status: $("#typeClass").val() },
+        success: function(response) {
+            if (response.msg == 'success') {
+                console.log(response.soTrang)
+                $("#soTrang").html("Page:<select onchange=getAllClass()></select>");
+                //hiển thị số trang vào thẻ select cho dễ chọn trang
+                for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
+                //hiển thị thông tin các tài khoản theo role và số trang.
+                getAllClass();
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+
+//lấy danh sách các lớp đang dạy
+function getAllClass() {
+    console.log($("#typeClass").val())
+    console.log($("#soTrang select").val())
+    $.ajax({
+        url: '/teacher/getAllClass',
+        method: 'get',
+        dataType: 'json',
+        data: { status: $("#typeClass").val(), page: $("#soTrang select").val() },
+        success: function(response) {
+            if (response.msg == 'success') {
+                console.log(response.classInfor)
+                $("#tableClass").html('')
+                $("#tableClass").append("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Take attended</div></div>")
+                response.classInfor.forEach((e) => {
+                    $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + e.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + e._id + "')>View</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
+                })
+                var getClassID = $("#getClassID").val()
+                if (getClassID) $("#" + getClassID).css("background-color", 'red')
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+
 //lấy danh sách học sinh trong lớp
 function sendData(id) {
     var _id = id
@@ -33,16 +85,16 @@ function sendData(id) {
         data: { abc: _id },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".studentListContent").html('<div class="tr"><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">grade</div><div class="td">feedBackContent</div><div class="td">Select</div><div class="td">Chat</div><div class="td">Grade</div></div>')
+                $(".studentListContent").html('<div class="tr"><div class="td">avatar</div><div class="td">username</div><div class="td">Aim</div><div class="td">email</div><div class="td">grade</div><div class="td">feedBackContent</div><div class="td">Chat</div><div class="td">Grade</div></div>')
                 $.each(response.data, function(index, data) {
                     if (data.studentID.length == 0) {
                         alert('No student in class')
                     } else {
                         $.each(data.studentID, function(index, studentID) {
                             if (studentID.grade === "Has not been commented yet") {
-                                $(".studentListContent").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'>" + studentID.grade + "</div><div class='td' id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div><div class='td'>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Grade </button>" + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><button>Chat</button></form></div></div>");
+                                $(".studentListContent").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'>" + studentID.grade + "</div><div class='td' id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</div><div class='td'>" + "<button onclick =studentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.ID.email + "')> Grade </button>" + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><button>Chat</button></form></div></div>");
                             } else {
-                                $(".studentListContent").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'>" + studentID.grade + "</div><div class='td' id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div><div class='td'>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Edit grade</button>" + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><button>Chat</button></form></div></div>");
+                                $(".studentListContent").append("<div class='tr'><div class='td'><img style ='max-width:150px;max-height:200px' src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'>" + studentID.grade + "</div><div class='td' id = '" + studentID.ID._id + "'>" + studentID.feedBackContent + "</div><div class='td'>" + "<button onclick =updateStudentAssessmentForm('" + _id + "','" + studentID.ID._id + "','" + studentID.ID.username + "','" + studentID.grade + "')> Edit grade</button>" + "</div><div class='td'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + studentID.ID._id + "'><button>Chat</button></form></div></div>");
                             }
                         });
                     }
@@ -177,6 +229,7 @@ function takeAttend(idattend, idClass) {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
+                console.log(response.data)
                 $("#takeAttendContent").html($("#takeAttendContent .tr:first-child"))
                 $.each(response.data[0].schedule, function(index, data) {
                     $.each(data.attend, function(index, attend) {
@@ -237,31 +290,6 @@ function submitTakeAttend() {
     });
 }
 
-//lấy danh sách các lớp đang dạy
-function getProcesscingClass() {
-    $.ajax({
-        url: '/teacher/getClass',
-        method: 'get',
-        dataType: 'json',
-        data: { time: "0" },
-        success: function(response) {
-            if (response.msg == 'success') {
-                console.log(response.classInfor)
-                $("#tableClass").html('')
-                $("#tableClass").append("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Take attended</div></div>")
-                response.classInfor.forEach((e) => {
-                    $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + e.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + e._id + "')>View</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
-                })
-                var getClassID = $("#getClassID").val()
-                if (getClassID) $("#" + getClassID).css("background-color", 'red')
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
-
 //lọc phân loại tìm kiếm (lớp đang dạy hay đã dạy và khoảng thời gian)
 function typeClass() {
     var type = $("#typeClass").val()
@@ -270,27 +298,4 @@ function typeClass() {
         getProcesscingClass()
     }
     if (type == "end") $("#formSearchEndClass").slideDown(500)
-}
-
-//tiến hành tìm kiếm và trả về kết quả
-function searchEndClass() {
-    var time = $("#monthClass").val() + "-01"
-    $.ajax({
-        url: '/teacher/getClass',
-        method: 'get',
-        dataType: 'json',
-        data: { check: "1", time: time },
-        success: function(response) {
-            if (response.msg == 'success') {
-                $("#tableClass").html('')
-                $("#tableClass").append("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Take attended</div></div>")
-                response.classInfor.forEach((e) => {
-                    $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate + "</div><div class='td'>" + e.endDate + "</div><div class='td'><button onclick=sendData('" + e._id + "')>View</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
-                })
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
 }
