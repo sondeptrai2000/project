@@ -93,8 +93,22 @@ class messtController {
             console.log(e);
             res.json({ msg: 'error' });
         }
+    };
+    //gửi thông báo số tin nhắn chưa đọc
+    async unreadMess(req, res) {
+        try {
+            var token = req.cookies.token
+            var decodeAccount = jwt.verify(token, 'minhson')
+                //lấy trạng thái read của cuọc hồi thoại
+            var Account = await AccountModel.findOne({ _id: decodeAccount }, { chat: 1 }).lean();
+            var unReadMess = await chatModel.find({ _id: { $in: Account.chat }, read: { $nin: decodeAccount._id } }).countDocuments()
+            console.log(unReadMess)
+            res.json({ msg: 'success' });
+        } catch (e) {
+            console.log(e);
+            res.json({ msg: 'error' });
+        }
     }
-
 
     async addChat(req, res) {
         try {
