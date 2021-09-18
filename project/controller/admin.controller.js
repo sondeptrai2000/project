@@ -160,11 +160,14 @@ class adminController {
     //lấy account ở trang ?
     async getAccount(req, res) {
         try {
-            //số tài khoản hiển thị trên 1 trang
+            console.log("getAccount")
+            var A = new Date()
+                //số tài khoản hiển thị trên 1 trang
             var accountPerPage = 10
             var skip = accountPerPage * parseInt(req.query.sotrang)
-            console.log(skip)
-            var data = await AccountModel.find({ role: req.query.role }).populate("relationship", { username: 1, email: 1, phone: 1 }).skip(skip).limit(accountPerPage).lean()
+            var data = await AccountModel.find({ role: req.query.role }, { classID: 0, progess: 0, codeRefresh: 0, chat: 0, password: 0 }).skip(skip).limit(accountPerPage).lean()
+            var B = new Date()
+            console.log(B - A)
             res.json({ msg: 'success', data });
         } catch (e) {    
             console.log(e)
@@ -175,10 +178,14 @@ class adminController {
     //đếm số lượng account dựa trên role
     async count(req, res) {
         try {
-            //số tài khoản hiển thị trên 1 trang
+            console.log("count")
+            var A = new Date()
+                //số tài khoản hiển thị trên 1 trang
             var accountPerPage = 10
-            var numberOfAccount = await AccountModel.find({ role: req.query.role }).lean().countDocuments()
+            var numberOfAccount = await AccountModel.find({ role: req.query.role }, { role: 1 }).lean().countDocuments()
             var soTrang = numberOfAccount / accountPerPage + 1
+            var B = new Date()
+            console.log(B - A)
             res.json({ msg: 'success', soTrang });
         } catch (e) {    
             console.log(e)
@@ -419,7 +426,7 @@ class adminController {
     //hiển thị danh sách lịch học
     async attendedList(req, res) {
         try {
-            var data = await ClassModel.find({ _id: req.query.id }, { schedule: 1 }).lean();
+            var data = await ClassModel.find({ _id: req.query.id }, { "schedule.date": 1, "schedule._id": 1, "schedule.day": 1, "schedule.room": 1, "schedule.status": 1, "schedule.time": 1 }).lean();
             res.json({ msg: 'success', data: data });
         } catch (e) {
             console.log(e)
@@ -498,8 +505,10 @@ class adminController {
     //mở form tạo class và lấy thông tin của giáo viên và các khóa học đẻe chọn giaos viên và lộ trình của lớp
     async getTeacherAndClass(req, res) {
         try {
+            var a = new Date()
             var targetxxx = await studyRouteModel.find({}, { routeName: 1 }).lean()
             var teacher = await AccountModel.find({ role: 'teacher' }, { avatar: 1, email: 1 }).lean()
+            console.log("get teacher and route: ", (new Date() - a))
             res.json({ msg: 'success', teacher, targetxxx });
         } catch (e) {
             console.log(e)
@@ -596,8 +605,10 @@ class adminController {
     //lấy danh sách các học sinh trong lớp
     async allClassStudent(req, res) {
         try {
-            var _id = req.query.abc
-            var selectedClassInfor = await ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
+            var a = new Date()
+            var _id = req.query.abc;
+            var selectedClassInfor = await ClassModel.find({ _id: _id }, { 'studentID.ID': 1 }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
+            console.log("getListStudent: ", (new Date() - a))
             res.json({ msg: 'success', data: selectedClassInfor });
         } catch (e) {
             console.log(e)

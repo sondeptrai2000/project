@@ -5,6 +5,8 @@ var url = "mongodb+srv://minhson123:minhson123@cluster0.v0phx.mongodb.net/projec
 mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+}, function(err, result) {
+    if (err) console.log('assignRoomAndTime lỗi')
 });
 const Schema = mongoose.Schema;
 const assignRoomAndTime = new Schema({

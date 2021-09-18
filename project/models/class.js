@@ -8,7 +8,6 @@ mongoose.connect(url, {
 }, function(err, result) {
     if (err) console.log('class lỗi')
 });
-mongoose.set('useCreateIndex', true);
 
 
 const Schema = mongoose.Schema;

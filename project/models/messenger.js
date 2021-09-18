@@ -6,10 +6,9 @@ var url = "mongodb+srv://minhson123:minhson123@cluster0.v0phx.mongodb.net/projec
 mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+}, function(err, result) {
+    if (err) console.log('chatSchema lỗi')
 });
-mongoose.set('useCreateIndex', true);
-mongoose.set('useFindAndModify', false);
-
 
 var chatSchema = new mongoose.Schema({
     person1: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },

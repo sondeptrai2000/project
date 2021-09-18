@@ -13,13 +13,8 @@ var transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
-    auth: {
-        user: 'sownenglishedu@gmail.com',
-        pass: 'son123@123'
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
+    auth: { user: 'sownenglishedu@gmail.com', pass: 'son123@123' },
+    tls: { rejectUnauthorized: false }
 });
 
 
@@ -27,33 +22,24 @@ var transporter = nodemailer.createTransport({
 const KEYFILEPATH = path.join(__dirname, 'service_account.json')
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
 const auth = new google.auth.GoogleAuth(
-    opts = {
-        keyFile: KEYFILEPATH,
-        scopes: SCOPES
-    }
+    opts = { keyFile: KEYFILEPATH, scopes: SCOPES }
 );
 const driveService = google.drive(options = { version: 'v3', auth });
-
 //thực hiện upflie lên ggdrive và trả về ID của file đó trên drive
 async function uploadFile(name, rootID, path) {
     var id = []
-    id.push(rootID)
+    id.push(rootID);
+    //upload file to drive
     var responese = await driveService.files.create(param = {
-        resource: {
-            "name": name,
-            "parents": id
-        },
-        media: {
-            body: fs.createReadStream(path = path)
-        },
-    })
+        resource: { "name": name, "parents": id },
+        media: { body: fs.createReadStream(path = path) },
+    });
+    //tạo quyền truy cập (xem ) cho file vừa upload
     await driveService.permissions.create({
         fileId: responese.data.id,
-        requestBody: {
-            role: 'reader',
-            type: 'anyone',
-        },
+        requestBody: { role: 'reader', type: 'anyone', },
     });
+    //trả về id của file đó trên drive để lưu vào mongoDB
     return responese.data.id
 }
 

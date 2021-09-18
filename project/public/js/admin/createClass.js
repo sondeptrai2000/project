@@ -1,5 +1,6 @@
 $(document).ready(function() {
     getAllClass();
+    createClassForm();
 });
 
 function getAllClass() {
@@ -37,7 +38,7 @@ $(window).on('click', function(e) {
     if ($(e.target).is('.createClassOut')) $('.createClassOut').fadeOut(1500);
 });
 
-//mở form tạo class và lấy thông tin của giáo viên và các khóa học đẻe chọn giaos viên và lộ trình của lớp
+//lấy thông tin của giáo viên và các khóa học đẻe chọn giaos viên và lộ trình của lớp
 function createClassForm() {
     $.ajax({
         url: '/admin/getTeacherAndClass',
@@ -45,7 +46,6 @@ function createClassForm() {
         dataType: 'json',
         success: function(response) {
             if (response.msg == 'success') {
-                $('.createClassOut').toggle(500)
                 $("#routeTypeS").html("")
                 $("#span2").html("")
                 $.each(response.targetxxx, function(index, data) { $("#routeTypeS").append('<option value="' + data.routeName + '">' + data.routeName + '</option>') });
@@ -134,6 +134,7 @@ function upDateSchedule(id) {
         data: { id: id },
         success: function(response) {
             if (response.msg == 'success') {
+                console.log(response.data)
                 $("#attendedList").html("<div class='tr'><div class='td' style='width:20%'>Date</div><div class='td'style='width:20%'>Day of week</div><div class='td'style='width:20%' >Room</div><div class='td'style='width:30%'>Time</div><div class='td'style='width:10%'>Action</div></div>")
                 $.each(response.data[0].schedule, function(index, data) {
                     $("#attendedList").append('<div class="tr" id="infor' + data._id + '"><div class="td">' + data.date.split("T00:00:00.000Z")[0] + '</div><div class="td">' + data.day + '</div><div class="td">' + data.room + '</div><div class="td">' + data.time + '</div><div class="td"><button  onclick=updateScheduleForm("' + data._id + '","' + idClass + '")>Update</button><input id ="' + data._id + '"type="hidden" value="' + data + '"></div></div>    ')
@@ -208,7 +209,7 @@ $("#SubmitupdateScheduleForm").submit(async function(event) {
     }
     console.log(update)
     $.ajax({
-        // url: '/admin/doupdateSchedule',
+        url: '/admin/doupdateSchedule',
         method: 'post',
         dataType: 'json',
         data: {
@@ -258,16 +259,14 @@ function sendData(id) {
         data: { abc: _id },
         success: function(response) {
             if (response.msg == 'success') {
+                console.log(response.data)
+
                 $(".studentListContent").html("<button onclick=addStudent('" + id + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
                 $(".studentListContent").append('<div class="tr"><div class="td" style="width:20%;">avatar</div><div class="td"style="width:20%;">username</div><div class="td" style="width:15%;">Aim</div><div class="td" style="width:35%;">email</div><div class="td"style="width:10%;">Select</div></div>')
                 $.each(response.data, function(index, data) {
-                    if (data.studentID.length == 0) {
-                        alert('không có học sinh trong lớp')
-                    } else {
-                        $.each(data.studentID, function(index, studentID) {
-                            $(".studentListContent").append("<div class='tr'><div class='td'><img src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div></div>");
-                        });
-                    }
+                    $.each(data.studentID, function(index, studentID) {
+                        $(".studentListContent").append("<div class='tr'><div class='td'><img src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div></div>");
+                    });
                 });
                 $(".studentListOut").fadeIn(500);
             }

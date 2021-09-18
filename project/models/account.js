@@ -5,6 +5,11 @@ var url = "mongodb+srv://minhson123:minhson123@cluster0.v0phx.mongodb.net/projec
 mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 1000,
+    keepAlive: true,
+    reconnectTries: 10
+}, function(err, result) {
+    if (err) console.log('AccountSchema lỗi')
 });
 
 const Schema = mongoose.Schema;

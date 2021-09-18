@@ -83,7 +83,8 @@ class teacherController {
 
     async attendedListStudent(req, res) {
         try {
-            var data = await ClassModel.find({ _id: req.query.idClass }, { schedule: { $elemMatch: { _id: req.query.idattend } } }).populate({ path: "schedule.attend.studentID", select: "username avatar" }).lean();
+            var data = await ClassModel.find({ _id: req.query.idClass }, { schedule: { $elemMatch: { _id: req.query.idattend } } }, { schedule: 1 }).populate({ path: "schedule.attend.studentID", select: "username avatar" }).lean();
+            console.log(data)
             res.json({ msg: 'success', data: data });
         } catch (e) {
             console.log(e)
@@ -194,7 +195,7 @@ class teacherController {
     async allClassStudent(req, res) {
         try {
             var _id = req.query.abc
-            var selectedClassInfor = await ClassModel.find({ _id: _id }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
+            var selectedClassInfor = await ClassModel.find({ _id: _id }, { 'studentID.ID': 1 }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
             res.json({ msg: 'success', data: selectedClassInfor });
         } catch (e) {
             console.log(e)
@@ -204,7 +205,7 @@ class teacherController {
 
     async attendedList(req, res) {
         try {
-            var data = await ClassModel.find({ _id: req.query.id }, { schedule: 1 }).lean();
+            var data = await ClassModel.find({ _id: req.query.id }, { "schedule.date": 1, "schedule._id": 1, "schedule.day": 1, "schedule.room": 1, "schedule.status": 1, "schedule.time": 1 }).lean();
             res.json({ msg: 'success', data: data });
         } catch (e) {
             console.log(e)

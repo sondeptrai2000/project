@@ -6,6 +6,7 @@ var myFileUpdate;
 $(document).ready(function() {
     //chạy hàm đếm số lượng giáo viên trong lớp và hiển thị số trang và giáo viên
     count();
+
 });
 
 //thoát modal box bằng cách ấn ra ngàoi form
@@ -76,11 +77,11 @@ function count() {
         data: { role: $("#accountFilter").val() },
         success: function(response) {
             if (response.msg == 'success') {
-                $("#soTrang").html("Page:<select onchange=getAccount()></select>")
-                    //hiển thị số trang vào thẻ select cho dễ chọn trang
+                $("#soTrang").html("Page:<select onchange=getAccount()></select>");
+                //hiển thị số trang vào thẻ select cho dễ chọn trang
                 for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
                 //hiển thị thông tin các tài khoản theo role và số trang.
-                getAccount()
+                getAccount();
             }
         },
         error: function(response) {
