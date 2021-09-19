@@ -7,7 +7,10 @@ $(document).ready(function() {
     //chạy hàm đếm số lượng giáo viên trong lớp và hiển thị số trang và giáo viên
     countAccount();
 
+
+
 });
+
 
 //thoát modal box bằng cách ấn ra ngàoi form
 $(window).on('click', function(e) {
@@ -178,6 +181,29 @@ function routeType(action) {
         }
     })
 }
+//hiệu ứng chọn các buổi học sinh có thể học tập tại trung tâm
+function choseTime(action) {
+    if (action == "update") {
+        $("#availbleTimeUpdate input").each(function() {
+            if ($(this).is(':checked')) {
+                if ($(this).val() == "All") {
+                    $("#availbleTimeUpdate input").prop('checked', false);
+                    $(this).prop('checked', true);
+                }
+            }
+        })
+    }
+    if (action == "create") {
+        $("#availbleTime input").each(function() {
+            if ($(this).is(':checked')) {
+                if ($(this).val() == "All") {
+                    $("#availbleTime input").prop('checked', false);
+                    $(this).prop('checked', true);
+                }
+            }
+        })
+    }
+}
 
 //ấn hiển đăgn ký khóa học dựa theo role cho việc tạo tài khoản. Học sinh sẽ hiển ra còn giáo viên sẽ đóng lại vì không cần thiết
 $("#role").change(async function() {
@@ -187,7 +213,7 @@ $("#role").change(async function() {
         $('.typeRole').html('');
     }
     if (accountRole != "teacher") {
-        $('.typeRole').html(" Chọn lộ trình học<select id='routeTypeS' onchange=routeType('create')></select>Level<select id='levelS'></select>Aim<select id='Aim'></select>Guardian name:<input type='text' name='guardianName'>Guardian phone: <input type='number' name='guardianPhone'>Guardian email:<input type='text' name='guardianEmail'>                              <div id='availbleTime' style='width:100%;padding:0;margin-top:10px;'><ul>Morning<input type='checkbox' class='checkTtime' value='Morning'></ul><ul>Afternoon<input type='checkbox' class='checkTtime' value='Afternoon'></ul><ul>Night<input type='checkbox' class='checkTtime' value='Night'></ul><ul>All<input type='checkbox' class='checkTtime' value='All'></ul></div>")
+        $('.typeRole').html(" Chọn lộ trình học<select id='routeTypeS' onchange=routeType('create')></select>Level<select id='levelS'></select>Aim<select id='Aim'></select>Guardian name:<input type='text' name='guardianName'>Guardian phone: <input type='number' name='guardianPhone'>Guardian email:<input type='text' name='guardianEmail'><div id='availbleTime' style='width:100%;padding:0;margin-top:10px;'><ul>Morning<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Morning'></ul><ul>Afternoon<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Afternoon'></ul><ul>Night<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Night'></ul><ul>All<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='All'></ul></div>")
         getRoute('create')
         $('.typeRole').slideDown()
     }
@@ -200,7 +226,7 @@ $("#roleUpdate").change(async function() {
         $('.typeRoleUpdate').html('');
     }
     if (accountRole != "teacher") {
-        $('.typeRoleUpdate').html(" Chọn lộ trình học<select id='routeTypeSUpdate' onchange=routeType('update')></select>Level<select id='levelSUpdate'></select>Aim<select id='AimUpdate'></select>Guardian name:<input type='text' name='guardianNameUpdate'>Guardian phone: <input type='number' name='guardianPhoneUpdate'>Guardian email:<input type='text' name='guardianEmailUpdate'>")
+        $('.typeRoleUpdate').html(" Chọn lộ trình học<select id='routeTypeSUpdate' onchange=routeType('update')></select>Level<select id='levelSUpdate'></select>Aim<select id='AimUpdate'></select>Guardian name:<input type='text' name='guardianNameUpdate'>Guardian phone: <input type='number' name='guardianPhoneUpdate'>Guardian email:<input type='text' name='guardianEmailUpdate'><div id='availbleTimeUpdate' style='width:100%;padding:0;margin-top:10px;'><ul>Morning<input type='checkbox' class='checkTtimeUpdate' onchange=choseTime('update') value='Morning'></ul><ul>Afternoon<input type='checkbox' class='checkTtimeUpdate' onchange=choseTime('update') value='Afternoon'></ul><ul>Night<input type='checkbox' class='checkTtimeUpdate' onchange=choseTime('update') value='Night'></ul><ul>All<input type='checkbox' class='checkTtimeUpdate' onchange=choseTime('update') value='All'></ul></div>")
         getRoute('update')
         $('.typeRoleUpdate').slideDown()
     }
@@ -282,17 +308,7 @@ function updateForm(id) {
     });
 }
 
-//hiệu ứng chọn các buổi học sinh có thể học tập tại trung tâm
-$(".checkTtime").on("change", function() {
-    $("#availbleTime input").each(function() {
-        if ($(this).is(':checked')) {
-            if ($(this).val() == "All") {
-                $("#availbleTime input").prop('checked', false);
-                $(this).prop('checked', true);
-            }
-        }
-    })
-})
+
 
 //thực hiện đăng ký và lưu tài khỏan vào đb
 $("#myform").submit(function(event) {
@@ -312,7 +328,7 @@ $("#myform").submit(function(event) {
         }
     })
     if (availableTime.length == 0) {
-        alert("nhaajp vaof")
+        alert("Enter time that student can study!")
     } else {
         var role = $("#role").val()
             //thôn tin bắt buộc của giáo viên or học sinh

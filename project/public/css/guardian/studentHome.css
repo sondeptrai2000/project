@@ -16,7 +16,7 @@ body {
     box-sizing: border-box;
     margin: 0;
     margin-top: 10px;
-    height: 520px;
+    height: 600px;
     padding: 0;
 }
 
@@ -58,14 +58,20 @@ body {
     font-size: 17px;
 }
 
-#Schedual select {
+#chonTuan {
     margin-bottom: 10px;
     font-size: 18px;
+    width: auto;
 }
 
 #Schedual h2 {
-    margin: 0;
+    font-size: 40px;
+    margin: 20px 0;
     margin-bottom: 10px;
+}
+
+#Schedual label {
+    font-size: 24px;
 }
 
 
@@ -73,13 +79,12 @@ body {
 
 .tr {
     display: table-row;
-    padding: 5px;
     overflow: hidden;
 }
 
 .td {
     display: table-cell;
-    padding: 5px;
+    padding: 10px;
     width: 300px;
     border: #000000 solid 1px;
     margin: 5px;

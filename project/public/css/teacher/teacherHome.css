@@ -16,7 +16,7 @@ body {
     box-sizing: border-box;
     margin: 0;
     margin-top: 10px;
-    height: 520px;
+    height: 600px;
     padding: 0;
 }
 
@@ -56,16 +56,26 @@ body {
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     font-size: 17px;
+    text-align: left;
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
 }
 
-#Schedual select {
+#chonTuan {
     margin-bottom: 10px;
     font-size: 18px;
+    width: auto;
 }
 
 #Schedual h2 {
-    margin: 0;
+    font-size: 40px;
+    margin: 20px 0;
     margin-bottom: 10px;
+}
+
+#Schedual label {
+    font-size: 24px;
 }
 
 
@@ -73,13 +83,12 @@ body {
 
 .tr {
     display: table-row;
-    padding: 5px;
     overflow: hidden;
 }
 
 .td {
     display: table-cell;
-    padding: 5px;
+    padding: 10px;
     width: 300px;
     border: #000000 solid 1px;
     margin: 5px;
@@ -156,7 +165,8 @@ body {
     -ms-overflow-style: none;
 }
 
-#teacherProfile::-webkit-scrollbar {
+#teacherProfile::-webkit-scrollbar,
+#Schedual::-webkit-scrollbar {
     width: 0 !important;
     display: none;
 }

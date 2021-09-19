@@ -142,7 +142,7 @@ function tuanoi() {
                         if (start <= schedule.date && schedule.date <= end) {
                             //ghi thông tin lịch học, làm việc vào bảng
                             var caLam = typeTime(schedule.time)
-                            $("#" + caLam + " div:nth-child(" + schedule.day + ")").append("<a href='/guardian/allClass/" + classInfor._id + "'>Class: " + classInfor.className + "</a> Room: " + schedule.room)
+                            $("#" + caLam + " div:nth-child(" + schedule.day + ")").append("<a href='/guardian/allClass/" + classInfor._id + "'>" + classInfor.className + "</a><br> Room: " + schedule.room)
                         }
                     });
                 });
