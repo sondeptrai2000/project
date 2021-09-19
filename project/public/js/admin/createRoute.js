@@ -22,8 +22,9 @@ function getAllRoute() {
         data: {},
         success: function(response) {
             if (response.msg == 'success') {
-                $(".tableRoute").html(" <div class='tr'><div class='td'>Tên lộ trình</div><div class='td'>Miêu tả</div><div class='td'>action</div></div>")
                 var data = response.data
+                $("#number").html("Total: " + data.length)
+                $(".tableRoute").html(" <div class='tr'><div class='td'>Tên lộ trình</div><div class='td'>Miêu tả</div><div class='td'>action</div></div>")
                 data.forEach(function(data) {
                     var add = "<div class='tr' id='" + data._id + "' onclick=viewSchedule('" + data._id + "')><div class='td'>" + data.routeName + "</div><div class='td'>" + data.description + "</div><div class='td'><button onclick=updateRoute('" + data._id + "')>Update</button><button onclick=deleteRoute('" + data._id + "')>Remove</button></div></div>"
                     $(".tableRoute").append(add)

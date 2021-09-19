@@ -59,7 +59,8 @@ function countClass() {
                 $("#soTrang").html("Page:<select onchange=getAllClass()></select>");
                 //hiển thị số trang vào thẻ select cho dễ chọn trang
                 for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
-                //hiển thị thông tin các tài khoản theo role và số trang.
+                $("#number").html("Total: " + response.numberOfClass)
+                    //hiển thị thông tin các tài khoản theo role và số trang.
                 getAllClass();
             }
         },

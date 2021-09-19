@@ -107,6 +107,7 @@ function tuanoi() {
         url: '/student/getSchedule',
         method: 'get',
         dataType: 'json',
+        data: { dauTuan: dauTuan },
         success: function(response) {
             if (response.msg == 'success') {
                 $("#time1").html('<div class="td">7:30 to 9:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
