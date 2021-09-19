@@ -5,32 +5,54 @@ $(document).ready(function() {
     //lấy thông tin cá nhân
     studentProfile()
         //lấy lịch học
-    test()
-        //hiệu ứng menu
-    $('header li').hover(function() {
-        $(this).find("div").slideDown()
-    }, function() {
-        $(this).find("div").hide(500)
-    });
-    //thoát update form
-    $(window).on('click', function(e) {
-        if ($(e.target).is('.updateProfileOut')) {
-            $('.updateProfileOut').slideUp(1500);
-        }
-    });
+    test();
+    unReadMess();
 
-    $('#myFile').on('change', function() {
-        var filereader = new FileReader();
-        filereader.onload = function(event) {
-            fileData = event.target.result;
-            var dataURL = filereader.result;
-            $("#currentAvatar").attr("src", dataURL);
-        };
-        myFile = $('#myFile').prop('files')[0];
-        console.log('myfile', myFile)
-        filereader.readAsDataURL(myFile)
-    });
+
 });
+//hiệu ứng menu
+$('header li').hover(function() {
+    $(this).find("div").slideDown()
+}, function() {
+    $(this).find("div").hide(500)
+});
+//thoát update form
+$(window).on('click', function(e) {
+    if ($(e.target).is('.updateProfileOut')) {
+        $('.updateProfileOut').slideUp(1500);
+    }
+});
+
+$('#myFile').on('change', function() {
+    var filereader = new FileReader();
+    filereader.onload = function(event) {
+        fileData = event.target.result;
+        var dataURL = filereader.result;
+        $("#currentAvatar").attr("src", dataURL);
+    };
+    myFile = $('#myFile').prop('files')[0];
+    console.log('myfile', myFile)
+    filereader.readAsDataURL(myFile)
+});
+
+//lấy số tin nhắn chưa đọc
+function unReadMess() {
+    $.ajax({
+        url: '/messenger/unreadMess',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#UnreadMessages").html(response.unReadMess)
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
 //lấy lịch học 
 function test() {
     //lấy các ngày trong năm

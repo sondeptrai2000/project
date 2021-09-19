@@ -1,20 +1,41 @@
 $(document).ready(function() {
-    getClass()
-        //hiệu ứng menu
-    $('header li').hover(function() {
-        $(this).find("div").slideDown()
-    }, function() {
-        $(this).find("div").hide(500)
-    });
+    getClass();
+    unReadMess();
 
 
-    $(window).on('click', function(e) {
-        if ($(e.target).is('.studentListOut')) $('.studentListOut').slideUp(1500);
-        if ($(e.target).is('.teacherIn4Out')) $('.teacherIn4Out').slideUp(1500);
-        if ($(e.target).is('.myAttendOut')) $('.myAttendOut').slideUp(1500);
-    });
 });
 
+//hiệu ứng menu
+$('header li').hover(function() {
+    $(this).find("div").slideDown()
+}, function() {
+    $(this).find("div").hide(500)
+});
+
+
+$(window).on('click', function(e) {
+    if ($(e.target).is('.studentListOut')) $('.studentListOut').slideUp(1500);
+    if ($(e.target).is('.teacherIn4Out')) $('.teacherIn4Out').slideUp(1500);
+    if ($(e.target).is('.myAttendOut')) $('.myAttendOut').slideUp(1500);
+});
+
+//lấy số tin nhắn chưa đọc
+function unReadMess() {
+    $.ajax({
+        url: '/messenger/unreadMess',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#UnreadMessages").html(response.unReadMess)
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
 
 //lấy thông tin các lớp đã và đang học
 function getClass() {

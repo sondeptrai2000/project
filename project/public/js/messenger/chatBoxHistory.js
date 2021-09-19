@@ -1,21 +1,19 @@
   // establish socket.io connection
   const socket = io();
 
-  $(document).ready(async function() {
-      try {
-          $("#welcome").html("Welcome " + senderName.value)
-          $(".chatBox").scrollTop($('#messContent').height())
-              //hiệu ứng menu
-          $('header li').hover(function() {
-              $(this).find("div").slideDown()
-          }, function() {
-              $(this).find("div").hide(500)
-          });
-          connectAllConversation();
-          chatBox($('#receiverID').val(), $('#_idRoom').val())
-      } catch (e) {
-          console.log(e)
-      }
+  $(document).ready(function() {
+      $("#welcome").html("Welcome " + senderName.value)
+      $(".chatBox").scrollTop($('#messContent').height())
+      connectAllConversation();
+      chatBox($('#receiverID').val(), $('#_idRoom').val())
+      unReadMess();
+  });
+
+  //hiệu ứng menu
+  $('header li').hover(function() {
+      $(this).find("div").slideDown()
+  }, function() {
+      $(this).find("div").hide(500)
   });
 
   //tạo room cho tất cả cuọco trò chuyện "online" để nhận thông báo khi người khác gửi tin nhắn
@@ -27,6 +25,25 @@
           idConversationList
       });
   }
+  //lấy số tin nhắn chưa đọc
+  function unReadMess() {
+      $.ajax({
+          url: '/messenger/unreadMess',
+          method: 'get',
+          dataType: 'json',
+          data: {},
+          success: function(response) {
+              if (response.msg == 'success') {
+                  $("#UnreadMessages").html(response.unReadMess)
+              }
+          },
+          error: function(response) {
+              alert('server error');
+          }
+      })
+  }
+
+
   //bắt sự kiện nhập
   $("#mess").focusin(function() {
       socket.emit('typing', {
@@ -95,6 +112,7 @@
                       if (message.ownermessengerID !== $('#senderID').val() && message.ownermessengerID !== $('#receiverID').val()) $('#messContent').append("<div style='width: 100%;padding: 0;margin: 0;text-align: center;'><p>" + message.ownermessenger + ": " + message.messContent + "</p></div>")
                   });
                   $('#messContent').scrollTop($('#messContent')[0].scrollHeight);
+                  unReadMess();
               }
           },
           error: function(response) {

@@ -103,7 +103,7 @@ class messtController {
             var Account = await AccountModel.findOne({ _id: decodeAccount }, { chat: 1 }).lean();
             var unReadMess = await chatModel.find({ _id: { $in: Account.chat }, read: { $nin: decodeAccount._id } }).countDocuments()
             console.log(unReadMess)
-            res.json({ msg: 'success' });
+            res.json({ msg: 'success', unReadMess });
         } catch (e) {
             console.log(e);
             res.json({ msg: 'error' });

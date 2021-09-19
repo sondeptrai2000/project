@@ -6,6 +6,7 @@ $(document).ready(function() {
     teacherProfile();
     //lịch học or làm việc
     test();
+    unReadMess();
 });
 
 //hiệu ứng menu
@@ -32,34 +33,48 @@ $('#myFile').on('change', function() {
 });
 
 //lấy thông tin cá nhân
-async function teacherProfile() {
-    try {
-        $.ajax({
-            url: '/account/Profile',
-            method: 'get',
-            dataType: 'json',
-            data: {},
-            success: function(response) {
-                if (response.msg == 'success') {
-                    $("#avatarProfile").attr("src", response.data.avatar);
-                    $("#idProfile").html(response.data._id);
-                    $("#welcome").html("Welcome " + response.data.username);
-                    $("#usernameProfile").html("Full Name: " + response.data.username);
-                    $("#genderProfile").html("Gender: " + response.data.sex);
-                    $("#emailProfile").html("Email: " + response.data.email);
-                    $("#phoneProfile").html("Phone: " + response.data.phone);
-                    $("#birthdayProfile").html("BirthDay: " + response.data.birthday);
-                    $("#addressProfile").html("Address: " + response.data.address);
-                }
-            },
-            error: function(response) {
-                alert('server error');
+function teacherProfile() {
+    $.ajax({
+        url: '/account/Profile',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#avatarProfile").attr("src", response.data.avatar);
+                $("#idProfile").html(response.data._id);
+                $("#welcome").html("Welcome " + response.data.username);
+                $("#usernameProfile").html("Full Name: " + response.data.username);
+                $("#genderProfile").html("Gender: " + response.data.sex);
+                $("#emailProfile").html("Email: " + response.data.email);
+                $("#phoneProfile").html("Phone: " + response.data.phone);
+                $("#birthdayProfile").html("BirthDay: " + response.data.birthday);
+                $("#addressProfile").html("Address: " + response.data.address);
             }
-        })
-    } catch (e) {
-        console.log(e)
-    }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
 };
+
+//lấy số tin nhắn chưa đọc
+function unReadMess() {
+    $.ajax({
+        url: '/messenger/unreadMess',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#UnreadMessages").html(response.unReadMess)
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
 
 //đưa thông tin cũ vào bảng cập nhật thông tin
 async function updateProfile() {

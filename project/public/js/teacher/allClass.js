@@ -1,6 +1,8 @@
 $(document).ready(function() {
     countClass()
         //lấy các lớp mà giáo viên đang dạy
+    unReadMess();
+
 });
 
 //hiệu ứng menu
@@ -46,6 +48,23 @@ function countClass() {
     });
 }
 
+//lấy số tin nhắn chưa đọc
+function unReadMess() {
+    $.ajax({
+        url: '/messenger/unreadMess',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#UnreadMessages").html(response.unReadMess)
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
 
 //lấy danh sách các lớp đang dạy
 function getAllClass() {
