@@ -65,9 +65,15 @@
                     <p>Chọn lộ trình học:</p>
                     <select id="routeTypeS" class="routeName" onchange="routeType()"></select>
                     Level: <select id="levelS" class="stage" onchange="level()"></select>
-                    Subject: <select id="subject" class="subject" onchange="getStudent()"></select>
+                    Subject: <select id="subject" class="subject"></select>
                     Class name: <input type="text" class="className" required />
                     Description: <input type="text" class="description" required />
+                    Available time to study:
+                    <div id='availbleTime' style='width:100%;padding:0;margin-top:10px;'>
+                        <ul>Morning<input type='checkbox' class='checkTtime' value='Morning'></ul>
+                        <ul>Afternoon<input type='checkbox' class='checkTtime' value='Afternoon'></ul>
+                        <ul>Night<input type='checkbox' class='checkTtime' value='Night'></ul>
+                    </div>
                     <h3>Student list</h3>
                     <div id="studentTable" border='solid'></div>
                     <h3>Teacher: </h3>

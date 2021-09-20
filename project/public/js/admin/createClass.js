@@ -31,10 +31,11 @@ function createClassForm() {
                 $("#routeTypeS").html("")
                 $("#span2").html("")
                 $.each(response.targetxxx, function(index, data) { $("#routeTypeS").append('<option value="' + data.routeName + '">' + data.routeName + '</option>') });
-                $.each(response.teacher, function(index, data) { $("#span2").append('<img src="' + data.avatar + '" onclick="selectedTeacher("' + data.email + '","' + data.avatar + '","' + data._id + '")"><figcaption>' + data.email + '</figcaption><input type="hidden" value="' + data._id + '">') });
+                $.each(response.teacher, function(index, data) { $("#span2").append('<img src="' + data.avatar + '" onclick="selectedTeacher("' + data.email + '","' + data._id + '")"><figcaption>' + data.email + '</figcaption><input type="hidden" value="' + data._id + '"><input type="hidden" class ="avatar' + data._id + '" value="' + data.avatar + '">') });
                 $("#teacherID img").attr("src", response.teacher[0].avatar)
                 $("#teacherID figcaption").text(response.teacher[0].email)
                 $("#teacherID input").val(response.teacher[0]._id)
+                routeType();
             }
             if (response.msg == 'error') alert("error")
         },
@@ -44,6 +45,13 @@ function createClassForm() {
     });
 
 }
+
+
+//chọn thời gian học
+$('.checkTtime').on('change', function() {
+    $('.checkTtime').not(this).prop('checked', false);
+    getStudent();
+});
 
 
 //đếm số lớp để hiển thị theo danh sachs trang
@@ -114,8 +122,10 @@ function searchClass() {
     });
 }
 //chọn giáo viên ở bảng chọn r hiển thị lại ở mục giáo viên chỉ định (tạo lớp form)
-function selectedTeacher(email, avatar, id) {
-    $("#teacherID").html('<img src="' + avatar + '" style="height: 200px;width: 200px;" onclick=$("#span2").toggle(500)><figcaption>' + email + '</figcaption><input type="hidden" value="' + id + '">')
+function selectedTeacher(email, id) {
+    console.log("vào")
+    console.log(".avatar" + id)
+    $("#teacherID").html('<img src="' + $(".avatar" + id).val() + '" style="height: 200px;width: 200px;" onclick=$("#span2").toggle(500)><figcaption>' + email + '</figcaption><input type="hidden" value="' + id + '">')
     $("#span2").fadeOut(500)
 }
 
@@ -562,7 +572,7 @@ function routeType() {
                     });
 
                 });
-
+                level();
             }
         },
         error: function(response) {
@@ -604,11 +614,13 @@ function level() {
 function getStudent() {
     var routeName = $('#routeTypeS').val();
     var levelS = $('#levelS').val();
+    var time
+    $("#availbleTime input").each(function() { if ($(this).is(':checked')) time = $(this).val() })
     $.ajax({
         url: '/admin/getStudent',
         method: 'get',
         dataType: 'json',
-        data: { abc: routeName, levelS: levelS },
+        data: { abc: routeName, levelS: levelS, time: time },
         success: function(response) {
             if (response.msg == 'success') {
                 if (response.student.length == 0) {

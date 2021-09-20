@@ -16,6 +16,7 @@ const assignRoomAndTime = new Schema({
         time: String,
         status: String,
     }],
+    listRoom: [{ type: String }]
 }, {
     collection: 'assignRoomAndTime'
 });

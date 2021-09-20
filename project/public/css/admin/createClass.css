@@ -141,6 +141,15 @@
         text-align: center;
     }
     
+    #availbleTime ul {
+        width: 33%;
+        float: left;
+    }
+    
+    #availbleTime input[type=checkbox] {
+        width: auto;
+    }
+    
     .button {
         font-size: 18px;
         width: auto !important;

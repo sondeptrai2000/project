@@ -54,32 +54,44 @@ async function uploadFile(name, rootID, path) {
 class adminController {
     async adminHome(req, res) {
         // AccountModel.updateMany({}, { $set: { classID: [] } }, function(err, data) {
-        //     if (err) {
-        //         console.log("k ok")
-        //     } else {
-        //         console.log(" ok")
-        //     }
-        // })
-        // assignRoomAndTimeModel.updateMany({}, {
-        //     $set: { room: [] }
-        // }, function(err, data) {
-        //     if (err) {
-        //         console.log("k ok 2")
-        //     } else {
-        //         console.log(" ok 2 ")
-        //     }
-        // })
-        // res.render('admin/adminHome')
-        // await chatModel.updateMany({
-        //     read: []
-        // })
-        // console.log("ok")
+        //         if (err) {
+        //             console.log("k ok")
+        //         } else {
+        //             console.log(" ok")
+        //         }
+        //     })
+        assignRoomAndTimeModel.updateMany({}, {
+                $set: { room: [] }
+            }, function(err, data) {
+                if (err) {
+                    console.log("k ok 2")
+                } else {
+                    console.log(" ok 2 ")
+                }
+            })
+            // res.render('admin/adminHome')
+            // await chatModel.updateMany({
+            //     read: []
+            // })
+            // console.log("ok")
     }
 
     async assignRoomAndTime(req, res) {
         try {
-            var data = await assignRoomAndTimeModel.find({})
+            var data = await assignRoomAndTimeModel.find({ dayOfWeek: "02" }, { listRoom: 1, _id: 0 }).lean()
+            var data = data[0].listRoom
             res.render('admin/assignRoomAndTime', { data })
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    async getRoomAndTime(req, res) {
+        try {
+            console.log("vào")
+            var data = await assignRoomAndTimeModel.find({ "room.room": "G1" })
+            res.json({ msg: 'success', data });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
@@ -88,7 +100,7 @@ class adminController {
 
     async addRoom(req, res) {
         try {
-            await assignRoomAndTimeModel.updateMany({}, { $push: { room: { $each: req.body.roomName } } })
+            await assignRoomAndTimeModel.updateMany({}, { $push: { room: { $each: req.body.roomName }, listRoom: req.body.room } })
             res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)
@@ -288,7 +300,8 @@ class adminController {
     //lấy các học sinh đang học tình trạng học tập tại mức độ đã chọn để thêm vào lớp trong form tạo lớp
     async getStudent(req, res) {
         try {
-            var student = await AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS }).lean()
+            console.log(req.query.time)
+            var student = await AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS, availableTime: { $in: [req.query.time, 'All'] } }).lean()
             res.json({ msg: 'success', student });
         } catch (e) {
             console.log(e)

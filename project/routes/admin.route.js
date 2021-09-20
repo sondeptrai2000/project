@@ -51,6 +51,7 @@ adminRouter.get('/studentClass/:id', adminController.studentClass);
 
 //Manage room and time
 adminRouter.get('/assignRoomAndTime', adminController.assignRoomAndTime);
+adminRouter.get('/getRoomAndTime', adminController.getRoomAndTime);
 adminRouter.post('/addRoom', adminController.addRoom);
 
 //Thông tin tư vấn
