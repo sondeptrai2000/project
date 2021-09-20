@@ -53,6 +53,7 @@ adminRouter.get('/studentClass/:id', adminController.studentClass);
 adminRouter.get('/assignRoomAndTime', adminController.assignRoomAndTime);
 adminRouter.get('/getRoomAndTime', adminController.getRoomAndTime);
 adminRouter.post('/addRoom', adminController.addRoom);
+adminRouter.post('/deleteRoom', adminController.deleteRoom);
 
 //Thông tin tư vấn
 adminRouter.get('/consultingAll', adminController.consultingAll);

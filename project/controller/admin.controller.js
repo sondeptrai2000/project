@@ -78,9 +78,7 @@ class adminController {
 
     async assignRoomAndTime(req, res) {
         try {
-            var data = await assignRoomAndTimeModel.find({ dayOfWeek: "02" }, { listRoom: 1, _id: 0 }).lean()
-            var data = data[0].listRoom
-            res.render('admin/assignRoomAndTime', { data })
+            res.render('admin/assignRoomAndTime')
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
@@ -90,7 +88,7 @@ class adminController {
     async getRoomAndTime(req, res) {
         try {
             console.log("vào")
-            var data = await assignRoomAndTimeModel.find({ "room.room": "G1" })
+            var data = await assignRoomAndTimeModel.find({})
             res.json({ msg: 'success', data });
         } catch (e) {
             console.log(e)
@@ -102,6 +100,21 @@ class adminController {
         try {
             await assignRoomAndTimeModel.updateMany({}, { $push: { room: { $each: req.body.roomName }, listRoom: req.body.room } })
             res.json({ msg: 'success' });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
+    async deleteRoom(req, res) {
+        try {
+            var list = req.body.listRoom
+            console.log(list)
+            list.forEach(async(e) => {
+                await assignRoomAndTimeModel.updateMany({}, { $pull: { room: { room: e }, listRoom: e } })
+            })
+            res.json({ msg: 'success' });
+
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
