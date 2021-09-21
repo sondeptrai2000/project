@@ -48,7 +48,7 @@ class teacherController {
             var soTrang = numberOfClass / classPerPage + 1
             var B = new Date()
             console.log("countClass", B - A)
-            res.json({ msg: 'success', soTrang });
+            res.json({ msg: 'success', soTrang, numberOfClass });
         } catch (e) {    
             console.log(e)
             res.json({ msg: 'error' });

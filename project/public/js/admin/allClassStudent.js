@@ -1,6 +1,6 @@
 $(document).ready(function() {
     getClass()
-
+    routeType()
 });
 //hiệu ứng menu
 $('header li').hover(function() {
@@ -103,7 +103,37 @@ function viewTeacherProfile(id) {
     });
 
 }
+//lấy thông tin của lộ trình học
+function routeType() {
+    var routeName = $('#routeTypeS').text();
+    $.ajax({
+        url: '/admin/getStage',
+        method: 'get',
+        dataType: 'json',
+        data: { abc: routeName },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#routeTuyBien").html("<div class='tr'></div><div class='tr'></div>");
+                //hiển thị thông tin 1 lộ trình học lên đầu form tạo lớp sau khi chọn 1 khóa học
+                $.each(response.data, function(index, targetxxx) {
+                    $.each(targetxxx.routeSchedual, function(indexBIG, routeSchedual) {
+                        $("#routeTuyBien .tr:nth-child(1)").append("<div class='td' style='font-size:20px;'>Stage " + (indexBIG + 1) + ": " + routeSchedual.stage + "</div>");
+                        $("#routeTuyBien .tr:nth-child(2)").append("<div class='td'></div>");
+                        if (routeSchedual.stage == $("#start").text() || routeSchedual.stage == $("#end").text()) $("#routeTuyBien .tr:nth-child(1) .td:nth-child(" + (indexBIG + 1) + ")").css("color", "red")
+                        if (routeSchedual.stage == $("#current").text()) $("#routeTuyBien .tr:nth-child(1) .td:nth-child(" + (indexBIG + 1) + ")").html('Stage' + (indexBIG + 1) + ': ' + routeSchedual.stage + '</div>' + '<i class="fas fa-map-marker-alt"></i>')
+                        $.each(routeSchedual.routeabcd, function(index, routeabcd) {
+                            $("#routeTuyBien .tr:nth-child(2) .td:nth-child(" + (indexBIG + 1) + ")").append("<li>" + routeabcd + "</li>");
+                        });
+                    });
 
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
 
 //lấy danh sáhc học sinh trong lớp
 function sendData(id) {

@@ -36,7 +36,8 @@ function countClass() {
             if (response.msg == 'success') {
                 console.log(response.soTrang)
                 $("#soTrang").html("Page:<select onchange=getAllClass()></select>");
-                //hiển thị số trang vào thẻ select cho dễ chọn trang
+                $("#number").html("Total: " + response.numberOfClass)
+                    //hiển thị số trang vào thẻ select cho dễ chọn trang
                 for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
                 //hiển thị thông tin các tài khoản theo role và số trang.
                 getAllClass();

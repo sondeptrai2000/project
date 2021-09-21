@@ -483,16 +483,16 @@ function search(email) {
                     }
                     $(".rightSide").append("<img src='" + data.avatar + "'> <p>Name: " + data.username + "</p><p>Gender: " + data.sex + "</p><p>Email: " + data.email + "</p><p>Phone: " + data.phone + "</p><p>Available Time to study: " + data.availableTime + "</p><p>Role: " + data.role + "</p><p>BirthDay: " + data.birthday + "</p><p>Address: " + data.address + "</p>")
                     $(".rightSide").append("<h1>Tình trạng học tập</h1>")
-                    $(".rightSide").append("<p>Route: " + data.routeName + " </p><p>Current level: " + data.stage + " </p><p>Aim : " + data.aim + "</p>")
+                    $(".rightSide").append("<p>Route: " + data.routeName + " </p><p>Start level: " + data.startStage + " </p><p>Current level: " + data.stage + " </p><p>Aim : " + data.aim + "</p>")
                     $(".rightSide").append("<h2>Tiến độ học tập</h2>")
-                    $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "' target='_blank'>Click here to see more</a>");
+                    $(".rightSide").append("<a href='/admin/studentClass/" + data._id + "' target='_blank'>Click here to see more about progress</a>");
                     //hiển thị lộ trình học của học sinh
                     var progress = data.progess
                     progress.forEach((e) => {
                         $(".rightSide").append("<h3>Stage: " + e.stage + "</h3>")
-                        $(".rightSide").append("<div class='tr'><div class='td'>Subject</div><div class='td'>Status</div><div class='td'>ClassID</div></div>")
+                        $(".rightSide").append("<div class='tr'><div class='td'>Subject</div><div class='td'>Status</div></div>")
                         e.stageClass.forEach((e) => {
-                            if (e.classID != "") $(".rightSide").append("<div class='tr'><div class='td'>" + e.name + " </div><div class='td'> " + e.status + " </div><div class='td'><button onclick=copyID('" + e.classID + "')>Get ClassID</button></div></div>")
+                            if (e.classID != "") $(".rightSide").append("<div class='tr'><div class='td'>" + e.name + " </div><div class='td'> " + e.status + " </div></div>")
                         })
                     })
                     $(".rightSide").append("<h1>Thông tin phụ huynh</h1>")
@@ -507,11 +507,4 @@ function search(email) {
             alert('server error');
         }
     })
-}
-
-
-//copy classId
-async function copyID(id) {
-    await navigator.clipboard.writeText(id);
-    alert("copied")
 }

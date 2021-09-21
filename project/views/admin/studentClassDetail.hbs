@@ -10,15 +10,7 @@
 </head>
 
 <body>
-    <div class="studentListOut" style="display:none">
-        <div class="studentList"></div>
-    </div>
-    <div class="myAttendOut" style="display:none">
-        <div class="myAttendContent"></div>
-    </div>
-    <div class="teacherIn4Out" style="display:none">
-        <div class="teacherIn4"></div>
-    </div>
+    <div id="routeTuyBien" border="solid" style="overflow:auto;"></div>
     <div class="content">
         <div class='leftSide'>
             {{#each data}}
@@ -26,6 +18,10 @@
             <img src='{{avatar}}'>
             <figcaption>{{username}}</figcaption>
             <figcaption>{{email}}</figcaption>
+            <figcaption id="routeTypeS">{{routeName}}</figcaption>
+            Start stage:<figcaption id="start">{{startStage}}</figcaption>
+            Current stage:<figcaption id="current">{{stage}}</figcaption>
+            Aim stage:<figcaption id="end">{{aim}}</figcaption>
             {{/each}}
         </div>
         <div class='rightSide'>

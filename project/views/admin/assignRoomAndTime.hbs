@@ -8,14 +8,9 @@
 
 <body>
         <div id="Schedual" style="text-align:left;">
-                <h2>Weekly Schedual</h2>
-                <label>Chose week: </label>
-                <select id='chonTuan' onchange="tuanoi()">
-                        {{#each data}}
-                        <option value='{{this}}'>{{this}}</option>
-                        {{/each}}
-
-                </select>
+                <h2>Room status</h2>
+                <label>Chose room: </label>
+                <select id='chonTuan' onchange="tuanoi()"></select>
                 <div class="tr" id='ngay'></div>
                 <div class="tr">
                         <div class="td">Day of week</div>
@@ -41,7 +36,7 @@
         </div>
 
         <div>
-                <h1>Thêm phòng</h1>
+                <h1>Add room</h1>
                 <span>Room Name: <input type="text" name="roomName"></span>
                 <button onclick="addRoom()">addRoom</button>
         </div>

@@ -561,9 +561,11 @@ function routeType() {
                         $("#levelS").append(update);
                     });
                 });
+
                 //hiển thị thông tin 1 lộ trình học lên đầu form tạo lớp sau khi chọn 1 khóa học
-                $.each(response.targetxxx, function(index, targetxxx) {
+                $.each(response.data, function(index, targetxxx) {
                     $.each(targetxxx.routeSchedual, function(indexBIG, routeSchedual) {
+                        console.log("1")
                         $("#routeTuyBien .tr:nth-child(1)").append("<div class='td' style='font-size:20px;'>Stage " + (indexBIG + 1) + ": " + routeSchedual.stage + "</div>");
                         $("#routeTuyBien .tr:nth-child(2)").append("<div class='td'></div>");
                         $.each(routeSchedual.routeabcd, function(index, routeabcd) {
