@@ -15,11 +15,13 @@
       <div class="createAccountOut" style="display: none;">
             <div id="createAccount">
                   <form id='myform'>
-                        <div style="text-align: left;">
-                              <h2 style="text-align: center;">ACCOUNT INFORMATION</h2>
+                        <div style="text-align: center;">
+                              <h2>ACCOUNT INFORMATION</h2>
                               <img id='output' style="height:300px; width:auto;text-align: center;" />
-                              <figcaption>Hãy chọn ảnh đại diện</figcaption>
+                              <figcaption>Upload Img</figcaption>
                               <input type='file' id="myFile" accept='image/*' style="width: 100%;" required />
+                        </div>
+                        <div style="text-align: left;">
                               Full name:<input type="text" id="username" required />
                               Gender:
                               <select class="Role" id="gender">
@@ -40,7 +42,7 @@
                               </select>
                         </div>
                         <div class="typeRole" style="text-align: left;display:none;">
-                            
+
                         </div>
                         <input type="submit" class='button' name="submit" value="Submit">
                         <button class='button' onclick="reset()">Reset information</button>
@@ -51,13 +53,16 @@
       <div class="updateFormOut" style="display: none;">
             <div id="updateForm">
                   <form id='myformUpdate'>
-                        <div style="text-align: left;">
-                              <input type='hidden' id='PersonID'>
+                        <div style="text-align: center;">
                               <h2 style="text-align: center;"> UPDATE ACCOUNT INFORMATION</h2>
                               <img id='currentAvatar' style="height:300px; width:auto;text-align:center;">
                               <figcaption>Post new image if you wanna change</figcaption>
                               <input type="hidden" id="oldAvatar">
                               <input type='file' id='myFileUpdate' style="width:100%;">
+                        </div>
+                        <div style="text-align: left;">
+                              <input type='hidden' id='PersonID'>
+
                               Name<input type='text' id='usernameUpdate' required />
                               Email<input type="email" id="emailUpdate" required />
                               Password<input type='password' id='passwordUpdate'
@@ -100,22 +105,22 @@
       <div class="body">
             <div class='leftSide'>
                   <div class='tr' id="option">
-                        <div class='td' style="width: 15%;">
+                        <div class='td'>
                               <button onclick='$(".createAccountOut").slideToggle();'>Create account</button>
                         </div>
-                        <div class='td' style="width: 15%;">
+                        <div class='td'>
                               Filter:
                               <select id="accountFilter" onchange="countAccount()">
                                     <option value="teacher">teacher</option>
                                     <option value="student">student</option>
                               </select>
                         </div>
-                        <div class='td' style="width: 30%;">
+                        <div class='td'>
                               <input id='search' type='text' placeholder='Email or phone number'>
                               <button onclick="search('')">Search</button>
                         </div>
-                        <div class='td' id="number" style="width: 10%;"></div>
-                        <div class='td' id="soTrang" style="width: 10%;"> </div>
+                        <div class='td' id="number"></div>
+                        <div class='td' id="soTrang"> </div>
                   </div>
                   <div class="tableAccount"></div>
             </div>

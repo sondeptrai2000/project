@@ -106,7 +106,6 @@
                   $('#receiverName').val(receiverName)
                   $('.chatTitle').html("Conversation between " + senderName + " and " + receiverName)
                   $.each(response.data.message, function(index, message) {
-                      console.log(typeof(message.time))
                       if (message.ownermessengerID === $('#senderID').val()) $('#messContent').append("<div class='sender' onclick=$(this).find('label').toggle();><p>" + message.messContent + "</p>" + "<img src='" + senderAva + "'><br><label style='display:none;'>" + message.time.toString() + "</label></div>")
                       if (message.ownermessengerID === $('#receiverID').val()) $('#messContent').append("<div class='receiver' onclick=$(this).find('label').toggle();><img src='" + receiverAva + "'>" + "<p>" + message.messContent + "</p><br><label style='display:none;'>" + message.time.toString() + "</label></div>")
                       if (message.ownermessengerID !== $('#senderID').val() && message.ownermessengerID !== $('#receiverID').val()) $('#messContent').append("<div style='width: 100%;padding: 0;margin: 0;text-align: center;'><p>" + message.ownermessenger + ": " + message.messContent + "</p></div>")
@@ -124,18 +123,17 @@
   //khi người dùng ấn chat thì sẽ server sẽ nhận tin nhắn và xử lý (server on "user-chat" )
   $("#messengerSubmit").submit(function(event) {
       event.preventDefault();
-      if (mess.value != "") {
-          //sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
-          socket.emit("user-chat", {
-              _idRoom: $("#_idRoom").val(),
-              senderID: $("#senderID").val(),
-              mess: $("#mess").val(),
-              senderName: $("#senderName").val(),
-              receiverName: $("#receiverName").val(),
-              receiverID: $("#receiverID").val(),
-          })
-          $("#mess").val("");
-      }
+      console.log($("#messengerSubmit input[name='mess']").val())
+          //   sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
+      socket.emit("user-chat", {
+          _idRoom: $("#_idRoom").val(),
+          senderID: $("#senderID").val(),
+          mess: $("#messengerSubmit input[name='mess']").val(),
+          senderName: $("#senderName").val(),
+          receiverName: $("#receiverName").val(),
+          receiverID: $("#receiverID").val(),
+      })
+      $("#messengerSubmit input[name='mess']").val("")
   });
   // server gửi tin nhắn lại từ sender cho receiver
   socket.on("server-chat", addMessageToHTML)

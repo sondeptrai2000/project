@@ -85,7 +85,12 @@ function getAllClass() {
                     $("#tableClass").append(" <div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td'>" + e.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + e.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + e._id + "')>View</button></div><div class='td'><button onclick=attendedList('" + e._id + "')>attended </button></div></div>")
                 })
                 var getClassID = $("#getClassID").val()
-                if (getClassID) $("#" + getClassID).css("background-color", 'red')
+                if (getClassID) {
+                    $("#" + getClassID).css("text-decoration-line", 'underline')
+                    $("#" + getClassID).css("font-size", '20px')
+                }
+
+
             }
         },
         error: function(response) {

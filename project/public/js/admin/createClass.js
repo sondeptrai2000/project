@@ -86,9 +86,10 @@ function getAllClass() {
         data: { status: $("#typeClass").val(), page: $("#soTrang select").val() },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div><div class='td'>Status</div></div>")
+                console.log(response.classInfor)
+                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>teacher</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div></div>")
                 $.each(response.classInfor, function(index, data) {
-                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div><div class='td'> data.classStatus </div></div>")
+                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>Name: " + data.teacherID.username + "<br>" + data.teacherID.email + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div></div>")
                 });
             }
         },
@@ -267,7 +268,7 @@ function sendData(id) {
                 console.log(response.data)
 
                 $(".studentListContent").html("<button onclick=addStudent('" + id + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
-                $(".studentListContent").append('<div class="tr"><div class="td" style="width:20%;">avatar</div><div class="td"style="width:20%;">username</div><div class="td" style="width:15%;">Aim</div><div class="td" style="width:35%;">email</div><div class="td"style="width:10%;">Select</div></div>')
+                $(".studentListContent").append('<div class="tr" id="firstTrlistStudent"><div class="td" style="width:20%;">avatar</div><div class="td"style="width:20%;">username</div><div class="td" style="width:15%;">Aim</div><div class="td" style="width:35%;">email</div><div class="td"style="width:10%;">Select</div></div>')
                 $.each(response.data, function(index, data) {
                     $.each(data.studentID, function(index, studentID) {
                         $(".studentListContent").append("<div class='tr'><div class='td'><img src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div></div>");

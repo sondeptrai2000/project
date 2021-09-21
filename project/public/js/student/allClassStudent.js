@@ -120,7 +120,7 @@ function viewTeacherProfile(id) {
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
-                    $(".teacherIn4").html("<div class='tr'><img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'><label>" + data.username + "</label></div><div class='tr'>" + data.email + "</div><div class='tr'><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + data._id + "'><input type='hidden' name='studentName' value='" + data.username + "'><button>Chat</button></form></div>");
+                    $(".teacherIn4").html("<img style ='max-width:150px;max-height:200px' src='" + data.avatar + "'><p>" + data.username + "</p><p>" + data.email + "</p><form action='/messenger/makeConnection' method='post'><input type='hidden' name='studentID' value='" + data._id + "'><input type='hidden' name='studentName' value='" + data.username + "'><button>Chat</button></form>");
                 });
                 $(".teacherIn4Out").fadeIn(500);
             }

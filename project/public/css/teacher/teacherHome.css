@@ -96,6 +96,12 @@ body {
     text-align: center;
 }
 
+#ngay,
+#thu {
+    background-color: gray;
+    color: white;
+}
+
 
 /* chỉnh updateProfileOut cập nhật tài khoản */
 
@@ -124,7 +130,7 @@ body {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
     font-size: 20px;
-    text-align: left;
+    text-align: center;
     padding: 20px;
 }
 

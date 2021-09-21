@@ -245,6 +245,8 @@ div.chat {
     background: gray;
     border-radius: 10px;
     font-size: 18px;
+    word-break: break-all;
+    max-width: 85%;
 }
 
 .sender img,

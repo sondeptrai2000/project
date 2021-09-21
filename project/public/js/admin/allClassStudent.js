@@ -1,13 +1,11 @@
 $(document).ready(function() {
-    getClass()
-    routeType()
+    routeType();
+    // bỏ đuỏi GMT 
+    $(".rightSide .tr .td:nth-child(7)").each(function() { $(this).text($(this).text().replace("07:00:00 GMT+0700 (GMT+07:00)", "")) })
+    $(".rightSide .tr .td:nth-child(8)").each(function() { $(this).text($(this).text().replace("07:00:00 GMT+0700 (GMT+07:00)", "")) })
+
 });
-//hiệu ứng menu
-$('header li').hover(function() {
-    $(this).find("div").slideDown()
-}, function() {
-    $(this).find("div").hide(500)
-});
+
 
 
 $(window).on('click', function(e) {
@@ -16,41 +14,9 @@ $(window).on('click', function(e) {
     if ($(e.target).is('.myAttendOut')) $('.myAttendOut').slideUp(1500);
 });
 
-//lấy thông tin các lớp đã và đang học
-function getClass() {
-    $.ajax({
-        url: '/student/getClass',
-        method: 'get',
-        dataType: 'json',
-        data: { check: "0" },
-        success: function(response) {
-            if (response.msg == 'success') {
-                $("#tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Teacher Name</div><div class='td'>Start date</div><div class='td'>End date</div class='td'><div class='td'>Student List</div></div>")
-                response.classInfor.forEach((e) => {
-                    e.classID.forEach((e) => {
-                        $("#tableClass").append("<div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.routeName + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td' onclick=viewTeacherProfile('" + e.teacherID._id + "')>" + e.teacherID.username + "</div><div class='td'>" + e.startDate + "</div><div class='td'>" + e.endDate + "</div><div class='td'><button onclick=sendData('" + e._id + "','" + e.subject + "')>List of student</button><button onclick=myAttended('" + e._id + "')>myAttended</button></div></div>")
-                    })
-                })
-                var getClassID = $("#getClassID").val()
-                if (getClassID) {
-                    $("#" + getClassID).css("background-color", 'gray')
-                    setTimeout(function() {
-                        $("#" + getClassID).css("background-color", '')
-                    }, 5000)
-                }
-            }
-            if (response.msg == 'abc') {
-                alert("học sinh đã chuyển sang giai đoạn cao hơn")
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
-
 //xem danh sách điểm danh của học sinh
 function myAttended(classID) {
+    console.log("vào")
     $.ajax({
         url: '/student/myAttended',
         method: 'get',
@@ -58,6 +24,7 @@ function myAttended(classID) {
         data: { classID: classID },
         success: function(response) {
             if (response.msg == 'success') {
+                console.log(response.data)
                 var data = response.data
                 var studentIndex
                 $(".myAttendContent").html("<div class='tr'><div class='td'>Date</div><div class='td'>Time</div><div class='td'>Status</div></div>")
@@ -119,8 +86,8 @@ function routeType() {
                     $.each(targetxxx.routeSchedual, function(indexBIG, routeSchedual) {
                         $("#routeTuyBien .tr:nth-child(1)").append("<div class='td' style='font-size:20px;'>Stage " + (indexBIG + 1) + ": " + routeSchedual.stage + "</div>");
                         $("#routeTuyBien .tr:nth-child(2)").append("<div class='td'></div>");
-                        if (routeSchedual.stage == $("#start").text() || routeSchedual.stage == $("#end").text()) $("#routeTuyBien .tr:nth-child(1) .td:nth-child(" + (indexBIG + 1) + ")").css("color", "red")
-                        if (routeSchedual.stage == $("#current").text()) $("#routeTuyBien .tr:nth-child(1) .td:nth-child(" + (indexBIG + 1) + ")").html('Stage' + (indexBIG + 1) + ': ' + routeSchedual.stage + '</div>' + '<i class="fas fa-map-marker-alt"></i>')
+                        if (routeSchedual.stage == $("#start").text().replace("Start stage: ", "") || routeSchedual.stage == $("#end").text().replace("Aim stage: ", "")) $("#routeTuyBien .tr:nth-child(1) .td:nth-child(" + (indexBIG + 1) + ")").css("background-color", "peru")
+                        if (routeSchedual.stage == $("#current").text().replace("Current stage: ", "")) $("#routeTuyBien .tr:nth-child(1) .td:nth-child(" + (indexBIG + 1) + ")").html('Stage ' + (indexBIG + 1) + ': ' + routeSchedual.stage + '</div>' + '<i class="fas fa-map-marker-alt"></i>')
                         $.each(routeSchedual.routeabcd, function(index, routeabcd) {
                             $("#routeTuyBien .tr:nth-child(2) .td:nth-child(" + (indexBIG + 1) + ")").append("<li>" + routeabcd + "</li>");
                         });
@@ -134,6 +101,8 @@ function routeType() {
         }
     })
 }
+
+
 
 //lấy danh sáhc học sinh trong lớp
 function sendData(id) {

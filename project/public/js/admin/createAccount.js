@@ -213,7 +213,7 @@ $("#role").change(async function() {
         $('.typeRole').html('');
     }
     if (accountRole != "teacher") {
-        $('.typeRole').html(" Chọn lộ trình học<select id='routeTypeS' onchange=routeType('create')></select>Level<select id='levelS'></select>Aim<select id='Aim'></select>Guardian name:<input type='text' name='guardianName'>Guardian phone: <input type='number' name='guardianPhone'>Guardian email:<input type='text' name='guardianEmail'>>Available time to study:<div id='availbleTime' style='width:100%;padding:0;margin-top:10px;'><ul>Morning<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Morning'></ul><ul>Afternoon<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Afternoon'></ul><ul>Night<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Night'></ul><ul>All<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='All'></ul></div>")
+        $('.typeRole').html(" Chọn lộ trình học<select id='routeTypeS' onchange=routeType('create')></select>Level<select id='levelS'></select>Aim<select id='Aim'></select>Guardian name:<input type='text' name='guardianName'>Guardian phone: <input type='number' name='guardianPhone'>Guardian email:<input type='text' name='guardianEmail'>Available time to study:<div id='availbleTime' style='width:100%;padding:0;margin-top:10px;'><ul>Morning<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Morning'></ul><ul>Afternoon<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Afternoon'></ul><ul>Night<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='Night'></ul><ul>All<input type='checkbox' class='checkTtime' onchange=choseTime('create') value='All'></ul></div>")
         getRoute('create')
         $('.typeRole').slideDown()
     }
@@ -468,8 +468,10 @@ function search(email) {
         data: { condition: condition },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".tableAccount .tr").css("background-color", '')
-                $("#" + response.data._id).css("background-color", 'gray')
+                $(".tableAccount .tr:not(:nth-child(1))").css("text-decoration-line", 'none')
+                $(".tableAccount .tr:not(:nth-child(1))").css("font-size", '18px')
+                $("#" + response.data._id).css("text-decoration-line", 'underline')
+                $("#" + response.data._id).css("font-size", '20px')
                 $(".rightSide").html("")
                 if (response.data.role == "teacher") {
                     $(".rightSide").append("<img src='" + response.data.avatar + "'><p>Name: " + response.data.username + "</p>Gender: " + response.data.sex + "</p>Email: " + response.data.email + "</p><p>Phone: " + response.data.phone + "</p><p>Role: " + response.data.role + "</p><p>BirthDay: " + response.data.birthday + "</p><p>Address: " + response.data.address + "</p>")

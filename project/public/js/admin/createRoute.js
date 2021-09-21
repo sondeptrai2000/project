@@ -62,7 +62,6 @@ function addClass(test, type) {
 
 function viewSchedule(id) {
     $(".viewRouteOut").fadeIn(500)
-    console.log("vào")
     var _id = id
     $.ajax({
         url: '/admin/viewSchedule',
@@ -71,10 +70,11 @@ function viewSchedule(id) {
         data: { _id: _id },
         success: function(response) {
             if (response.msg == 'success') {
-                $(".tableRoute .tr").css("background-color", '')
-                $("#" + _id).css("background-color", 'gray')
+                $(".tableRoute .tr:not(:nth-child(1))").css("text-decoration-line", 'none')
+                $(".tableRoute .tr:not(:nth-child(1))").css("font-size", '18px')
+                $("#" + _id).css("text-decoration-line", 'underline')
+                $("#" + _id).css("font-size", '20px')
                 var data = response.data
-                console.log(data)
                 $(".viewRoute").html("<h1>Route Name: " + data[0].routeName + "</h1>")
                 $(".viewRoute").append("<h2>Description: " + data[0].description + "</h2>")
                 data[0].routeSchedual.forEach(function(e, indexBIG) {
@@ -131,7 +131,7 @@ $("#doCreateRoute").submit(async function(event) {
         dataType: 'json',
         data: formData,
         success: function(response) {
-            if (response.msg == 'success') alert('Sign Up success');
+            if (response.msg == 'success') { alert('Sign Up success'); }
             if (response.msg == 'Account already exists') alert('Account already exists');
         },
         error: function(response) {

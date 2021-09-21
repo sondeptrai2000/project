@@ -10,28 +10,38 @@
 </head>
 
 <body>
+    <div class="studentListOut" style="display:none">
+        <div class="studentList"></div>
+    </div>
+    <div class="myAttendOut" style="display:none">
+        <div class="myAttendContent"></div>
+    </div>
+    <div class="teacherIn4Out" style="display:none">
+        <div class="teacherIn4"></div>
+    </div>
     <div id="routeTuyBien" border="solid" style="overflow:auto;"></div>
+
     <div class="content">
         <div class='leftSide'>
             {{#each data}}
             <input type="hidden" value="{{_id}}" id="studentID">
             <img src='{{avatar}}'>
-            <figcaption>{{username}}</figcaption>
-            <figcaption>{{email}}</figcaption>
-            <figcaption id="routeTypeS">{{routeName}}</figcaption>
-            Start stage:<figcaption id="start">{{startStage}}</figcaption>
-            Current stage:<figcaption id="current">{{stage}}</figcaption>
-            Aim stage:<figcaption id="end">{{aim}}</figcaption>
+            <p>Name: {{username}}</p>
+            <p>Email: {{email}}</p>
+            <p id="routeTypeS">{{routeName}}</p>
+            <p id="start">Start stage: {{startStage}}</p>
+            <p id="current">Current stage: {{stage}}</p>
+            <p id="end">Aim stage: {{aim}}</p>
             {{/each}}
         </div>
         <div class='rightSide'>
             <div class='tr'>
                 <div class='td'>Class name</div>
-                <div class='td'>routeName</div>
-                <div class='td'>stage</div>
-                <div class='td'>subject</div>
+                <div class='td'>Route</div>
+                <div class='td'>Stage</div>
+                <div class='td'>Subject</div>
                 <div class='td'>Description</div>
-                <div class='td'>Teacher Name</div>
+                <div class='td'>Teacher</div>
                 <div class='td'>Start date</div>
                 <div class='td'>End date</div class='td'>
                 <div class='td'>Student List</div>

@@ -233,7 +233,7 @@ class adminController {
             var A = new Date()
             var classPerPage = 2
             var skip = classPerPage * parseInt(req.query.page)
-            var classInfor = await ClassModel.find({ classStatus: req.query.status }, { schedule: 0, studentID: 0, classStatus: 0 }).skip(skip).limit(classPerPage).lean();
+            var classInfor = await ClassModel.find({ classStatus: req.query.status }, { schedule: 0, studentID: 0, classStatus: 0 }).populate({ path: "teacherID", select: "username email phone" }).skip(skip).limit(classPerPage).lean();
             var B = new Date()
             console.log(B - A)
             res.json({ msg: 'success', classInfor });

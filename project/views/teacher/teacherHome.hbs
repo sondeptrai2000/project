@@ -14,11 +14,14 @@
 
     <div class="updateProfileOut" style="display:none">
         <div class="updateProfile">
-            <input type='hidden' id='idProfileUpdate'>
-            <h2>Update profile</h2>
             <div>
+                <h2>Update profile</h2>
                 <img id='currentAvatar' style='max-width:auto;max-height:auto'></img>
                 <input type='hidden' id='avatarOldProfile'></input>
+            </div>
+            <div style="text-align: left;">
+                <input type='hidden' id='idProfileUpdate'>
+
                 <input type='file' id='myFile'>
                 Name:<input id='usernameUpdate'></input>
                 Password:<input id='newPassWord' placeholder="Input New password if you wanna change"></input>
@@ -31,8 +34,8 @@
                 Phone:<input id='phoneUpdate'></input>
                 BirthDay:<input type="date" id='birthdayUpdate'></input>
                 Address:<input id='addressUpdate'></input>
-                <button onclick="doUpdateProfile()">Update</button>
-            </div>
+            </div> <button onclick="doUpdateProfile()">Update</button>
+
         </div>
     </div>
     <header> {{> teacherHeader }}</header>
@@ -48,11 +51,11 @@
             <p id='addressProfile'></p>
             <button onclick="updateProfile()">Update</button>
         </div>
-        <div id="Schedual" >
+        <div id="Schedual">
             <h2>Weekly Schedual</h2>
             <label>Chose week: </label><select id='chonTuan' onchange="tuanoi()"></select>
             <div class="tr" id='ngay'></div>
-            <div class="tr">
+            <div class="tr" id='thu'>
                 <div class="td">Day of week</div>
                 <div class="td">Monday</div>
                 <div class="td">Tuesday</div>
@@ -62,21 +65,11 @@
                 <div class="td">Saturday</div>
                 <div class="td">Sunday</div>
             </div>
-            <div class="tr" id="time1">
-                <div class="td">7:30 to 9:30</div>
-            </div>
-            <div class="tr" id="time2">
-                <div class="td">9:45 to 11:45</div>
-            </div>
-            <div class="tr" id="time3">
-                <div class="td">13:30 to 15:30</div>
-            </div>
-            <div class="tr" id="time4">
-                <div class="td">15:45 to 17:45</div>
-            </div>
-            <div class="tr" id="time5">
-                <div class="td">18:15 to 20:15</div>
-            </div>
+            <div class="tr" id="time1"></div>
+            <div class="tr" id="time2"></div>
+            <div class="tr" id="time3"></div>
+            <div class="tr" id="time4"></div>
+            <div class="tr" id="time5"></div>
 
         </div>
     </div>

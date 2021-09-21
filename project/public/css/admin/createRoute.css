@@ -2,14 +2,6 @@
     box-sizing: border-box;
 }
 
-#option .td {
-    width: auto;
-    padding: 0;
-    margin: 0;
-    font-size: 20px;
-    float: right;
-}
-
 #option input,
 #option select,
 #option button {
@@ -24,7 +16,7 @@
 }
 
 #option .td {
-    width: auto;
+    width: fit-content;
     padding: 0;
     margin: 0;
     border: none;
@@ -56,6 +48,12 @@
     overflow: auto;
 }
 
+.tableRoute .tr:nth-child(1) {
+    background-color: gray;
+    color: white;
+    font-size: 20px;
+}
+
 .tr {
     display: table-row;
     padding: 5px;
@@ -68,6 +66,10 @@
     width: 300px;
     border: #000000 solid 1px;
     margin: 5px;
+}
+
+li {
+    font-size: 20px;
 }
 
 .updateRouteOut,

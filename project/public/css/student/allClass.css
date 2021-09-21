@@ -2,6 +2,10 @@
     box-sizing: border-box;
 }
 
+button {
+    font-size: 18px;
+}
+
 body {
     width: 100%;
     background-image: url("/images/background.jpg");
@@ -33,19 +37,25 @@ body {
 }
 
 #tableClass button {
-    font-size: 18px;
+    width: 100%;
+    margin: 2px 0px;
 }
 
 
 /* chỉnh option thanh lựa chọn */
 
+
+/* chỉnh option thanh lựa chọn */
+
 #option {
-    text-align: left;
+    margin-bottom: 10px;
     font-size: 20px;
 }
 
-#option input {
-    font-size: 15px;
+#option input,
+#option select,
+#option button {
+    font-size: 18px;
 }
 
 #option .tr {
@@ -56,10 +66,20 @@ body {
 }
 
 #option .td {
+    width: fit-content;
     padding: 0;
+    margin: 0;
     border: none;
     font-size: 20px;
-    text-align: left;
+    padding-right: 20px;
+}
+
+#tableClass .tr:nth-child(1),
+.studentList .tr:nth-child(1),
+.myAttendContent .tr:nth-child(1) {
+    background-color: gray;
+    color: white;
+    font-size: 20px;
 }
 
 .tr {
@@ -107,14 +127,17 @@ body {
     overflow: auto;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
+    font-size: 18px;
 }
 
 
 /* chỉnh teacher profile */
 
 .teacherIn4 {
-    height: 50%;
-    width: 30%;
+    height: 60%;
+    width: 40%;
+    margin-left: 30%;
+    text-align: center;
 }
 
 
