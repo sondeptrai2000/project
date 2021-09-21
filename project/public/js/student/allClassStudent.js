@@ -60,9 +60,11 @@ function getClass() {
                 })
                 var getClassID = $("#getClassID").val()
                 if (getClassID) {
-                    $("#" + getClassID).css("background-color", 'red')
+                    $("#" + getClassID).css("text-decoration-line", 'underline');
+                    $("#" + getClassID).css("font-size", '20px');
                     setTimeout(function() {
-                        $("#" + getClassID).css("background-color", '')
+                        $("#" + getClassID).css("text-decoration-line", 'none');
+                        $("#" + getClassID).css("font-size", '18px');
                     }, 5000)
                 }
             }

@@ -179,8 +179,6 @@ function studentProfile() {
             if (response.msg == 'success') {
                 $(".content").show();
                 $("#idProfile").text(response.data._id);
-                $("#routeProfile").html("Route: " + response.data.routeName);
-                $("#stageProfile").html("Stage: " + response.data.stage);
                 $("#avatarProfile").attr("src", response.data.avatar);
                 $("#welcome").html("Welcome " + response.data.username);
                 console.log(response.data.username)

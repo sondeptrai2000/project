@@ -74,6 +74,12 @@ body {
     font-size: 24px;
 }
 
+#ngay,
+#thu {
+    background-color: gray;
+    color: white;
+}
+
 
 /* chỉnh tr td thuộc tính cột hàng */
 

@@ -86,11 +86,13 @@ function getAllClass() {
                 })
                 var getClassID = $("#getClassID").val()
                 if (getClassID) {
-                    $("#" + getClassID).css("text-decoration-line", 'underline')
-                    $("#" + getClassID).css("font-size", '20px')
+                    $("#" + getClassID).css("text-decoration-line", 'underline');
+                    $("#" + getClassID).css("font-size", '20px');
+                    setTimeout(function() {
+                        $("#" + getClassID).css("text-decoration-line", 'none');
+                        $("#" + getClassID).css("font-size", '18px');
+                    }, 5000)
                 }
-
-
             }
         },
         error: function(response) {
