@@ -1,6 +1,7 @@
 $(document).ready(function() {
     countClass()
     createClassForm();
+    unReadMess();
 });
 
 
@@ -19,6 +20,26 @@ $(window).on('click', function(e) {
     if ($(e.target).is('.updateScheduleFormOut')) $('.updateScheduleFormOut').fadeOut(1500);
     if ($(e.target).is('.createClassOut')) $('.createClassOut').fadeOut(1500);
 });
+
+
+//lấy số tin nhắn chưa đọc
+function unReadMess() {
+    $.ajax({
+        url: '/messenger/unreadMess',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#UnreadMessages").html(response.unReadMess)
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
 
 //lấy thông tin của giáo viên và các khóa học đẻe chọn giaos viên và lộ trình của lớp
 function createClassForm() {

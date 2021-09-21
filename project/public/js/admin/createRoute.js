@@ -1,5 +1,6 @@
 $(document).ready(function() {
     getAllRoute()
+    unReadMess();
 
 });
 $(window).on('click', function(e) {
@@ -13,6 +14,26 @@ $('header li').hover(function() {
 }, function() {
     $(this).find("div").hide(500)
 });
+
+
+//lấy số tin nhắn chưa đọc
+function unReadMess() {
+    $.ajax({
+        url: '/messenger/unreadMess',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#UnreadMessages").html(response.unReadMess)
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
+
 
 function getAllRoute() {
     $.ajax({

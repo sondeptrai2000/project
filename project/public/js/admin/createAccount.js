@@ -6,6 +6,7 @@ var myFileUpdate;
 $(document).ready(function() {
     //chạy hàm đếm số lượng giáo viên trong lớp và hiển thị số trang và giáo viên
     countAccount();
+    unReadMess();
 
 
 
@@ -69,6 +70,24 @@ async function reset() {
     console.log(myFile)
 }
 
+
+//lấy số tin nhắn chưa đọc
+function unReadMess() {
+    $.ajax({
+        url: '/messenger/unreadMess',
+        method: 'get',
+        dataType: 'json',
+        data: {},
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#UnreadMessages").html(response.unReadMess)
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+}
 
 //đếm số tk để hiển thị theo danh sachs trang
 function countAccount() {
