@@ -259,6 +259,27 @@ class adminController {
             res.json({ msg: 'error' });
         }
     };
+    //lấy lịch học làm việc dựa vào id và role
+    async getSchedule(req, res) {
+        try {
+            var id = req.query.id;
+            var role = req.query.role;
+            //lấy thời điểm đầu tuần để lấy khóa học đang hoạt động trong khoảng thời gian đó. 
+            var sosanh = new Date(req.query.dauTuan)
+            if (role == 'teacher') var classInfor = await ClassModel.find({ teacherID: id, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }, { className: 1, schedule: 1 });
+            if (role == 'student') {
+                //lấy danh sách các lớp học của học sinh
+                var data = await AccountModel.findOne({ _id: id }, { classID: 1 }).lean();
+                //lấy lich học các lớp
+                var classInfor = await ClassModel.find({ _id: { $in: data.classID }, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean()
+            }
+            res.json({ msg: 'success', classInfor });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    }
+
     //trang xem thông tin cụ thể thông tin quá trình học của học sinh 
     async studentClass(req, res) {
         try {

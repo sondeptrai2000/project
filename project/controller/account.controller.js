@@ -99,7 +99,7 @@ let homeAdmin = async(req, res) => {
         if (token) {
             let decodeAccount = jwt.verify(token, 'minhson')
             var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
-            if (data.role === 'admin') res.render('admin/adminHome')
+            if (data.role === 'admin') res.render('admin/createAccount')
         } else {
             res.redirect('/')
         }

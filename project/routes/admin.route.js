@@ -1,11 +1,12 @@
 var express = require('express');
 var adminRouter = express.Router();
 var adminController = require('../controller/admin.controller')
-adminRouter.get('/', adminController.adminHome)
+adminRouter.get('/', adminController.createAccount)
 
 //Manage account page
 adminRouter.get('/createAccount', adminController.createAccount);
 
+adminRouter.get('/getSchedule', adminController.getSchedule)
 adminRouter.get('/getAccount', adminController.getAccount);
 adminRouter.get('/countAccount', adminController.countAccount);
 adminRouter.get('/search', adminController.search);

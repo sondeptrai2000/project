@@ -101,12 +101,8 @@
         method: 'post',
         data: formData,
         success: function (response) {
-          if (response.msg == 'success') {
-            alert("success")
-          }
-          if (response.msg == 'invalidCode') {
-            alert('Invalid Code! Try again.');
-          }
+          if (response.msg == 'success')   alert("success")
+          if (response.msg == 'invalidCode') alert('Invalid Code! Try again.');
         },
         error: function (response) {
           alert('server error');

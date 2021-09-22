@@ -7,9 +7,7 @@ $(document).ready(function() {
     //chạy hàm đếm số lượng giáo viên trong lớp và hiển thị số trang và giáo viên
     countAccount();
     unReadMess();
-
-
-
+    setCalender();
 });
 
 
@@ -17,6 +15,7 @@ $(document).ready(function() {
 $(window).on('click', function(e) {
     if ($(e.target).is('.createAccountOut')) $('.createAccountOut').fadeOut(1500);
     if ($(e.target).is('.updateFormOut')) $('.updateFormOut').fadeOut(1500);
+    if ($(e.target).is('.SchedualOut')) $('.SchedualOut').fadeOut(1500);
 });
 
 //hiệu ứng menu
@@ -138,8 +137,8 @@ function getAccount() {
         success: function(response) {
             if (response.msg == 'success') {
                 $.each(response.data, function(index, data) {
-                    if (role == 'teacher') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
-                    if (role == 'student') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
+                    if (role == 'teacher') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button><button onclick=viewSchedual('" + data._id + "','" + data.role + "')>Schedual</button></div></div >");
+                    if (role == 'student') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button><button onclick=viewSchedual('" + data._id + "','" + data.role + "')>Schedual</button></div></div >");
                 });
                 //hiển thị thông tin chi tiết trang form bên phải
                 search(response.data[0].email)
@@ -149,6 +148,124 @@ function getAccount() {
             alert('server error');
         }
     });
+}
+//lấy các ngày trong khoảng thời gian học
+var getDaysArray = function(start, end) {
+    for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+        arr.push(new Date(dt));
+    }
+    return arr;
+};
+//chia 3 làm việc để in vào bảng theo id
+function typeTime(time) {
+    var caLam
+    if (time == "7:30 to 9:30") caLam = "time1"
+    if (time == "9:45 to 11:45") caLam = "time2"
+    if (time == "13:30 to 15:30") caLam = "time3"
+    if (time == "15:45 to 17:45") caLam = "time4"
+    if (time == "18:15 to 20:15") caLam = "time5"
+    return caLam
+
+}
+
+//cấu tạo lịch
+function setCalender() {
+    //lấy các ngày trong năm
+    for (var arr = [], dt = new Date("2021-01-01"); dt <= new Date("2021-12-31"); dt.setDate(dt.getDate() + 1)) {
+        var date = new Date(dt)
+        var month = (date.getMonth() + 1).toString().padStart(2, "0");
+        var lol = date.getFullYear() + "-" + month + "-" + date.getDate().toString().padStart(2, "0");
+        arr.push({ "ngay": lol, "thu": (date.getDay() + 1) });
+    }
+    //chia thành các tuần từ thứ 2 to CN
+    var tuan = []
+    var check = false
+    var check2 = false
+    for (var i = 0; i < arr.length; i++) {
+        var d = new Date(arr[i].ngay);
+        var n = d.getDay();
+        if (arr[i].thu != 2 && i < 7 && check2 == false) {
+            tuan.push(arr[i].ngay + ' to ' + arr[7 - n].ngay)
+            check2 = true
+        }
+        if (arr[i].thu == 2 && (i + 7) < arr.length) {
+            tuan.push(arr[i].ngay + ' to ' + arr[i + 6].ngay)
+        }
+        if (arr[i].thu != 2 && (i + 7) > arr.length && check == false) {
+            tuan.push(arr[i + 1].ngay + ' to ' + arr[arr.length - 1].ngay)
+            check = true
+        }
+    }
+    //đưa các tuần vào thẻ select và đặt select cho tuần hiện tại.
+    const date1 = new Date();
+    var year = date1.getFullYear()
+    var month = date1.getMonth() + 1
+        //lấy thời gian hiện tại để so sánh và lấy tuần
+    var now = date1.getFullYear() + "-" + month.toString().padStart(2, "0") + "-" + date1.getDate();
+    for (var u = 0; u < tuan.length; u++) {
+        $("#chonTuan").append('<option value="' + tuan[u] + '">' + tuan[u] + '</option>');
+        dauTuan = tuan[u].split(" to ")[0]
+        cuoiTuan = tuan[u].split(" to ")[1]
+        if ((dauTuan <= now) && (now <= cuoiTuan)) {
+            $('#chonTuan option:selected').removeAttr('selected');
+            $("#chonTuan option[value='" + tuan[u] + "']").attr('selected', 'selected');
+        }
+    }
+};
+
+//xem lịch học , làm việc
+function viewSchedual(id, role) {
+    $("#viewID").val(id)
+    $("#viewRole").val(role)
+
+    //lấy thông tin lịch trình học, làm việc
+    var tuan = $("#chonTuan").val()
+    var dauTuan = tuan.split(" to ")[0]
+    var cuoiTuan = tuan.split(" to ")[1]
+    var formData = { dauTuan: dauTuan, cuoiTuan: cuoiTuan, id: id, role: role };
+    console.log(formData)
+        //chỉnh fomat date giống Type Date trong mongoDB để so sánh 
+        // link src hàm moment ở head
+    var start = moment(new Date(dauTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
+    var end = moment(new Date(cuoiTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
+    var a = getDaysArray(new Date(dauTuan), new Date(cuoiTuan));
+    $("#ngay").html("<div class='td'>Ngày</div>")
+        //tùy biến ngày vào html
+    a.forEach(element => {
+        $("#ngay").append("<div class='td'>" + (element.getFullYear() + "-" + (element.getMonth() + 1).toString().padStart(2, "0") + "-" + element.getDate()) + "</div>")
+    });
+    //lấy thông tin lịch học
+    $.ajax({
+        url: '/admin/getSchedule',
+        method: 'get',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#time1").html('<div class="td">7:30 to 9:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time2").html('<div class="td">9:45 to 11:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time3").html('<div class="td">13:30 to 15:30</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time4").html('<div class="td">15:45 to 17:45</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $("#time5").html('<div class="td">18:15 to 20:15</div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div><div class="td"></div>')
+                $.each(response.classInfor, function(index, classInfor) {
+                    $.each(classInfor.schedule, function(index, schedule) {
+                        if (start <= schedule.date && schedule.date <= end) {
+                            //ghi thông tin lịch học, làm việc vào bảng
+                            var caLam = typeTime(schedule.time)
+                            $("#" + caLam + " div:nth-child(" + schedule.day + ")").append("" + classInfor.className + "</a><br> Room: " + schedule.room)
+                        }
+                    });
+                });
+                $(".SchedualOut").fadeIn(500);
+            }
+            if (response.msg == 'error') {
+                alert("error")
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
 }
 
 //phân loại đăng ký khóa học dựa vào role cho cả create and update
