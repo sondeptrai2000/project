@@ -597,6 +597,7 @@ class adminController {
                 teacherID: req.body.teacherID,
                 endDate: new Date(req.body.endDate),
                 startDate: new Date(req.body.startDate),
+                timeToStudy: req.body.timeToStudy
             });
             //nếu có học sinh
             if (studentID && listStudent) {

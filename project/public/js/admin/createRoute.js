@@ -62,20 +62,20 @@ function getAllRoute() {
 
 function addStage(type) {
     if (type == "create") {
-        var add = "<div>Stage: <input type='text' name='stageTest'required/><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStage') > <i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'create')><i class='fas fa-plus-square'></i></button></div>"
+        var add = "<div>Stage: <input type='text' name='stageTest'required/><button type='button' onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button  type='button' onclick =$(this).parent().appendTo('#addStage') > <i class='fas fa-angle-double-down'></i> </button><button  type='button' onclick=addClass($(this).parent(),'create')><i class='fas fa-plus-square'></i></button></div>"
         $('#addStage').append(add)
     } else {
-        var add = "<div>Stage: <input type='text' name='stageTestUpdate'required/><button onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button onclick =$(this).parent().appendTo('#addStageUpdate') ><i class='fas fa-angle-double-down'></i> </button><button onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
+        var add = "<div>Stage: <input type='text' name='stageTestUpdate'required/><button  type='button' onclick =$(this).parent().remove()><i class='fas fa-trash-alt'></i></button><button  type='button' onclick =$(this).parent().appendTo('#addStageUpdate') ><i class='fas fa-angle-double-down'></i> </button><button  type='button' onclick=addClass($(this).parent(),'update')><i class='fas fa-plus-square'></i></button></div>"
         $('#addStageUpdate').append(add)
     }
 }
 
 function addClass(test, type) {
     if (type == "create") {
-        var add = "<div class='route'>Route: <input type='text' name='classIn' required/><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
+        var add = "<div class='route'>Route: <input type='text' name='classIn' required/><button  type='button' onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
         test.append(add)
     } else {
-        var add = "<div class='route'>Route: <input type='text' name='classInUpdate'required/><button onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
+        var add = "<div class='route'>Route: <input type='text' name='classInUpdate'required/><button   type='button' onclick=$(this).parent().remove();><i class='fas fa-trash-alt'></i></button></div>"
         test.append(add)
     }
 }
@@ -111,27 +111,13 @@ function viewSchedule(id) {
         }
     });
 }
-
+//Note: làm fillter theo .tr
 function search() {
     var name = "/" + $("#searchRoute").val() + "/i"
-    $.ajax({
-        url: '/admin/searchRoute',
-        method: 'get',
-        dataType: 'json',
-        data: { name: name },
-        success: function(response) {
-            if (response.msg == 'success') {
-                console.log(response.data)
-            }
 
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
 }
 
-$("#doCreateRoute").submit(async function(event) {
+$("#doCreateRoute").submit(function(event) {
     event.preventDefault();
     var schedule = []
     $("input[name='stageTest']").each(function(index, e) {
@@ -152,7 +138,11 @@ $("#doCreateRoute").submit(async function(event) {
         dataType: 'json',
         data: formData,
         success: function(response) {
-            if (response.msg == 'success') { alert('Sign Up success'); }
+            if (response.msg == 'success') {
+                alert('Sign Up success');
+                getAllRoute();
+                $(".createRouteOut").fadeOut(500);
+            }
             if (response.msg == 'Account already exists') alert('Account already exists');
         },
         error: function(response) {
@@ -236,6 +226,7 @@ function deleteRoute(id) {
             success: function(response) {
                 if (response.msg == 'success') {
                     alert('success');
+                    getAllRoute();
                 }
                 if (response.msg == 'error') {
                     alert('error');

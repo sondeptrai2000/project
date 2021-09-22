@@ -47,7 +47,6 @@ function getClass() {
         success: function(response) {
             if (response.msg == 'success') {
                 $("#tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Teacher Name</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Grade</div><div class='td'>Comment</div><div class='td'>Action</div></div>")
-                console.log(response.classInfor)
                 response.classInfor.forEach((e) => {
                     e.classID.forEach((e) => {
                         $("#tableClass").append("<div class='tr' id=" + e._id + "><div class='td'>" + e.className + "</div><div class='td'>" + e.stage + "</div><div class='td'>" + e.subject + "</div><div class='td'>" + e.description + "</div><div class='td' onclick=viewTeacherProfile('" + e.teacherID._id + "')>" + e.teacherID.username + "</div><div class='td'>" + e.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + e.endDate.replace("T00:00:00.000Z", "") + "</div></div>")

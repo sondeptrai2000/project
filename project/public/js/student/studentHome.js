@@ -159,7 +159,6 @@ function tuanoi() {
 //phân ca để dưa vào bảng lịch học
 function typeTime(time) {
     var caLam
-    console.log(time)
     if (time == "7:30 to 9:30") caLam = "time1"
     if (time == "9:45 to 11:45") caLam = "time2"
     if (time == "13:30 to 15:30") caLam = "time3"
@@ -226,7 +225,6 @@ function doUpdateProfile() {
         birthday: $("#birthdayUpdate").val(),
         avatar: $('#currentAvatar').attr('src'),
     };
-    console.log(formData1)
     $.ajax({
         url: '/account/doeditAccount',
         method: 'post',

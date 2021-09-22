@@ -17,25 +17,14 @@ const classSchema = new Schema({
     stage: String,
     subject: String,
     description: String,
+    timeToStudy: [{ type: String }],
     studentID: [{
-        ID: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'account'
-        },
-        grade: {
-            type: String,
-            default: "Has not been commented yet"
-        },
-        feedBackContent: {
-            type: String,
-            default: "Has not been commented yet"
-        },
+        ID: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
+        grade: { type: String, default: "Has not been commented yet" },
+        feedBackContent: { type: String, default: "Has not been commented yet" },
         absentRate: Number,
     }],
-    teacherID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'account'
-    },
+    teacherID: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
     schedule: [{
         commonPoint: { type: String, default: "schedule" },
         date: Date,
@@ -44,13 +33,8 @@ const classSchema = new Schema({
         room: String,
         status: String,
         attend: [{
-            studentID: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'account'
-            },
-            attended: {
-                type: String,
-            }
+            studentID: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
+            attended: { type: String, }
         }]
     }],
     uploadDate: String,

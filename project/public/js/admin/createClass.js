@@ -21,6 +21,93 @@ $(window).on('click', function(e) {
     if ($(e.target).is('.createClassOut')) $('.createClassOut').fadeOut(1500);
 });
 
+//đếm số lớp để hiển thị theo danh sachs trang
+function countClass() {
+    $.ajax({
+        url: '/admin/countClass',
+        method: 'get',
+        dataType: 'json',
+        data: { status: $("#typeClass").val() },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $("#soTrang").html("Page:<select onchange=getAllClass()></select>");
+                //hiển thị số trang vào thẻ select cho dễ chọn trang
+                for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
+                $("#number").html("Total: " + response.numberOfClass)
+                    //hiển thị thông tin các tài khoản theo role và số trang.
+                getAllClass();
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+//lấy danh sách lớp
+function getAllClass() {
+    $.ajax({
+        url: '/admin/getAllClass',
+        method: 'get',
+        dataType: 'json',
+        data: { status: $("#typeClass").val(), page: $("#soTrang select").val() },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>teacher</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div></div>")
+                $.each(response.classInfor, function(index, data) {
+                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>Name: " + data.teacherID.username + "<br>" + data.teacherID.email + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td' style='display:none;'>" + data.timeToStudy + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div></div>")
+                });
+            }
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+//tìm kiếm class
+function searchClass() {
+    if ($("#search").val() == "") alert("Input class name")
+    $.ajax({
+        url: '/admin/searchClass',
+        method: 'get',
+        dataType: 'json',
+        data: { className: $("#search").val() },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div><div class='td'>Status</div></div>")
+                $.each(response.classInfor, function(index, data) {
+                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div><div class='td'> data.classStatus </div></div>")
+                });
+            }
+            if (response.msg == 'notFound') alert("Can't found class")
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
+}
+
+//xóa 1 lớp học
+function deleteClass(id) {
+    if (confirm("Are you sure you want to delete this?")) {
+        $.ajax({
+            url: '/admin/deleteClass',
+            method: 'get',
+            dataType: 'json',
+            data: { id: id },
+            success: function(response) {
+                if (response.msg == 'success') {
+                    countClass();
+                    alert('success ');
+                }
+                if (response.msg == 'error') alert('error ');
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        });
+    }
+}
 
 //lấy số tin nhắn chưa đọc
 function unReadMess() {
@@ -68,6 +155,96 @@ function createClassForm() {
 }
 
 
+//thực hiện tạo lớp và lưu vào đb
+$("#myform").submit(async function(event) {
+    event.preventDefault();
+    var studentID = []
+    var listStudent = []
+    var attend = []
+    $("input[name='hobby']").each(function(data) {
+        if ($(this).is(':checked')) {
+            studentID.push($(this).val())
+            listStudent.push({ 'ID': $(this).val() });
+            attend.push({ "studentID": $(this).val(), "attended": "" })
+        }
+    });
+    //lấy các thứ trong tuần, giờ học, phòng
+    var buoihoc = []
+    var time = []
+    var room = []
+    $(".buoihocthu").each(function(data) { buoihoc.push($(this).val()) });
+    $(".cahoc").each(function() { time.push($(this).val()) });
+    $(".Room").each(function() { room.push($(this).val()) });
+    //lấy các buổi học trong khoảng thời gian từ ngày bắt đầu môn học đến ngày kết thúc môn học
+    var schedual = []
+    var range = getDaysArray(new Date($("#startDate").val()), new Date($("#endDate").val()));
+    for (var i = 0; i < range.length; i++) {
+        for (var u = 0; u < buoihoc.length; u++) {
+            // trừ 1 bời vì getDay luôn có giá trị nhỏ hơn giá trị của  thứ. EX: thứ 2 => getDay sẽ là 1 
+            if (range[i].getDay() == (buoihoc[u] - 1)) {
+                var date = range[i].getFullYear() + "-" + (range[i].getMonth() + 1).toString().padStart(2, "0") + "-" + range[i].getDate().toString().padStart(2, "0")
+                var day = (range[i].getDay() + 1).toString().padStart(2, "0")
+                schedual.push({ "time": time[u], "room": room[u], "date": date, "day": day, "attend": attend })
+                break;
+            }
+        }
+    }
+    //lấy các thời gian học sinh có thể đi học tại trung tâm
+    var timeToStudy = []
+    $("#availbleTime input").each(function() {
+        if ($(this).is(':checked')) {
+            if ($(this).val() == "All") {
+                timeToStudy.length = 0
+                timeToStudy.push($(this).val())
+                $("#availbleTime input").prop('checked', false);
+                $(this).prop('checked', true);
+            } else {
+                timeToStudy.push($(this).val())
+            }
+        }
+    })
+    if (timeToStudy.length == 3) timeToStudy = ["All"]
+    if (timeToStudy.length == 0) {
+        alert("Enter time that student can study!")
+    } else {
+        var formData = {
+            className: $(".className").val(),
+            subject: $(".subject").val(),
+            routeName: $(".routeName").val(),
+            stage: $(".stage").val(),
+            description: $(".description").val(),
+            teacherID: $("#teacherID input").val(),
+            endDate: $(".endDate").val(),
+            startDate: $(".startDate").val(),
+            studentID: studentID,
+            listStudent: listStudent,
+            schedual: schedual,
+            time: time,
+            room: room,
+            buoihoc: buoihoc,
+            timeToStudy: timeToStudy
+        }
+        $.ajax({
+            url: '/admin/createClass',
+            method: 'post',
+            dataType: 'json',
+            data: formData,
+            success: function(response) {
+                if (response.msg == 'success') {
+                    alert("create class success");
+                    countClass();
+                    $('.createClassOut').toggle(500);
+                }
+                if (response.msg == 'error') alert("error")
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+    }
+})
+
+
 //chọn thời gian học
 $('.checkTtime').on('change', function() {
     $('.checkTtime').not(this).prop('checked', false);
@@ -75,80 +252,40 @@ $('.checkTtime').on('change', function() {
 });
 
 
-//đếm số lớp để hiển thị theo danh sachs trang
-function countClass() {
-    $.ajax({
-        url: '/admin/countClass',
-        method: 'get',
-        dataType: 'json',
-        data: { status: $("#typeClass").val() },
-        success: function(response) {
-            if (response.msg == 'success') {
-                console.log(response.soTrang)
-                $("#soTrang").html("Page:<select onchange=getAllClass()></select>");
-                //hiển thị số trang vào thẻ select cho dễ chọn trang
-                for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
-                $("#number").html("Total: " + response.numberOfClass)
-                    //hiển thị thông tin các tài khoản theo role và số trang.
-                getAllClass();
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
 
-function getAllClass() {
-    $.ajax({
-        url: '/admin/getAllClass',
-        method: 'get',
-        dataType: 'json',
-        data: { status: $("#typeClass").val(), page: $("#soTrang select").val() },
-        success: function(response) {
-            if (response.msg == 'success') {
-                console.log(response.classInfor)
-                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>teacher</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div></div>")
-                $.each(response.classInfor, function(index, data) {
-                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>Name: " + data.teacherID.username + "<br>" + data.teacherID.email + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div></div>")
-                });
-            }
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
-
-//tìm kiếm class
-
-function searchClass() {
-    if ($("#search").val() == "") alert("Input class name")
-    $.ajax({
-        url: '/admin/searchClass',
-        method: 'get',
-        dataType: 'json',
-        data: { className: $("#search").val() },
-        success: function(response) {
-            if (response.msg == 'success') {
-                $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div><div class='td'>Status</div></div>")
-                $.each(response.classInfor, function(index, data) {
-                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><button onclick=sendData('" + data._id + "')>Student list</button><button onclick=upDateSchedule('" + data._id + "')>List Schedule </button><button onclick=deleteClass('" + data._id + "')>Delete</button></div><div class='td'> data.classStatus </div></div>")
-                });
-            }
-            if (response.msg == 'notFound') alert("Can't found class")
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
 //chọn giáo viên ở bảng chọn r hiển thị lại ở mục giáo viên chỉ định (tạo lớp form)
 function selectedTeacher(email, id) {
-    console.log("vào")
-    console.log(".avatar" + id)
     $("#teacherID").html('<img src="' + $(".avatar" + id).val() + '" style="height: 200px;width: 200px;" onclick=$("#span2").toggle(500)><figcaption>' + email + '</figcaption><input type="hidden" value="' + id + '">')
     $("#span2").fadeOut(500)
+}
+
+
+
+//lấy danh sách các học sinh trong lớp
+function sendData(id) {
+    var _id = id
+    $.ajax({
+        url: '/admin/allClassStudent',
+        method: 'get',
+        dataType: 'json',
+        data: { abc: _id },
+        success: function(response) {
+            if (response.msg == 'success') {
+                $(".studentListContent").html("<button onclick=addStudent('" + id + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
+                $(".studentListContent").append('<div class="tr" id="firstTrlistStudent"><div class="td" style="width:20%;">avatar</div><div class="td"style="width:20%;">username</div><div class="td" style="width:15%;">Aim</div><div class="td" style="width:35%;">email</div><div class="td"style="width:10%;">Select</div></div>')
+                $.each(response.data, function(index, data) {
+                    $.each(data.studentID, function(index, studentID) {
+                        $(".studentListContent").append("<div class='tr'><div class='td'><img src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div></div>");
+                    });
+                });
+                $(".studentListOut").fadeIn(500);
+            }
+            if (response.msg == 'error') alert("error")
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    });
 }
 
 //hiển thị danh sách lịch giảng dạy để admin chọn vào thay đổi lịch làm việc 1 ngày nào đó trong list
@@ -161,7 +298,6 @@ function upDateSchedule(id) {
         data: { id: id },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.data)
                 $("#attendedList").html("<div class='tr'><div class='td' style='width:20%'>Date</div><div class='td'style='width:20%'>Day of week</div><div class='td'style='width:20%' >Room</div><div class='td'style='width:30%'>Time</div><div class='td'style='width:10%'>Action</div></div>")
                 $.each(response.data[0].schedule, function(index, data) {
                     $("#attendedList").append('<div class="tr" id="infor' + data._id + '"><div class="td">' + data.date.split("T00:00:00.000Z")[0] + '</div><div class="td">' + data.day + '</div><div class="td">' + data.room + '</div><div class="td">' + data.time + '</div><div class="td"><button  onclick=updateScheduleForm("' + data._id + '","' + idClass + '")>Update</button><input id ="' + data._id + '"type="hidden" value="' + data + '"></div></div>    ')
@@ -187,9 +323,7 @@ function updateScheduleForm(scheduleID, classID) {
 $("#cahocUpdate").change(async function() {
     var date = new Date($("input[name='dateScheduleUpdate']").val())
     var dayOfWeek = (date.getDay() + 1)
-    if (dayOfWeek == '1') {
-        dayOfWeek = "8"
-    }
+    if (dayOfWeek == '1') dayOfWeek = "8"
     $("#dayOfWeekUpdate").html("0" + dayOfWeek)
     $.ajax({
         url: '/admin/getThu',
@@ -224,17 +358,13 @@ $("#SubmitupdateScheduleForm").submit(async function(event) {
     if (dayOfWeek == '01') dayOfWeek = "08"
     var old = []
     var scheduleID = $("input[name='updateScheduleID']").val()
-
-    $("#infor" + scheduleID + " .td:not(:last-child)").each(function() {
-        old.push($(this).text().trim())
-    })
+    $("#infor" + scheduleID + " .td:not(:last-child)").each(function() { old.push($(this).text().trim()) })
     var update = {
         "schedule.$.time": $('#cahocUpdate').val(),
         "schedule.$.room": $('#roomUpdate').val(),
         "schedule.$.day": dayOfWeek,
         "schedule.$.status": "update"
     }
-    console.log(update)
     $.ajax({
         url: '/admin/doupdateSchedule',
         method: 'post',
@@ -256,67 +386,16 @@ $("#SubmitupdateScheduleForm").submit(async function(event) {
     });
 })
 
-function deleteClass(id) {
-    if (confirm("Are you sure you want to delete this?")) {
-        $.ajax({
-            url: '/admin/deleteClass',
-            method: 'get',
-            dataType: 'json',
-            data: {
-                id: id
-            },
-            success: function(response) {
-                if (response.msg == 'success') alert('success ');
-                if (response.msg == 'error') alert('error ');
-            },
-            error: function(response) {
-                alert('server error');
-            }
-        });
-    }
-}
-
-//lấy danh sách các học sinh trong lớp
-function sendData(id) {
-    var _id = id
-    $.ajax({
-        url: '/admin/allClassStudent',
-        method: 'get',
-        dataType: 'json',
-        data: { abc: _id },
-        success: function(response) {
-            if (response.msg == 'success') {
-                console.log(response.data)
-
-                $(".studentListContent").html("<button onclick=addStudent('" + id + "')>Them học sinh vào lớp</button><button onclick=removeStudent('" + id + "')>Xóa học sinh trong lớp</button>")
-                $(".studentListContent").append('<div class="tr" id="firstTrlistStudent"><div class="td" style="width:20%;">avatar</div><div class="td"style="width:20%;">username</div><div class="td" style="width:15%;">Aim</div><div class="td" style="width:35%;">email</div><div class="td"style="width:10%;">Select</div></div>')
-                $.each(response.data, function(index, data) {
-                    $.each(data.studentID, function(index, studentID) {
-                        $(".studentListContent").append("<div class='tr'><div class='td'><img src='" + studentID.ID.avatar + "'></div><div class='td'>" + studentID.ID.username + "</div><div class='td'>" + studentID.ID.aim + "</div><div class='td'>" + studentID.ID.email + "</div><div class='td'><input type='checkbox' class='removeFormClass' value='" + studentID.ID._id + "' /></div></div>");
-                    });
-                });
-                $(".studentListOut").fadeIn(500);
-            }
-            if (response.msg == 'error') alert("error")
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    });
-}
 
 //hiển thị các học sinh có mức độ tương ứng với lớp đã chọn để xem xét thêm vào lớp
 function addStudent(classID) {
     var infor4 = []
-    $("#" + classID + " .td").each(function() {
-        infor4.push($(this).text())
-    })
-    console.log(infor4)
-    console.log(infor4[3])
+    $("#" + classID + " .td").each(function() { infor4.push($(this).text()) })
     var condition = {
         role: 'student',
-        routeName: infor4[1].trim(),
-        stage: infor4[2].trim(),
+        routeName: infor4[2].trim(),
+        stage: infor4[3].trim(),
+        availableTime: { $in: [infor4[5].trim(), 'All'] }
     }
     $.ajax({
         url: '/admin/addStudentToClass',
@@ -325,7 +404,6 @@ function addStudent(classID) {
         data: { condition },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.data)
                 $('#studentTableAdd').html("<div class='tr'><div class='td'>avatar</div><div class='td'>username</div><div class='td'>email</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>Chose</div></div>");
                 $.each(response.data, function(index, student) {
                     var check = false
@@ -362,7 +440,6 @@ function doAddToClass(classID) {
             studentlistcl.push($(this).attr('value'));
         }
     });
-    console.log(studentlistAttend)
     $.ajax({
         url: '/admin/doaddStudentToClass',
         method: 'post',
@@ -454,10 +531,8 @@ function getTime(i) {
         },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.data)
                 $.each(response.data, function(index, data) {
                     $.each(data.schedule, function(index, schedule) {
-                        console.log(schedule.time)
                         $('#cahoc' + i + ' option[value="' + schedule.time + '"]').remove()
                     });
                 });
@@ -497,72 +572,6 @@ function getThu(i) {
     })
 }
 
-//thực hiện tạo lớp và lưu vào đb
-$("#myform").submit(async function(event) {
-    event.preventDefault();
-    var studentID = []
-    var listStudent = []
-    var attend = []
-    $("input[name='hobby']").each(function(data) {
-        if ($(this).is(':checked')) {
-            studentID.push($(this).val())
-            listStudent.push({ 'ID': $(this).val() });
-            attend.push({ "studentID": $(this).val(), "attended": "" })
-        }
-    });
-    //lấy các thứ trong tuần, giờ học, phòng
-    var buoihoc = []
-    var time = []
-    var room = []
-    $(".buoihocthu").each(function(data) { buoihoc.push($(this).val()) });
-    $(".cahoc").each(function() { time.push($(this).val()) });
-    $(".Room").each(function() { room.push($(this).val()) });
-    //lấy các buổi học trong khoảng thời gian từ ngày bắt đầu môn học đến ngày kết thúc môn học
-    var schedual = []
-    var range = getDaysArray(new Date($("#startDate").val()), new Date($("#endDate").val()));
-    for (var i = 0; i < range.length; i++) {
-        for (var u = 0; u < buoihoc.length; u++) {
-            // trừ 1 bời vì getDay luôn có giá trị nhỏ hơn giá trị của  thứ. EX: thứ 2 => getDay sẽ là 1 
-            if (range[i].getDay() == (buoihoc[u] - 1)) {
-                var date = range[i].getFullYear() + "-" + (range[i].getMonth() + 1).toString().padStart(2, "0") + "-" + range[i].getDate().toString().padStart(2, "0")
-                var day = (range[i].getDay() + 1).toString().padStart(2, "0")
-                schedual.push({ "time": time[u], "room": room[u], "date": date, "day": day, "attend": attend })
-                break;
-            }
-        }
-    }
-    var formData = {
-        className: $(".className").val(),
-        subject: $(".subject").val(),
-        routeName: $(".routeName").val(),
-        stage: $(".stage").val(),
-        description: $(".description").val(),
-        teacherID: $("#teacherID input").val(),
-        endDate: $(".endDate").val(),
-        startDate: $(".startDate").val(),
-        studentID: studentID,
-        listStudent: listStudent,
-        schedual: schedual,
-        time: time,
-        room: room,
-        buoihoc: buoihoc
-    }
-    console.log(formData)
-    $.ajax({
-        url: '/admin/createClass',
-        method: 'post',
-        dataType: 'json',
-        data: formData,
-        success: function(response) {
-            if (response.msg == 'success') alert("create class success")
-            if (response.msg == 'error') alert("error")
-        },
-        error: function(response) {
-            alert('server error');
-        }
-    })
-
-})
 
 //lấy thông tin của lộ trình học
 function routeType() {
@@ -587,7 +596,6 @@ function routeType() {
                 //hiển thị thông tin 1 lộ trình học lên đầu form tạo lớp sau khi chọn 1 khóa học
                 $.each(response.data, function(index, targetxxx) {
                     $.each(targetxxx.routeSchedual, function(indexBIG, routeSchedual) {
-                        console.log("1")
                         $("#routeTuyBien .tr:nth-child(1)").append("<div class='td' style='font-size:20px;'>Stage " + (indexBIG + 1) + ": " + routeSchedual.stage + "</div>");
                         $("#routeTuyBien .tr:nth-child(2)").append("<div class='td'></div>");
                         $.each(routeSchedual.routeabcd, function(index, routeabcd) {

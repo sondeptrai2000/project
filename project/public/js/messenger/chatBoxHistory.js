@@ -123,8 +123,7 @@
   //khi người dùng ấn chat thì sẽ server sẽ nhận tin nhắn và xử lý (server on "user-chat" )
   $("#messengerSubmit").submit(function(event) {
       event.preventDefault();
-      console.log($("#messengerSubmit input[name='mess']").val())
-          //   sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
+      //   sender gửi tin nhắn đền server và thông qua server gửi đến người nhận
       socket.emit("user-chat", {
           _idRoom: $("#_idRoom").val(),
           senderID: $("#senderID").val(),

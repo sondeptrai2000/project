@@ -159,7 +159,6 @@ function tuanoi() {
 //phân ca để dưa vào bảng lịch học
 function typeTime(time) {
     var caLam
-    console.log(time)
     if (time == "7:30 to 9:30") caLam = "time1"
     if (time == "9:45 to 11:45") caLam = "time2"
     if (time == "13:30 to 15:30") caLam = "time3"
@@ -181,7 +180,6 @@ function studentProfile() {
                 $("#idProfile").text(response.data._id);
                 $("#avatarProfile").attr("src", response.data.avatar);
                 $("#welcome").html("Welcome " + response.data.username);
-                console.log(response.data.username)
                 $("#usernameProfile").html("Full Name: " + response.data.username);
                 $("#genderProfile").html("Gender: " + response.data.sex);
                 $("#emailProfile").html("Email: " + response.data.email);
@@ -226,7 +224,6 @@ function doUpdateProfile() {
         birthday: $("#birthdayUpdate").val(),
         avatar: $('#currentAvatar').attr('src'),
     };
-    console.log(formData1)
     $.ajax({
         url: '/account/doeditAccount',
         method: 'post',

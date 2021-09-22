@@ -34,7 +34,6 @@ function countClass() {
         data: { status: $("#typeClass").val() },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.soTrang)
                 $("#soTrang").html("Page:<select onchange=getAllClass()></select>");
                 $("#number").html("Total: " + response.numberOfClass)
                     //hiển thị số trang vào thẻ select cho dễ chọn trang
@@ -69,8 +68,6 @@ function unReadMess() {
 
 //lấy danh sách các lớp đang dạy
 function getAllClass() {
-    console.log($("#typeClass").val())
-    console.log($("#soTrang select").val())
     $.ajax({
         url: '/teacher/getAllClass',
         method: 'get',
@@ -78,7 +75,6 @@ function getAllClass() {
         data: { status: $("#typeClass").val(), page: $("#soTrang select").val() },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.classInfor)
                 $("#tableClass").html('')
                 $("#tableClass").append("<div class='tr'><div class='td'>Class name</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Student List</div><div class='td'>Take attended</div></div>")
                 response.classInfor.forEach((e) => {
@@ -256,7 +252,6 @@ function takeAttend(idattend, idClass) {
         data: formData,
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.data)
                 $("#takeAttendContent").html($("#takeAttendContent .tr:first-child"))
                 $.each(response.data[0].schedule, function(index, data) {
                     $.each(data.attend, function(index, attend) {

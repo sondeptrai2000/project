@@ -62,12 +62,10 @@ $("#myInput").on("keyup", function() {
 
 // làm trống thông tin tạo tài khoản
 async function reset() {
-    console.log(myFile)
     $("#createAccount input").val('');
     $("#output").attr('src', '');
     fileData = undefined
     myFile = undefined
-    console.log(myFile)
 }
 
 
@@ -91,7 +89,6 @@ function unReadMess() {
 
 //đếm số tk để hiển thị theo danh sachs trang
 function countAccount() {
-    console.log($("#accountFilter").val())
     $.ajax({
         url: '/admin/countAccount',
         method: 'get',
@@ -99,7 +96,6 @@ function countAccount() {
         data: { role: $("#accountFilter").val() },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.soTrang)
                 $("#soTrang").html("Page:<select onchange=getAccount()></select>");
                 //hiển thị số trang vào thẻ select cho dễ chọn trang
                 for (let i = 1; i < response.soTrang; i++) { $("#soTrang select").append("<option value='" + (i - 1) + "'>" + i + "</option>") }
@@ -141,7 +137,6 @@ function getAccount() {
         data: { role: role, sotrang: page },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.data)
                 $.each(response.data, function(index, data) {
                     if (role == 'teacher') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td'>" + data.address + "</div><div class='td'>" + data.birthday + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
                     if (role == 'student') $(".tableAccount").append("<div class='tr' id ='" + data._id + "' onclick=search('" + data.email + "')><div class='td'><img  src='" + data.avatar + "'></div><div class='td'>" + data.username + "</div><div class='td'>" + data.sex + "</div><div class='td'>" + data.email + "</div><div class='td' style='display:none;'>" + data.role + "</div><div class='td'>" + data.phone + "</div><div class='td' style='display:none;'>" + data.address + "</div><div class='td' style='display:none;'>" + data.birthday + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.aim + "</div><div class='td' style='display:none;'>" + data.relationship.username + "</div><div class='td' style='display:none;'>" + data.relationship.email + "</div><div class='td' style='display:none;'>" + data.relationship.phone + "</div><div class='td'><button onclick=updateForm('" + data._id + "')>Update</button></div></div >");
@@ -376,7 +371,6 @@ $("#myform").submit(function(event) {
                 email: $("input[name='guardianEmail']").val(),
             };
         }
-        console.log(formData1)
         $.ajax({
             url: '/admin/doCreateAccount',
             method: 'post',
@@ -448,7 +442,6 @@ $("#myformUpdate").submit(function(event) {
                 email: $("input[name='guardianEmailUpdate']").val(),
             }
         }
-        console.log(formData1)
         $.ajax({
             url: '/admin/doeditAccount',
             method: 'post',
