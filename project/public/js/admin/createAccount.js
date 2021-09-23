@@ -387,27 +387,6 @@ function getRoute(type) {
 function updateForm(id) {
     $('#levelSUpdate').html('');
     $("#AimUpdate").html('');
-    $(".updateFormOut").fadeIn(2000);
-    var selector = "#" + id + " .td"
-    var infor4 = []
-    $(selector).each(function() { infor4.push($(this).text()) })
-    $("#PersonID").val(id)
-    $("#currentAvatar").attr("src", $("#" + id + " img").attr('src'));
-    $("#oldAvatar").val($("#" + id + " img").attr('src'));
-    $("#usernameUpdate").val(infor4[1])
-    $('#genderUpdate option:selected').removeAttr('selected');
-    $("#genderUpdate option[value='" + infor4[2] + "']").attr('selected', 'selected');
-    $("#emailUpdate").val(infor4[3])
-    $("#currentRole").val(infor4[4])
-    $('#roleUpdate option:selected').removeAttr('selected');
-    $("#roleUpdate option[value='" + infor4[4] + "']").attr('selected', 'selected');
-    $("#phoneUpdate").val(infor4[5])
-    $("#addressUpdate").val(infor4[6])
-    $("#birthdayUpdate").val(infor4[7])
-    $("input[name='guardianNameUpdate']").val(infor4[11])
-    $("input[name='guardianPhoneUpdate']").val(infor4[13])
-    $("input[name='guardianEmailUpdate']").val(infor4[12])
-    $("#roleUpdate").change()
     $.ajax({
         url: '/admin/editAccount',
         method: 'get',
@@ -415,22 +394,41 @@ function updateForm(id) {
         data: { updateid: id },
         success: function(response) {
             if (response.msg == 'success') {
-                $.each(response.targetxxx, function(index, targetxxx) {
-                    if (targetxxx.routeName == infor4[8]) {
-                        var routeOption = "<option value='" + targetxxx.routeName + "'>" + targetxxx.routeName + "</option>"
-                        $("#routeTypeSUpdate").append(routeOption);
-                        $("#routeTypeSUpdate option[value='" + infor4[8] + "']").attr('selected', 'selected');
-                        $.each(targetxxx.routeSchedual, function(index, routeSchedual) {
-                            var Schudelstage = "<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>"
-                            $("#levelSUpdate").append(Schudelstage);
-                            $('#levelSUpdate option:selected').removeAttr('selected');
-                            $("#levelSUpdate option[value='" + infor4[9] + "']").attr('selected', 'selected');
-                            $("#AimUpdate").append(Schudelstage);
-                            $('#AimUpdate option:selected').removeAttr('selected');
-                            $("#AimUpdate option[value='" + infor4[10] + "']").attr('selected', 'selected');
-                        });
-                    }
-                });
+                var account = response.account
+                $("#currentRole").val(account.role)
+                $("#roleUpdate").change();
+                $("#PersonID").val(id)
+                $("#currentAvatar").attr(account.avatar);
+                $("#oldAvatar").val(account.avatar);
+                $("#usernameUpdate").val(account.username)
+                $('#genderUpdate option:selected').removeAttr('selected');
+                $("#genderUpdate option[value='" + account.sex + "']").attr('selected', 'selected');
+                $("#emailUpdate").val(account.email)
+                $('#roleUpdate option:selected').removeAttr('selected');
+                $("#roleUpdate option[value='" + account.role + "']").attr('selected', 'selected');
+                $("#phoneUpdate").val(account.phone)
+                $("#addressUpdate").val(account.address)
+                $("#birthdayUpdate").val(account.birthday)
+                if (account.role == "student") {
+                    $("input[name='guardianNameUpdate']").val(account.relationship.username)
+                    $("input[name='guardianPhoneUpdate']").val(account.relationship.phone)
+                    $("input[name='guardianEmailUpdate']").val(account.relationship.email)
+                    $.each(response.targetxxx, function(index, targetxxx) {
+                        if (targetxxx.routeName == account.routeName) {
+                            $("#routeTypeSUpdate").append("<option value='" + targetxxx.routeName + "'>" + targetxxx.routeName + "</option>");
+                            $("#routeTypeSUpdate option[value='" + account.routeName + "']").attr('selected', 'selected');
+                            $.each(targetxxx.routeSchedual, function(index, routeSchedual) {
+                                $("#levelSUpdate").append("<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>");
+                                $('#levelSUpdate option:selected').removeAttr('selected');
+                                $("#levelSUpdate option[value='" + account.stage + "']").attr('selected', 'selected');
+                                $("#AimUpdate").append("<option value='" + routeSchedual.stage + "'>" + routeSchedual.stage + "</option>");
+                                $('#AimUpdate option:selected').removeAttr('selected');
+                                $("#AimUpdate option[value='" + account.aim + "']").attr('selected', 'selected');
+                            });
+                        }
+                    });
+                }
+                $(".updateFormOut").fadeIn(2000);
             }
         },
         error: function(response) {
@@ -442,141 +440,138 @@ function updateForm(id) {
 
 
 //thực hiện đăng ký và lưu tài khỏan vào đb
-$("#myform").submit(function(event) {
+$("#myform").submit(async function(event) {
     event.preventDefault();
-    //lấy các thời gian học sinh có thể đi học tại trung tâm
-    var availableTime = []
-    $("#availbleTime input").each(function() {
-        if ($(this).is(':checked')) {
-            if ($(this).val() == "All") {
-                availableTime.length = 0
-                availableTime.push($(this).val())
-                $("#availbleTime input").prop('checked', false);
-                $(this).prop('checked', true);
-            } else {
-                availableTime.push($(this).val())
-            }
-        }
-    })
-    if (availableTime.length == 3) availableTime = ["All"]
-    if (availableTime.length == 0) {
-        alert("Enter time that student can study!")
-    } else {
-        var role = $("#role").val()
-            //thôn tin bắt buộc của giáo viên or học sinh
-        var formData1 = {
-            sex: $("#gender").val(),
-            username: $("#username").val(),
-            email: $("#email").val(),
-            role: role,
-            phone: $("#phone").val(),
-            address: $("#address").val(),
-            birthday: $("#birthday").val(),
-        };
-        var formData2
-            //thông tin bổ sung dựa trên role
-        if (role != "teacher") {
-            formData1["stage"] = $("#levelS").val()
-            formData1["routeName"] = $("#routeTypeS").val()
-            formData1["aim"] = $("#Aim").val()
-            formData1["startStage"] = $("#levelS").val()
-            formData1["availableTime"] = availableTime
-            formData2 = {
-                role: "guardian",
-                username: $("input[name='guardianName']").val(),
-                phone: $("input[name='guardianPhone']").val(),
-                email: $("input[name='guardianEmail']").val(),
-            };
-        }
-        $.ajax({
-            url: '/admin/doCreateAccount',
-            method: 'post',
-            dataType: 'json',
-            data: { password: $("#password").val(), filename: myFile.name, file: fileData, student: formData1, phuhuynh: formData2 },
-            success: function(response) {
-                if (response.msg == 'success') {
-                    reset();
-                    getAccount();
-                    $(".createAccountOut").slideUp();
-                    alert('Sign Up success');
+    var role = $("#role").val()
+    if (role == "student") {
+        //lấy các thời gian học sinh có thể đi học tại trung tâm
+        var availableTime = []
+        $("#availbleTime input").each(function() {
+            if ($(this).is(':checked')) {
+                if ($(this).val() == "All") {
+                    availableTime.length = 0
+                    availableTime.push($(this).val())
+                    $("#availbleTime input").prop('checked', false);
+                    $(this).prop('checked', true);
+                } else {
+                    availableTime.push($(this).val())
                 }
-                if (response.msg == 'Account already exists') alert('Account already exists');
-                if (response.msg == 'Phone already exists') alert('Phone already exists');
-                if (response.msg == 'error') alert('error');
-            },
-            error: function(response) {
-                alert('server error');
             }
         })
+        if (availableTime.length == 3) availableTime = ["All"]
+        if (availableTime.length == 0) alert("Enter time that student can study!")
     }
+    //thôn tin bắt buộc của giáo viên or học sinh
+    var formData1 = {
+        sex: $("#gender").val(),
+        username: $("#username").val(),
+        email: $("#email").val(),
+        role: role,
+        phone: $("#phone").val(),
+        address: $("#address").val(),
+        birthday: $("#birthday").val(),
+    };
+    var formData2;
+    //thông tin bổ sung dựa trên role
+    if (role != "teacher") {
+        formData1["stage"] = $("#levelS").val()
+        formData1["routeName"] = $("#routeTypeS").val()
+        formData1["aim"] = $("#Aim").val()
+        formData1["startStage"] = $("#levelS").val()
+        formData1["availableTime"] = availableTime
+        formData2 = {
+            role: "guardian",
+            username: $("input[name='guardianName']").val(),
+            phone: $("input[name='guardianPhone']").val(),
+            email: $("input[name='guardianEmail']").val(),
+        };
+    }
+    $.ajax({
+        url: '/admin/doCreateAccount',
+        method: 'post',
+        dataType: 'json',
+        data: { password: $("#password").val(), filename: myFile.name, file: fileData, student: formData1, phuhuynh: formData2 },
+        success: function(response) {
+            if (response.msg == 'success') {
+                reset();
+                getAccount();
+                $(".createAccountOut").slideUp();
+                alert('Sign Up success');
+            }
+            if (response.msg == 'Email or phone already exists') alert('Email or phone already exists');
+            if (response.msg == 'Guardian email or phone already exists') alert('Guardian email or phone already exists');
+            if (response.msg == 'success') alert('success');
+            if (response.msg == 'error') alert('error');
+        },
+        error: function(response) {
+            alert('server error');
+        }
+    })
+
 });
 
 //thực hiện cập nhật thông tin tài khỏan vào đb
 //giống kha khá với tạo tài khoản
 $("#myformUpdate").submit(function(event) {
     event.preventDefault();
-    if (!fileDataUpdate) {
-        fileDataUpdate = "none"
-    }
-    //lấy các thời gian học sinh có thể đi học tại trung tâm
-    var availableTime = []
-    $("#availbleTimeUpdate input").each(function() {
-        if ($(this).is(':checked')) {
-            if ($(this).val() == "All") {
-                availableTime.length = 0
-                availableTime.push($(this).val())
-                $("#availbleTimeUpdate input").prop('checked', false);
-                $(this).prop('checked', true);
-            } else {
-                availableTime.push($(this).val())
+    var role = $("#roleUpdate").val()
+    if (!fileDataUpdate) fileDataUpdate = "none";
+    if (role == 'student') {
+        //lấy các thời gian học sinh có thể đi học tại trung tâm
+        var availableTime = []
+        $("#availbleTimeUpdate input").each(function() {
+            if ($(this).is(':checked')) {
+                if ($(this).val() == "All") {
+                    availableTime.length = 0
+                    availableTime.push($(this).val())
+                    $("#availbleTimeUpdate input").prop('checked', false);
+                    $(this).prop('checked', true);
+                } else { availableTime.push($(this).val()) }
             }
+        });
+        if (availableTime.length == 3) availableTime = ["All"];
+        if (availableTime.length == 0) alert("Enter time that student can study!");
+    }
+    var formData1 = {
+        sex: $("#gender").val(),
+        username: $("#usernameUpdate").val(),
+        email: $("#emailUpdate").val(),
+        role: role,
+        phone: $("#phoneUpdate").val(),
+        address: $("#addressUpdate").val(),
+        birthday: $("#birthdayUpdate").val(),
+    };
+    var formData2
+    if (role != "teacher") {
+        formData1["stage"] = $("#levelSUpdate").val()
+        formData1["routeName"] = $("#routeTypeSUpdate").val()
+        formData1["aim"] = $("#AimUpdate").val()
+        formData1["availableTime"] = availableTime
+        formData2 = {
+            role: "guardian",
+            username: $("input[name='guardianNameUpdate']").val(),
+            phone: $("input[name='guardianPhoneUpdate']").val(),
+            email: $("input[name='guardianEmailUpdate']").val(),
+        }
+    }
+    $.ajax({
+        url: '/admin/doeditAccount',
+        method: 'post',
+        dataType: 'json',
+        //Note: oldLink: là link avatar cũ
+        data: { id: $("#PersonID").val(), oldLink: $('#oldAvatar').val(), password: $("#passwordUpdate").val(), formData1: formData1, formData2: formData2, file: fileDataUpdate, },
+        success: function(response) {
+            if (response.msg == 'success') {
+                alert('update success');
+                $('.updateFormOut').fadeOut(2000);
+                getAccount();
+            }
+        },
+        error: function(response) {
+            alert('server error');
         }
     })
-    if (availableTime.length == 3) availableTime = ["All"]
-    if (availableTime.length == 0) {
-        alert("Enter time that student can study!")
-    } else {
-        var role = $("#roleUpdate").val()
-        var formData1 = {
-            sex: $("#gender").val(),
-            username: $("#usernameUpdate").val(),
-            email: $("#emailUpdate").val(),
-            role: role,
-            phone: $("#phoneUpdate").val(),
-            address: $("#addressUpdate").val(),
-            birthday: $("#birthdayUpdate").val(),
-        };
-        var formData2
-        if (role != "teacher") {
-            formData1["stage"] = $("#levelSUpdate").val()
-            formData1["routeName"] = $("#routeTypeSUpdate").val()
-            formData1["aim"] = $("#AimUpdate").val()
-            formData1["availableTime"] = availableTime
-            formData2 = {
-                role: "guardian",
-                username: $("input[name='guardianNameUpdate']").val(),
-                phone: $("input[name='guardianPhoneUpdate']").val(),
-                email: $("input[name='guardianEmailUpdate']").val(),
-            }
-        }
-        $.ajax({
-            url: '/admin/doeditAccount',
-            method: 'post',
-            dataType: 'json',
-            //Note: oldLink: là link avatar cũ
-            data: { id: $("#PersonID").val(), oldLink: $('#oldAvatar').val(), password: $("#passwordUpdate").val(), formData1: formData1, formData2: formData2, file: fileDataUpdate, },
-            success: function(response) {
-                if (response.msg == 'success') {
-                    alert('update success');
-                    $('.updateFormOut').fadeOut(2000);
-                    getAccount();
-                }
-            },
-            error: function(response) {
-                alert('server error');
-            }
-        })
-    }
+
 })
 
 

@@ -219,7 +219,7 @@ function attendedList(id) {
                 room = []
                 day = []
                 time = []
-                $("#attendedList").html('<div class="tr"><div class="td">Date</div><div class="td">Day of week</div><div class="td">Action</div></div>')
+                $("#attendedList").html('<div class="tr"><div class="td">Date</div><div class="td">Day of week</div><div class="td">Status</div><div class="td">Action</div></div>')
                 $("#loladate4").val(response.data[0].schedule[response.data[0].schedule.length - 1].date)
                 $.each(response.data[0].schedule, function(index, data) {
                     //lấy các ngày giờ học để tiện cho việc xét tragnj thái cho phòng nếu đó là ngày cuối cùng của khóa học
@@ -229,7 +229,11 @@ function attendedList(id) {
                         if (!day.includes(data.day)) day.push(data.day)
                         if (!time.includes(data.time)) time.push(data.time)
                     }
-                    $("#attendedList").append('<div class="tr"><div class="td">' + data.date.split("T00:00:00.000Z")[0] + '</div><div class="td">' + data.day + '</div><div class="td"><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></div></div>')
+                    if (data.status == 'success') {
+                        $("#attendedList").append('<div class="tr"><div class="td">' + data.date.split("T00:00:00.000Z")[0] + '</div><div class="td">' + data.day + '</div><div class="td"><i style="color:green;" class="far fa-check-circle"></i></div><div class="td"><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></div></div>')
+                    } else {
+                        $("#attendedList").append('<div class="tr"><div class="td">' + data.date.split("T00:00:00.000Z")[0] + '</div><div class="td">' + data.day + '</div><div class="td"></div><div class="td"><button onclick=takeAttend("' + data._id + '","' + idClass + '")>Take attend </button><input id ="' + data._id + '"type="hidden" value="' + data + '"></div></div>')
+                    }
                 });
                 $(".attendedListOut").fadeIn(500)
             }

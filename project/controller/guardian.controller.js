@@ -4,8 +4,6 @@ const ClassModel = require('../models/class');
 var jwt = require('jsonwebtoken');
 
 
-
-
 class guardianController {
     guardianHome(req, res) {
         res.json('Trang chủ guardian')
@@ -16,9 +14,8 @@ class guardianController {
             let token = req.cookies.token
             let decodeAccount = jwt.verify(token, 'minhson')
             var guardian = await AccountModel.findOne({ _id: decodeAccount }, { relationship: 1 }).lean()
-            console.log(req.query.classID)
             var data = await ClassModel.find({ _id: req.query.classID }, { schedule: 1, "studentID.absentRate": 1 }).populate({ path: "schedule.attend.studentID", select: { username: 1, avatar: 1 } }).lean();
-            res.json({ msg: 'success', data: data, studentID: guardian.relationship });
+            return res.json({ msg: 'success', data: data, studentID: guardian.relationship });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
@@ -29,8 +26,8 @@ class guardianController {
     allClass(req, res) {
         var params = req.params.id
         var studentName = req.cookies.username
-        if (params != "0") res.render('guardian/allClass', { params, studentName })
-        if (params == "0") res.render('guardian/allClass', { studentName })
+        if (params != "0") return res.render('guardian/allClass', { params, studentName })
+        if (params == "0") return res.render('guardian/allClass', { studentName })
     }
 
 
@@ -44,7 +41,7 @@ class guardianController {
                 select: '-schedule',
                 populate: { path: 'teacherID', select: 'username' }
             }).lean()
-            res.json({ msg: 'success', classInfor, studentID: guardian.relationship });
+            return res.json({ msg: 'success', classInfor, studentID: guardian.relationship });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
@@ -55,20 +52,19 @@ class guardianController {
     getTeacherProfile(req, res) {
         AccountModel.find({ _id: req.query.abc }, { username: 1, email: 1, avatar: 1 }).lean().exec(function(err, data) {
             if (err) {
-                res.json({ msg: 'error' });
+                return res.json({ msg: 'error' });
             } else {
-                res.json({ msg: 'success', data: data });
+                return res.json({ msg: 'success', data: data });
             }
         })
     }
 
     allClassStudent(req, res) {
-        var _id = req.query.abc
-        ClassModel.find({ _id: _id }).populate('studentID.ID', { username: 1, email: 1, avatar: 1 }).lean().exec((err, selectedClassInfor) => {
+        ClassModel.find({ _id: req.query.abc }).populate('studentID.ID', { username: 1, email: 1, avatar: 1 }).lean().exec((err, selectedClassInfor) => {
             if (err) {
-                res.json({ msg: 'error' });
+                return res.json({ msg: 'error' });
             } else {
-                res.json({ msg: 'success', data: selectedClassInfor });
+                return res.json({ msg: 'success', data: selectedClassInfor });
             }
         })
     }
@@ -87,10 +83,10 @@ class guardianController {
             var studentID = guardian.relationship
             var sosanh = new Date(req.query.dauTuan)
             var classInfor = await ClassModel.find({ _id: { $in: student.classID }, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }).lean()
-            res.json({ msg: 'success', classInfor, studentID });
+            return res.json({ msg: 'success', classInfor, studentID });
         } catch (e) {
             console.log(e)
-            res.json({ msg: 'error' });
+            return res.json({ msg: 'error' });
         }
     }
 

@@ -46,6 +46,7 @@ async function uploadFile(name, rootID, path) {
 let getCode = async(req, res) => {
     try {
         var check = await AccountModel.findOne({ email: req.query.email }, { username: 1 })
+        if (!check) return res.json({ msg: 'email not found' });
         if (check) {
             var code = Crypto.randomBytes(21).toString('base64').slice(0, 21)
             console.log(code)
@@ -58,12 +59,9 @@ let getCode = async(req, res) => {
             }
             await AccountModel.findOneAndUpdate({ email: req.query.email }, { codeRefresh: code })
             await transporter.sendMail(mainOptions)
-            setTimeout(async function() {
-                await AccountModel.findOneAndUpdate({ email: req.query.email }, { codeRefresh: "" })
-            }, 600000)
-            res.json({ msg: 'success' });
+            setTimeout(async function() { await AccountModel.findOneAndUpdate({ email: req.query.email }, { codeRefresh: "" }) }, 600000)
+            return res.json({ msg: 'success' });
         }
-        if (!check) res.json({ msg: 'email not found' });
     } catch (e) {
         console.log(e)
         res.json({ msg: 'error' });
@@ -73,18 +71,16 @@ let getCode = async(req, res) => {
 
 let confirmPass = async(req, res) => {
     try {
-        console.log("vvaof")
-        console.log(req.body.codeForgot)
         var check = await AccountModel.findOne({ email: req.body.email }, { username: 1, codeRefresh: 1 })
+        if (!check) return res.json({ msg: 'email not found' });
         if (check) {
             if (check.codeRefresh == req.body.codeForgot) {
                 const salt = bcrypt.genSaltSync(saltRounds);
                 const hash = bcrypt.hashSync(req.body.newPass, salt);
                 await AccountModel.findOneAndUpdate({ email: req.body.email }, { codeRefresh: "", password: hash })
-                res.json({ msg: 'success' });
-            } else { res.json({ msg: 'invalidCode' }); }
+                return res.json({ msg: 'success' });
+            } else { return res.json({ msg: 'invalidCode' }); }
         }
-        if (!check) res.json({ msg: 'email not found' });
     } catch (e) {
         console.log(e)
         res.json({ msg: 'error' });
@@ -99,10 +95,8 @@ let homeAdmin = async(req, res) => {
         if (token) {
             let decodeAccount = jwt.verify(token, 'minhson')
             var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
-            if (data.role === 'admin') res.render('admin/createAccount')
-        } else {
-            res.redirect('/')
-        }
+            if (data.role === 'admin') return res.render('admin/createAccount')
+        } else { return res.redirect('/') }
     } catch (e) {
         console.log(e)
         res.redirect('/')
@@ -116,10 +110,8 @@ let homeTeacher = async(req, res) => {
         if (token) {
             let decodeAccount = jwt.verify(token, 'minhson')
             var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
-            if (data.role === 'teacher') res.render('teacher/teacherHome')
-        } else {
-            res.redirect('/')
-        }
+            if (data.role === 'teacher') return res.render('teacher/teacherHome')
+        } else { res.redirect('/') }
     } catch (e) {
         console.log(e)
         res.redirect('/')
@@ -133,10 +125,8 @@ let homeGuardian = async(req, res) => {
         if (token) {
             let decodeAccount = jwt.verify(token, 'minhson')
             var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
-            if (data.role === 'guardian') res.render('guardian/guardianHome')
-        } else {
-            res.redirect('/')
-        }
+            if (data.role === 'guardian') return res.render('guardian/guardianHome')
+        } else { res.redirect('/') }
     } catch (e) {
         console.log(e)
         res.redirect('/')
@@ -150,10 +140,8 @@ let homeStudent = async(req, res) => {
         if (token) {
             let decodeAccount = jwt.verify(token, 'minhson')
             var data = await AccountModel.findOne({ _id: decodeAccount }).lean()
-            if (data.role === 'student') res.render('student/studentHome')
-        } else {
-            res.redirect('/')
-        }
+            if (data.role === 'student') return res.render('student/studentHome')
+        } else { res.redirect('/') }
     } catch (e) {
         console.log(e)
         res.redirect('/')
@@ -163,15 +151,15 @@ let homeStudent = async(req, res) => {
 let loginController = async function(req, res) {
     try {
         var result = await bcrypt.compare(req.body.password, req.user.password)
-        if (result == true) {
+        if (result) {
             let token = jwt.sign({ _id: req.user._id }, 'minhson', { expiresIn: '1d' })
             res.cookie("token", token, { maxAge: 24 * 60 * 60 * 10000 });
             let user = req.user
-            if (user.role === "admin") res.json({ msg: 'success', data: "./homeAdmin" });
-            if (user.role === "student") res.json({ msg: 'success', data: "./homeStudent" });
-            if (user.role === "guardian") res.json({ msg: 'success', data: "./homeGuardian" });
-            if (user.role === "teacher") res.json({ msg: 'success', data: "./homeTeacher" });
-        } else { res.json({ msg: 'invalid_Info' }); }
+            if (user.role === "admin") return res.json({ msg: 'success', data: "./homeAdmin" });
+            if (user.role === "student") return res.json({ msg: 'success', data: "./homeStudent" });
+            if (user.role === "guardian") return res.json({ msg: 'success', data: "./homeGuardian" });
+            if (user.role === "teacher") return res.json({ msg: 'success', data: "./homeTeacher" });
+        } else { return res.json({ msg: 'invalid_Info' }); }
     } catch (e) {
         console.log(e)
         res.json({ message: "error" })
@@ -181,35 +169,31 @@ let doeditAccount = async function(req, res) {
     try {
         var check = await AccountModel.find({ email: req.body.formData1.email }).lean()
         var checkphone = await AccountModel.find({ phone: req.body.formData1.phone }).lean()
-        if (check.length > 1) {
-            res.json({ msg: 'Account already exists' })
-        } else if (checkphone.length > 1) {
-            res.json({ msg: 'Phone already exists' })
-        } else {
-            var password = req.body.password
-            var formData1 = req.body.formData1
-            if (password.length != 0) {
-                const salt = bcrypt.genSaltSync(saltRounds);
-                const hash = bcrypt.hashSync(password, salt);
-                formData1["password"] = hash
-            }
-            if (req.body.file != "none") {
-                var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
-                var image = req.body.file;
-                var data = image.split(',')[1];
-                fs.writeFileSync(path, data, { encoding: 'base64' });
-                var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
-                if (!response) res.json({ msg: 'error' });
-                formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
-                var oldImg = req.body.oldLink
-                if (oldImg) {
-                    oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
-                    await driveService.files.delete({ fileId: oldImg })
-                }
-            }
-            await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
-            res.json({ msg: 'success', data: data });
+        if (check.length > 1) return res.json({ msg: 'Account already exists' })
+        if (checkphone.length > 1) return res.json({ msg: 'Phone already exists' })
+        var password = req.body.password
+        var formData1 = req.body.formData1
+        if (password.length != 0) {
+            const salt = bcrypt.genSaltSync(saltRounds);
+            const hash = bcrypt.hashSync(password, salt);
+            formData1["password"] = hash
         }
+        if (req.body.file != "none") {
+            var path = __dirname.replace("controller", "public/avatar") + '/' + req.body.filename;
+            var image = req.body.file;
+            var data = image.split(',')[1];
+            fs.writeFileSync(path, data, { encoding: 'base64' });
+            var response = await uploadFile(req.body.filename, "11B3Y7b7OJcbuqlaHPJKrsR2ow3ooKJv1", path)
+            if (!response) res.json({ msg: 'error' });
+            formData1["avatar"] = "https://drive.google.com/uc?export=view&id=" + response
+            var oldImg = req.body.oldLink
+            if (oldImg) {
+                oldImg = oldImg.split("https://drive.google.com/uc?export=view&id=")[1]
+                await driveService.files.delete({ fileId: oldImg })
+            }
+        }
+        await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
+        res.json({ msg: 'success', data: data });
     } catch (e) {
         console.log(e)
         res.json({ msg: 'error' });
@@ -220,11 +204,8 @@ let profile = async function(req, res) {
     try {
         var token = req.cookies.token
         var decodeAccount = jwt.verify(token, 'minhson')
-        var before = new Date();
         var data = await AccountModel.findById({ _id: decodeAccount._id }).lean();
         res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
-        var after = new Date();
-        console.log("profile: ", (after - before))
         res.json({ msg: 'success', data: data });
     } catch (e) {
         console.log(e)

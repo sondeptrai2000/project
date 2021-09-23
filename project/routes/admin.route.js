@@ -44,7 +44,6 @@ adminRouter.get('/createRoute', adminController.createRoute);
 
 adminRouter.get('/getAllRoute', adminController.getAllRoute);
 adminRouter.get('/viewSchedule', adminController.viewSchedule);
-adminRouter.get('/searchRoute', adminController.searchRoute);
 adminRouter.post('/docreateRoute', adminController.docreateRoute);
 adminRouter.post('/doUpdateRoute', adminController.doUpdateRoute);
 adminRouter.delete('/deleteRoute', adminController.deleteRoute);
@@ -58,8 +57,7 @@ adminRouter.get('/getRoomAndTime', adminController.getRoomAndTime);
 adminRouter.post('/addRoom', adminController.addRoom);
 adminRouter.post('/deleteRoom', adminController.deleteRoom);
 
-//Thông tin tư vấn
-adminRouter.get('/consultingAll', adminController.consultingAll);
+
 
 
 module.exports = adminRouter

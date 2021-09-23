@@ -37,12 +37,10 @@ class messtController {
                 var data = await chatModel.create(createConnection)
                 await AccountModel.updateMany({ _id: { $in: [sender._id, receiver._id] } }, { $push: { chat: data._id } })
                 next();
-            } else {
-                next();
-            }
+            } else { next(); }
         } catch (e) {
             console.log(e)
-            res.json({ msg: 'user not found' })
+            return res.json({ msg: 'user not found' })
         }
     }
 
@@ -52,28 +50,27 @@ class messtController {
         try {
             let token = req.cookies.token
             let decodeAccount = jwt.verify(token, 'minhson')
-            var sender = await AccountModel.findOne({ _id: decodeAccount }, { username: 1, chat: 1, role: 1 }).lean()
-                // lấy tin nhắn cuối cùng trong mảng message để hiển thị trong lịch sử chat
-            var data1 = await chatModel.find({ _id: { $in: sender.chat } }, { message: { $slice: -1 }, }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).sort({ updateTime: -1 }).lean();
-            if (data1.length == "0") {
-                res.render("message/chatTrong.ejs", { role })
+            var sender = await AccountModel.findOne({ _id: decodeAccount._id }, { username: 1, chat: 1, role: 1 }).lean();
+            //lấy list chat để join người user vào các phòng để nhận tin nhắn chat
+            var listID = sender.chat;
+            //lấy role để tùy biến cho header
+            var role = sender.role;
+            if (listID.length == 0) {
+                return res.render("message/emptyChat.ejs", { role, senderName: sender.username, senderAvatar: sender.avatar, senderID: sender._id })
             } else {
+                // lấy tin nhắn cuối cùng trong mảng message để hiển thị trong lịch sử chat
+                var data1 = await chatModel.find({ _id: { $in: listID } }, { message: { $slice: -1 }, }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).sort({ updateTime: -1 }).lean();
                 //xác định người gửi trong đoạn chat đầu tiên để hiển thị
                 if (sender._id.toString() == data1[0].person1._id.toString()) {
                     var formData = { senderID: data1[0].person1._id, senderName: data1[0].person1.username, receiverID: data1[0].person2._id, receiverName: data1[0].person2.username }
                 } else {
                     var formData = { senderID: data1[0].person2._id, senderName: data1[0].person2.username, receiverID: data1[0].person1._id, receiverName: data1[0].person1.username }
                 }
-                //lấy list chat để join người user vào các phòng để nhận tin nhắn chat
-                var listID = sender.chat;
-                //lấy role để tùy biến cho header
-                var role = sender.role;
-                res.render("message/chatBoxHistory.ejs", { data1, formData, listID, role })
+                return res.render("message/chatBoxHistory.ejs", { data1, formData, listID, role })
             }
         } catch (e) {    
-            if (e) {
-                res.json('error')
-            }
+            return res.json('error')
+
         }
     };
 
@@ -88,10 +85,10 @@ class messtController {
             if (!chatInfor.read.includes(decodeAccount._id)) await chatModel.findOneAndUpdate({ _id: req.query._idRoom }, { $push: { read: decodeAccount._id } });
             //trả về cuộc trò chuyện
             var data = await chatModel.findOne({ _id: req.query._idRoom }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).lean()
-            res.json({ msg: 'success', data });
+            return res.json({ msg: 'success', data });
         } catch (e) {
             console.log(e);
-            res.json({ msg: 'error' });
+            return res.json({ msg: 'error' });
         }
     };
     //gửi thông báo số tin nhắn chưa đọc
@@ -101,12 +98,12 @@ class messtController {
             var decodeAccount = jwt.verify(token, 'minhson')
                 //lấy trạng thái read của cuọc hồi thoại
             var Account = await AccountModel.findOne({ _id: decodeAccount }, { chat: 1 }).lean();
-            var unReadMess = await chatModel.find({ _id: { $in: Account.chat }, read: { $nin: decodeAccount._id } }).countDocuments()
+            var unReadMess = await chatModel.find({ _id: { $in: Account.chat }, read: { $nin: decodeAccount._id } }).lean().countDocuments()
             console.log(unReadMess)
-            res.json({ msg: 'success', unReadMess });
+            return res.json({ msg: 'success', unReadMess });
         } catch (e) {
             console.log(e);
-            res.json({ msg: 'error' });
+            return res.json({ msg: 'error' });
         }
     }
 
@@ -114,7 +111,6 @@ class messtController {
         try {
             //lấy thông tin người muốn kết nối
             var condition = req.body.condition
-            console.log(req.body.condition)
             var receiver = await AccountModel.findOne(condition, { username: 1, avatar: 1, chat: 1 }).lean()
             let token = req.cookies.token
             let decodeAccount = jwt.verify(token, 'minhson')
@@ -131,18 +127,18 @@ class messtController {
                     //thêm id cuộc trò chuyện vào lịch sử trò chuyển ở thông tin người dùng
                     await AccountModel.updateMany({ _id: { $in: [receiver._id, sender._id] } }, { $push: { chat: data._id } })
                     var idRoom = data._id
-                    res.json({ msg: 'createSuccess', receiver, idRoom });
+                    return res.json({ msg: 'createSuccess', receiver, idRoom });
                 } else {
                     //nếu đã chat vs nhau rồi sẽ trả về cuộc trò chuyện
                     var data = await chatModel.findOne({ _id: check._id }).lean()
                     var receiverID = receiver._id
                     var idRoom = data._id
-                    res.json({ msg: 'conversation is already exist ', receiverID, idRoom });
+                    return res.json({ msg: 'conversation is already exist ', receiverID, idRoom });
                 }
-            } else { res.json({ msg: 'user not found' }) }
+            } else { return res.json({ msg: 'user not found' }) }
         } catch (error) {
             console.log(error)
-            res.json({ msg: 'error' })
+            return res.json({ msg: 'error' })
         }
     }
 }

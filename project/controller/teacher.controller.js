@@ -24,13 +24,12 @@ class teacherController {
         }
     }
 
-
     async allClass(req, res) {
         try {
             var params = req.params.id
             var teacherName = req.cookies.username
-            if (params != "0") res.render('teacher/allClass', { params, teacherName })
-            if (params == "0") res.render('teacher/allClass', { teacherName })
+            if (params != "0") return res.render('teacher/allClass', { params, teacherName })
+            if (params == "0") return res.render('teacher/allClass', { teacherName })
         } catch (e) {
             console.log(e)
             res.json("lỗi")
@@ -39,15 +38,12 @@ class teacherController {
     //đếm số lượng account dựa trên trạng thái của lớp học
     async countClass(req, res) {
         try {
-            var token = req.cookies.token
-            var decodeAccount = jwt.verify(token, 'minhson')
-            var A = new Date()
-                //số lớp hiển thị trên 1 trang
-            var classPerPage = 2
+            var token = req.cookies.token;
+            var decodeAccount = jwt.verify(token, 'minhson');
+            //số lớp hiển thị trên 1 trang
+            var classPerPage = 20
             var numberOfClass = await ClassModel.find({ teacherID: decodeAccount, classStatus: req.query.status }, { _id: 1 }).lean().countDocuments()
             var soTrang = numberOfClass / classPerPage + 1
-            var B = new Date()
-            console.log("countClass", B - A)
             res.json({ msg: 'success', soTrang, numberOfClass });
         } catch (e) {    
             console.log(e)
@@ -61,12 +57,9 @@ class teacherController {
         try {
             var token = req.cookies.token
             var decodeAccount = jwt.verify(token, 'minhson')
-            var A = new Date()
-            var classPerPage = 2
+            var classPerPage = 20
             var skip = classPerPage * parseInt(req.query.page)
             var classInfor = await ClassModel.find({ teacherID: decodeAccount, classStatus: req.query.status }, { schedule: 0, studentID: 0, classStatus: 0 }).skip(skip).limit(classPerPage).lean();
-            var B = new Date()
-            console.log(B - A)
             res.json({ msg: 'success', classInfor });
         } catch (e) {
             console.log(e)
@@ -80,11 +73,7 @@ class teacherController {
             var decodeAccount = jwt.verify(token, 'minhson');
             //lấy thời điểm đầu tuần để lấy khóa học đang hoạt động trong khoảng thời gian đó. 
             var sosanh = new Date(req.query.dauTuan)
-            var before = new Date();
             var classInfor = await ClassModel.find({ teacherID: decodeAccount, startDate: { $lte: sosanh }, endDate: { $gte: sosanh } }, { className: 1, schedule: 1 });
-            var after = new Date();
-            console.log("Đầu tuần: " + req.query.dauTuan)
-            console.log(after - before)
             res.json({ msg: 'success', classInfor });
         } catch (e) {
             console.log(e)
@@ -92,13 +81,9 @@ class teacherController {
         }
     }
 
-
-
-
     async attendedListStudent(req, res) {
         try {
             var data = await ClassModel.find({ _id: req.query.idClass }, { schedule: { $elemMatch: { _id: req.query.idattend } } }, { schedule: 1 }).populate({ path: "schedule.attend.studentID", select: "username avatar" }).lean();
-            console.log(data)
             res.json({ msg: 'success', data: data });
         } catch (e) {
             console.log(e)
@@ -110,7 +95,7 @@ class teacherController {
         try {
             var now = new Date();
             //cập nhật điểm danh cho học sinh
-            await ClassModel.updateOne({ _id: req.body.idClass, "schedule._id": req.body.schedule }, { $set: { "schedule.$.attend": req.body.attend } });
+            await ClassModel.updateOne({ _id: req.body.idClass, "schedule._id": req.body.schedule }, { $set: { "schedule.$.attend": req.body.attend, "schedule.$.status": "success" } });
             //tính số buổi học sinh đã nghỉ
             var data = await ClassModel.find({ _id: req.body.idClass }, { schedule: 1, studentID: 1 }).lean();
             var student1 = data[0].studentID;
@@ -138,12 +123,6 @@ class teacherController {
             res.json({ msg: 'error' });
         }
     }
-
-
-
-
-
-
 
     async studentAssessment(req, res) {
         try {
@@ -208,8 +187,7 @@ class teacherController {
 
     async allClassStudent(req, res) {
         try {
-            var _id = req.query.abc
-            var selectedClassInfor = await ClassModel.find({ _id: _id }, { studentID: 1 }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
+            var selectedClassInfor = await ClassModel.find({ _id: req.query.abc }, { studentID: 1 }).populate('studentID.ID', { avatar: 1, username: 1, aim: 1, email: 1 }).lean();
             res.json({ msg: 'success', data: selectedClassInfor });
         } catch (e) {
             console.log(e)

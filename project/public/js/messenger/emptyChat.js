@@ -3,10 +3,6 @@
 
   $(document).ready(function() {
       $("#welcome").html("Welcome " + senderName.value)
-      $(".chatBox").scrollTop($('#messContent').height())
-      connectAllConversation();
-      chatBox($('#receiverID').val(), $('#_idRoom').val())
-      unReadMess();
   });
 
   //hiệu ứng menu
@@ -192,7 +188,7 @@
               if (response.msg == 'createSuccess') {
                   //hiển thị cuộc trò chuyện mới nhất lên đầu lịch sử
                   var now = Date().toString().split("GMT")[0]
-                  $(".history").prepend("<div class='" + response._idRoom + "'onclick=chatBox('" + response.receiver._id + "','" + response.idRoom + "')><img src='" + response.receiver.avatar + "'><p>  " + response.receiver.username + "<br>Hệ thống: Đã kết nố...</p><br><label>" + now + "</label></div>")
+                  $(".history").prepend("<div class='" + response.idRoom + "'onclick=chatBox('" + response.receiver._id + "','" + response.idRoom + "')><img src='" + response.receiver.avatar + "'><p>  " + response.receiver.username + "<br>Hệ thống: Đã kết nố...</p><br><label>" + now + "</label></div>")
                   chatBox(response.receiver._id, response.idRoom);
                   var idConversationList = [];
                   idConversationList.push(response.idRoom);
