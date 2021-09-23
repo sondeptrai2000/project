@@ -12,8 +12,8 @@ var chatSchema = new mongoose.Schema({
         time: { type: Date, default: Date.now }
     }],
     updateTime: { type: Date, default: Date.now }
-}, { collection: 'chat' });
+}, { collection: 'chats' });
 
-var chatModel = mongoose.model('chat', chatSchema);
+var chatModel = mongoose.model('chats', chatSchema);
 
 module.exports = chatModel

@@ -59,16 +59,15 @@ class messtController {
                 return res.render("message/emptyChat.ejs", { role, senderName: sender.username, senderAvatar: sender.avatar, senderID: sender._id })
             } else {
                 // lấy tin nhắn cuối cùng trong mảng message để hiển thị trong lịch sử chat
-                var data1 = await chatModel.find({ _id: { $in: listID } }, { message: { $slice: -1 }, }).populate({ path: 'person1', select: ' username avatar', }).populate({ path: 'person2', select: ' username avatar', }).sort({ updateTime: -1 }).lean();
+                var data1 = await chatModel.find({ _id: { $in: listID } }, { message: { $slice: -1 }, }).populate({ path: 'person1', select: ' username avatar' }).populate({ path: 'person2', select: ' username avatar' }).sort({ updateTime: -1 }).lean();
                 //xác định người gửi trong đoạn chat đầu tiên để hiển thị
                 if (sender._id.toString() == data1[0].person1._id.toString()) {
                     var formData = { senderID: data1[0].person1._id, senderName: data1[0].person1.username, receiverID: data1[0].person2._id, receiverName: data1[0].person2.username }
-                } else {
-                    var formData = { senderID: data1[0].person2._id, senderName: data1[0].person2.username, receiverID: data1[0].person1._id, receiverName: data1[0].person1.username }
-                }
+                } else { var formData = { senderID: data1[0].person2._id, senderName: data1[0].person2.username, receiverID: data1[0].person1._id, receiverName: data1[0].person1.username } }
                 return res.render("message/chatBoxHistory.ejs", { data1, formData, listID, role })
             }
-        } catch (e) {    
+        } catch (e) {   
+            console.log(e) 
             return res.json('error')
 
         }
