@@ -21,7 +21,26 @@
     <div class="attendedListOut" style="display: none;">
         <div id="attendedList"></div>
     </div>
-
+    <div class="updateClassOut" style="display: none;">
+        <div id="updateClass">
+            <form id='submitUpdateClass'>
+                <input type="hidden" id='updateClassID'>
+                <div style=" text-align: left;">
+                    Class name: <input type="text" id="classNameUpdate" required />
+                    Description: <input type="text" id="descriptionUpdate" required />
+                    Current teacher name:<input type="text" id="currentTeacherName" readonly required />
+                    Current teacher email:<input type="text" id="currentTeacherEmail" readonly required />
+                    Change Teacher:<input type="text"
+                        placeholder="Input new teacher phone or email to change teacher of this class"
+                        id="updateTeacher" />
+                    Note: The schedual of new teacher have to available for this class! Please check schedual of new
+                    teacher
+                    before submit.<br>
+                </div>
+                <button>Submit</button>
+            </form>
+        </div>
+    </div>
     <div class="updateScheduleFormOut" style="display: none;">
         <div class="updateSchedualContent">
             <form id='SubmitupdateScheduleForm'>
@@ -76,6 +95,7 @@
                         <ul>Night<input type='checkbox' class='checkTtime' value='Night'></ul>
                     </div>
                     <h3>Student list</h3>
+                    Tìm kiếm: <input id='filterStudent' type='text' placeholder="Enter information of student">
                     <div id="studentTable" border='solid'></div>
                     <h3>Teacher: </h3>
                     <div id="teacherID">

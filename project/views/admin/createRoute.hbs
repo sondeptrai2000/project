@@ -48,10 +48,10 @@
                                         <button onclick='$(".createRouteOut").fadeIn(500);'>Create Route</button>
                                 </div>
                                 <div class='td'>
-                                        <input id='searchRoute' type='text' placeholder="Nhập tên lộ trình ">
-                                        <button onclick="search()">Search</button>
+                                        Tìm kiếm: <input id='searchRoute' onkeyup="filterRoute()" type='text'
+                                                placeholder="Enter name of route">
                                 </div>
-                                <div class='td' id="number" ></div>
+                                <div class='td' id="number"></div>
                         </div>
                         <div class="tableRoute"></div>
                 </div>

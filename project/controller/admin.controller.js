@@ -133,7 +133,22 @@ class adminController {
                 await AccountModel.updateMany({ _id: { $in: listStudentID } }, { $pull: { classID: req.query.id } });
             }
             await ClassModel.deleteOne({ _id: req.query.id })
-            res.json({ msg: 'success', data });
+            res.json({ msg: 'success' });
+        } catch (e) {
+            console.log(e)
+            res.json({ msg: 'error' });
+        }
+    };
+
+    async updateClass(req, res) {
+        try {
+            if (req.body.updateTeacher != "") {
+                var teacher = await AccountModel.findOne(req.body.updateTeacher, { _id: 1 }).lean();
+                if (teacher) await ClassModel.updateOne({ _id: req.body.classID }, { className: req.body.className, description: req.body.Description, teacherID: teacher._id })
+                if (!teacher) res.json({ msg: 'Teacher not found' });
+            }
+            if (req.body.updateTeacher == "") await ClassModel.updateOne({ _id: req.body.classID }, { className: req.body.className, description: req.body.Description })
+            res.json({ msg: 'success' });
         } catch (e) {
             console.log(e)
             res.json({ msg: 'error' });
@@ -335,7 +350,7 @@ class adminController {
     async getStudent(req, res) {
         try {
             console.log(req.query.time)
-            var student = await AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS, availableTime: { $in: [req.query.time, 'All'] } }).lean()
+            var student = await AccountModel.find({ role: 'student', routeName: req.query.abc, stage: req.query.levelS, availableTime: { $in: [req.query.time, 'All'] } }, { username: 1, stage: 1, email: 1, progess: 1, avatar: 1, phone: 1 }).lean()
             res.json({ msg: 'success', student });
         } catch (e) {
             console.log(e)

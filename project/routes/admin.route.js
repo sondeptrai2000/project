@@ -22,6 +22,8 @@ adminRouter.get('/getTeacherAndClass', adminController.getTeacherAndClass);
 
 adminRouter.get('/countClass', adminController.countClass);
 
+adminRouter.post('/updateClass', adminController.updateClass);
+
 adminRouter.get('/searchClass', adminController.searchClass);
 adminRouter.get('/getAllClass', adminController.getAllClass);
 adminRouter.get('/attendedList', adminController.attendedList);

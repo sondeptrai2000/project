@@ -14,6 +14,10 @@ $('header li').hover(function() {
 });
 // thoát khỏi modal box
 $(window).on('click', function(e) {
+    if ($(e.target).is('.updateClassOut')) {
+        $('.actionOut').fadeIn(1000);
+        $('.updateClassOut').fadeOut(1000);
+    }
     if ($(e.target).is('.studentListOut')) {
         $('.actionOut').fadeIn(1000);
         $('.studentListOut').fadeOut(1000);
@@ -61,7 +65,7 @@ function getAllClass() {
             if (response.msg == 'success') {
                 $(".tableClass").html("<div class='tr'><div class='td'>Class name</div><div class='td'>teacher</div><div class='td'>routeName</div><div class='td'>stage</div><div class='td'>subject</div><div class='td'>Description</div><div class='td'>Start date</div><div class='td'>End date</div><div class='td'>Action</div></div>")
                 $.each(response.classInfor, function(index, data) {
-                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>Name: " + data.teacherID.username + "<br>" + data.teacherID.email + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td' style='display:none;'>" + data.timeToStudy + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><i class='far fa-edit' onclick=actionClass('" + data._id + "')></i><div style='display:none;' class='action" + data._id + "'><div class='td'><button onclick=changeInfor('" + data._id + "')><i class='fas fa-chalkboard-teacher'></i><br>Update class</button></div><div class='td'><button onclick=sendData('" + data._id + "')><i class='fas fa-users'></i><br>Student list</button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')><i class='far fa-calendar-alt'></i><br>List Schedule </button></div><div class='td'><button onclick=deleteClass('" + data._id + "')><i class='far fa-trash-alt'></i><br>Delete</button></div></div></div></div>")
+                    $(".tableClass").append("<div class='tr' id='" + data._id + "'><div class='td'>" + data.className + "</div><div class='td'>Name: " + data.teacherID.username + "<br>Email:" + data.teacherID.email + "</div><div class='td'>" + data.routeName + "</div><div class='td'>" + data.stage + "</div><div class='td'>" + data.subject + "</div><div class='td' style='display:none;'>" + data.timeToStudy + "</div><div class='td'>" + data.description + "</div><div class='td'>" + data.startDate.replace("T00:00:00.000Z", "") + "</div><div class='td'>" + data.endDate.replace("T00:00:00.000Z", "") + "</div><div class='td'><i class='far fa-edit' onclick=actionClass('" + data._id + "')></i><div style='display:none;' class='action" + data._id + "'><div class='td'><button onclick=changeInfor('" + data._id + "')><i class='fas fa-chalkboard-teacher'></i><br>Update class</button></div><div class='td'><button onclick=sendData('" + data._id + "')><i class='fas fa-users'></i><br>Student list</button></div><div class='td'><button onclick=upDateSchedule('" + data._id + "')><i class='far fa-calendar-alt'></i><br>List Schedule </button></div><div class='td'><button onclick=deleteClass('" + data._id + "')><i class='far fa-trash-alt'></i><br>Delete</button></div></div></div></div>")
                 });
             }
         },
@@ -73,8 +77,17 @@ function getAllClass() {
 //hiển thị bảng lựa chọn chỉnh sửa thông tin lớp học
 function actionClass(id) {
     $(".actionOut").toggle(500)
+    $(".action").html("")
     $(".action").html($(".action" + id).clone())
     $(".action .action" + id).show()
+    $("#updateClassID").val(id)
+    var allIn4 = []
+    console.log("#" + id + " .td")
+    $("#" + id + " .td").each(function() { allIn4.push($(this).text()) })
+    $("#classNameUpdate").val(allIn4[0])
+    $("#descriptionUpdate").val(allIn4[6])
+    $("#currentTeacherName").val(allIn4[1].split("Email")[0].replace("Name: ", ""))
+    $("#currentTeacherEmail").val(allIn4[1].split("Email:")[1])
 }
 //tìm kiếm class
 function searchClass() {
@@ -98,7 +111,11 @@ function searchClass() {
         }
     });
 }
-
+//cập nhật thông tin lớp học: giáo viên, tên, miêu tả
+function changeInfor(id) {
+    $(".actionOut").toggle(500)
+    $(".updateClassOut").fadeIn(500);
+}
 //xóa 1 lớp học
 function deleteClass(id) {
     if (confirm("Are you sure you want to delete this?")) {
@@ -166,6 +183,56 @@ function createClassForm() {
 
 }
 
+//thực hiện cập nhật thông tin lớp và lưu vào đb
+$("#submitUpdateClass").submit(async function(event) {
+        event.preventDefault();
+        var condition = {}
+        var updateTeacher = $("#updateTeacher").val()
+        if (updateTeacher != '') {
+            if (isNaN(updateTeacher) == true) condition["email"] = updateTeacher
+            if (isNaN(updateTeacher) == false) condition["phone"] = updateTeacher
+        } else { condition = "" }
+        var formData = {
+            classID: $("#updateClassID").val(),
+            className: $("#classNameUpdate").val(),
+            Description: $("#descriptionUpdate").val(),
+            currentTeacherEmail: $("#currentTeacherEmail").val(),
+            updateTeacher: condition,
+        }
+        $.ajax({
+            url: '/admin/updateClass',
+            method: 'post',
+            dataType: 'json',
+            data: formData,
+            success: function(response) {
+                if (response.msg == 'success') {
+                    alert("update class success");
+                    countClass();
+                    $('.updateClassOut').toggle(500);
+                }
+                if (response.msg == 'Teacher not found') alert("Teacher not found")
+                if (response.msg == 'error') alert("error")
+            },
+            error: function(response) {
+                alert('server error');
+            }
+        })
+
+    })
+    //lọc tìm kiếm student 
+$("#filterStudent").keyup(function() {
+    var filter = $("#filterStudent").val().toUpperCase()
+    console.log(filter)
+    $("#studentTable .tr:not(:first-child)").each(function() {
+        if ($(this).find('.td').text().toUpperCase().indexOf(filter) > -1) {
+            $(this).show()
+            console.log($(this).text())
+        } else {
+            $(this).hide()
+        }
+        if (filter == "") $(this).show()
+    })
+});
 
 //thực hiện tạo lớp và lưu vào đb
 $("#myform").submit(async function(event) {
@@ -687,7 +754,7 @@ function getStudent() {
                             }
                         });
                         //nếu trong lộ trình học cá nhân của học sinh đã học bộ môn này và  bị restudy hoặc chưa học thì sẽ hiển thị ra danh sách để thêm vào lớp
-                        if (check == false) $('#studentTable').append("<div class='tr'><div class='td'><img style ='max-width:200;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td' style='display:none;'>" + student.email + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby' value='" + student._id + "' /></div><div class='td'>" + "<button class='del' value='" + student._id + "'>View</button>" + "</div></div>");
+                        if (check == false) $('#studentTable').append("<div class='tr'><div class='td'><img style ='max-width:200;max-height:200px' src='" + student.avatar + "'></div><div class='td'>" + student.username + "</div><div class='td' style='display:none;'>" + student.email + "</div><div class='td' style='display:none;'>" + student.phone + "</div><div class='td'>" + student.stage + "</div><div class='td'><input type='checkbox' name='hobby' value='" + student._id + "' /></div><div class='td'>" + "<button class='del' value='" + student._id + "'>View</button>" + "</div></div>");
                     });
                     $('#studentTable').show();
                 }

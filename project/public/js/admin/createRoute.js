@@ -33,7 +33,20 @@ function unReadMess() {
         }
     })
 }
-
+//lọc tìm kiếm
+function filterRoute() {
+    var filter = $("#searchRoute").val().toUpperCase()
+    console.log(filter)
+    $(".tableRoute .tr:not(:first-child)").each(function() {
+        if ($(this).find('.td').text().toUpperCase().indexOf(filter) > -1) {
+            $(this).show()
+            console.log($(this).text())
+        } else {
+            $(this).hide()
+        }
+        if (filter == "") $(this).show()
+    })
+}
 
 function getAllRoute() {
     $.ajax({
