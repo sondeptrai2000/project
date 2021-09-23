@@ -17,13 +17,11 @@ adminRouter.post('/doCreateAccount', adminController.doCreateAccount);
 adminRouter.post('/doeditAccount', adminController.doeditAccount);
 
 //Manage class page
-// adminRouter.get('/allClassLevel', adminController.allClassLevel);
+adminRouter.get('/createClass', adminController.createClass);
+
 adminRouter.get('/getTeacherAndClass', adminController.getTeacherAndClass);
-
 adminRouter.get('/countClass', adminController.countClass);
-
 adminRouter.post('/updateClass', adminController.updateClass);
-
 adminRouter.get('/searchClass', adminController.searchClass);
 adminRouter.get('/getAllClass', adminController.getAllClass);
 adminRouter.get('/attendedList', adminController.attendedList);
@@ -35,7 +33,6 @@ adminRouter.get('/addStudentToClass', adminController.addStudentToClass);
 adminRouter.post('/doaddStudentToClass', adminController.doaddStudentToClass);
 adminRouter.post('/doremoveStudentToClass', adminController.doremoveStudentToClass);
 adminRouter.get('/getTime', adminController.getTime);
-adminRouter.get('/createClass', adminController.createClass);
 adminRouter.post('/createClass', adminController.docreateClass);
 adminRouter.get('/getStudent', adminController.getStudent);
 
@@ -48,15 +45,14 @@ adminRouter.post('/docreateRoute', adminController.docreateRoute);
 adminRouter.post('/doUpdateRoute', adminController.doUpdateRoute);
 adminRouter.delete('/deleteRoute', adminController.deleteRoute);
 
-//xem các lớp mà học sinh đã học (studentClassDetail)
-adminRouter.get('/studentClass/:id', adminController.studentClass);
-
 //Manage room and time
 adminRouter.get('/assignRoomAndTime', adminController.assignRoomAndTime);
 adminRouter.get('/getRoomAndTime', adminController.getRoomAndTime);
 adminRouter.post('/addRoom', adminController.addRoom);
 adminRouter.post('/deleteRoom', adminController.deleteRoom);
 
+//xem các lớp mà học sinh đã học (studentClassDetail) quá trình học
+adminRouter.get('/studentClass/:id', adminController.studentClass);
 
 
 

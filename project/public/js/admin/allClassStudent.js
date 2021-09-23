@@ -6,8 +6,6 @@ $(document).ready(function() {
 
 });
 
-
-
 $(window).on('click', function(e) {
     if ($(e.target).is('.studentListOut')) $('.studentListOut').slideUp(1500);
     if ($(e.target).is('.teacherIn4Out')) $('.teacherIn4Out').slideUp(1500);
@@ -16,7 +14,6 @@ $(window).on('click', function(e) {
 
 //xem danh sách điểm danh của học sinh
 function myAttended(classID) {
-    console.log("vào")
     $.ajax({
         url: '/student/myAttended',
         method: 'get',
@@ -24,7 +21,6 @@ function myAttended(classID) {
         data: { classID: classID },
         success: function(response) {
             if (response.msg == 'success') {
-                console.log(response.data)
                 var data = response.data
                 var studentIndex
                 $(".myAttendContent").html("<div class='tr'><div class='td'>Date</div><div class='td'>Time</div><div class='td'>Status</div></div>")

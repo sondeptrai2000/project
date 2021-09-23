@@ -1,6 +1,4 @@
 var mongoose = require("mongoose");
-//const { stringify } = require("querystring");
-var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://minhson123:minhson123@cluster0.v0phx.mongodb.net/project?retryWrites=true&w=majority";
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -37,9 +35,7 @@ const AccountSchema = new Schema({
     address: String,
     birthday: String,
     codeRefresh: String,
-}, {
-    collection: 'account'
-});
+}, { collection: 'account' });
 
 var AccountModel = mongoose.model('account', AccountSchema);
 module.exports = AccountModel

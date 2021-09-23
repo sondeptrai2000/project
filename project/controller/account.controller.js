@@ -64,7 +64,7 @@ let getCode = async(req, res) => {
         }
     } catch (e) {
         console.log(e)
-        res.json({ msg: 'error' });
+        return res.json({ msg: 'error' });
     }
 }
 
@@ -83,7 +83,7 @@ let confirmPass = async(req, res) => {
         }
     } catch (e) {
         console.log(e)
-        res.json({ msg: 'error' });
+        return res.json({ msg: 'error' });
     }
 }
 
@@ -99,7 +99,7 @@ let homeAdmin = async(req, res) => {
         } else { return res.redirect('/') }
     } catch (e) {
         console.log(e)
-        res.redirect('/')
+        return res.redirect('/')
     }
 }
 
@@ -114,7 +114,7 @@ let homeTeacher = async(req, res) => {
         } else { res.redirect('/') }
     } catch (e) {
         console.log(e)
-        res.redirect('/')
+        return res.redirect('/')
     }
 }
 
@@ -129,7 +129,7 @@ let homeGuardian = async(req, res) => {
         } else { res.redirect('/') }
     } catch (e) {
         console.log(e)
-        res.redirect('/')
+        return res.redirect('/')
     }
 }
 
@@ -144,7 +144,7 @@ let homeStudent = async(req, res) => {
         } else { res.redirect('/') }
     } catch (e) {
         console.log(e)
-        res.redirect('/')
+        return res.redirect('/')
     }
 }
 
@@ -162,7 +162,7 @@ let loginController = async function(req, res) {
         } else { return res.json({ msg: 'invalid_Info' }); }
     } catch (e) {
         console.log(e)
-        res.json({ message: "error" })
+        return res.json({ message: "error" })
     }
 }
 let doeditAccount = async function(req, res) {
@@ -193,10 +193,10 @@ let doeditAccount = async function(req, res) {
             }
         }
         await AccountModel.findOneAndUpdate({ _id: req.body.id }, formData1)
-        res.json({ msg: 'success', data: data });
+        return res.json({ msg: 'success', data: data });
     } catch (e) {
         console.log(e)
-        res.json({ msg: 'error' });
+        return res.json({ msg: 'error' });
     }
 }
 
@@ -206,10 +206,10 @@ let profile = async function(req, res) {
         var decodeAccount = jwt.verify(token, 'minhson')
         var data = await AccountModel.findById({ _id: decodeAccount._id }).lean();
         res.cookie("username", data.username, { maxAge: 24 * 60 * 60 * 10000 });
-        res.json({ msg: 'success', data: data });
+        return res.json({ msg: 'success', data: data });
     } catch (e) {
         console.log(e)
-        res.json({ msg: 'error' });
+        return res.json({ msg: 'error' });
     }
 }
 module.exports = {

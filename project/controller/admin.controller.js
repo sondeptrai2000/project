@@ -1,28 +1,19 @@
 const AccountModel = require('../models/account');
 const studyRouteModel = require('../models/studyRoute');
 const ClassModel = require('../models/class');
-const consultingInformationModel = require('../models/consultingInformation');
 const assignRoomAndTimeModel = require('../models/assignRoomAndTime');
-
 const fs = require("fs")
 const { google } = require("googleapis")
 var path = require('path');
-var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
-const chatModel = require('../models/messenger');
-
-const { data } = require('jquery');
-const { inflate } = require('zlib');
 const nodemailer = require('nodemailer');
 
 //set up kết nối tới ggdrive
 const KEYFILEPATH = path.join(__dirname, 'service_account.json')
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
-const auth = new google.auth.GoogleAuth(
-    opts = { keyFile: KEYFILEPATH, scopes: SCOPES }
-);
+const auth = new google.auth.GoogleAuth(opts = { keyFile: KEYFILEPATH, scopes: SCOPES });
 const driveService = google.drive(options = { version: 'v3', auth });
 
 // set up mail sever
@@ -39,18 +30,13 @@ async function uploadFile(name, rootID, path) {
     var id = []
     id.push(rootID);
     //upload file to drive
-    var responese = await driveService.files.create(param = {
-        resource: { "name": name, "parents": id },
-        media: { body: fs.createReadStream(path = path) },
-    });
+    var responese = await driveService.files.create(param = { resource: { "name": name, "parents": id }, media: { body: fs.createReadStream(path = path) } });
     //tạo quyền truy cập (xem ) cho file vừa upload
-    await driveService.permissions.create({
-        fileId: responese.data.id,
-        requestBody: { role: 'reader', type: 'anyone', },
-    });
+    await driveService.permissions.create({ fileId: responese.data.id, requestBody: { role: 'reader', type: 'anyone' } });
     //trả về id của file đó trên drive để lưu vào mongoDB
     return responese.data.id
 }
+
 class adminController {
     async adminHome(req, res) {
         // AccountModel.updateMany({}, { $set: { classID: [] } }, function(err, data) {
@@ -60,20 +46,20 @@ class adminController {
         //             console.log(" ok")
         //         }
         //     })
-        assignRoomAndTimeModel.updateMany({}, {
-                $set: { room: [] }
-            }, function(err, data) {
-                if (err) {
-                    console.log("k ok 2")
-                } else {
-                    console.log(" ok 2 ")
-                }
-            })
-            // res.render('admin/adminHome')
-            // await chatModel.updateMany({
-            //     read: []
-            // })
-            // console.log("ok")
+        // assignRoomAndTimeModel.updateMany({}, {
+        //         $set: { room: [] }
+        //     }, function(err, data) {
+        //         if (err) {
+        //             console.log("k ok 2")
+        //         } else {
+        //             console.log(" ok 2 ")
+        //         }
+        //     })
+        // res.render('admin/adminHome')
+        // await chatModel.updateMany({
+        //     read: []
+        // })
+        // console.log("ok")
     }
 
     async assignRoomAndTime(req, res) {

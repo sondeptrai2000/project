@@ -1,15 +1,6 @@
 var mongoose = require('mongoose');
-
-var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://minhson123:minhson123@cluster0.v0phx.mongodb.net/project?retryWrites=true&w=majority";
-
-mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}, function(err, result) {
-    if (err) console.log('chatSchema lỗi')
-});
-
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, }, function(err, result) { if (err) console.log('chatSchema lỗi') });
 var chatSchema = new mongoose.Schema({
     person1: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
     person2: { type: mongoose.Schema.Types.ObjectId, ref: 'account' },
@@ -21,7 +12,7 @@ var chatSchema = new mongoose.Schema({
         time: { type: Date, default: Date.now }
     }],
     updateTime: { type: Date, default: Date.now }
-})
+}, { collection: 'chat' });
 
 var chatModel = mongoose.model('chat', chatSchema);
 

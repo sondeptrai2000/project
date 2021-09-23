@@ -1,15 +1,6 @@
 var mongoose = require('mongoose')
-var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://minhson123:minhson123@cluster0.v0phx.mongodb.net/project?retryWrites=true&w=majority";
-
-mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}, function(err, result) {
-    if (err) console.log('class lỗi')
-});
-
-
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function(err, result) { if (err) console.log('class lỗi') });
 const Schema = mongoose.Schema;
 const classSchema = new Schema({
     className: String,
@@ -41,10 +32,7 @@ const classSchema = new Schema({
     endDate: Date,
     startDate: Date,
     classStatus: { type: String, default: "Processing" },
-}, {
-    collection: 'class',
-    timestamps: true
-});
+}, { collection: 'class', timestamps: true });
 
 var classModel = mongoose.model('class', classSchema)
 module.exports = classModel
