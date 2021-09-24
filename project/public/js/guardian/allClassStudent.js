@@ -34,8 +34,21 @@ function unReadMess() {
             alert('server error');
         }
     })
-}
-
+};
+//tìm kiếm lớp học
+$("#myInput").keyup(function() {
+    var filter = $("#myInput").val().toUpperCase()
+    console.log(filter)
+    $("#tableClass .tr:not(:first-child)").each(function() {
+        if ($(this).find('.td').text().toUpperCase().indexOf(filter) > -1) {
+            $(this).show()
+            console.log($(this).text())
+        } else {
+            $(this).hide()
+        }
+        if (filter == "") $(this).show()
+    })
+});
 
 //lấy thông tin các lớp đã và đang học
 function getClass() {

@@ -185,41 +185,42 @@ function createClassForm() {
 
 //thực hiện cập nhật thông tin lớp và lưu vào đb
 $("#submitUpdateClass").submit(async function(event) {
-        event.preventDefault();
-        var condition = {}
-        var updateTeacher = $("#updateTeacher").val()
-        if (updateTeacher != '') {
-            if (isNaN(updateTeacher) == true) condition["email"] = updateTeacher
-            if (isNaN(updateTeacher) == false) condition["phone"] = updateTeacher
-        } else { condition = "" }
-        var formData = {
-            classID: $("#updateClassID").val(),
-            className: $("#classNameUpdate").val(),
-            Description: $("#descriptionUpdate").val(),
-            currentTeacherEmail: $("#currentTeacherEmail").val(),
-            updateTeacher: condition,
-        }
-        $.ajax({
-            url: '/admin/updateClass',
-            method: 'post',
-            dataType: 'json',
-            data: formData,
-            success: function(response) {
-                if (response.msg == 'success') {
-                    alert("update class success");
-                    countClass();
-                    $('.updateClassOut').toggle(500);
-                }
-                if (response.msg == 'Teacher not found') alert("Teacher not found")
-                if (response.msg == 'error') alert("error")
-            },
-            error: function(response) {
-                alert('server error');
+    event.preventDefault();
+    var condition = {}
+    var updateTeacher = $("#updateTeacher").val()
+    if (updateTeacher != '') {
+        if (isNaN(updateTeacher) == true) condition["email"] = updateTeacher
+        if (isNaN(updateTeacher) == false) condition["phone"] = updateTeacher
+    } else { condition = "" }
+    var formData = {
+        classID: $("#updateClassID").val(),
+        className: $("#classNameUpdate").val(),
+        Description: $("#descriptionUpdate").val(),
+        currentTeacherEmail: $("#currentTeacherEmail").val(),
+        updateTeacher: condition,
+    }
+    $.ajax({
+        url: '/admin/updateClass',
+        method: 'post',
+        dataType: 'json',
+        data: formData,
+        success: function(response) {
+            if (response.msg == 'success') {
+                alert("update class success");
+                countClass();
+                $('.updateClassOut').toggle(500);
             }
-        })
-
+            if (response.msg == 'Teacher not found') alert("Teacher not found")
+            if (response.msg == 'error') alert("error")
+        },
+        error: function(response) {
+            alert('server error');
+        }
     })
-    //lọc tìm kiếm student 
+
+});
+
+//lọc tìm kiếm student 
 $("#filterStudent").keyup(function() {
     var filter = $("#filterStudent").val().toUpperCase()
     console.log(filter)

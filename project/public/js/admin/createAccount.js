@@ -50,14 +50,6 @@ $('#myFileUpdate').on('change', function() {
     filereaderUpdate.readAsDataURL(myFileUpdate)
 });
 
-//tìm kiếm account
-$("#myInput").on("keyup", function() {
-    var value = $(this).val().toLowerCase();
-    $(".taskrow div class='tr'").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    });
-});
-
 
 // làm trống thông tin tạo tài khoản
 async function reset() {
@@ -223,9 +215,8 @@ function viewSchedual(id, role) {
     var dauTuan = tuan.split(" to ")[0]
     var cuoiTuan = tuan.split(" to ")[1]
     var formData = { dauTuan: dauTuan, cuoiTuan: cuoiTuan, id: id, role: role };
-    console.log(formData)
-        //chỉnh fomat date giống Type Date trong mongoDB để so sánh 
-        // link src hàm moment ở head
+    //chỉnh fomat date giống Type Date trong mongoDB để so sánh 
+    // link src hàm moment ở head
     var start = moment(new Date(dauTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
     var end = moment(new Date(cuoiTuan)).format('YYYY-MM-DD[T00:00:00.000Z]');
     var a = getDaysArray(new Date(dauTuan), new Date(cuoiTuan));
@@ -396,9 +387,9 @@ function updateForm(id) {
             if (response.msg == 'success') {
                 var account = response.account
                 $("#currentRole").val(account.role)
+                $("#currentAvatar").attr("src", account.avatar)
                 $("#roleUpdate").change();
                 $("#PersonID").val(id)
-                $("#currentAvatar").attr(account.avatar);
                 $("#oldAvatar").val(account.avatar);
                 $("#usernameUpdate").val(account.username)
                 $('#genderUpdate option:selected').removeAttr('selected');
@@ -413,6 +404,7 @@ function updateForm(id) {
                     $("input[name='guardianNameUpdate']").val(account.relationship.username)
                     $("input[name='guardianPhoneUpdate']").val(account.relationship.phone)
                     $("input[name='guardianEmailUpdate']").val(account.relationship.email)
+                    $("#availbleTimeUpdate input").each(function() { if (account.availableTime.includes($(this).val())) $(this).prop('checked', true); })
                     $.each(response.targetxxx, function(index, targetxxx) {
                         if (targetxxx.routeName == account.routeName) {
                             $("#routeTypeSUpdate").append("<option value='" + targetxxx.routeName + "'>" + targetxxx.routeName + "</option>");

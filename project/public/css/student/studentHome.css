@@ -56,6 +56,7 @@ body {
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     font-size: 17px;
+    overflow: auto;
 }
 
 #chonTuan {
